@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .item .activeIcon {
+        @apply hidden;
+    }
+}
+
+@layer components {
+    .item.active .nonIcon {
+        @apply hidden;
+    }
+}
+
+@layer components {
+    .item.active .activeIcon {
+        @apply block;
+    }
+}
+
+@layer components {
+    .item:not(.active) .content {
+        @apply h-0 overflow-hidden py-0;
+    }
+}
+
+@layer components {
+    .item .content {
+        @apply pl-4 h-auto leading-8;
+    }
+}
+
+@layer components {
+    .content ul li {
+        @apply hover:bg-[rgba(0,0,0,0.06)] w-2/4 cursor-pointer p-1 rounded-md;
+    }
+}
+
+@layer components {
+    input[type="radio"] {
+        @apply hidden;
+    }
+}
+
+@layer components {
+    input:checked + label {
+        @apply text-blue-500 font-bold;
+    }
+}
+
+@layer components {
+    label .iconChecked {
+        @apply hidden;
+    }
+}
+
+@layer components {
+    input:checked + label .iconChecked {
+        @apply block text-blue-500 font-bold;
+    }
+}
+
+@layer components {
+    input[type="radio"]:checked + .checked-timeline {
+        @apply text-red-500 border-b-2 border-red-500;
+    }
+}
+
+@keyframes vibrate {
+    0% {
+        transform: translate(0);
+    }
+    25% {
+        transform: translate(-2px, 0);
+    }
+    50% {
+        transform: translate(2px, 0);
+    }
+    75% {
+        transform: translate(-2px, 0);
+    }
+    100% {
+        transform: translate(0);
+    }
+}
+
+.vibrate {
+    animation: vibrate 0.1s linear;
+}
