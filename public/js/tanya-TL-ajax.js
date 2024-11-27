@@ -1,14 +1,14 @@
-function fetchFilteredDataTanya(status, page = 1) {
+function fetchFilteredDataTL(status, page = 1) {
     $.ajax({
-    url: '/paginateTanyaTeacher',
+    url: '/paginateTanyaTL',
     method: 'GET',
     data: {
         status: status,
         page: page // Include the page parameter
     },
     success: function(data) {
-        $('#tableListTeacher').empty(); // Clear previous entries
-        $('.pagination-container-tanya').empty(); // Clear previous pagination links
+        $('#tableListTL').empty(); // Clear previous entries
+        $('.pagination-container-TL').empty(); // Clear previous pagination links
 
     if (data.data.length > 0) {
         $.each(data.data, function(index, application) {
@@ -41,7 +41,7 @@ function fetchFilteredDataTanya(status, page = 1) {
     const restoreUrl = data.restoreUrl.replace(':id', application.id);
     const limitString = (str, limit) => str.length > limit ? str.substring(0, limit) + '...' : str;
 
-    $('#tableListTeacher').append(`
+    $('#tableListTL').append(`
         <tr class="text-xs">
             <td>${index + 1}</td>
             <td>${(application.nama_lengkap || '')}</td>
@@ -56,11 +56,11 @@ function fetchFilteredDataTanya(status, page = 1) {
 });
 
     // Append pagination links
-        $('.pagination-container-tanya').html(data.links);
+        $('.pagination-container-TL').html(data.links);
                     
     } else {
-        $('#tableTanyaTeacher thead').hide(); // hide thead table
-        $('#tableListTeacher').empty(); // Clear existing rows
+        $('#tableTanyaTL thead').hide(); // hide thead table
+        $('#tableListTL').empty(); // Clear existing rows
         $('#emptyMessage').show(); // Tampilkan pesan kosong
     }
 }
@@ -71,20 +71,20 @@ function fetchFilteredDataTanya(status, page = 1) {
 
     $(document).ready(function() {
         // Ambil data yang berstatus 'semua' saat halaman dimuat (jadi ini menampilkan semua data tanpa filter)
-        fetchFilteredDataTanya('semua');
+        fetchFilteredDataTL('semua');
     });
 
 
     $('#statusFilter').on('change', function() {
         const status = $(this).val();
-        fetchFilteredDataTanya(status); // Call the function to fetch data based on status
+        fetchFilteredDataTL(status); // Call the function to fetch data based on status
     });
 
     function bindPaginationLinks() {
-        $('.pagination-container-tanya').off('click', 'a').on('click', 'a', function(event) {
+        $('.pagination-container-TL').off('click', 'a').on('click', 'a', function(event) {
             event.preventDefault(); // Cegah perilaku default link
             const page = new URL(this.href).searchParams.get('page'); // Dapatkan nomor halaman dari link
             const status = $('#statusFilter').val(); // Dapatkan filter status saat ini
-            fetchFilteredDataTanya(status, page); // Ambil data yang difilter untuk halaman yang ditentukan
+            fetchFilteredDataTL(status, page); // Ambil data yang difilter untuk halaman yang ditentukan
         });
     }

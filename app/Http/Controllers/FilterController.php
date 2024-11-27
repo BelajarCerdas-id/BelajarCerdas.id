@@ -80,6 +80,29 @@ public function filterTanyaTeacher(Request $request)
     ]);
 }
 
+public function filterTanyaTL(Request $request)
+{
+    $user = session('user');
+
+    if(!isset($user)) {
+        return redirect('/login');
+    }
+
+    $query = Tanya::query();
+
+    if($request->filled('status') && $request->status !== 'semua'){
+        $query->where('status', $request->status );
+    }
+
+    $data = $query->onlyTrashed()->orderBy('created_at', 'desc')->paginate(10);
+
+    return response()->json([
+        'data' => $data->items(),
+        'links' => (string) $data->links(),
+        'restoreUrl' => route('tanya.edit', ':id')
+    ]);
+}
+
 public function filterClassNote(Request $request)
 {
     $user = session('user');

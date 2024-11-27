@@ -132,7 +132,7 @@
                 </form>
             </div>
         </div>
-    @elseif ($user->status === 'Guru')
+    @elseif ($user->status === 'Mentor')
         <div class="grid lg:grid-cols-4 border-[1px] border-gray-400 gap-8">
             <div class="lg:col-span-2 bg-white shadow-lg h-auto">
                 <header class="grid border-b-[1px] border-gray-200 pb-2">
@@ -214,6 +214,7 @@
                     @csrf
                     @method('PUT')
                     <div class="input-hidden border-b-[1px] border-gray-200 pb-[120px]">
+                        <input type="hidden" name="id_mentor" value="{{ $user->id }}">
                         <input type="hidden" name="mentor" value="{{ $user->nama_lengkap }}">
                         <input type="hidden" name="asal_mengajar" value="{{ $user->sekolah }}">
                         {{-- <input type="hidden" name="kelas" value="{{ $user->kelas }}"> --}}
@@ -295,6 +296,7 @@
                                 <span class="text-red-500 font-bold text-sm">{{ $message }}</span>
                             @enderror
                             <div class="input-hidden">
+                                <input type="hidden" name="id_mentor" value="{{ $user->id }}">
                                 <input type="hidden" name="mentor" value="{{ $user->nama_lengkap }}">
                                 <input type="hidden" name="asal_mengajar" value="{{ $user->sekolah }}">
                                 {{-- <input type="hidden" name="kelas" value="{{ $user->kelas }}"> --}}

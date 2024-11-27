@@ -162,6 +162,7 @@ class TanyaController extends Controller
     $getTanya = Tanya::find($id);
     // Update data lain
     $getTanya->mentor = $request->mentor;
+    $getTanya->id_mentor = $request->id_mentor;
     $getTanya->asal_mengajar = $request->asal_mengajar;
     $getTanya->email_mentor = $request->email_mentor;
     $getTanya->jawaban = $request->jawaban;

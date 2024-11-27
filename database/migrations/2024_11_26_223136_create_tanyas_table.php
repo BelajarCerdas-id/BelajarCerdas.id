@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('image_tanya')->nullable();
             $table->string('no_hp');
             $table->string('mentor')->nullable();
+            $table->string('id_mentor')->nullable();
             $table->string('email_mentor')->nullable();
             $table->string('asal_mengajar')->nullable();
             $table->string('fase_mentor')->nullable();
@@ -34,6 +35,7 @@ return new class extends Migration
             $table->string('alasan_ditolak')->nullable();
             $table->softDeletes();
             $table->timestamps();
+
         });
     }
 

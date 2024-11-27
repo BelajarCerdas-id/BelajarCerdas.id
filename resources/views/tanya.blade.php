@@ -1,28 +1,8 @@
-<x-sidebar_beranda></x-sidebar_beranda>
+<x-sidebar_beranda :user="session('user')"></x-sidebar_beranda>
+@extends('components/sidebar_beranda_mobile')
 @if (isset($user))
     @if ($user->status === 'Siswa')
-        <div class="home-beranda">
-            <div class="content">
-                <div class="navbar-beranda">
-                    <header>Beranda</header>
-                    <!-- <div class="information-account">
-                  <div class="notification">
-                  <i class="fa-solid fa-bell"></i>
-              </div>
-              <div class="coin">
-                  <i class="fa-solid fa-coins"></i>
-              </div> -->
-                    <div class="profile">
-                        <i class="fa-solid fa-user"></i>
-                        <div class="information-profile">
-                            <span class="name">{{ $user->nama_lengkap }}</span><br>
-                            <span class="class">{{ $user->kelas }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="home-beranda">
+        <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
             <div class="content-beranda">
                 <div class="bg-[--color-default] w-full h-20 shadow-lg rounded-t-xl flex items-center pl-10 mb-10">
                     <div class="text-white font-bold flex items-center gap-4">
@@ -31,7 +11,7 @@
                     </div>
                 </div>
                 <div class="flex mt-10">
-                    <div class="w-[1200px] hover:bg-gray-100" onclick="tanyaSiswa()">
+                    <div class="w-full hover:bg-gray-100" onclick="tanyaSiswa()">
                         <input type="radio" class="hidden" name="radio" id="tanya" checked>
                         <div class="checked-timeline">
                             <label for="tanya" class="cursor-pointer">
@@ -40,7 +20,7 @@
                             </label>
                         </div>
                     </div>
-                    <div class="w-[1200px] hover:bg-gray-100" onclick="riwayatSiswa()">
+                    <div class="w-full hover:bg-gray-100" onclick="riwayatSiswa()">
                         <input type="radio" class="hidden" name="radio" id="riwayat">
                         <div class="checked-timeline">
                             <label for="riwayat" class="cursor-pointer">
@@ -50,7 +30,188 @@
                         </div>
                     </div>
                 </div>
-                <div class="bg-white shadow-xl relative ... overflow-hidden">
+                <div class="w-full bg-white rounded-lg shadow-lg gap-12 px-6 py-6 relative overflow-hidden">
+                    <div class="w-full h-auto" id="tanyaSiswa">
+                        <form action="{{ route('tanya.store') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="input-hidden hidden">
+                                <input type="text" name="nama_lengkap" value="{{ $user->nama_lengkap }}">
+                                <input type="text" name="email" value="{{ $user->email }}">
+                                <input type="text" name="sekolah" value="{{ $user->sekolah }}">
+                                <input type="text" name="fase" value="{{ $user->fase }}">
+                                <input type="text" name="kelas" value="{{ $user->kelas }}">
+                                <input type="text" name="no_hp" value="{{ $user->no_hp }}">
+                                {{-- <input type="text" name="jam_tanya" id="jam_tanya"> --}}
+                            </div>
+                            <div class="flex lg:gap-12 gap-4 flex-col lg:flex-row">
+                                <div class="w-full">
+                                    <label class="mb-2 text-sm">Kelas<sup class="text-red-500 pl-1">&#42;</sup></label>
+                                    @if (isset($user))
+                                        @if ($user->fase === 'Fase A')
+                                            <select name="kelas" id="id_kelas"
+                                                class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 {{ $errors->has('kelas') ? 'border-[1px] border-red-500' : '' }}">
+                                                <option value="" class="hidden">Pilih Kelas</option>
+                                                <option value="Kelas 1"
+                                                    {{ @old('kelas') === 'Kelas 1' ? 'selected' : '' }}>
+                                                    Kelas 1
+                                                </option>
+                                                <option value="Kelas 2"
+                                                    {{ @old('kelas') === 'Kelas 2' ? 'selected' : '' }}>
+                                                    Kelas 2
+                                                </option>
+                                            </select>
+                                        @elseif($user->fase === 'Fase F+')
+                                            <select name="kelas" id="id_kelas"
+                                                class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 {{ $errors->has('kelas') ? 'border-[1px] border-red-500' : '' }}">
+                                                <option value="" class="hidden">Pilih Kelas</option>
+                                                <option value="Kelas 11"
+                                                    {{ @old('kelas') === 'Kelas 11' ? 'selected' : '' }}>
+                                                    Kelas 11
+                                                </option>
+                                                <option value="Kelas 12"
+                                                    {{ @old('kelas') === 'Kelas 12' ? 'selected' : '' }}>
+                                                    Kelas 12
+                                                </option>
+                                            </select>
+                                        @else
+                                        @endif
+                                    @else
+                                        <p>Tidak Ada Akses.</p>
+                                    @endif
+                                    @error('kelas')
+                                        <span class="text-red-500 font-bold text-sm mt-1 pl-2">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="w-full">
+                                    <label class="mb-2 text-sm">Mata Pelajaran<sup
+                                            class="text-red-500 pl-1">&#42;</sup></label>
+                                    <select name="mapel" id="id_mapel"
+                                        class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 {{ $errors->has('mapel') ? 'border-[1px] border-red-500' : '' }}">
+                                        <option value="" class="hidden">Pilih mata pelajaran</option>
+                                    </select>
+                                    @error('mapel')
+                                        <span class="text-red-500 font-bold text-sm mt-1 pl-2">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="lg:w-2/4 w-full lg:pr-5 my-4">
+                                <label class="mb-2 text-sm">Bab<sup class="text-red-500 pl-1">&#42;</sup></label>
+                                <select name="bab" id="id_bab"
+                                    class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 {{ $errors->has('bab') ? 'border-[1px] border-red-500' : '' }}">
+                                    <option value="" class="hidden">Pilih Bab</option>
+                                </select>
+                                @error('bab')
+                                    <span class="text-red-500 font-bold text-sm mt-1 pl-2">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="flex lg:gap-10 gap-4 flex-col lg:flex-row relative">
+                                <div class="w-full relative">
+                                    <label class="mb-2 text-sm">Pertanyaan<sup
+                                            class="text-red-500 pl-1">&#42;</sup></label>
+                                    <textarea name="pertanyaan"
+                                        class="w-full h-20 bg-gray-100 outline-none rounded-xl text-xs p-2 resize-none mt-2 {{ $errors->has('pertanyaan') ? 'border-[1px] border-red-500' : '' }}"
+                                        placeholder="Masukkan Pertanyaan">{{ @old('pertanyaan') }}</textarea>
+                                    <button
+                                        class="absolute right-0 bottom-0 bg-red-500 w-[150px] h-8 text-white font-bold rounded-lg">Kirim</button>
+                                    @error('pertanyaan')
+                                        <span class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="w-full">
+                                    <div class="w-2/4 h-auto">
+                                        <span class="text-sm">Upload Gambar<sup>&#42;Optional</sup></span>
+                                        <div class="text-xs mt-1">
+                                            <span>Maksimum ukuran file 2MB. <br> File dapat dalam format
+                                                .jpg/.png/.jpeg.</span>
+                                        </div>
+                                        <div class="upload-icon">
+                                            <div class="flex flex-col max-w-[260px]">
+                                                <div id="imagePreview" class="max-w-[140px] cursor-pointer mt-4"
+                                                    onclick="openModal()">
+                                                    {{-- Image will be inserted here --}}
+                                                    <img id="popupImage" alt="" class="">
+                                                </div>
+                                                <div id="textPreview" class="text-red-500 font-bold mt-2"></div>
+                                            </div>
+                                            <div class="text-icon"></div>
+                                        </div>
+
+                                        <div
+                                            class="content-upload w-[200px] h-10 bg-red-500 text-white font-bold rounded-lg mt-6">
+                                            <label for="file-upload"
+                                                class="w-full h-full flex justify-center items-center cursor-pointer gap-2">
+                                                <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                                <span>Upload Gambar</span>
+                                            </label>
+                                            <input id="file-upload" name="image_tanya" class="hidden"
+                                                onchange="previewImage(event)" type="file"
+                                                accept=".jpg, .png, .jpeg">
+                                        </div>
+                                        @error('image_tanya')
+                                            <div class="w-60">
+                                                <span
+                                                    class="relative ... top-2 text-red-500 font-bold text-sm">{{ $message }}</span>
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <!-- Modal for displaying the image -->
+                        <dialog id="imageModal" class="modal">
+                            <div class="modal-box bg-white">
+                                <button class="absolute right-2 top-2 outline-none hover:bg-slate-200 btn-circle"
+                                    onclick="closeModal()">✕</button>
+                                <img id="modalImage" alt="" class="w-full h-auto">
+                            </div>
+                        </dialog>
+                    </div>
+                    <div class="w-full h-auto hidden" id="riwayatSiswa">
+                        <div class="flex justify-end">
+                            <select name="" id="statusFilter"
+                                class="w-[150px] h-10 rounded-lg flex justify-center items-center px-2 border-[1px] outline-none text-sm cursor-pointer">
+                                <div class="border-none">
+                                    <option value="" class="hidden">Filter Data</option>
+                                    <option value="semua">Lihat Semua</option>
+                                    <option value="Diterima">Diterima</option>
+                                    <option value="Ditolak">Ditolak</option>
+                                </div>
+                            </select>
+                        </div>
+                        @if (isset($siswaHistoryRestore) && is_iterable($siswaHistoryRestore) && $siswaHistoryRestore->isNotEmpty())
+                            <div class="overflow-x-auto mt-4">
+                                <table class="table" id="filterTable">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Pertanyaan</th>
+                                            <th>Mata Pelajaran</th>
+                                            <th>Bab</th>
+                                            <th>Jam_Tanya</th>
+                                            <th>Jam_Jawab</th>
+                                            <th>Jawaban</th>
+                                            <th>status</th>
+                                            <th>Detail</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="filterList">
+                                        {{-- show data in ajax --}}
+                                    </tbody>
+                                </table>
+                                <div class="pagination-container-siswa"></div>
+                                <div class="flex justify-center">
+                                    <span class="showMessage hidden absolute top-2/4">Tidak ada
+                                        riwayat</span>
+                                </div>
+                            </div>
+                        @else
+                            <div class="h-full flex justify-center items-center">
+                                <span>Tidak ada riwayat</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                {{-- <div class="bg-white shadow-xl relative ... overflow-hidden">
                     <div class="relative ... w-full h-auto" id="tanyaSiswa" style="transform: translateX(0);">
                         <form action="{{ route('tanya.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
@@ -62,7 +223,7 @@
                                 <input type="text" name="fase" value="{{ $user->fase }}">
                                 <input type="text" name="kelas" value="{{ $user->kelas }}">
                                 <input type="text" name="no_hp" value="{{ $user->no_hp }}">
-                                {{-- <input type="text" name="jam_tanya" id="jam_tanya"> --}}
+                                {{-- <input type="text" name="jam_tanya" id="jam_tanya"> --}
                             </div>
                             <div class="flex mx-6 my-6 gap-12">
                                 <div class="w-full">
@@ -71,12 +232,10 @@
                                         <select name="kelas" id="id_kelas"
                                             class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 {{ $errors->has('kelas') ? 'border-[1px] border-red-500' : '' }}">
                                             <option value="" class="hidden">Pilih Kelas</option>
-                                            <option value="Kelas 1"
-                                                {{ @old('kelas') === 'Kelas 1' ? 'selected' : '' }}>
+                                            <option value="Kelas 1" {{ @old('kelas') === 'Kelas 1' ? 'selected' : '' }}>
                                                 Kelas 1
                                             </option>
-                                            <option value="Kelas 2"
-                                                {{ @old('kelas') === 'Kelas 2' ? 'selected' : '' }}>
+                                            <option value="Kelas 2" {{ @old('kelas') === 'Kelas 2' ? 'selected' : '' }}>
                                                 Kelas 2
                                             </option>
                                         </select>
@@ -133,7 +292,7 @@
                                         <div class="flex flex-col max-w-[260px]">
                                             <div id="imagePreview" class="max-w-[140px] cursor-pointer mt-4"
                                                 onclick="openModal()">
-                                                {{-- Image will be inserted here --}}
+                                                {{-- Image will be inserted here --}
                                                 <img id="popupImage" alt="" class="">
                                             </div>
                                             <div id="textPreview" class="text-red-500 font-bold mt-2"></div>
@@ -199,7 +358,7 @@
                                         </tr>
                                     </thead>
                                     <tbody id="filterList">
-                                        {{-- show data in ajax --}}
+                                        {{-- show data in ajax --}
                                     </tbody>
                                 </table>
                                 <div class="pagination-container-siswa"></div>
@@ -214,9 +373,9 @@
                             </div>
                         @endif
                     </div>
-                </div>
+                </div> --}}
 
-                <div class="w-2/4 h-full mt-5 bg-white rounded-lg shadow-md">
+                <div class="lg:w-2/4 w-full h-full mt-5 bg-white rounded-lg shadow-md">
                     <header class="pb-6 p-4">
                         <span>Riwayat Harian</span>
                     </header>
@@ -371,38 +530,17 @@
                 </div>
             </div>
         </div>
-    @elseif($user->status === 'Guru')
-        <div class="home-beranda">
-            <div class="content">
-                <div class="navbar-beranda">
-                    <header>Beranda</header>
-                    <!-- <div class="information-account">
-                  <div class="notification">
-                  <i class="fa-solid fa-bell"></i>
-              </div>
-              <div class="coin">
-                  <i class="fa-solid fa-coins"></i>
-              </div> -->
-                    <div class="profile">
-                        <i class="fa-solid fa-user"></i>
-                        <div class="information-profile">
-                            <span class="name">{{ $user->nama_lengkap }}</span><br>
-                            <span class="class">{{ $user->kelas }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="home-beranda">
+    @elseif($user->status === 'Mentor')
+        <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
             <div class="content-beranda">
-                <div class="bg-[--color-default] w-full h-16 shadow-lg rounded-t-xl flex items-center pl-10 mb-6">
+                <div class="bg-[--color-default] w-full h-16 shadow-lg rounded-t-xl flex items-center pl-10 mb-10">
                     <div class="text-white font-bold flex items-center gap-4">
                         <i class="fa-solid fa-file-lines text-2xl"></i>
                         <span class="text-xl">Tanya</span>
                     </div>
                 </div>
-                <div class="flex">
-                    <div class="w-[1200px] hover:bg-gray-100" onclick="questionTeacher()">
+                <div class="flex mt-10">
+                    <div class="w-full hover:bg-gray-100" onclick="questionTeacher()">
                         <input type="radio" name="radio" id="tanya" checked>
                         <div class="checked-timeline">
                             <label for="tanya" class="cursor-pointer">
@@ -411,7 +549,7 @@
                             </label>
                         </div>
                     </div>
-                    <div class="w-[1200px] hover:bg-gray-100" onclick="historyTeacher()">
+                    <div class="w-full hover:bg-gray-100" onclick="historyTeacher()">
                         <input type="radio" name="radio" id="riwayat">
                         <div class="checked-timeline">
                             <label for="riwayat" class="cursor-pointer">
@@ -499,7 +637,10 @@
             </div>
         </div>
     @else
-        <p>You do not have access to this pages.</p>
+        <div class="flex flex-col min-h-screen items-center justify-center">
+            <p>ALERT SEMENTARA</p>
+            <p>You do not have access to this pages.</p>
+        </div>
     @endif
 @else
     <p>You are not logged in.</p>
@@ -509,7 +650,6 @@
 <script src="js/tanya-riwayat-siswa.js"></script> {{-- content tanya riwayat(js) --}}
 <script src="js/riwayat-harian-siswa.js"></script> {{-- content tanya riwayat harian(js) --}}
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script> {{-- source script combobox(ajax) --}}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {{-- source script filter data(ajax) --}}
 <script src="js/riwayat-siswa-ajax.js"></script> {{-- script ajax filter data --}}
 <script src="js/tanya-guru-ajax.js"></script>
 <script src="js/riwayat-guru-ajax.js"></script>

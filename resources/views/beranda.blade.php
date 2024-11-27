@@ -1,58 +1,9 @@
-<x-sidebar_beranda></x-sidebar_beranda>
+<x-sidebar_beranda :user="session('user')"></x-sidebar_beranda>
+@extends('components/sidebar_beranda_mobile') <!-- Menggunakan layout dengan modal -->
 @if (isset($user))
     @if ($user->status === 'Siswa')
-        <div class="home-beranda">
-            <div class="content">
-                {{-- Navbar for PC --}}
-                <div class="navbar-beranda">
-                    <header>Beranda</header>
-                    <!-- <div class="information-account">
-                            <div class="notification">
-                            <i class="fa-solid fa-bell"></i>
-                        </div>
-                        <div class="coin">
-                            <i class="fa-solid fa-coins"></i>
-                        </div> -->
-                    <div class="profile">
-                        <i class="fa-solid fa-user"></i>
-                        <div class="information-profile">
-                            <span class="name">{{ $user->nama_lengkap }}</span><br>
-                            <span class="class">{{ $user->kelas }}</span>
-                        </div>
-                    </div>
-                </div>
-                {{-- navbar for mobile --}}
-                <div class="navbar-beranda-phone w-full h-full flex justify-between items-center">
-                    <div class="flex items-center">
-                        <i class="fas fa-bars text-2xl relative top-1" onclick="togglePopup()"></i>
-                        <img src="image/logoBC-example.png" alt="" class="w-[80%]">
-                    </div>
-                    <div class="flex items-center gap-10 text-2xl relative top-1">
-                        <span>
-                            <i class="fas fa-bell text-blue-500 font-bold"></i>
-                        </span>
-                        <span class="">
-                            <i class="fas fa-coins text-yellow-500 "></i>
-                            <a>0</a>
-                        </span>
-                    </div>
-                </div>
-                <div class="sidebar-beranda-phone" id="popup-1">
-                    <div class="overlay-sidebar-phone"></div>
-                    <div class="content-sidebar-phone">
-                        <header class="w-full h-20 bg-[--color-default] flex items-center justify-between pl-2 pr-6">
-                            <img src="image/logoBC-example.png" alt="" class="w-24">
-                            <i class="fas fa-xmark text-2xl text-white" onclick="togglePopup()"></i>
-                        </header>
-                        <main>
-                            <section></section>
-                        </main>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="home-beranda z-[-1] md:z-0">
-            <div class="md:content-beranda mt-[120px]">
+        <div class="home-beranda z-[-1] md:z-0 border-4 mt-[80px] md:mt-0"> {{-- mt ini berguna untuk ketika sidebar lagi terbuka dan di responsif ke layar hp, content didalam sini turun supaya tidak bentrok sama extends sidebar mobile dan bisa dibuka --}}
+            <div class="content-beranda mt-[120px]">
                 <div class="max-w-full border-[1px] border-gray-200 mx-6">
                     <div class="grid grid-cols-5 gap-6">
                         <div
@@ -119,7 +70,8 @@
                             </div>
                         </div>
                         <div class="lg:col-span-2 col-span-5 mt-8">
-                            <div class="bg-yellow-500 mb-8 p-10 rounded-xl flex justify-center items-center">Jadwal Hari
+                            <div class="bg-yellow-500 mb-8 p-10 rounded-xl flex justify-center items-center">Jadwal
+                                Hari
                                 Ini
                             </div>
                             <div class="bg-green-500 p-10 rounded-xl flex justify-center items-center">Real Clock</div>
@@ -149,68 +101,15 @@
                                 @endforeach
                             </div>
                         </div>
-                        {{-- <div
-                            class="lg:col-span-3 md:col-span-5 col-span-5 grid lg:grid-cols-4 md:grid-cols-3 gap-4 border-2">
-                            @foreach ($packetSiswa as $packet)
-                                <div
-                                    class="w-full h-full relative ... border-[1px] border-gray-200 rounded-lg hidden md:block">
-                                    <header>
-                                        <div class="w-full h-[110px] border-[1px] border-gray-200">
-                                            <img src="{{ $packet['image'] }}" alt=""
-                                                class="w-full h-full bg-cover">
-                                        </div>
-
-                                        <section class="mt-10 w-full h-16 text-center">
-                                            <span class="text-sm">{{ $packet['text'] }}</span>
-                                        </section>
-
-                                        <a href="{{ $packet['url'] }}">
-                                            <footer class="flex justify-center pb-6">
-                                                <button
-                                                    class="border-none outline-none bg-gray-700 w-[93%] h-8 rounded-lg text-white font-bold text-sm">{{ $packet['button'] }}</button>
-                                            </footer>
-                                        </a>
-                                    </header>
-                                </div>
-                            @endforeach
-                        </div> --}}
                     </div>
                 </div>
             </div>
         </div>
-
-        <p>Welcome, {{ $user->nama_lengkap }}</p>
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit">Logout</button>
-        </form>
     @elseif ($user->status === 'Murid')
-        <p>Welcome, Guru!</p>
-        <!-- Guru-specific content here -->
-    @elseif ($user->status === 'Guru')
-        <div class="home-beranda">
-            <div class="content">
-                <div class="navbar-beranda">
-                    <header>Beranda</header>
-                    <!-- <div class="information-account">
-                <div class="notification">
-                <i class="fa-solid fa-bell"></i>
-            </div>
-            <div class="coin">
-                <i class="fa-solid fa-coins"></i>
-            </div> -->
-                    <div class="profile">
-                        <i class="fa-solid fa-user"></i>
-                        <div class="information-profile">
-                            <span class="name">{{ $user->nama_lengkap }}</span><br>
-                            <span class="class">{{ $user->kelas }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="home-beranda">
-            <div class="content-beranda">
+        INI BERANDA MURID
+    @elseif ($user->status === 'Mentor')
+        <div class="home-beranda z-[-1] md:z-0 border-4 mt-[80px] md:mt-0"> {{-- mt ini berguna untuk ketika sidebar lagi terbuka dan di responsif ke layar hp, content didalam sini turun supaya tidak bentrok sama extends sidebar mobile dan bisa dibuka --}}
+            <div class="content-beranda mt-[120px]">
                 <div class="max-w-full border-[1px] border-gray-200 mx-6">
                     <div class="grid grid-cols-5 gap-6">
                         <div
@@ -223,34 +122,33 @@
                                     <figcaption class="font-bold">K13</figcaption>
                                 </figure>
                                 <div class="w-full border-[1px] border-gray-200">
-                                    <div class="border-[1px] border-blue-200 gap-4 flex flex-wrap">
+                                    <div
+                                        class="border-[1px] border-red-500 gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                                         @foreach ($mapelK13 as $mapel)
-                                            <figure
-                                                class="w-[210px] border-[1px] border-yellow-400 mx-auto hidden md:block">
+                                            <figure class="w-full border-[1px] border-yellow-400 hidden md:block">
                                                 <div class="w-full flex justify-center">
-                                                    <img src="{{ $mapel['image'] }}" alt=""
-                                                        class="w-[30px]">
+                                                    <img src="{{ $mapel['image'] }}" alt="" class="w-[30px]">
                                                 </div>
-                                                <figcaption class="text-center">{{ $mapel['judul'] }}</figcaption>
+                                                <figcaption class="text-center">{{ $mapel['judul'] }}
+                                                </figcaption>
                                             </figure>
                                         @endforeach
                                     </div>
+                                </div>
 
-                                    <figure class="w-max border-4 ml-2 btn md:hidden">
-                                        <button class="btn" onclick="my_modal_3.showModal()">
-                                            <div class="w-full flex justify-center mb-2">
-                                                <img src="image/pkn.png" alt="" class="w-[30px]">
-                                            </div>
-                                            <figcaption class="text-xs text-center">Semua Pelajaran</figcaption>
-                                        </button>
+                                <div class="md:hidden p-2" onclick="my_modal_3.showModal()">
+                                    <figure class="w-max ml-2">
+                                        <div class="w-full flex justify-center mb-2">
+                                            <img src="image/pkn.png" alt="" class="w-[30px]">
+                                        </div>
+                                        <figcaption class="text-xs text-center md:hidden">Semua Pelajaran</figcaption>
                                     </figure>
                                 </div>
 
                                 <dialog id="my_modal_3" class="modal">
                                     <div class="modal-box">
                                         <form method="dialog">
-                                            <button
-                                                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                            <button class=" outline-none absolute right-4 top-1">✕</button>
                                         </form>
                                         <h3 class="text-lg font-bold">Hello!</h3>
                                         <p class="py-4">Press ESC key or click on ✕ button to close</p>
@@ -280,68 +178,120 @@
                         </div>
                         <div class="lg:col-span-2 col-span-5 mt-8">
                             <div class="bg-yellow-500 mb-8 p-10 rounded-xl flex justify-center items-center">Jadwal
-                                Hari Ini
-                            </div>
+                                Hari Ini</div>
                             <div class="bg-green-500 p-10 rounded-xl flex justify-center items-center">Real Clock</div>
                         </div>
-                        <div
-                            class="lg:col-span-3 md:col-span-5 col-span-5 flex flex-wrap border-[1px] border-gray-200">
-                            @foreach ($packetSiswa as $packet)
-                                <div
-                                    class="w-[240px] h-[280px] relative ... border-[1px] border-gray-200 rounded-lg mx-auto hidden md:block">
-                                    <header>
-                                        <div class="w-full h-[110px] border-[1px] border-gray-200">
-                                            <img src="{{ $packet['image'] }}" alt=""
-                                                class="w-full h-full bg-cover">
-                                        </div>
+                        <div class="lg:col-span-3 md:col-span-5 col-span-5">
+                            <div class="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-3 grid-cols-2 gap-4">
+                                @foreach ($packetSiswa as $packet)
+                                    <div class="w-full h-full relative ... border-[1px] border-gray-200 rounded-lg">
+                                        <header>
+                                            <div class="w-full h-[110px] border-[1px] border-gray-200">
+                                                <img src="{{ $packet['image'] }}" alt=""
+                                                    class="w-full h-full object-cover">
+                                            </div>
 
-                                        <section class="mt-10 w-full">
-                                            <span class="text-sm flex text-center">{{ $packet['text'] }}</span>
-                                        </section>
+                                            <section class="mt-10 w-full h-16 text-center">
+                                                <span class="text-xs">{{ $packet['text'] }}</span>
+                                            </section>
 
-                                        <a href="{{ $packet['url'] }}">
-                                            <footer class="flex justify-center">
-                                                <button
-                                                    class="absolute bottom-6 border-none outline-none bg-gray-700 w-[93%] h-8 rounded-lg text-white font-bold text-sm">{{ $packet['button'] }}</button>
-                                            </footer>
-                                        </a>
-                                    </header>
-                                </div>
-                            @endforeach
+                                            <a href="{{ $packet['url'] }}">
+                                                <footer class="flex justify-center pb-6 mt-4">
+                                                    <button
+                                                        class="border-none outline-none bg-gray-700 w-[93%] h-8 rounded-lg text-white font-bold text-sm">{{ $packet['button'] }}</button>
+                                                </footer>
+                                            </a>
+                                        </header>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <p>Welcome, {{ $user->nama_lengkap }}</p>
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit">Logout</button>
-        </form>
-        <!-- Murid-specific content here -->
     @elseif($user->status === 'Admin')
 
     @elseif($user->status === 'Wakil Kepala Sekolah')
 
     @elseif($user->status === 'Kepala Sekolah')
+        <span>jkenfjksdn</span>
+    @elseif($user->status === 'Team Leader')
+        <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0"> {{-- mt ini berguna untuk ketika sidebar lagi terbuka dan di responsif ke layar hp, content didalam sini turun supaya tidak bentrok sama extends sidebar mobile dan bisa dibuka --}}
+            <div class="content-beranda mt-[120px]">
+                <header class="text-2xl mb-8 font-bold">List Pertanyaan</header>
+                <div class="w-full h-auto" id="questionTL">
+                    @if (isset($getTanyaTL) && is_iterable($getTanyaTL) && $getTanyaTL->isNotEmpty())
+                        <div class="overflow-x-auto">
+                            <table class="table" id="tableTanyaTL">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama Siswa</th>
+                                        <th>Pertanyaan</th>
+                                        <th>Jawaban</th>
+                                        <th>Mata Pelajaran</th>
+                                        <th>Bab</th>
+                                        <th>Jam_Tanya</th>
+                                        <th>Detail</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableListTL">
+                                    {{-- show data in ajax --}}
+                                </tbody>
+                            </table>
+                            <div class="pagination-container-TL"></div>
+                            <div class="flex justify-center">
+                                <span class="showMessage hidden absolute top-2/4">Tidak ada
+                                    riwayat</span>
+                            </div>
+                        </div>
+                    @else
+                        <div class="h-full flex justify-center items-center">
+                            <span>Tidak ada pertanyaan</span>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
     @else
-        <p>You do not have access to this dashboard.</p>
+        <div class="flex flex-col min-h-screen items-center justify-center">
+            <p>ALERT SEMENTARA</p>
+            <p>You do not have access to this pages.</p>
+        </div>
     @endif
 @else
     <p>You are not logged in.</p>
 @endif
 
 
+<script src="js/tanya-TL-ajax.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuItems = document.querySelectorAll('.menu-murid a');
+
+        // Ambil URL halaman saat ini
+        const currentPage = window.location.pathname;
+
+        // Periksa setiap menu dan beri kelas 'active' jika href-nya cocok dengan URL saat ini
+        menuItems.forEach(item => {
+            const menuLink = item.getAttribute('href'); // ambil href dari setiap link
+
+            // Jika href menu sesuai dengan URL halaman saat ini
+            if (currentPage.includes(menuLink)) {
+                item.closest('.menu-murid').classList.add('active'); // tambahkan kelas active
+            } else {
+                item.closest('.menu-murid').classList.remove(
+                    'active'); // hapus kelas active jika tidak sesuai
+            }
+        });
+    });
+</script>
+
 <script>
     function togglePopup() {
-        var sidebarPhone = document.getElementById("popup-1").classList.toggle("active");
-        var overlaySidebar = document.querySelector(".overlay-sidebar-phone");
-
-        if (sidebarPhone.classList.contains("active")) {
-            overlaySidebar.classList.add("active");
-        } else {
-            overlaySidebar.classList.remove("active");
-        }
+        const sidebarMobile = document.getElementById('popup-1').classList.toggle('active');
     }
 </script>
 

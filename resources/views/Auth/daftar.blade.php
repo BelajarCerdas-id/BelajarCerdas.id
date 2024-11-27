@@ -101,7 +101,7 @@
                             class="form-select w-full bg-gray-100 outline-none rounded-xl text-xs p-2 cursor-pointer {{ $errors->has('status') ? 'border-[1px] border-red-500' : 'border-gray-300' }}">
                             <option value="" class="hidden">Pilih Status</option>
                             <option value="Siswa" {{ @old('status') === 'Siswa' ? 'selected' : '' }}>Siswa</option>
-                            <option value="Guru" {{ @old('status') === 'Guru' ? 'selected' : '' }}>Guru</option>
+                            <option value="Mentor" {{ @old('status') === 'Mentor' ? 'selected' : '' }}>Mentor</option>
                         </select>
                         @error('status')
                             <span class="text-red-500 font-bold text-xs pt-2">{{ $message }}</span>

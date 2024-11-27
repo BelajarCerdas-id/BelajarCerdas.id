@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Crud;
+use App\Models\Star;
 use App\Models\Level;
 use App\Models\Tanya;
 use Illuminate\Http\Request;
@@ -60,6 +62,14 @@ class webController extends Controller
 
     public function beranda()
     {
+        // Retrieve the user from the session
+        $user = session('user');
+        $getTanyaTL = Tanya::onlyTrashed()->get();
+
+        if (!$user) {
+            return redirect('/login');
+        }
+
         $mapelK13 = [
             [
                 'image' => 'image/pkn.png',
@@ -205,16 +215,64 @@ class webController extends Controller
                 'button' => 'CATATAN'
             ],
         ];
-        // Retrieve the user from the session
+        return view('beranda', compact('user', 'mapelK13', 'mapelMerdeka', 'packetSiswa', 'getTanyaTL'));
+    }
+
+    public function laporan()
+    {
+         // Mengambil user_id dari session
+        $user = session('user');  // Misalnya session hanya menyimpan ID user
+        if(!$user) {
+            return redirect('/login');
+        }
+
+        // Controller laporan Team Leader
+        // Mengambil data mentor yang berstatus 'Mentor'
+        $getData = Crud::where('status', 'Mentor')->get();
+
+        
+        // // Mengambil jumlah Tanya berdasarkan email_mentor yang sesuai dengan email mentor
+        $countData = [];
+        foreach ($getData as $item) {
+            // Mengambil jumlah Tanya untuk setiap mentor berdasarkan email_mentor
+            $countData[$item->email] = Tanya::onlyTrashed()->where('email_mentor', $item->email)->count();
+        }
+
+        // Controller laporan Mentor
+        // pluck() akan mengambil semua email dari koleksi getData
+        // groupBy() akan mengambil dan mengelompokkan semua data berdasarkan email_mentor
+        $dataAccept = Tanya::onlyTrashed()->whereIn('email_mentor', $getData->pluck('email')) ->where('status', 'Diterima')->get()->groupBy('email_mentor'); // Mengambil semua pertanyaan yang email_mentornya ada di antara daftar email mentor
+        $dataReject = Tanya::onlyTrashed()->whereIn('email_mentor', $getData->pluck('email'))->where('status', 'Ditolak')->get()->groupBy('email_mentor');
+
+        $validatedMentorAccepted = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email');
+        $validatedMentorRejected = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Ditolak')->get()->groupBy('email');
+
+
+        return view('laporan', compact('user', 'getData', 'countData', 'dataAccept', 'dataReject', 'validatedMentorAccepted', 'validatedMentorRejected'));
+    }
+
+
+
+    public function viewLaporan(string $id)
+    {
         $user = session('user');
 
-        if (!$user) {
-            return redirect('/login');
-        } else {
-            // Pass the user data to the view
-            // compact untuk meneruskan data dari controller (pengontrol) ke tampilan (view)
-            return view('beranda', compact('user', 'mapelK13', 'mapelMerdeka', 'packetSiswa'));
-        }
-    }
-}
+        // Ambil data mentor berdasarkan ID
+        $mentor = Crud::find($id);  // Mengambil data mentor berdasarkan ID yang dikirimkan
 
+        // Ambil semua pertanyaan yang di-trashed berdasarkan email_mentor dari mentor yang dipilih
+        $getLaporan = Tanya::onlyTrashed()->where('email_mentor', $mentor->email)->get();
+        $dataAccept = Tanya::onlyTrashed()->where('email_mentor', $mentor->email)->where('status', 'Diterima')->get();
+        $dataReject = Tanya::onlyTrashed()->where('email_mentor', $mentor->email)->where('status', 'Ditolak')->get();
+
+        $validatedMentorAccepted = Star::where('email', $mentor->email)->where('status', 'Diterima')->get();
+        $validatedMentorRejected = Star::where('email', $mentor->email)->where('status', 'Ditolak')->get();
+
+        $statusStar = Star::whereIn('id_tanya', $getLaporan->pluck('id'))->get()->keyBy('id_tanya'); // pluck('id') akan menghasilkan sebuah array yang hanya berisi nilai dari kolom id tersebut.
+
+        // Kirimkan data mentor dan laporan ke view
+        return view('viewLaporan', compact('user', 'getLaporan', 'mentor', 'statusStar', 'dataReject', 'dataAccept', 'validatedMentorAccepted', 'validatedMentorRejected'));
+    }
+
+    
+}

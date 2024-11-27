@@ -1,4 +1,4 @@
-<x-sidebar_beranda></x-sidebar_beranda>
+<x-script></x-script>
 @if (isset($user))
     @if ($user->status === 'Siswa')
         <div class="grid lg:grid-cols-2 border-[1px] border-gray-400 gap-8 mx-20">
@@ -132,7 +132,7 @@
                 </form>
             </div>
         </div>
-    @elseif ($user->status === 'Guru')
+    @elseif ($user->status === 'Mentor')
         <div class="grid lg:grid-cols-2 border-[1px] border-gray-400 gap-8 mx-20">
             <div class="lg:col-span-1 bg-white shadow-lg h-max">
                 <header class="grid border-b-[1px] border-gray-200 pb-2">

@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 class Tanya extends Model
 {
     use HasFactory, softDeletes;
-
     protected $fillable = [
         'nama_lengkap',
         'email',
@@ -24,6 +23,7 @@ class Tanya extends Model
         'jam_tanya',
         'jam_jawab',
         'mentor',
+        'id_mentor',
         'email_mentor',
         'asal_mengajar',
         'jawaban',
