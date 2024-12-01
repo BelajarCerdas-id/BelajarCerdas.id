@@ -1,4 +1,4 @@
-<x-sidebar_beranda :user="session('user')"></x-sidebar_beranda>
+@include('components/sidebar_beranda') {{-- pakai include, kalau pakai extends dataAccept jalan cuma responsif antara sidebar sama home-beranda nya ga jalan --}}
 @extends('components/sidebar_beranda_mobile') <!-- Menggunakan layout dengan modal -->
 
 @if (isset($user))
@@ -140,22 +140,27 @@
                         <div class="">
                             <header class="flex mt-8 px-2">Syarat & Ketentuan :</header>
                             <ul class="flex flex-col items-start px-4">
-                                <li>
+                                <li class="flex items-center gap-1 mb-1">
                                     <i class="fas fa-circle text-[8px] text-[#824D74]"></i>
                                     <span class="text-sm">Proses pembayaran akan dilakukan minimal 5 hari kerja.</span>
                                 </li>
-                                <li>
+                                <li class="flex items-center gap-1 mb-1">
                                     <i class="fas fa-circle text-[8px] text-[#824D74]"></i>
                                     <span class="text-sm">Pembayaran dilakukan melalui E-Wallet (Dana, Ovo,
                                         Gopay).</span>
                                 </li>
-                                <li>
+                                <li class="flex items-center gap-1 mb-1">
                                     <i class="fas fa-circle text-[8px] text-[#824D74]"></i>
-                                    <span class="text-sm">Lorem Ipsum</span>
+                                    <span class="text-sm">Pembayaran dilakukan setiap 30 soal Accepted.</span>
                                 </li>
-                                <li>
-                                    <i class="fas fa-circle text-[8px] text-[#824D74]"></i>
-                                    <span class="text-sm">Lorem Ipsum</span>
+                                <li class="px-3.5">
+                                    <span class="text-sm flex flex-start"><a class="pr-3">Bronze</a> :
+                                        Rp500/soal</span>
+                                    <span class="text-sm flex flex-start"><a class="pr-[22px]">Silver</a> :
+                                        Rp1000/soal</span>
+                                    <span class="text-sm flex flex-start"><a class="pr-7">Gold</a> :
+                                        Rp1500/soal</span>
+                                    <span class="text-sm flex flex-start">Platinum : Rp2000/soal</span>
                                 </li>
                             </ul>
                         </div>
@@ -204,6 +209,8 @@
                 </div>
             </div>
         </div>
+    @elseif($user->status === 'XR')
+        {{-- Page laporan XR --}}
     @else
         <div class="flex flex-col min-h-screen items-center justify-center">
             <p>ALERT SEMENTARA</p>

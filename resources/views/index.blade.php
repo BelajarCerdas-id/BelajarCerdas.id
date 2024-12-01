@@ -16,7 +16,7 @@
         <section class="grid grid-cols-12 relative">
             <div class="col-span-12 md:col-span-7 px-4 md:pl-12">
                 <div class="text-center md:text-left flex flex-col justify-center h-full">
-                    <p class="text-4xl md:text-5xl lg:text-6xl">
+                    <p class="text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
                         <span>Belajar Mandiri<br> atau dengan <br> bantuan tutor</span>
                     </p>
                     <p class="mt-2">
@@ -32,7 +32,7 @@
                 </div>
             </div>
             <div class="col-span-5 hidden md:block">
-                <img src="image/doc_home.png" alt="">
+                <img src="image/software tester-amico.png" alt="">
             </div>
         </section>
     </main>

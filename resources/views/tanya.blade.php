@@ -1,4 +1,4 @@
-<x-sidebar_beranda :user="session('user')"></x-sidebar_beranda>
+@include('components/sidebar_beranda')
 @extends('components/sidebar_beranda_mobile')
 @if (isset($user))
     @if ($user->status === 'Siswa')

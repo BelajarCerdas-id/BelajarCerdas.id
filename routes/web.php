@@ -91,9 +91,11 @@ Route::get('/paginateMapelCatatan', [FilterController::class, 'filterMapelNote']
 Route::post('/star', [StarController::class, 'store'])->name('star.store');
 Route::get('/laporan/{id}', [webController::class, 'viewLaporan'])->name('laporan.edit');
 Route::get('/laporan', [WebController::class, 'laporan']);
-// Route::get('/laporan', [webController::class, 'laporanTL']);
 
 
+Route::get('/sidebar', [WebController::class, 'sidebarBeranda']);
+
+Route::post('/update-payment-status/{email}/{batch}', [StarController::class, 'updatePaymentStatus'])->name('starPayment.update');
 
 
 // ROUTES TESTING

@@ -14,6 +14,8 @@ class Star extends Model
         'email',
         'sekolah',
         'status',
-        'id_tanya'
+        'id_tanya',
+        'payment_status',
+        'kode_payment'
     ];
 }

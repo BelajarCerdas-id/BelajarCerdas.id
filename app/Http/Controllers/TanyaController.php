@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Crud;
+use App\Models\Star;
 use App\Models\Tanya;
 use App\Models\testing;
 use Illuminate\Http\Request;
@@ -38,13 +39,18 @@ class TanyaController extends Controller
         $siswaHistoryRestore = Tanya::onlyTrashed()->where('email', $user->email)->orderBy('created_at', 'desc')->paginate(2); // dataSiswa session tanya for page siswa (after soft delete)
         $teacherHistoryRestore = Tanya::onlyTrashed()->where('email_mentor', $user->email)->orderBy('created_at', 'desc')->get(); // getStore session tanya for page guru (after soft delete)
 
+        $getData = Crud::where('status', 'Mentor')->get();
+
+        $dataAccept = Tanya::onlyTrashed()->whereIn('email_mentor', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email_mentor');
+        $validatedMentorAccepted = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email');
+
         // Mengurutkan data berdasarkan urutan asli atau ID
         // $combinedHistory = $combinedHistory->sortBy('id'); // Ganti 'id' dengan atribut yang relevan jika diperlukan (id di hidden karena tidak butuh, tapi biarin aja)
 
 
 
         // Pass user data and filtered questions to the view
-        return view('tanya', compact('user', 'getTanya', 'historyStudent', 'historyStudentAnswered', 'historyStudentReject', 'teacherHistoryRestore', 'siswaHistoryRestore'));
+        return view('tanya', compact('user', 'getTanya', 'historyStudent', 'historyStudentAnswered', 'historyStudentReject', 'teacherHistoryRestore', 'siswaHistoryRestore', 'dataAccept', 'validatedMentorAccepted'));
     }
 
     /**

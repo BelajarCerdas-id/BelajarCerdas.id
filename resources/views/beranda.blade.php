@@ -1,4 +1,4 @@
-<x-sidebar_beranda :user="session('user')"></x-sidebar_beranda>
+@include('components/sidebar_beranda')
 @extends('components/sidebar_beranda_mobile') <!-- Menggunakan layout dengan modal -->
 @if (isset($user))
     @if ($user->status === 'Siswa')
@@ -252,6 +252,108 @@
                         </div>
                     @endif
                 </div>
+            </div>
+        </div>
+    @elseif($user->status === 'XR')
+        <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
+            <div class="content-beranda mt-[120px]">
+                <header class="text-2xl mb-8 font-bold">List Mentor</header>
+                <ul class="bg-white shadow-lg w-[450px] h-40 p-4 mb-8 rounded-lg">
+                    <li>
+                        <span class="text-sm">Total Dibayar</span> :
+                        <span class="text-sm">{{ $totalPaidCount }}</span>
+                    </li>
+                    <li>
+                        <span class="text-sm">Total Belum Dibayar</span> :
+                        <span class="text-sm">{{ $totalUnpaidCount }}</span>
+                    </li>
+                    <li>
+                        <span class="text-sm">Total Data Menunggu</span> :
+                        <span class="text-sm">{{ $totalWaitingUnpaidCount }}</span>
+                    </li>
+                </ul>
+                <div class="grid grid-cols-2 gap-8">
+                    @foreach ($getData as $item)
+                        <a href="{{ route('laporan.edit', $item->id) }}">
+                            <div class="bg-white flex items-center gap-2 pl-6 rounded-xl shadow-lg">
+                                <i class="fas fa-circle-user text-4xl"></i>
+                                <div class="flex flex-col w-full">
+                                    <span class="text-sm leading-6">
+                                        Nama:
+                                        {{ $item->nama_lengkap }}
+                                    </span>
+                                    <span class="text-xs leading-6">
+                                        Sekolah:
+                                        {{ $item->sekolah }}
+                                    </span>
+                                    <span class="text-xs leading-6">
+                                        Accepted:
+                                        {{ isset($countData[$item->email]) ? $countData[$item->email] : 0 }}
+                                    </span>
+                                    <div class="flex justify-between pr-8">
+                                        <span class="text-xs leading-6">
+                                            Dibayar :
+                                            {{ isset($paidBatchCount[$item->email]) ? $paidBatchCount[$item->email] : 0 }}
+                                        </span>
+                                        <span class="text-xs leading-6">
+                                            Belum Dibayar :
+                                            {{ isset($unpaidBatchCount[$item->email]) ? $unpaidBatchCount[$item->email] : 0 }}
+                                        </span>
+                                        <span class="text-xs leading-6">
+                                            Menunggu :
+                                            {{ isset($waitingBatchCount[$item->email]) ? $waitingBatchCount[$item->email] : 0 }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+                {{-- <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nama Lengkap</th>
+                                <th>Email</th>
+                                <th>Asal Mengajar</th>
+                                <th>Jumlah Diterima</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($tableData as $item)
+                                <tr>
+                                    <td>{{ $item['nama_mentor'] }}</td>
+                                    <td>{{ $item['email'] }}</td>
+                                    <td>{{ $item['sekolah'] }}</td>
+                                    <td>{{ $item['count'] }}</td>
+                                    <td>
+                                        @if ($item['payment_status'] === 'pay' && $item['kode_payment'] === 'TIDAK' && $item['count'] == 3)
+                                            <!-- Tombol Pay untuk batch yang belum dibayar -->
+                                            <form
+                                                action="{{ url('/update-payment-status/' . $item['email'] . '/' . $item['batch']) }}"
+                                                method="POST">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="text-white bg-green-500 p-2 w-24 rounded-lg font-bold">Pay</button>
+                                            </form>
+                                        @elseif($item['payment_status'] === 'paid' && $item['kode_payment'] === 'YA' && $item['count'] == 3 && $item['batch'])
+                                            <!-- Tombol PAID jika sudah dibayar -->
+                                            <button type="button"
+                                                class="text-white bg-green-500 p-2 w-24 rounded-lg font-bold">PAID</button>
+                                        @else
+                                            <!-- Tombol non-aktif jika tidak bisa membayar -->
+                                            <button
+                                                class="text-white bg-gray-400 p-2 w-24 rounded-lg font-bold cursor-default"
+                                                disabled>Pay</button>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+
+                        </tbody>
+                    </table>
+                </div> --}}
             </div>
         </div>
     @else

@@ -129,6 +129,86 @@
                 </div>
             </div>
         </div>
+    @elseif($user->status === 'XR')
+        <div class="home-beranda">
+            <div class="content-beranda">
+                <header class="text-2xl mb-8 font-bold">Laporan Mentor</header>
+                <ul class="bg-white shadow-lg w-[450px] h-40 p-4 mb-8 rounded-lg">
+                    <li>
+                        <span class="text-sm">Nama Lengkap</span> :
+                        <span class="text-sm">{{ $mentor->nama_lengkap }}</span>
+                    </li>
+                    <li>
+                        <span class="pr-3.5 text-sm">Asal Sekolah</span> :
+                        <span class="text-sm">{{ $mentor->sekolah }}</span>
+                    </li>
+                    <li class="flex gap-4 mt-4">
+                        <div class="text-center">
+                            <span class="text-sm">Dibayar</span><br>
+                            <i class="fas fa-circle-check text-md text-success"></i>
+                            <span class="text-md"> {{ $paidBatchCount }} </span>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-sm">Perlu Dibayar</span><br>
+                            <i class="fas fa-circle-xmark text-md text-error"></i>
+                            <span class="text-md"> {{ $unpaidBatchCount }} </span>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-sm">Menunggu...</span><br>
+                            <i class="fas fa-circle-xmark text-md text-error"></i>
+                            <span class="text-md"> {{ $waitingBatchCount }} </span>
+                        </div>
+                    </li>
+                </ul>
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr class="text-center">
+                                <th>Nama Lengkap</th>
+                                <th>Email</th>
+                                <th>Asal Mengajar</th>
+                                <th>Jumlah Diterima</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($tableData as $item)
+                                <tr class="text-center">
+                                    <td>{{ $item['nama_mentor'] }}</td>
+                                    <td>{{ $item['email'] }}</td>
+                                    <td>{{ $item['sekolah'] }}</td>
+                                    <td>{{ $item['count'] }}</td>
+                                    <td>
+
+                                        @if ($item['payment_status'] === 'pay' && $item['kode_payment'] === 'TIDAK' && $item['count'] == 3)
+                                            <!-- Tombol Pay untuk batch yang belum dibayar -->
+                                            <form
+                                                action="{{ route('starPayment.update', ['email' => $item['email'], 'batch' => $item['batch']]) }}"
+                                                method="POST">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{ $mentor->id }}">
+                                                {{-- ini penting kalo pada saat mengirim data di view{id} lalu redirect nya ke view{id} tersebut --}}
+                                                <button type="submit"
+                                                    class="text-white bg-green-500 p-2 w-24 rounded-lg font-bold">Pay</button>
+                                            </form>
+                                        @elseif($item['payment_status'] === 'paid' && $item['kode_payment'] === 'YA' && $item['count'] == 3)
+                                            <!-- Tombol PAID jika sudah dibayar -->
+                                            <button type="button"
+                                                class="text-white bg-green-500 p-2 w-24 rounded-lg font-bold">PAID</button>
+                                        @else
+                                            <!-- Tombol non-aktif jika tidak bisa membayar -->
+                                            <button
+                                                class="text-white bg-gray-400 p-2 w-24 rounded-lg font-bold cursor-default"
+                                                disabled>Pay</button>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     @else
         <div class="flex flex-col min-h-screen items-center justify-center">
             <p>ALERT SEMENTARA</p>

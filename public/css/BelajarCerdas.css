@@ -427,6 +427,7 @@ input[type="radio"]:checked + a {
 
 .information-account {
     display: flex;
+    align-items: center;
     gap: 10px;
 }
 
@@ -520,7 +521,6 @@ input[type="radio"]:checked + .checked-timeline {
 .home-beranda .content {
     display: flex;
     flex-direction: column;
-    height: 100vh;
     z-index: 10;
 }
 

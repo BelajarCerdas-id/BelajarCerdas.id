@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('sekolah');
             $table->string('status');
             $table->string('id_tanya');
+            $table->string('payment_status')->default('pay');
+            $table->string('kode_payment')->nullable()->default('TIDAK');
             $table->timestamps();
         });
     }
