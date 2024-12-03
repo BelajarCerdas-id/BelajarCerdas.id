@@ -75,7 +75,7 @@
                                             {{-- mengecek apakah dalam koleksi $statusStar terdapat entri dengan kunci yang sesuai dengan $item->id., dan mengecek dengan status Diterima --}}
                                             @if ($statusStar[$item->id]->status === 'Diterima')
                                                 <button
-                                                    class="text-white bg-green-500 p-2 w-24 rounded-lg cursor-default">{{ $statusStar[$item->id]->status }}</button>
+                                                    class="text-success bg-green-200 p-2 w-32 rounded-lg cursor-default">{{ $statusStar[$item->id]->status }}</button>
                                             @elseif($statusStar[$item->id]->status === 'Ditolak')
                                                 <button
                                                     class="text-white bg-red-500 p-2 w-24 rounded-lg cursor-default">{{ $statusStar[$item->id]->status }}</button>
@@ -87,7 +87,7 @@
                                                 @csrf
                                                 <div class="hidden">
                                                     <input type="text" name="id" value="{{ $mentor->id }}">
-                                                    <input type="hidden" name="id_tanya" value="{{ $item->id }}">
+                                                    <input type="text" name="id_tanya" value="{{ $item->id }}">
                                                     <input type="text" name="nama_mentor"
                                                         value="{{ $mentor->nama_lengkap }}">
                                                     <input type="text" name="email" value="{{ $mentor->email }}">
@@ -189,16 +189,16 @@
                                                 <input type="hidden" name="id" value="{{ $mentor->id }}">
                                                 {{-- ini penting kalo pada saat mengirim data di view{id} lalu redirect nya ke view{id} tersebut --}}
                                                 <button type="submit"
-                                                    class="text-white bg-green-500 p-2 w-24 rounded-lg font-bold">Pay</button>
+                                                    class="text-white bg-green-500 p-2 w-32 rounded-lg font-bold">Pay</button>
                                             </form>
                                         @elseif($item['payment_status'] === 'paid' && $item['kode_payment'] === 'YA' && $item['count'] == 3)
                                             <!-- Tombol PAID jika sudah dibayar -->
-                                            <button type="button"
-                                                class="text-white bg-green-500 p-2 w-24 rounded-lg font-bold">PAID</button>
+                                            <button
+                                                class="text-success bg-green-200 p-2 w-32 rounded-lg cursor-default">PAID</button>
                                         @else
                                             <!-- Tombol non-aktif jika tidak bisa membayar -->
                                             <button
-                                                class="text-white bg-gray-400 p-2 w-24 rounded-lg font-bold cursor-default"
+                                                class="text-white bg-gray-400 p-2 w-32 rounded-lg font-bold cursor-default"
                                                 disabled>Pay</button>
                                         @endif
                                     </td>

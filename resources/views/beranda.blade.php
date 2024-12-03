@@ -272,7 +272,7 @@
                         <span class="text-sm">{{ $totalWaitingUnpaidCount }}</span>
                     </li>
                 </ul>
-                <div class="grid grid-cols-2 gap-8">
+                <div class="grid grid-cols-4 gap-8">
                     @foreach ($getData as $item)
                         <a href="{{ route('laporan.edit', $item->id) }}">
                             <div class="bg-white flex items-center gap-2 pl-6 rounded-xl shadow-lg">

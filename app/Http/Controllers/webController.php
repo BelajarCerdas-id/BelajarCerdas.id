@@ -89,7 +89,7 @@ class webController extends Controller
         $totalWaitingUnpaidCount = 0;
         $paidBatchCount = [];
         $unpaidBatchCount = [];
-        $waitingBatchCount = 0;
+        $waitingBatchCount = [];
         
         foreach ($data as $email => $batchUsers) {
             // Hitung berapa banyak batch yang perlu dibuat
@@ -124,7 +124,7 @@ class webController extends Controller
                 } elseif ($batchStatus === 'pay' && $currentBatch->count() == 3) {
                     $unpaidBatchCount[$email] = isset($unpaidBatchCount[$email]) ? $unpaidBatchCount[$email] + 1 : 1;
                 }elseif($currentBatch->count() < 3) {
-                    $waitingBatchCount++;
+                    $waitingBatchCount[$email] = isset($waitingBatchCount[$email]) ? $waitingBatchCount[$email] + 1 : 1;
                 }
             }
         }
@@ -274,7 +274,7 @@ class webController extends Controller
                 'button' => 'CATATAN'
             ],
         ];
-        return view('beranda', compact('user', 'mapelK13', 'mapelMerdeka', 'packetSiswa', 'getTanyaTL', 'getData', 'countData', 'dataAccept',  'validatedMentorAccepted', 'paidBatchCount', 'unpaidBatchCount', 'totalPaidCount', 'totalUnpaidCount', 'totalWaitingUnpaidCount'));
+        return view('beranda', compact('user', 'mapelK13', 'mapelMerdeka', 'packetSiswa', 'getTanyaTL', 'getData', 'countData', 'dataAccept',  'validatedMentorAccepted', 'paidBatchCount', 'unpaidBatchCount', 'waitingBatchCount', 'totalPaidCount', 'totalUnpaidCount', 'totalWaitingUnpaidCount'));
     }
 
     public function laporan()
