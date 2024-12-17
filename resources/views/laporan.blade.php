@@ -185,7 +185,7 @@
             <div class="content-beranda">
                 <header class="text-2xl mb-8 font-bold">List Mentor</header>
                 <div class="grid grid-cols-4 gap-8">
-                    @foreach ($getData as $item)
+                    {{-- @foreach ($getData as $item)
                         <a href="{{ route('laporan.edit', $item->id) }}">
                             <div class="bg-white flex items-center gap-2 pl-6 rounded-xl shadow-lg">
                                 <i class="fas fa-circle-user text-4xl"></i>
@@ -205,8 +205,14 @@
                                 </div>
                             </div>
                         </a>
-                    @endforeach
+                    @endforeach --}}
                 </div>
+                <div id="filterTableMentor">
+                    <div class="grid grid-cols-4 gap-8" id="filterListMentor">
+                        {{-- show data in ajax --}}
+                    </div>
+                </div>
+                <div class="pagination-container-listMentor"></div>
             </div>
         </div>
     @elseif($user->status === 'XR')
@@ -220,3 +226,5 @@
 @else
     <p>You are not logged in.</p>
 @endif
+
+<script src="js/laporan-mentor-tl-ajax.js"></script>

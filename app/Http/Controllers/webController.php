@@ -78,9 +78,9 @@ class webController extends Controller
 
         $countData = [];
 
-        foreach($getData as $item) {
-            $countData[$item->email] = Star::where('email', $item->email)->count();
-        }                                                           
+        $countData = $getData->mapWithKeys(function ($item) {
+            return [$item->email => Tanya::onlyTrashed()->where('email_mentor', $item->email)->count()];
+        });                                                      
 
         $data = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email'); // Ambil semua data yang statusnya diterima
 
@@ -132,51 +132,51 @@ class webController extends Controller
         $mapelK13 = [
             [
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
         ];
 
@@ -184,61 +184,61 @@ class webController extends Controller
             [
                 'title' => 'Merdeka',
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'title' => 'Merdeka',
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'title' => 'Merdeka',
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'title' => 'Merdeka',
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'title' => 'Merdeka',
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'title' => 'Merdeka',
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'title' => 'Merdeka',
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
-            ],
-            [
-                'title' => 'Merdeka',
-                'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'title' => 'Merdeka',
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'title' => 'Merdeka',
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
             ],
             [
                 'title' => 'Merdeka',
                 'image' => 'image/pkn.png',
-                'judul' => 'Pkn'
+                'judul' => 'Text Here'
+            ],
+            [
+                'title' => 'Merdeka',
+                'image' => 'image/pkn.png',
+                'judul' => 'Text Here'
             ],
         ];
 
@@ -320,61 +320,116 @@ class webController extends Controller
         $mentor = Crud::find($id);  // Mengambil data mentor berdasarkan ID yang dikirimkan
 
         // Ambil semua pertanyaan yang di-trashed berdasarkan email_mentor dari mentor yang dipilih
-        $getLaporan = Tanya::onlyTrashed()->where('email_mentor', $mentor->email)->get();
+        $getLaporan = Tanya::onlyTrashed()->where('email_mentor', $mentor->email)->where('status', 'Diterima')->orderBy('created_at', 'desc')->paginate(10);
         $dataAccept = Tanya::onlyTrashed()->where('email_mentor', $mentor->email)->where('status', 'Diterima')->get();
         $dataReject = Tanya::onlyTrashed()->where('email_mentor', $mentor->email)->where('status', 'Ditolak')->get();
 
         $validatedMentorAccepted = Star::where('email', $mentor->email)->where('status', 'Diterima')->get();
         $validatedMentorRejected = Star::where('email', $mentor->email)->where('status', 'Ditolak')->get();
 
-        $statusStar = Star::whereIn('id_tanya', $getLaporan->pluck('id'))->get()->keyBy('id_tanya'); // pluck('id') akan menghasilkan sebuah array yang hanya berisi nilai dari kolom id tersebut.
+        // kalau object nya menggunakan paginate, tidak bisa menggunakan method pluck langsung, harus seperti ini
+        $laporanItems = $getLaporan->items();
+        $statusStar = Star::whereIn('id_tanya', collect($laporanItems)->pluck('id'))->get()->keyBy('id_tanya');; // pluck('id') akan menghasilkan sebuah array yang hanya berisi nilai dari kolom id tersebut.
 
-        $data = Star::where('status', 'Diterima')->where('email', $mentor->email)->get(); // Ambil semua data yang statusnya diterima
+        // $data = Star::where('status', 'Diterima')->where('email', $mentor->email)->get(); // Ambil semua data yang statusnya diterima
 
         
+        // $tableData = [];
+        // $batchCount = ceil($data->count() / 3); // Menghitung berapa banyak batch yang perlu dibuat
+        
+        // $paidBatchCount = 0;
+        // $unpaidBatchCount = 0;
+        // $waitingBatchCount = 0;
+
+        // // Loop untuk mengelompokkan data berdasarkan batch
+        // for ($i = 0; $i < $batchCount; $i++) {
+        //     $batchUsers = $data->slice($i * 3, 3); // Mengambil 3 data untuk setiap batch
+
+        //       // Cek apakah semua data dalam batch ini sudah berstatus 'paid'
+        //         $allPaid = $batchUsers->every(function ($item) {
+        //             return $item->payment_status === 'paid' && $item->kode_payment === 'YA';
+        //         });
+
+        //         // Tentukan apakah batch ini 'paid' atau 'pay'
+        //         $batchStatus = $allPaid ? 'paid' : 'pay';
+
+        //         // Jika batch ini sudah 'paid', increment counter
+        //         if ($batchStatus === 'paid') {
+        //             $paidBatchCount++;
+        //         }
+
+        //         if ($batchStatus === 'pay' && $batchUsers->count() == 3) {
+        //             $unpaidBatchCount++;
+        //         }
+
+        //         if ($batchStatus === 'pay' && $batchUsers->count() <  3) {
+        //             $waitingBatchCount++;
+        //         }
+        
+        //     // Ambil informasi umum yang sama untuk semua entri dalam satu batch
+        //     $nama_mentor = $batchUsers->first()->nama_mentor;
+        //     $email = $batchUsers->first()->email;
+        //     $sekolah = $batchUsers->first()->sekolah;
+        //     $payment_status = $batchUsers->first()->payment_status;
+        //     $kode_payment = $batchUsers->first()->kode_payment;
+
+        //     // Masukkan informasi per batch ke dalam array
+        //     $tableData[] = [
+        //         'batch' => $i + 1, // Menandai batch ke-1, ke-2, dst.
+        //         'count' => $batchUsers->count(), // Ambil data per batch
+        //         'nama_mentor' => $nama_mentor,
+        //         'email' => $email,
+        //         'sekolah' => $sekolah,
+        //         'payment_status' => $payment_status,
+        //         'kode_payment' => $kode_payment,
+        //     ];
+        // }
+
+        $data = Star::where('status', 'Diterima')->where('email', $mentor->email)->paginate(10); // Data dengan pagination
+
         $tableData = [];
-        $batchCount = ceil($data->count() / 3); // Menghitung berapa banyak batch yang perlu dibuat
-        
+
+        // Kelompokkan data ke dalam batch dengan ukuran 3
+        $batches = collect($data->items())->chunk(3); // Mengelompokkan data menjadi batch berisi 3 entri
+
         $paidBatchCount = 0;
         $unpaidBatchCount = 0;
         $waitingBatchCount = 0;
 
-        // Loop untuk mengelompokkan data berdasarkan batch
-        for ($i = 0; $i < $batchCount; $i++) {
-            $batchUsers = $data->slice($i * 3, 3); // Mengambil 3 data untuk setiap batch
+        // Loop melalui setiap batch
+        foreach ($batches as $batchIndex => $batchUsers) {
+            // Cek apakah semua data dalam batch ini berstatus 'paid'
+            $allPaid = $batchUsers->every(function ($item) {
+                return $item['payment_status'] === 'paid' && $item['kode_payment'] === 'YA';
+            });
 
-              // Cek apakah semua data dalam batch ini sudah berstatus 'paid'
-                $allPaid = $batchUsers->every(function ($item) {
-                    return $item->payment_status === 'paid' && $item->kode_payment === 'YA';
-                });
+            // Tentukan status batch (paid atau pay)
+            $batchStatus = $allPaid ? 'paid' : 'pay';
 
-                // Tentukan apakah batch ini 'paid' atau 'pay'
-                $batchStatus = $allPaid ? 'paid' : 'pay';
+            // Hitung batch yang sudah dibayar, belum dibayar, atau menunggu
+            if ($batchStatus === 'paid') {
+                $paidBatchCount++;
+            }
 
-                // Jika batch ini sudah 'paid', increment counter
-                if ($batchStatus === 'paid') {
-                    $paidBatchCount++;
-                }
+            if ($batchStatus === 'pay' && $batchUsers->count() == 3) {
+                $unpaidBatchCount++;
+            }
 
-                if ($batchStatus === 'pay' && $batchUsers->count() == 3) {
-                    $unpaidBatchCount++;
-                }
+            if ($batchStatus === 'pay' && $batchUsers->count() < 3) {
+                $waitingBatchCount++;
+            }
 
-                if ($batchStatus === 'pay' && $batchUsers->count() <  3) {
-                    $waitingBatchCount++;
-                }
-        
-            // Ambil informasi umum yang sama untuk semua entri dalam satu batch
             $nama_mentor = $batchUsers->first()->nama_mentor;
             $email = $batchUsers->first()->email;
             $sekolah = $batchUsers->first()->sekolah;
             $payment_status = $batchUsers->first()->payment_status;
             $kode_payment = $batchUsers->first()->kode_payment;
 
-            // Masukkan informasi per batch ke dalam array
+            // Ambil informasi umum dari batch
+            // $firstUser = $batchUsers->first();
             $tableData[] = [
-                'batch' => $i + 1, // Menandai batch ke-1, ke-2, dst.
-                'count' => $batchUsers->count(), // Ambil data per batch
+                'batch' => $batchIndex + 1, // Batch ke-1, ke-2, dst.
+                'count' => $batchUsers->count(),
                 'nama_mentor' => $nama_mentor,
                 'email' => $email,
                 'sekolah' => $sekolah,

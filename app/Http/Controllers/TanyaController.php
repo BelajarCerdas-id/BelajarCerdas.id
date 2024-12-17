@@ -18,7 +18,7 @@ class TanyaController extends Controller
     {
         // ambil semua data di tanya (belum di soft delete)
         $user = session('user');
-        $getTanya = Tanya::all();
+        $getTanya = Tanya::paginate(1);
 
         // Check if the user is logged in
         if (!$user) {

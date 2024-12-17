@@ -11,19 +11,19 @@
                     </div>
                 </div>
                 <div class="flex mt-10">
-                    <div class="w-full hover:bg-gray-100" onclick="tanyaSiswa()">
-                        <input type="radio" class="hidden" name="radio" id="tanya" checked>
+                    <div class="w-full hover:bg-gray-100" onclick="content()">
+                        <input type="radio" class="hidden" name="radio" id="radio1" checked>
                         <div class="checked-timeline">
-                            <label for="tanya" class="cursor-pointer">
+                            <label for="radio1" class="cursor-pointer">
                                 <span class="text-lg flex justify-center relative top-1">Tanya</span>
                                 <div class="w-full border-b-[1px] border-gray-200 h-2"></div>
                             </label>
                         </div>
                     </div>
-                    <div class="w-full hover:bg-gray-100" onclick="riwayatSiswa()">
-                        <input type="radio" class="hidden" name="radio" id="riwayat">
+                    <div class="w-full hover:bg-gray-100" onclick="riwayat()">
+                        <input type="radio" class="hidden" name="radio" id="radio2">
                         <div class="checked-timeline">
-                            <label for="riwayat" class="cursor-pointer">
+                            <label for="radio2" class="cursor-pointer">
                                 <span class="text-lg flex justify-center relative top-1">Riwayat</span>
                                 <div class="w-full border-b-[1px] border-gray-200 h-2"></div>
                             </label>
@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <div class="w-full bg-white rounded-lg shadow-lg gap-12 px-6 py-6 relative overflow-hidden">
-                    <div class="w-full h-auto" id="tanyaSiswa">
+                    <div class="w-full h-auto" id="content">
                         <form action="{{ route('tanya.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="input-hidden hidden">
@@ -166,7 +166,7 @@
                             </div>
                         </dialog>
                     </div>
-                    <div class="w-full h-auto hidden" id="riwayatSiswa">
+                    <div class="w-full h-auto hidden" id="riwayat">
                         <div class="flex justify-end">
                             <select name="" id="statusFilter"
                                 class="w-[150px] h-10 rounded-lg flex justify-center items-center px-2 border-[1px] outline-none text-sm cursor-pointer">
@@ -540,19 +540,19 @@
                     </div>
                 </div>
                 <div class="flex mt-10">
-                    <div class="w-full hover:bg-gray-100" onclick="questionTeacher()">
-                        <input type="radio" name="radio" id="tanya" checked>
+                    <div class="w-full hover:bg-gray-100" onclick="content()">
+                        <input type="radio" name="radio" id="radio1" checked>
                         <div class="checked-timeline">
-                            <label for="tanya" class="cursor-pointer">
+                            <label for="radio1" class="cursor-pointer">
                                 <span class="text-lg flex justify-center relative top-1">Tanya</span>
                                 <div class="w-full border-b-[1px] border-gray-200 h-2"></div>
                             </label>
                         </div>
                     </div>
-                    <div class="w-full hover:bg-gray-100" onclick="historyTeacher()">
-                        <input type="radio" name="radio" id="riwayat">
+                    <div class="w-full hover:bg-gray-100" onclick="riwayat()">
+                        <input type="radio" name="radio" id="radio2">
                         <div class="checked-timeline">
-                            <label for="riwayat" class="cursor-pointer">
+                            <label for="radio2" class="cursor-pointer">
                                 <span class="text-lg flex justify-center relative top-1">Riwayat</span>
                                 <div class="w-full border-b-[1px] border-gray-200 h-2"></div>
                             </label>
@@ -560,7 +560,7 @@
                     </div>
                 </div>
                 <div class="relative w-full h-auto overflow-hidden bg-white shadow-lg">
-                    <div class="w-full h-auto" id="questionTeacher">
+                    <div class="w-full h-auto" id="content">
                         @if (isset($getTanya) && is_iterable($getTanya) && $getTanya->isNotEmpty())
                             <div class="overflow-x-auto">
                                 <table class="table" id="tableTanyaTeacher">
@@ -583,12 +583,12 @@
                                 <div class="pagination-container-tanya"></div>
                             </div>
                         @else
-                            <div class="h-full flex justify-center items-center">
+                            <div class="h-96 flex justify-center items-center">
                                 <span>Tidak ada pertanyaan</span>
                             </div>
                         @endif
                     </div>
-                    <div class="w-full h-auto hidden" id="historyTeacher">
+                    <div class="w-full h-auto hidden" id="riwayat">
                         <div class="absolute right-8 top-2">
                             <select name="" id="statusFilter"
                                 class="w-[150px] h-10 rounded-lg flex justify-center items-center px-2 border-[1px] outline-none text-sm cursor-pointer bg-white">
@@ -623,7 +623,7 @@
                                     </tbody>
                                 </table>
                                 <div class="pagination-container-riwayat"></div>
-                                <div class="flex justify-center">
+                                <div class="flex justify-center h-96">
                                     <span class="emptyMessage hidden absolute top-2/4">Tidak ada riwayat</span>
                                 </div>
                             </div>
@@ -647,12 +647,12 @@
 @endif
 
 <script src="js/upload-image.js"></script> {{-- upload image(js) --}}
-<script src="js/tanya-riwayat-siswa.js"></script> {{-- content tanya riwayat(js) --}}
+<script src="js/content-riwayat.js"></script> {{-- content tanya riwayat(js) --}}
 <script src="js/riwayat-harian-siswa.js"></script> {{-- content tanya riwayat harian(js) --}}
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script> {{-- source script combobox(ajax) --}}
 <script src="js/riwayat-siswa-ajax.js"></script> {{-- script ajax filter data --}}
 <script src="js/tanya-guru-ajax.js"></script>
 <script src="js/riwayat-guru-ajax.js"></script>
+
 <script>
     const tanyaGuru = document.getElementById('questionTeacher');
     const riwayatGuru = document.getElementById('historyTeacher');
@@ -750,51 +750,6 @@
     });
 </script>
 
-{{-- <div id="timestamp"></div>
-
-<script>
-    function time() {
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-    document.getElementById('jam_tanya').value = `${hours}:${minutes}:${seconds}`;
-    };
-    time();
-
-    setInterval(time, 1);
-</script>
-
-<script>
-    function formatNumber(num) {
-        return num < 10 ? '0' + num : num; // Menambahkan 0 di depan jika kurang dari 10
-    }
-
-    function updateTimestamp() {
-        const date = new Date();
-
-        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        const day = days[date.getDay()]; // Mendapatkan hari dalam minggu
-        const dayNumber = formatNumber(date.getDate()); // Tanggal
-        const month = formatNumber(date.getMonth() + 1); // Bulan (0-11, jadi +1)
-        const year = date.getFullYear(); // Tahun
-
-        const hours = formatNumber(date.getHours());
-        const minutes = formatNumber(date.getMinutes());
-        const seconds = formatNumber(date.getSeconds());
-
-        const formattedTimestamp =
-            `${day}, ${dayNumber},${month},${year} ${hours}:${minutes}:${seconds}`; // Format: Day, DD/MM/YYYY HH:MM:SS
-        document.getElementById('timestamp').innerText = formattedTimestamp;
-    }
-
-    // Update timestamp setiap detik
-    setInterval(updateTimestamp, 1000);
-
-    // Panggil fungsi sekali untuk menampilkan timestamp saat pertama kali
-    updateTimestamp();
-</script> --}}
-
 {{-- <td>{{ Str::limit($item->pertanyaan, 5) }}</td>
                                         <td>{{ $item->mapel }}</td>
                                         <td>{{ $item->bab }}</td>
@@ -817,7 +772,7 @@
 {{-- @if (isset($siswaHistoryRestore) && is_iterable($siswaHistoryRestore) && $siswaHistoryRestore->isNotEmpty())
                                     @foreach ($siswaHistoryRestore as $item)
                                         <tr>
-                                            <td></td>
+                                            <td>{{ $item-> }}</td>
                                             <!-- Menyesuaikan nomor urut -->
                                             <td>{{ Str::limit($item->pertanyaan, 5) }}</td>
                                             <td>{{ $item->mapel }}</td>

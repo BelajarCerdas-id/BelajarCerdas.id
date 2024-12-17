@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Crud;
+use App\Models\Star;
 use App\Models\Tanya;
 use App\Models\Keynote;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class FilterController extends Controller
 {
@@ -139,12 +142,55 @@ public function filterMapelNote(Request $request)
             $query->where('mapel', $request->mapel);
     };
 
-    $data = $query->OrderBy('created_at', 'desc')->paginate(12);
+    $data = $query->orderBy('created_at', 'desc')->paginate(12);
 
     return response()->json([
         'data' => $data->items(),
         'links' => (string) $data->links(),    
     ]);
 }
+
+public function filterListMentor()
+{
+    $user = session('user');
+
+    $query = Crud::where('status', 'Mentor');
+    $countData = [];
+
+    $countData = $query->get()->mapWithKeys(function ($item) {
+        return [$item->email => Tanya::onlyTrashed()->where('email_mentor', $item->email)->count()];
+    });
+
+    $data = $query->orderBy('created_at', 'desc')->paginate(5);
+
+    return response()->json([
+        'countData' => $countData,
+        'data' => $data->items(),
+        'links' => (string) $data->links(),
+        'url' => route('laporan.edit', ':id')
+    ]);
+}
+
+// public function filterViewLaporanTL()
+// {
+//     $mentor = Crud::where('status', 'Mentor');
+
+//         // Ambil semua pertanyaan yang di-trashed berdasarkan email_mentor
+//         $query = Tanya::onlyTrashed()->where('email_mentor', $mentor->email);
+
+//         $data = $query->orderBy('created_at', 'desc')->paginate(5);
+//         // Mengambil status "Diterima" dan "Ditolak" dari tabel Star
+//         $statusStar = Star::whereIn('id_tanya', $data->pluck('id'))->get()->keyBy('id_tanya');
+
+//         return response()->json([
+//             'data' => $data->items(),
+//             'links' => (string) $data->links(),
+//             'statusStar' => $statusStar
+//         ]);
+// }
+
+
+
+
 
 }

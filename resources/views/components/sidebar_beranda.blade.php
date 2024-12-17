@@ -258,7 +258,7 @@
                 <!-- <i class="bx bxl-audible icon"></i>
                 <div class="logo_name">Code Effect</div>
                 <i class="bx bx-menu" id="btn"></i> -->
-                <img src="image/logoBC-example.png" alt="">
+                <img src="../image/logoBC-example.png" alt="">
             </div>
             <div class="nav-list">
                 <div class="menu-murid">
@@ -330,7 +330,7 @@
                 <!-- <i class="bx bxl-audible icon"></i>
                 <div class="logo_name">Code Effect</div>
                 <i class="bx bx-menu" id="btn"></i> -->
-                <img src="image/logoBC-example.png" alt="">
+                <img src="../image/logoBC-example.png" alt="">
             </div>
             <div class="nav-list">
                 <div class="menu-murid">

@@ -5,6 +5,7 @@ use App\Models\Post;
 use Illuminate\Support\Arr;
 use App\Http\Controllers\User;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DataController;
 use App\Http\Controllers\StarController;
 use App\Http\Controllers\testController;
 use App\Http\Controllers\KelasController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\TanyaController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\CatatanController;
+use App\Http\Controllers\EnglishZoneController;
 use App\Http\Controllers\AuthController; // login daftar
 use App\Http\Controllers\CrudController; // database client
 use App\Http\Controllers\UsersController; //database client (percobaan)
@@ -79,6 +81,10 @@ Route::get('/filterTeacher', [FilterController::class, 'filterHistoryTeacher'])-
 Route::get('/paginateTanyaTeacher', [FilterController::class, 'filterTanyaTeacher'])->name('tanya.teacher');
 Route::get('/paginateTanyaTL', [FilterController::class, 'filterTanyaTL'])->name('tanya.TL');
 
+Route::get('/paginateListMentor', [filterController::class, 'filterListMentor']);
+Route::get('/paginateViewLaporan', [FilterController::class, 'filterViewLaporanTL']);
+
+
 
 // ROUTES CATATAN
 Route::get('/catatan', [CatatanController::class, 'index']);
@@ -97,6 +103,9 @@ Route::get('/sidebar', [WebController::class, 'sidebarBeranda']);
 
 Route::post('/update-payment-status/{email}/{batch}', [StarController::class, 'updatePaymentStatus'])->name('starPayment.update');
 
+
+// ROUTES ENGLISH ZONE
+Route::get('/english-zone', [EnglishZoneController::class, 'index']);
 
 // ROUTES TESTING
 Route::get('/select', [BarangController::class, 'index']);

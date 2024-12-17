@@ -2,28 +2,29 @@
 @extends('components/sidebar_beranda_mobile') <!-- Menggunakan layout dengan modal -->
 @if (isset($user))
     @if ($user->status === 'Siswa')
-        <div class="home-beranda z-[-1] md:z-0 border-4 mt-[80px] md:mt-0"> {{-- mt ini berguna untuk ketika sidebar lagi terbuka dan di responsif ke layar hp, content didalam sini turun supaya tidak bentrok sama extends sidebar mobile dan bisa dibuka --}}
+        <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0"> {{-- mt ini berguna untuk ketika sidebar lagi terbuka dan di responsif ke layar hp, content didalam sini turun supaya tidak bentrok sama extends sidebar mobile dan bisa dibuka --}}
             <div class="content-beranda mt-[120px]">
-                <div class="max-w-full border-[1px] border-gray-200 mx-6">
+                <div class="max-w-full mx-6">
                     <div class="grid grid-cols-5 gap-6">
                         <div
-                            class="relative ... lg:col-span-3 col-span-5 h-96 border-[1px] border-gray-200 overflow-hidden">
+                            class="relative lg:col-span-3 col-span-5 md:h-[480px] lg:h-[440px] h-[440px] overflow-hidden bg-white shadow-lg rounded-lg">
                             <x-dropdown></x-dropdown>
-                            <div class="k13 w-full h-full absolute border-[1px] border-red-500 pt-20 top-0"
-                                id="k13">
-                                <figure class="flex gap-4 px-14 mb-4">
+                            <div class="k13 w-full h-full absolute pt-20 top-0" id="k13">
+                                <figure class="flex gap-4 px-14 mb-4 lg:mt-4">
                                     <img src="image/k13.png" alt="" class="w-[30px]">
                                     <figcaption class="font-bold">K13</figcaption>
                                 </figure>
-                                <div class="w-full border-[1px] border-gray-200">
+                                <div class="w-full lg:mt-12">
                                     <div
-                                        class="border-[1px] border-red-500 gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                                        class="gap-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mx-4">
                                         @foreach ($mapelK13 as $mapel)
-                                            <figure class="w-full border-[1px] border-yellow-400 hidden md:block">
+                                            <figure
+                                                class="w-full hidden md:block hover:bg-slate-200 cursor-pointer rounded-lg">
                                                 <div class="w-full flex justify-center">
-                                                    <img src="{{ $mapel['image'] }}" alt="" class="w-[30px]">
+                                                    <img src="{{ $mapel['image'] }}" alt=""
+                                                        class="w-[34px] h-10">
                                                 </div>
-                                                <figcaption class="text-center">{{ $mapel['judul'] }}
+                                                <figcaption class="text-center text-sm">{{ $mapel['judul'] }}
                                                 </figcaption>
                                             </figure>
                                         @endforeach
@@ -49,20 +50,23 @@
                                     </div>
                                 </dialog>
                             </div>
-                            <div class="merdeka absolute right-[-100%] border-[1px] border-gray-200 w-full h-full pt-20 top-0"
-                                id="merdeka">
-                                <figure class="flex gap-4 px-14 mb-4">
+                            <div class="merdeka absolute right-[-100%] w-full h-full pt-20 top-0" id="merdeka">
+                                <figure class="flex gap-4 px-14 mb-4 lg:mt-4">
                                     <img src="image/k13.png" alt="" class="w-[30px]">
                                     <figcaption class="font-bold">Merdeka</figcaption>
                                 </figure>
-                                <div class="w-full border-[1px] border-gray-200">
-                                    <div class="border-[1px] border-blue-200 gap-4 flex flex-wrap">
+                                <div class="w-full lg:mt-12">
+                                    <div
+                                        class="gap-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mx-4">
                                         @foreach ($mapelMerdeka as $mapel)
-                                            <figure class="w-[210px] border-2 border-yellow-400 mx-auto">
+                                            <figure
+                                                class="w-full hidden md:block hover:bg-slate-200 cursor-pointer rounded-lg">
                                                 <div class="w-full flex justify-center">
-                                                    <img src="{{ $mapel['image'] }}" alt="" class="w-[30px]">
+                                                    <img src="{{ $mapel['image'] }}" alt=""
+                                                        class="w-[34px] h-10">
                                                 </div>
-                                                <figcaption class="text-center">{{ $mapel['judul'] }}</figcaption>
+                                                <figcaption class="text-center text-sm">{{ $mapel['judul'] }}
+                                                </figcaption>
                                             </figure>
                                         @endforeach
                                     </div>
@@ -70,11 +74,16 @@
                             </div>
                         </div>
                         <div class="lg:col-span-2 col-span-5 mt-8">
-                            <div class="bg-yellow-500 mb-8 p-10 rounded-xl flex justify-center items-center">Jadwal
+                            <span class="text-lg"> Jadwal : </span>
+                            <div class="p-10 rounded-xl flex justify-center items-center bg-white shadow-lg mb-8">Jadwal
                                 Hari
                                 Ini
                             </div>
-                            <div class="bg-green-500 p-10 rounded-xl flex justify-center items-center">Real Clock</div>
+                            <span class="text-lg"> Hari Ini : </span>
+                            <div
+                                class="lg:col-span-2 col-span-5 p-10 rounded-xl flex justify-center items-center bg-white shadow-lg">
+                                <div id="timestamp" class="text-center text-lg font-bold"></div>
+                            </div>
                         </div>
                         <div class="lg:col-span-3 md:col-span-5 col-span-5">
                             <div class="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-3 grid-cols-2 gap-4">
@@ -215,7 +224,7 @@
     @elseif($user->status === 'Wakil Kepala Sekolah')
 
     @elseif($user->status === 'Kepala Sekolah')
-        <span>jkenfjksdn</span>
+
     @elseif($user->status === 'Team Leader')
         <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0"> {{-- mt ini berguna untuk ketika sidebar lagi terbuka dan di responsif ke layar hp, content didalam sini turun supaya tidak bentrok sama extends sidebar mobile dan bisa dibuka --}}
             <div class="content-beranda mt-[120px]">
@@ -287,7 +296,7 @@
                                         {{ $item->sekolah }}
                                     </span>
                                     <span class="text-xs leading-6">
-                                        Accepted:
+                                        Total Tanya:
                                         {{ isset($countData[$item->email]) ? $countData[$item->email] : 0 }}
                                     </span>
                                     <div class="flex justify-between pr-8">
@@ -309,51 +318,6 @@
                         </a>
                     @endforeach
                 </div>
-                {{-- <div class="overflow-x-auto">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Nama Lengkap</th>
-                                <th>Email</th>
-                                <th>Asal Mengajar</th>
-                                <th>Jumlah Diterima</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($tableData as $item)
-                                <tr>
-                                    <td>{{ $item['nama_mentor'] }}</td>
-                                    <td>{{ $item['email'] }}</td>
-                                    <td>{{ $item['sekolah'] }}</td>
-                                    <td>{{ $item['count'] }}</td>
-                                    <td>
-                                        @if ($item['payment_status'] === 'pay' && $item['kode_payment'] === 'TIDAK' && $item['count'] == 3)
-                                            <!-- Tombol Pay untuk batch yang belum dibayar -->
-                                            <form
-                                                action="{{ url('/update-payment-status/' . $item['email'] . '/' . $item['batch']) }}"
-                                                method="POST">
-                                                @csrf
-                                                <button type="submit"
-                                                    class="text-white bg-green-500 p-2 w-24 rounded-lg font-bold">Pay</button>
-                                            </form>
-                                        @elseif($item['payment_status'] === 'paid' && $item['kode_payment'] === 'YA' && $item['count'] == 3 && $item['batch'])
-                                            <!-- Tombol PAID jika sudah dibayar -->
-                                            <button type="button"
-                                                class="text-white bg-green-500 p-2 w-24 rounded-lg font-bold">PAID</button>
-                                        @else
-                                            <!-- Tombol non-aktif jika tidak bisa membayar -->
-                                            <button
-                                                class="text-white bg-gray-400 p-2 w-24 rounded-lg font-bold cursor-default"
-                                                disabled>Pay</button>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-
-                        </tbody>
-                    </table>
-                </div> --}}
             </div>
         </div>
     @else
@@ -435,17 +399,39 @@
     }
 </script>
 
+<script>
+    function formatNumber(num) {
+        return num < 10 ? '0' + num : num; // Menambahkan 0 di depan jika kurang dari 10
+    }
 
-{{-- <div class="max-w-full border-2 border-red-500 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-5 mx-8">
-    <div class="col-span-3 lg:h-[450px] h-[350px] border-2 bg-blue-500">
-        <span>Mapel</span>
-    </div>
-    <div class="col-span-2">
-        <div class="w-full h-[150px] border-2 bg-green-500 flex justify-center items-center">
-            <span>Jadwal</span>
-        </div>
-        <div class="w-full h-[150px] border-2 bg-yellow-500 flex justify-center items-center">
-            <span>Time</span>
-        </div>
-    </div>
-</div> --}}
+    function updateTimestamp() {
+        const date = new Date();
+
+        const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu"];
+        const day = days[date.getDay()]; // Mendapatkan hari dalam minggu
+
+        const dayNumber = formatNumber(date.getDate()); // Tanggal
+
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September",
+            "Oktober", "November", "Desember",
+        ];
+        const month = months[date.getMonth()]; // Bulan (Januari - Desember)
+
+        const year = date.getFullYear(); // Tahun
+
+        const hours = formatNumber(date.getHours()); // Jam
+        const minutes = formatNumber(date.getMinutes()); // Minute
+        const seconds = formatNumber(date.getSeconds()); // Detik
+
+        const formattedTimestamp =
+            `${day}, ${dayNumber} ${month} ${year}
+                                            ${hours}:${minutes}:${seconds}`; // Format: Day, DD/MM/YYYY HH:MM:SS
+        document.getElementById('timestamp').innerText = formattedTimestamp;
+    }
+
+    // Update timestamp setiap detik
+    setInterval(updateTimestamp, 1000);
+
+    // Panggil fungsi sekali untuk menampilkan timestamp saat pertama kali
+    updateTimestamp();
+</script>

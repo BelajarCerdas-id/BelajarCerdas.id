@@ -31,7 +31,7 @@ class StarController extends Controller
     public function store(Request $request)
     {
         // Validasi input
-        $request->validate([
+        $validated = $request->validate([
             'nama_mentor' => 'required',
             'email' => 'required',
             'sekolah' => 'required',
@@ -52,6 +52,15 @@ class StarController extends Controller
             'id_tanya' => $request->id_tanya
         ]);
 
+        // Redirect kembali ke halaman laporan yang sama sesuai dengan id yang dilihat (tanpa pagination)
+        // return redirect()->route('laporan.edit', ['id' => $mentor->id]);
+
+        // Mendapatkan parameter page dari form
+        $page = $request->input('page', 1);
+
+        // Redirect kembali ke halaman laporan yang sama (sesuai dengan id yang dilihat), dan tetap di halaman pagination yang terakhir dilihat user (pagination)
+        return redirect()->route('laporan.edit', ['id' => $mentor->id, 'page' => $page]);
+
         // Mengambil data berdasarkan email dan batch
         // $users = Star::where('email', $email)->where('status', 'Diterima')->get();
 
@@ -68,9 +77,10 @@ class StarController extends Controller
         // }
         // }
 
+        // return response()->json([
+        //     'data' => $validated
+        // ]);
 
-        // Redirect ke route star.edit dengan ID yang baru saja dibuat
-        return redirect()->route('laporan.edit', ['id' => $mentor->id]);
     }
 
 
@@ -111,6 +121,7 @@ class StarController extends Controller
 
     public function updatePaymentStatus(Request $request, $email, $batch)
     {
+        dd($request->all());
         // Mengambil data berdasarkan email dan batch
         $users = Star::where('email', $email)->where('status', 'Diterima')->get();
         $backRoute = Crud::find($request->id);
@@ -128,7 +139,9 @@ class StarController extends Controller
         }
         }
 
+        $page = $request->input('page', 1);
+
         // Redirect kembali ke halaman dengan pesan sukses
-        return redirect()->route('laporan.edit', ['id' => $backRoute->id])->with('status', 'Pembayaran berhasil!');
+        return redirect()->route('laporan.edit', ['id' => $backRoute->id, 'page' => $page])->with('status', 'Pembayaran berhasil!');
     }
 }
