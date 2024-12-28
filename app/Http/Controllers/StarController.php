@@ -121,7 +121,6 @@ class StarController extends Controller
 
     public function updatePaymentStatus(Request $request, $email, $batch)
     {
-        dd($request->all());
         // Mengambil data berdasarkan email dan batch
         $users = Star::where('email', $email)->where('status', 'Diterima')->get();
         $backRoute = Crud::find($request->id);

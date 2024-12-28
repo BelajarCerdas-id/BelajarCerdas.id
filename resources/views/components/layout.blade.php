@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="css/BelajarCerdas.css">
+    {{-- <link rel="stylesheet" href="../css/BelajarCerdas.css"> --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Document</title>
     <link rel="shortcut icon" href="#" />

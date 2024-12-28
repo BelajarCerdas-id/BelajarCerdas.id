@@ -16,9 +16,9 @@
                     </p>
                     <div class="flex flex-col md:flex-row gap-2 mt-4">
                         <button
-                            class="border-none outline-none bg-gray-700 w-full md:w-32 h-10 rounded-full text-white font-bold text-sm">Daftar</button>
+                            class="border-2 outline-none w-full md:w-32 h-10 rounded-full text-sm hover:bg-[--color-default] hover:text-white font-bold">Daftar</button>
                         <button
-                            class="border-2 outline-none w-full md:w-32 h-10 rounded-full text-sm hover:bg-gray-700 hover:text-white font-bold">Masuk</button>
+                            class="border-2 outline-none w-full md:w-32 h-10 rounded-full text-sm hover:bg-[--color-default] hover:text-white font-bold">Masuk</button>
                     </div>
                 </div>
             </div>
@@ -40,11 +40,11 @@
                 <main>
                     <ul class="text-sm list-none px-4 h-[150px]">
                         <li class="flex gap-1 mt-4 mb-2">
-                            <i class="fa-solid fa-circle text-[8px] text-[#824D74] relative ... top-[7px]"></i>
+                            <i class="fa-solid fa-circle text-[8px] text-[--color-default] relative ... top-[6px]"></i>
                             <span class="text-[12px]"><?= $packet['Desc1'] ?></span>
                         </li>
                         <li class="flex gap-1 mt-4 mb-2">
-                            <i class="fa-solid fa-circle text-[8px] text-[#824D74] relative ... top-[7px]"></i>
+                            <i class="fa-solid fa-circle text-[8px] text-[--color-default] relative ... top-[6px]"></i>
                             <span class="text-[12px]"><?= $packet['Desc2'] ?></span>
                         </li>
                     </ul>
@@ -53,14 +53,14 @@
                     <div class="border-b-[1px] border-gray-300 w-full"></div>
                     <div class="priceList mt-10">
                         <div class="flex justify-center gap-2">
-                            <a class="text-xs md:text-sm text-[#074173] font-medium">Mulai dari</a>
+                            <a class="text-xs md:text-sm text-[--color-default] font-medium">Mulai dari</a>
                             <span
                                 class="line-through text-red-500 font-bold text-xs md:text-sm">{{ $packet['Discount'] }}</span>
                         </div>
                         <span class="font-bold text-xs md:text-base">{{ $packet['Price'] }}</span>
                     </div>
                     <button
-                        class=" bg-gray-700 w-[90%] rounded-full h-[40px] text-white font-bold text-xs md:text-sm mt-4">{{ $packet['Button'] }}</button>
+                        class="bg-[--color-default] w-[90%] rounded-full h-[40px] text-white font-bold text-xs md:text-sm mt-4">{{ $packet['Button'] }}</button>
                 </footer>
             </section>
         </article>

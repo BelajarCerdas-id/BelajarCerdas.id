@@ -12,8 +12,12 @@
 
 <body>
     <nav>
-        <div class="navbar fixed z-[999] bg-gray-800 shadow-lg text-white font-bold gap-4 flex justify-between">
-            <a href="/" class="btn btn-ghost text-lg">BelajarCerdas</a>
+        <div
+            class="navbar fixed z-[999] bg-[--color-default] shadow-lg text-white font-bold gap-4 flex justify-between px-10">
+            <a href="/" class="flex gap-2">
+                <img src="image/logo-sementara.png" alt="" class="w-[30px]">
+                <span class="text-lg">BelajarCerdas</span>
+            </a>
 
             <div class="NavLink gap-2 hidden md:flex">
                 <x-nav-active href="/murid" :active="request()->is('murid')">Murid</x-nav-active>
@@ -22,12 +26,12 @@
                 <x-nav-active href="/post" :active="request()->is('post')">Post</x-nav-active>
             </div>
 
-            <div class="auth px-6 gap-6 lg:flex md:hidden sm:hidden hidden">
+            <div class="auth gap-6 lg:flex md:hidden sm:hidden hidden">
                 <a href="daftar">
-                    <button class="bg-gray-700 px-8 py-2 rounded-md text-sm font-bold">Daftar</button>
+                    <button class="bg-white px-8 py-2 rounded-lg text-[#468FAF] text-sm font-bold">Daftar</button>
                 </a>
                 <a href="/login">
-                    <button class="bg-gray-700 px-8 py-2 rounded-md text-sm font-bold">Login</button>
+                    <button class="bg-white px-8 py-2 rounded-lg text-[#468FAF] text-sm font-bold">Login</button>
                 </a>
             </div>
 

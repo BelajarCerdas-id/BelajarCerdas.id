@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="../css/BelajarCerdas.css"> {{-- css for page view only, kalau ga bisa tambahin ../ sekali lagi --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {{-- source script filter data(ajax) --}}
+    {{-- <script src="ckeditor/ckeditor.js"></script> ckeditor 4 script(folder bukan cdn) --}}
+    <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script>> {{-- ckeditor 5 --}}
     <title>Document</title>
     <link rel="shortcut icon" href="#" />
     <link rel="icon" href="image/koin.png">

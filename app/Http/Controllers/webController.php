@@ -7,6 +7,8 @@ use App\Models\Star;
 use App\Models\Level;
 use App\Models\Tanya;
 use Illuminate\Http\Request;
+use App\Models\englishZoneSoal;
+use App\Models\englishZoneJawaban;
 use Illuminate\Container\Attributes\DB;
 
 class webController extends Controller
@@ -279,6 +281,38 @@ class webController extends Controller
 
     public function laporan()
     {
+        $englishZoneBobot= [
+            [
+                'title_editor' => 'Pilihan A',
+                'title_bobot' => 'Bobot A',
+                'value_editor' => 'pilihan_A',
+                'value_bobot' => 'bobot_A',
+            ],
+            [
+                'title_editor' => 'Pilihan B',
+                'title_bobot' => 'Bobot B',
+                'value_editor' => 'pilihan_B',
+                'value_bobot' => 'bobot_B',
+            ],
+            [
+                'title_editor' => 'Pilihan C',
+                'title_bobot' => 'Bobot C',
+                'value_editor' => 'pilihan_C',
+                'value_bobot' => 'bobot_C',
+            ],
+            [
+                'title_editor' => 'Pilihan D',
+                'title_bobot' => 'Bobot D',
+                'value_editor' => 'pilihan_D',
+                'value_bobot' => 'bobot_D',
+            ],
+            [
+                'title_editor' => 'Pilihan E',
+                'title_bobot' => 'Bobot E',
+                'value_editor' => 'pilihan_E',
+                'value_bobot' => 'bobot_E',
+            ],
+        ];
          // Mengambil user_id dari session
         $user = session('user');  // Misalnya session hanya menyimpan ID user
         if(!$user) {
@@ -307,7 +341,7 @@ class webController extends Controller
         $validatedMentorRejected = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Ditolak')->get()->groupBy('email');
 
 
-        return view('laporan', compact('user', 'getData', 'countData', 'dataAccept', 'dataReject', 'validatedMentorAccepted', 'validatedMentorRejected'));
+        return view('laporan', compact('user', 'getData', 'countData', 'dataAccept', 'dataReject', 'validatedMentorAccepted', 'validatedMentorRejected', 'englishZoneBobot'));
     }
 
 
@@ -451,6 +485,19 @@ class webController extends Controller
         $validatedMentorAccepted = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email');
 
         return view('components/sidebar_beranda', compact('user', 'getData', 'dataAccept', 'validatedMentorAccepted'));
+    }
+
+    public function pengayaan() {
+        $user = session('user');
+        if(!isset($user)) {
+            return redirect('/login');
+        }
+
+        $getSoal = englishZoneSoal::all();
+        // mengambil semua data yang id_soal (englishZoneJawaban) dengan id (englishZoneSoal) sesuai.
+        $getJawaban = englishZoneJawaban::whereIn('id_soal', $getSoal->pluck('id'))->where('email', $user->email)->get()->groupBy('id_soal');
+
+        return view('pengayaan', compact('user', 'getSoal', 'getJawaban'));
     }
 
     

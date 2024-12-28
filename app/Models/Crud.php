@@ -17,6 +17,7 @@ class Crud extends Model
         'email',
         'password',
         'no_hp',
-        'status'
+        'status',
+        'kode_jenjang_murid',
     ];
 }

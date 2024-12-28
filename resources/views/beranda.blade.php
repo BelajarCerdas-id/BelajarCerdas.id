@@ -320,6 +320,8 @@
                 </div>
             </div>
         </div>
+    @elseif($user->status === 'Administrator')
+        fvbdf
     @else
         <div class="flex flex-col min-h-screen items-center justify-center">
             <p>ALERT SEMENTARA</p>

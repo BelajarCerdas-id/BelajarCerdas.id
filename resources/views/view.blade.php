@@ -306,28 +306,28 @@
                             <div class="flex flex-col">
                                 <input type="radio" name="alasan_ditolak" id="reason1"
                                     value="gambar tidak sesuai dengan pertanyaan">
-                                <label for="reason1" class="listReason">
+                                <label for="reason1" class="radioList">
                                     <a>Gambar tidak sesuai dengan pertanyaan</a>
                                 </label>
 
                                 <input type="radio" name="alasan_ditolak" id="reason2"
                                     value="Gambar tidak jelas">
-                                <label for="reason2" class="listReason">
+                                <label for="reason2" class="radioList">
                                     <a>Gambar tidak jelas</a>
                                 </label>
 
                                 <input type="radio" name="alasan_ditolak" id="reason3" value="Lorem Ipsum">
-                                <label for="reason3" class="listReason">
+                                <label for="reason3" class="radioList">
                                     <a>Lorem Ipsum</a>
                                 </label>
 
                                 <input type="radio" name="alasan_ditolak" id="reason4" value="Lorem Ipsum">
-                                <label for="reason4" class="listReason">
+                                <label for="reason4" class="radioList">
                                     <a>Lorem Ipsum</a>
                                 </label>
 
                                 <input type="radio" name="alasan_ditolak" id="reason5" value="Lorem Ipsum">
-                                <label for="reason5" class="listReason">
+                                <label for="reason5" class="radioList">
                                     <a>Lorem Ipsum</a>
                                 </label>
                             </div>

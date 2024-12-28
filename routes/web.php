@@ -105,7 +105,17 @@ Route::post('/update-payment-status/{email}/{batch}', [StarController::class, 'u
 
 
 // ROUTES ENGLISH ZONE
-Route::get('/english-zone', [EnglishZoneController::class, 'index']);
+Route::get('/english-zone', [EnglishZoneController::class, 'index'])->name('englishZone.index');
+Route::post('/english-zone', [EnglishZoneController::class, 'store'])->name('englishZone.store');
+Route::get('/englishZone-view/{id}', [EnglishZoneController::class, 'show'])->name('englishZone.show');
+
+Route::post('/laporana', [EnglishZoneController::class, 'uploadImage'])->name('englishZone.uploadImage');
+Route::post('/laporann', [EnglishZoneController::class, 'uploadSoal'])->name('englishZone.uploadSoal');
+Route::post('/delete-image-endpoint', [EnglishZoneController::class, 'deleteImage'])->name('englishZone.deleteImage');
+
+Route::get('/pengayaan', [webController::class, 'pengayaan']);
+Route::post('/pengayaan', [EnglishZoneController::class, 'uploadJawaban'])->name('englishZoneJawaban.store');
+
 
 // ROUTES TESTING
 Route::get('/select', [BarangController::class, 'index']);

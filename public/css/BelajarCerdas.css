@@ -1,5 +1,5 @@
 :root {
-    --color-default: #253f5b;
+    --color-default: #013a63;
     --color-hover: #4f728e;
     --color-second: #0067ac;
     --color-white: #fff;
@@ -31,37 +31,32 @@ section {
     font-size: 45px;
 }
 
-.listReason {
+.radioList {
     cursor: pointer;
 }
 
-.listReason a {
+.radioList a {
     display: inline-flex;
     align-items: center;
-    padding: 10px 20px 10px 10px;
-    border-radius: 31px;
+    padding: 5px;
     gap: 10px;
-    /* transition: all .25s ease-out; */
+    border-radius: 31px;
 }
 
-.listReason a:hover {
-    background-color: #d6d6e5;
-}
-
-.listReason a:before {
+.radioList a:before {
     content: "";
     width: 18px;
     height: 18px;
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3);
     border-radius: 50%;
-    transition: all 0.25s ease-out;
+    transition: all 0.25s ease-in-out;
 }
 
-input[type="radio"]:checked + .listReason a:before {
+input[type="radio"]:checked + .radioList a:before {
     box-shadow: inset 0 0 0 5px #4189e0;
 }
 
-input[type="radio"]:checked + a {
+input[type="radio"]:checked a {
     color: #4189e0;
     font-weight: bold;
 }
@@ -130,7 +125,16 @@ input[type="radio"]:checked + a {
     font-size: 15px;
     font-weight: bolder;
 } */
-
+/* .upload-icon {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 300px;
+} */
+.upload-icon img {
+    max-width: 300px;
+    max-height: 350px;
+}
 .popup .overlay {
     position: fixed;
     top: 0px;
@@ -143,11 +147,15 @@ input[type="radio"]:checked + a {
     /* semakin tinngi z-index nya agar content lain tidak bisa di click (tembus) */
 }
 
+.popup {
+    border: 1px solid red;
+}
+
 .popup .content-popup {
     position: absolute;
     top: 50%;
     left: 50%;
-    background: red;
+    background: white;
     max-width: 100%;
     width: 50%;
     height: 50%;
@@ -207,14 +215,16 @@ input[type="radio"]:checked + a {
 
 .sidebar-beranda .logo_details {
     width: 100%;
-    height: 80px;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 10px;
+    gap: 8px;
 }
 
 .sidebar-beranda .logo_details img {
-    width: 150px;
+    width: 50px;
 }
 
 .sidebar-beranda.open .logo_details {
@@ -739,7 +749,15 @@ input[type="radio"]:checked + .checked-timeline {
     background: #fff;
     border: 1px solid rgba(0, 0, 0, 0.2);
     padding: 15px 40px;
-    margin-bottom: 20px;
+    margin-top: 20px;
+    border-radius: 7px;
+}
+
+.wrapper-content-accordion-pengayaan {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 0 20px;
+    margin-top: 20px;
     border-radius: 7px;
 }
 
@@ -757,6 +775,19 @@ input[type="radio"]:checked + .checked-timeline {
     font-weight: bold;
 }
 
+.toggleButton-pengayaan {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: transparent;
+    border: none;
+    /* buat ilangin border pada button */
+    outline: none;
+    cursor: pointer;
+    padding: 15px 0;
+}
+
 .content-accordion {
     position: relative;
     text-align: justify;
@@ -767,6 +798,10 @@ input[type="radio"]:checked + .checked-timeline {
 
 .wrapper-content-accordion1 {
     margin-top: 40px;
+}
+
+.wrapper-content-accordion-soal {
+    margin-top: 20px;
 }
 
 .box-content-bab {
@@ -843,6 +878,166 @@ input[type="radio"]:checked + .checked-timeline {
     background: #824d74;
     color: whitesmoke;
     font-weight: bolder;
+}
+
+.modal-box {
+    width: 100%;
+    overflow-y: hidden;
+    overflow-x: auto;
+}
+
+/* buat nampilin ul dan ol yang ke hidden karena menggunakan daisy ui */
+.ck-content ul {
+    list-style-type: disc;
+    /* Mengembalikan bullet list */
+    margin-left: 0.5rem;
+    padding-left: 0.5rem;
+}
+
+.ck-content ol {
+    list-style-type: decimal;
+    /* Mengembalikan numbered list */
+    margin-left: 0.5rem;
+    padding-left: 0.5rem;
+}
+
+.ck-content img {
+    width: 100px;
+    text-align: left !important; /* Menetapkan gambar ke kiri, jika ada aturan yang bertentangan */
+    float: left !important;
+}
+
+.ckeditor {
+    resize: none;
+}
+
+.pilihanSoal .option {
+    display: flex;
+    align-items: center;
+    width: 80%;
+    height: 40px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 0 16px 15px;
+    border-radius: 8px;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+.pilihanSoal .option-disabled {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    height: 40px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 0 16px 15px;
+    border-radius: 8px;
+    padding: 0 10px;
+}
+
+.pilihanSoal .option-disabled-current {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    height: 40px;
+    margin: 0 16px 15px;
+    border-radius: 8px;
+    padding: 0 10px;
+}
+
+.pilihanSoal .option-disabled-true {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    height: 40px;
+    margin: 0 16px 15px;
+    border-radius: 8px;
+    padding: 0 10px;
+    color: white;
+    font-weight: bold;
+}
+
+input[type="radio"]:checked + .pilihanSoal .option {
+    border: 1px solid #4189e0;
+}
+
+/* .ck-content {
+    height: 120px;
+} */
+
+/* dropdown sidebar administrator */
+/* Styling untuk sidebar */
+.sidebar-beranda-administrator {
+    width: 250px;
+    background-color: #0d47a1;
+    color: white;
+    height: 100vh;
+    padding: 10px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.list-item {
+    margin: 14px 8px;
+}
+
+.toggle-menu {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    cursor: pointer;
+}
+
+.toggle-menu i {
+    font-size: 12px;
+}
+
+.toggle-menu span,
+.toggle-menu a {
+    font-size: 14px;
+}
+
+.menu-item {
+    display: block;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.toggle-dropdown {
+    display: block;
+    padding: 8px 0px;
+    color: white;
+    cursor: pointer;
+}
+
+.content-dropdown {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.4s ease;
+    font-size: 12px;
+}
+
+.content-dropdown a {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 15px;
+    transition: all 0.4s ease;
+}
+
+.content-dropdown a:hover {
+    color: yellow;
+}
+
+.list-item.show .content-dropdown {
+    max-height: 200px;
+    opacity: 1;
 }
 
 @media screen and (max-width: 900px) {

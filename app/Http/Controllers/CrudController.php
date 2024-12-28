@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Crud;
+use App\Models\englishZone;
 use Illuminate\Http\Request;
 
 class CrudController extends Controller
@@ -57,6 +58,13 @@ class CrudController extends Controller
             // "password"=>Hash::make($request->password),
             "no_hp"=>$request->no_hp,
             "status"=>$request->status
+        ]);
+        // ini dipakai untuk mendapatkan data user
+        englishZone::create([
+            "nama_lengkap"=>$request->nama_lengkap,
+            "sekolah"=>$request->sekolah,
+            "email"=>$request->email,
+            "status"=>$request->status,
         ]);
         return redirect()->route('crud');
     }

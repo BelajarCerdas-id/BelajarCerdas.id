@@ -104,8 +104,8 @@
                                     <span class="text-red-500 font-bold text-sm mt-1 pl-2">{{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="flex lg:gap-10 gap-4 flex-col lg:flex-row relative">
-                                <div class="w-full relative">
+                            <div class="flex lg:gap-10 gap-4 flex-col lg:flex-row">
+                                <div class="w-full h-44 relative">
                                     <label class="mb-2 text-sm">Pertanyaan<sup
                                             class="text-red-500 pl-1">&#42;</sup></label>
                                     <textarea name="pertanyaan"
@@ -129,7 +129,7 @@
                                                 <div id="imagePreview" class="max-w-[140px] cursor-pointer mt-4"
                                                     onclick="openModal()">
                                                     {{-- Image will be inserted here --}}
-                                                    <img id="popupImage" alt="" class="">
+                                                    <img id="popupImage" alt="" class="object-contain">
                                                 </div>
                                                 <div id="textPreview" class="text-red-500 font-bold mt-2"></div>
                                             </div>

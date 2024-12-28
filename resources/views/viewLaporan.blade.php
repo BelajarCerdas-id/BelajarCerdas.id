@@ -250,7 +250,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="">{{ $data->links() }}</div>
+                {{-- <div class="">{{ $data->links() }}</div> --}}
             </div>
         </div>
     @else

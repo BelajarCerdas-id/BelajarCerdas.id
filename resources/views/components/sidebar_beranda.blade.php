@@ -1,12 +1,14 @@
 <x-script></x-script>
 @if (isset($user))
     @if ($user->status === 'Siswa' or $user->status === 'Murid')
-        <div class="sidebar-beranda hidden md:block">
+        <div class="sidebar-beranda hidden md:block bg-[--color-default]">
             <div class="logo_details">
                 <!-- <i class="bx bxl-audible icon"></i>
                 <div class="logo_name">Code Effect</div>
                 <i class="bx bx-menu" id="btn"></i> -->
-                <img src="image/logoBC-example.png" alt="">
+                {{-- <img src="image/logoBC-example.png" alt=""> --}}
+                <img src="image/logo-sementara.png" alt="">
+                <span class="text-lg text-white font-bold">BelajarCerdas</span>
             </div>
             <div class="nav-list">
                 <div class="menu-murid">
@@ -249,7 +251,115 @@
     @elseif ($user->status === 'Admin')
 
     @elseif($user->status === 'Administrator')
+        {{-- <aside class="sidebar-beranda hidden md:block">
+            <div class="logo_details">
+                <!-- <i class="bx bxl-audible icon"></i>
+                <div class="logo_name">Code Effect</div>
+                <i class="bx bx-menu" id="btn"></i> -->
+                {{-- <img src="image/logoBC-example.png" alt=""> --}
+                <img src="image/logo-sementara.png" alt="">
+                <span class="text-lg text-white font-bold">BelajarCerdas</span>
+            </div>
+            <nav>
+                <div class="sidebar">
+                    <a href="#" class="menu-item">Beranda</a>
 
+                    <div class="menu-item">
+                        <span class="toggle-dropdown">Kelas Pintar Regular</span>
+                        <div class="content-dropdown">
+                            <a href="#">Manage Content</a>
+                            <a href="#">Content for Release</a>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <span class="toggle-dropdown">Question</span>
+                        <div class="content-dropdown">
+                            <a href="#">Manage Question</a>
+                            <a href="#">Question for Release</a>
+                        </div>
+                    </div>
+
+                    <a href="#" class="menu-item">Games</a>
+
+                    <div class="menu-item">
+                        <span class="toggle-dropdown">Syllabus & Service</span>
+                        <div class="content-dropdown">
+                            <a href="#">Manage Syllabus</a>
+                            <a href="#">Guru Ahli</a>
+                        </div>
+                    </div>
+
+                    <a href="#" class="menu-item">Document IKM</a>
+                    <a href="#" class="menu-item">TANYA</a>
+                    <a href="#" class="menu-item">PTN</a>
+                </div>
+            </nav>
+        </aside> --}}
+        <aside class="sidebar-beranda-administrator">
+            <div class="logo_details flex items-center gap-2 justify-center">
+                <img src="image/logo-sementara.png" alt="" class="w-[50px]">
+                <span class="text-lg text-white font-bold">BelajarCerdas</span>
+            </div>
+            <ul class="mt-8">
+                <li class="list-item">
+                    <div class="toggle-menu">
+                        <i class="fas fa-house"></i>
+                        <a href="#">Beranda</a>
+                    </div>
+                </li>
+                <li class="list-item">
+                    <div class="dropdown-menu">
+                        <div class="toggle-menu">
+                            <i class="fas fa-house"></i>
+                            <span class="toggle-dropdown">English Zone</span>
+                            <i class="fas fa-chevron-down absolute right-0"></i>
+                        </div>
+                        <div class="content-dropdown">
+                            <a href="">Upload Materi</a>
+                            <a href="">Upload Soal</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-item">
+                    <div class="dropdown-menu">
+                        <div class="toggle-menu">
+                            <i class="fas fa-house"></i>
+                            <span class="toggle-dropdown">TANYA</span>
+                            <i class="fas fa-chevron-down absolute right-0"></i>
+                        </div>
+                        <div class="content-dropdown">
+                            <a href="">Lorem Ipsum</a>
+                            <a href="">Lorem Ipsum</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </aside>
+
+        <div class="home-beranda hidden md:block">
+            <div class="content">
+                {{-- Navbar for PC --}}
+                <div class="navbar-beranda">
+                    <header>Beranda</header>
+                    <div class="information-account">
+                        <div class="notification">
+                            <i class="fa-solid fa-bell"></i>
+                        </div>
+                        <div class="coin">
+                            <i class="fa-solid fa-coins"></i>
+                        </div>
+                        <div class="profile">
+                            <i class="fa-solid fa-user"></i>
+                            <div class="information-profile">
+                                <span class="name">{{ $user->nama_lengkap }}</span>
+                                <span class="class">{{ $user->status }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     @elseif($user->status === 'Wakil Kepala Sekolah' or $user->status === 'Kepala Sekolah')
 
     @elseif($user->status === 'Team Leader')
@@ -402,6 +512,30 @@
 @else
     <p>You are not logged in.</p>
 @endif
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const toggles = document.querySelectorAll(".toggle-menu");
+
+        toggles.forEach(toggle => {
+            toggle.addEventListener("click", () => {
+                const parent = toggle.closest(
+                    '.list-item'); // Mendapatkan elemen dropdown-menu
+
+                // Toggle visibilitas dropdown
+                parent.classList.toggle("show");
+
+                // Tutup dropdown lain jika perlu
+                document.querySelectorAll(".list-item").forEach(dropdown => {
+                    if (dropdown !== parent) {
+                        dropdown.classList.remove("show");
+                    }
+                });
+            });
+        });
+    });
+</script>
 
 
 

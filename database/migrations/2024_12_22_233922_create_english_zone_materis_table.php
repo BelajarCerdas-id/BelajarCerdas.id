@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cruds', function (Blueprint $table) {
+        Schema::create('english_zone_materis', function (Blueprint $table) {
             $table->id();
             $table->string('nama_lengkap');
-            $table->string('sekolah');
-            $table->string('fase');
-            $table->string('kode');
-            $table->string('kelas');
             $table->string('email');
-            $table->string('password');
-            $table->string('no_hp');
             $table->string('status');
+            $table->string('modul');
+            $table->string('judul');
+            $table->string('pdf_file');
+            $table->string('video_materi');
+            $table->string('jenjang_murid');
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cruds');
+        Schema::dropIfExists('english_zone_materis');
     }
 };
