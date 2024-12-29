@@ -116,6 +116,14 @@ Route::post('/delete-image-endpoint', [EnglishZoneController::class, 'deleteImag
 Route::get('/pengayaan', [webController::class, 'pengayaan']);
 Route::post('/pengayaan', [EnglishZoneController::class, 'uploadJawaban'])->name('englishZoneJawaban.store');
 
+Route::get('upload-materi', [WebController::class, 'uploadMateri']);
+Route::get('upload-soal', [WebController::class, 'uploadSoal']);
+Route::get('question-for-release', [WebController::class, 'questionForRelease']);
+Route::put('question-for-release/update', [englishZoneController::class, 'update'])->name('questionForRelease.update');
+
+Route::get('/filter-questions', [filterController::class, 'questionStatus'])->name('filter.questions');
+
+
 
 // ROUTES TESTING
 Route::get('/select', [BarangController::class, 'index']);

@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('english_zone_soals', function (Blueprint $table) {
             $table->id();
             $table->string('nama_lengkap');
+            $table->string('modul');
+            $table->string('jenjang');
             $table->string('status');
             $table->string('soal');
             $table->string('pilihan_A');
@@ -30,6 +32,7 @@ return new class extends Migration
             $table->string('jawaban');
             $table->string('deskripsi_jawaban');
             $table->string('tipe_upload');
+            $table->string('status_soal')->default('unpublish');
             $table->timestamps();
         });
     }

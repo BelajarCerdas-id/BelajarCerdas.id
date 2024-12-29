@@ -995,6 +995,7 @@ input[type="radio"]:checked + .pilihanSoal .option {
 
 .toggle-menu i {
     font-size: 12px;
+    transition: all 0.4s ease;
 }
 
 .toggle-menu span,
@@ -1038,6 +1039,92 @@ input[type="radio"]:checked + .pilihanSoal .option {
 .list-item.show .content-dropdown {
     max-height: 200px;
     opacity: 1;
+}
+
+.list-item.show #rotate {
+    transform: rotate(-180deg);
+}
+
+/* Sembunyikan dropdown menu secara default */
+.dropdown-menu-preview {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    left: -110px;
+    width: 150px;
+    height: max;
+}
+
+/* Gaya untuk menu item */
+.dropdown-menu-preview .list-dropdown-preview {
+    list-style-type: none;
+    padding: 0 8px;
+}
+
+.dropdown-menu-preview .list-dropdown-preview li {
+    padding: 5px 0px;
+    width: 100%;
+    display: flex;
+    align-content: flex-start;
+    align-items: center;
+    gap: 5px;
+}
+
+.dropdown-menu-preview .list-dropdown-preview li a {
+    text-decoration: none;
+    color: #333;
+}
+
+/* Hover effect */
+.dropdown-menu-preview .list-dropdown-preview li:hover {
+    background-color: #f1f1f1;
+}
+
+/* Styling untuk tabel secara keseluruhan */
+.table-question {
+    width: 100%;
+    border-collapse: collapse; /* Menggabungkan border antara sel */
+}
+
+/* Styling untuk setiap sel dalam tabel (th dan td) */
+.th-question,
+.td-question {
+    border: 2px solid #ddd; /* Menambahkan border ke setiap sel */
+    padding: 8px; /* Memberikan ruang di dalam sel */
+    text-align: center; /* Menyelaraskan teks di tengah */
+}
+
+/* Styling untuk header */
+.thead-question {
+    background-color: #f2f2f2; /* Warna latar belakang untuk header */
+    font-weight: bold; /* Membuat teks header lebih tebal */
+}
+
+/* Styling untuk baris yang memiliki status 'published' */
+.td-question {
+    color: white;
+}
+
+/* Styling untuk baris yang memiliki status 'unpublished' */
+.td-question {
+    color: black;
+}
+
+/* Styling untuk button */
+.button-question {
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Styling untuk cell status */
+.td-question span {
+    font-size: 14px;
 }
 
 @media screen and (max-width: 900px) {

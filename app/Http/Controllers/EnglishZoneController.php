@@ -48,7 +48,7 @@ class EnglishZoneController extends Controller
             'status' => 'required',
             'modul' => 'required',
             'judul' => 'required',
-            'uploadSoal' => 'required|max:1024',
+            'pdf_file' => 'required|max:10000',
             // 'video_materi' => [
             //     'requiired',
             //     'url',
@@ -68,7 +68,9 @@ class EnglishZoneController extends Controller
             'uploadSoal.required' => 'Harap upload PDF',
             'video_materi.required' => 'Link video Harus di isi',
             'video_materi.url' => 'Format link tidak sesuai',
-            'jenjang_murid.required' => 'Harap pilih jenjang'
+            'jenjang_murid.required' => 'Harap pilih jenjang',
+            'pdf_file.required' => 'Harap upload materi',
+            'pdf_file.max' => 'file PDF melebihi ukuran maksimal file'
         ]);
 
         // mwnggunakan storage bawaan laravel
@@ -122,10 +124,27 @@ class EnglishZoneController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        $ids = $request->input('id'); // Ambil ID soal dari checkbox
+
+        if ($ids) {
+            // Ambil semua soal yang dipilih
+            $soalList = englishZoneSoal::whereIn('id', $ids)->get();
+
+            // foreach untuk memproses setiap elemen (soal) yang ada dalam $soalList secara bersamaan,
+            foreach ($soalList as $soal) {
+                // Toggle status: jika unpublish, ubah ke published; jika published, ubah ke unpublish
+                // mengecek apa status_soal saya ini = status_soal unpublish maka akan published; jika published akan unpublish
+                $soal->status_soal = $soal->status_soal === 'unpublish' ? 'published' : 'unpublish';
+                $soal->save();
+            }
+        }
+
+        return redirect()->back()->with('success', 'Status soal berhasil diperbarui.');
+        // return response()->json();
     }
+
 
     /**
      * Remove the specified resource from storage.

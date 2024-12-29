@@ -1,7 +1,7 @@
 @include('components/sidebar_beranda')
 @extends('components/sidebar_beranda_mobile')
 
-<div class="home-beranda">
+<div class="home-beranda bg-white">
     <div class="content-beranda">
         <div class="relative">
             <form action="{{ route('englishZoneJawaban.store') }}" method="POST" class="form">

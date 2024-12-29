@@ -7,6 +7,7 @@ use App\Models\Star;
 use App\Models\Tanya;
 use App\Models\Keynote;
 use Illuminate\Http\Request;
+use App\Models\englishZoneSoal;
 use Illuminate\Support\Facades\Log;
 
 class FilterController extends Controller
@@ -168,6 +169,36 @@ public function filterListMentor()
         'data' => $data->items(),
         'links' => (string) $data->links(),
         'url' => route('laporan.edit', ':id')
+    ]);
+}
+
+public function questionStatus(Request $request)
+{
+    $user = session('user');
+
+    $query = englishZoneSoal::query();
+
+    // filtering by status_soal
+    if ($request->filled('status_soal') && $request->status_soal !== 'semua') {
+    $query->where('status_soal', $request->status_soal);
+    }
+
+    // filtering by modul
+    if ($request->filled('modul') && $request->modul !== 'semua') {
+        $query->where('modul', $request->modul);
+    }
+
+    // filtering by jenjang
+    if($request->filled('jenjang') && $request->jenjang !== 'semua') {
+        $query->where('jenjang', $request->jenjang);
+    }
+
+    // Paginate the filtered results
+    $data = $query->orderBy('created_at', 'desc')->paginate(20);
+
+    return response()->json([
+        'data' => $data->items(),
+        'links' => (string) $data->links()
     ]);
 }
 

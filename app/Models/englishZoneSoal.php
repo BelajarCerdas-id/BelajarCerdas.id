@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class englishZoneSoal extends Model
 {
@@ -11,6 +11,8 @@ class englishZoneSoal extends Model
     protected $fillable = [
         'nama_lengkap',
         'status',
+        'modul',
+        'jenjang',
         'soal',
         'pilihan_A',
         'bobot_A',
@@ -25,6 +27,7 @@ class englishZoneSoal extends Model
         'tingkat_kesulitan',
         'jawaban',
         'deskripsi_jawaban',
-        'tipe_upload'
+        'tipe_upload',
+        'status_soal',
     ];
 }

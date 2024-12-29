@@ -313,11 +313,12 @@
                         <div class="toggle-menu">
                             <i class="fas fa-house"></i>
                             <span class="toggle-dropdown">English Zone</span>
-                            <i class="fas fa-chevron-down absolute right-0"></i>
+                            <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
                         </div>
                         <div class="content-dropdown">
-                            <a href="">Upload Materi</a>
-                            <a href="">Upload Soal</a>
+                            <a href="/upload-materi">Upload Materi</a>
+                            <a href="/upload-soal">Upload Soal</a>
+                            <a href="/question-for-release">Question For Release</a>
                         </div>
                     </div>
                 </li>
@@ -326,7 +327,7 @@
                         <div class="toggle-menu">
                             <i class="fas fa-house"></i>
                             <span class="toggle-dropdown">TANYA</span>
-                            <i class="fas fa-chevron-down absolute right-0"></i>
+                            <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
                         </div>
                         <div class="content-dropdown">
                             <a href="">Lorem Ipsum</a>
