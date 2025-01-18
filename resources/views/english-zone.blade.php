@@ -79,7 +79,7 @@
             </div>
         </div>
     @elseif($user->status === 'Murid')
-        <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0 bg-white">
+        <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
             <div class="content-beranda">
                 <div class="bg-[--color-default] w-full h-20 shadow-lg rounded-t-xl flex items-center pl-10 mb-10">
                     <div class="text-white font-bold flex items-center gap-4">
@@ -109,13 +109,13 @@
                 </div>
                 <div class="relative w-full h-auto overflow-hidden bg-white shadow-lg">
                     <div class="w-full h-auto" id="content">
-                        @foreach ($getMateri as $item)
+                        @foreach ($mainMateri as $modul => $item)
                             <div class="container-accordion">
                                 <div class="wrapper-content-accordion">
                                     <button class="toggleButton">
                                         <div class="">
-                                            <span>{{ $item->modul }}.</span>
-                                            <span>{{ $item->judul }}</span>
+                                            <span>{{ $modul }}.</span>
+                                            <span>{{ $item->judul_modul }}</span>
                                         </div>
                                         <i class="fa-solid fa-chevron-up icon"></i>
                                     </button>
@@ -128,7 +128,7 @@
                                                         <span> Materi </span>
                                                     </div>
                                                     <div class="bottom-title">
-                                                        <span> {{ $item->judul }} </span>
+                                                        <span> {{ $item->judul_modul }} </span>
                                                     </div>
                                                 </div>
                                                 <button class="button-link-concept" formaction="">
@@ -139,20 +139,45 @@
                                                     </div>
                                                 </button>
                                             </div>
-                                            <div class="box-content-bab">
-                                                <div class="title-content-bab">
-                                                    <div class="logo-content-bab"></div>
-                                                    <div class="header-title">
-                                                        <span> Video Materi </span>
+                                            <div class="accordion-video-list">
+                                                <div class="box-video-list">
+                                                    <div class="title-content-bab">
+                                                        <div class="logo-content-bab"></div>
+                                                        <div class="header-title">
+                                                            <span> Video </span>
+                                                        </div>
+                                                        <div class="bottom-title">
+                                                            <span>{{ $item->judul_modul }}</span>
+                                                        </div>
                                                     </div>
-                                                    <div class="bottom-title">
-                                                        <span> {{ $item->judul }} </span>
-                                                    </div>
+                                                    <button class="toggleButton-videoList">
+                                                        <div>
+                                                            <span>Lihat Video</span>
+                                                            <i class="fa-solid fa-chevron-right toggle-icon"></i>
+                                                        </div>
+                                                    </button>
                                                 </div>
-                                                <button class="button-link-ppt">
-                                                    <a href="{{ $item->video_materi }}" target="_blank"> Lihat Video
-                                                    </a>
-                                                </button>
+
+                                                <div class="content-video-list border-4 w-full absolute left-0">
+                                                    @foreach ($allMateri[$item->modul] as $video)
+                                                        <div class="">
+                                                            <a href="{{ $video->link_video }}" target="_blank">
+                                                                <div class="list-video">
+                                                                    <div>
+                                                                        <img src="image/youtube-logo.png"
+                                                                            class="w-[30px]" alt="YouTube Logo">
+                                                                    </div>
+                                                                    <div>
+                                                                        <span
+                                                                            class="leading-[40px] text-blue-500 hover:underline">
+                                                                            {{ $video->judul_video }}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
                                             </div>
                                             <div class="box-content-bab">
                                                 <div class="title-content-bab">
@@ -161,14 +186,14 @@
                                                         <span> Pengayaan </span>
                                                     </div>
                                                     <div class="bottom-title">
-                                                        <span> {{ $item->judul }} </span>
+                                                        <span> {{ $item->judul_modul }} </span>
                                                     </div>
                                                 </div>
-                                                <form>
-                                                    <button class="button-link-ebook" formaction="">
-                                                        <a href="/pengayaan"> Lihat Soal </a>
-                                                    </button>
-                                                </form>
+                                                <button class="button-link-ebook" formaction="">
+                                                    {{-- mengirimkan ke route tujuan dengan parameter url modul, hasil url (pengayaan/modul 1, dst) --}}
+                                                    <a href="{{ route('pengayaan', $item->modul) }}"> Lihat Soal
+                                                    </a>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -216,7 +241,88 @@
 @endif
 
 <script src="js/content-riwayat.js"></script> {{-- content slide --}}
-<script src="js/accordion.js"></script> {{-- accordion script --}}
+{{-- <script src="js/accordion.js"></script> accordion script --}}
+
+<script>
+    function showMateri(element) {
+        const pdfUrl = element.getAttribute('data-pdf');
+        const modal = document.getElementById('my_modal_5');
+        const iframe = document.getElementById('modal_image');
+        const noImage = document.getElementById('no_image');
+
+        // Tampilkan PDF di iframe
+        if (pdfUrl) {
+            iframe.src = pdfUrl;
+            iframe.classList.remove('hidden');
+            noImage.style.display = 'none';
+        } else {
+            iframe.classList.add('hidden');
+            noImage.style.display = 'flex';
+        }
+
+        // Tampilkan modal
+        modal.showModal();
+    }
+</script>
+
+
+<script>
+    document.querySelectorAll('.toggleButton-videoList').forEach((button) => {
+        button.addEventListener('click', function() {
+            let videoList = this.closest('.accordion-video-list').querySelector('.content-video-list');
+            let icon = this.querySelector('.toggle-icon');
+            let contentAccordion = this.closest('.content-accordion');
+
+            // Buka atau tutup video list
+            if (videoList.style.height === "0px" || videoList.style.height === "") {
+                videoList.style.height = videoList.scrollHeight + "px"; // Membuka video list
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                videoList.style.height = "0px"; // Menutup video list
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-right');
+            }
+
+            // Menyesuaikan tinggi accordion utama setelah video list dibuka/tutup
+            setTimeout(() => {
+                let totalHeight = 0;
+                contentAccordion.querySelectorAll('.content-video-list').forEach(list => {
+                    totalHeight += list.scrollHeight; // Menambahkan tinggi video list
+                });
+
+                // Menyesuaikan tinggi accordion utama
+                if (videoList.style.height !== "0px") {
+                    // Jika video list terbuka, tingkatkan tinggi accordion utama
+                    contentAccordion.style.height = (contentAccordion.scrollHeight + videoList
+                        .scrollHeight) + "px";
+                } else {
+                    // Jika video list tertutup, kembalikan tinggi accordion utama ke ukuran semula
+                    contentAccordion.style.height = (contentAccordion.scrollHeight - videoList
+                        .scrollHeight) + "px";
+                }
+            }, 0); // Menjalankan langsung tanpa delay
+        });
+    });
+
+    // Script for the main accordion (same as before)
+    document.querySelectorAll('.toggleButton').forEach((button) => {
+        button.addEventListener('click', function() {
+            let content = this.nextElementSibling;
+            let icon = this.querySelector('.icon');
+
+            if (content.style.height === "0px" || content.style.height === "") {
+                content.style.height = content.scrollHeight + "px";
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                content.style.height = "0px";
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            }
+        });
+    });
+</script>
 
 <script>
     // Menerapkan CKEditor untuk setiap elemen dengan kelas 'task-textarea'
@@ -227,32 +333,4 @@
                 console.error(error);
             });
     });
-</script>
-
-<script>
-    function showMateri(element) {
-        const modal = document.getElementById('my_modal_5');
-        const modalImage = document.getElementById('modal_image');
-        const modalCatatan = document.getElementById('modal_catatan');
-        const noImage = document.getElementById('no_image');
-        const headCatatan = document.getElementById('head-catatan');
-
-        // Ambil data dari atribut
-        const imageSrc = element.getAttribute('data-pdf');
-        const catatan = element.getAttribute('data-catatan');
-
-        // Set gambar dan data
-        modalImage.src = imageSrc;
-
-        // Cek apakah sumber gambar tidak kosong
-        if (imageSrc) {
-            modalImage.style.display = 'block';
-            noImage.style.display = 'none';
-        } else {
-            modalImage.style.display = 'none';
-            noImage.style.display = 'block';
-        }
-        // Tampilkan dialog
-        modal.showModal();
-    }
 </script>

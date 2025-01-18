@@ -17,8 +17,10 @@
                     <div class="flex flex-col md:flex-row gap-2 mt-4">
                         <button
                             class="border-2 outline-none w-full md:w-32 h-10 rounded-full text-sm hover:bg-[--color-default] hover:text-white font-bold">Daftar</button>
-                        <button
-                            class="border-2 outline-none w-full md:w-32 h-10 rounded-full text-sm hover:bg-[--color-default] hover:text-white font-bold">Masuk</button>
+                        <a href="/login">
+                            <button
+                                class="border-2 outline-none w-full md:w-32 h-10 rounded-full text-sm hover:bg-[--color-default] hover:text-white font-bold">Masuk</button>
+                        </a>
                     </div>
                 </div>
             </div>

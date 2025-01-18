@@ -100,6 +100,7 @@ Route::get('/laporan', [WebController::class, 'laporan']);
 
 
 Route::get('/sidebar', [WebController::class, 'sidebarBeranda']);
+Route::get('/sidebar-beranda-mobile', [WebController::class, 'sidebarBerandaMobile']);
 
 Route::post('/update-payment-status/{email}/{batch}', [StarController::class, 'updatePaymentStatus'])->name('starPayment.update');
 
@@ -113,7 +114,8 @@ Route::post('/laporana', [EnglishZoneController::class, 'uploadImage'])->name('e
 Route::post('/laporann', [EnglishZoneController::class, 'uploadSoal'])->name('englishZone.uploadSoal');
 Route::post('/delete-image-endpoint', [EnglishZoneController::class, 'deleteImage'])->name('englishZone.deleteImage');
 
-Route::get('/pengayaan', [webController::class, 'pengayaan']);
+// lalu route akan mendapatkan parameter yang dikirim oleh href tadi yang akan di proses oleh controller
+Route::get('/pengayaan/{modul}', [webController::class, 'pengayaan'])->name('pengayaan');
 Route::post('/pengayaan', [EnglishZoneController::class, 'uploadJawaban'])->name('englishZoneJawaban.store');
 
 Route::get('upload-materi', [WebController::class, 'uploadMateri']);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-white">
+<html lang="en" class="!bg-white">
 
 <head>
     <meta charset="UTF-8">
@@ -18,9 +18,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {{-- source script filter data(ajax) --}}
     <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script> {{-- ckeditor 5 --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script> {{-- upload pdf --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> {{-- sweetAlert CDN --}}
     <title>Document</title>
     <link rel="shortcut icon" href="#" />
-    <link rel="icon" href="image/koin.png">
+    <link rel="icon" href="image/bc-favicon.ico">
 </head>
 
 <body>

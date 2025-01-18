@@ -23,9 +23,14 @@ class EnglishZoneController extends Controller
             return redirect('/login');
         }
         // mencari jenjang murid yang sesuai dengan jenjang murid user login
-        $getMateri = englishZoneMateri::where('jenjang_murid', $user->kode_jenjang_murid)->get();
+        // Group materi berdasarkan modul
+        $groupedMateri = englishZoneMateri::where('jenjang_murid', $user->kode_jenjang_murid)->get()->groupBy('modul');
+
+    // Ambil data utama per modul (satu per modul) dan semua data materi lainnya
+        $mainMateri = $groupedMateri->map(fn($materis) => $materis->first()); // Data utama tiap modul
+        $allMateri = $groupedMateri; // Semua data materi, termasuk video
         $getSoal = englishZoneSoal::all();
-        return view('english-zone', compact('user', 'getMateri', 'getSoal'));
+        return view('english-zone', compact('user', 'mainMateri', 'allMateri', 'getSoal'));
     }
 
     /**
@@ -41,65 +46,54 @@ class EnglishZoneController extends Controller
      */
     public function store(Request $request)
     {
-        $user = session('user');
         $request->validate([
             'nama_lengkap' => 'required',
             'email' => 'required',
             'status' => 'required',
             'modul' => 'required',
-            'judul' => 'required',
-            'pdf_file' => 'required|max:10000',
-            // 'video_materi' => [
-            //     'requiired',
-            //     'url',
-            //     function ($atrribute, $value, $fail) {
-            //         if (!preg_match('/^https?:\/\//', $value)) {
-            //             $fail('Link video harus diawali dengan http:// atau https://');
-            //         }
-            // }],
-            'video_materi' => 'required|url',
+            'judul_modul' => 'required',
+            'judul_video.*' => 'required',
+            'link_video.*' => 'required',
             'jenjang_murid' => 'required',
+            'pdf_file' => 'required|max:10000',
         ], [
-            'nama_lengkap.required' => 'Nama harus di isi',
-            'email.required' => 'Email harus di isi',
-            'status.required' => 'status harus di isi',
-            'modul.required' => 'Harap pilih modul',
-            'judul.required' => 'judul harus di isi',
-            'uploadSoal.required' => 'Harap upload PDF',
-            'video_materi.required' => 'Link video Harus di isi',
-            'video_materi.url' => 'Format link tidak sesuai',
-            'jenjang_murid.required' => 'Harap pilih jenjang',
-            'pdf_file.required' => 'Harap upload materi',
-            'pdf_file.max' => 'file PDF melebihi ukuran maksimal file'
+            'modul.required' => 'Harap pilih modul!',
+            'jenjang_murid.required' => 'Harap pilih jenjang!',
+            'judul_video.*.required' => 'Judul video harus diisi!',
+            'link_video.*.required' => 'Link video harus diisi!',
         ]);
 
-        // mwnggunakan storage bawaan laravel
-        // $filePath = $request->file('uploadSoal')->store('englishZone_pdf', 'public');
-
-        // membuat storage sendiri
-        if($request->hasFile('uploadSoal')) {
-            $filename = time() . $request->file('uploadSoal')->getClientOriginalName();
-            $request->file('uploadSoal')->move(public_path('englishZone_pdf'), $filename);
-            $validatedData['uploadSoal'] = $filename;
+        if ($request->hasFile('pdf_file')) {
+            $filename = time() . $request->file('pdf_file')->getClientOriginalName();
+            $request->file('pdf_file')->move(public_path('englishZone_pdf'), $filename);
         }
 
-        englishZoneMateri::create([
-            'nama_lengkap' => $request->nama_lengkap,
-            'email' => $request->email,
-            'status' => $request->status,
-            'modul' => $request->modul,
-            'judul' => $request->judul,
-            'uploadSoal' => $filename,
-            'video_materi' => $request->video_materi,
-            'jenjang_murid' => $request->jenjang_murid,
-        ]);
+        $judul_video = $request->input('judul_video');
+        $link_video = $request->input('link_video');
 
-        return view('english-zone', compact('user'));
+        foreach ($judul_video as $index => $value) {
+            englishZoneMateri::create([
+                'nama_lengkap' => $request->nama_lengkap,
+                'email' => $request->email,
+                'status' => $request->status,
+                'modul' => $request->modul,
+                'judul_modul' => $request->judul_modul,
+                'pdf_file' => $filename,
+                'judul_video' => $value,
+                'link_video' => $link_video[$index],
+                'jenjang_murid' => $request->jenjang_murid,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Data berhasil disimpan.');
     }
+
 
     /**
      * Display the specified resource.
      */
+
+    // controller show pdf in pdfviewer (ga kepake tapi simpen aja)
     public function show(string $id)
     {
         $getPDF = englishZoneMateri::find($id);
@@ -124,6 +118,7 @@ class EnglishZoneController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    // controller update status_soal (administrator)
     public function update(Request $request)
     {
         $ids = $request->input('id'); // Ambil ID soal dari checkbox
@@ -132,17 +127,19 @@ class EnglishZoneController extends Controller
             // Ambil semua soal yang dipilih
             $soalList = englishZoneSoal::whereIn('id', $ids)->get();
 
-            // foreach untuk memproses setiap elemen (soal) yang ada dalam $soalList secara bersamaan,
-            foreach ($soalList as $soal) {
-                // Toggle status: jika unpublish, ubah ke published; jika published, ubah ke unpublish
-                // mengecek apa status_soal saya ini = status_soal unpublish maka akan published; jika published akan unpublish
-                $soal->status_soal = $soal->status_soal === 'unpublish' ? 'published' : 'unpublish';
-                $soal->save();
+            // Iterasi melalui soal untuk memperbarui status pilihan A-E
+            foreach($soalList as $soal) {
+                // Toggle status untuk semua pilihan (A-E) yang terhubung ke soal ini
+                $optionSoal = englishZoneSoal::where('soal', $soal->soal)->get();
+                foreach($optionSoal as $value) {
+                    // Toggle status: jika unpublish, ubah ke published; jika published, ubah ke unpublish
+                    $value->status_soal = $value->status_soal === 'unpublish' ? 'published' : 'unpublish';
+                    $value->save();
+                }
             }
         }
 
-        return redirect()->back()->with('success', 'Status soal berhasil diperbarui.');
-        // return response()->json();
+        return redirect()->back()->with('success', 'Status soal dan pilihan berhasil diperbarui.');
     }
 
 
@@ -154,7 +151,7 @@ class EnglishZoneController extends Controller
         //
     }
 
-    // Administrator
+    // controller upload image ckeditor
     public function uploadImage(Request $request) {
     // Menangani upload gambar
         if ($request->hasFile('upload')) {
@@ -170,32 +167,7 @@ class EnglishZoneController extends Controller
         }
     }
 
-    public function uploadSoal(Request $request) {
-        $soal = new englishZoneSoal;
-
-        $soal->nama_lengkap = $request->nama_lengkap;
-        $soal->status = $request->status;
-        $soal->soal = $request->soal;
-        $soal->pilihan_A = $request->pilihan_A;
-        $soal->bobot_A = $request->bobot_A;
-        $soal->pilihan_B = $request->pilihan_B;
-        $soal->bobot_B = $request->bobot_B;
-        $soal->pilihan_C = $request->pilihan_C;
-        $soal->bobot_C = $request->bobot_C;
-        $soal->pilihan_D = $request->pilihan_D;
-        $soal->bobot_D = $request->bobot_D;
-        $soal->pilihan_E = $request->pilihan_E;
-        $soal->bobot_E = $request->bobot_E;
-        $soal->tingkat_kesulitan = $request->tingkat_kesulitan;
-        $soal->jawaban = $request->jawaban;
-        $soal->deskripsi_jawaban = $request->deskripsi_jawaban;
-        $soal->tipe_upload = $request->tipe_upload;
-
-        $soal->save();
-
-        return redirect()->back();
-    }
-
+    // controller delete image ckeditor
     public function deleteImage(Request $request) {
         $request->validate([
             'imageUrl' => 'required|url',
@@ -212,49 +184,229 @@ class EnglishZoneController extends Controller
         return response()->json(['message' => 'Gambar tidak ditemukan'], 404);
     }
 
-    // murid
-
-    public function uploadJawaban(Request $request)
-    {
+    // controller upload soal (administrator)
+    public function uploadSoal(Request $request) {
         $request->validate([
-            'jawaban' => 'required'
+            'nama_lengkap' => 'required',
+            'modul_soal' => 'required',
+            'jenjang' => 'required',
+            'status' => 'required',
+            'soal' => 'required',
+            'option_pilihan.*' => 'required',
+            'jawaban_pilihan.*' => 'required',
+            'tingkat_kesulitan' => 'required',
+            'jawaban_benar' => 'required',
+            'deskripsi_jawaban' => 'required',
+            'tipe_upload' => 'required'
         ], [
-            'jawaban.required' => 'Jawaban tidak boleh kosong!'
+            'nama_lengkap.required' => 'Harap isi nama lengkap!',
+            'modul_soal.required' => 'Harap pilih modul!',
+            'jenjang.required' => 'Harap pilih jenjang!',
+            'status.required' => 'Harap pilih status!',
+            'soal.required' => 'Harap isi soal!',
+            'option_pilihan.*.required' => 'Harap isi pilihan jawaban!',
+            'jawaban_pilihan.*.required' => 'Harap isi pilihan jawaban!',
+            'tingkat_kesulitan.required' => 'Harap pilih tingkat kesulitan!',
+            'jawaban_benar.required' => 'Harap pilih jawaban benar!',
+            'deskripsi_jawaban.required' => 'Harap isi deskripsi jawaban!',
+            'tipe_upload.required' => 'Harap pilih tipe upload!'
         ]);
-        // Mengambil Semua Data dari Formulir
-        $data = $request->all();
+        $jawaban_pilihan = $request->input('jawaban_pilihan');
+        $option_pilihan = $request->input('option_pilihan');
 
-        // Mengambil Jawaban dari Formulir
-        $jawabanArray = $data['jawaban']; // Array jawaban dari formulir
-
-        foreach ($jawabanArray as $noSoal => $jawaban) {
-            // Memisahkan pilihan, jawaban, dan bobot untuk A, B, C, D, E
-            [$pilihanGanda, $jawabanDetail, $bobot_A, $bobot_B, $bobot_C, $bobot_D, $bobot_E] = explode('|', $jawaban);
-
-            // Menyimpan jawaban dan bobot ke dalam tabel
-            englishZoneJawaban::create([
-                'nama_lengkap' => $data['nama_lengkap'],
-                'email' => $data['email'],
-                'sekolah' => $data['sekolah'],
-                'kelas' => $data['kelas'],
-                'status' => $data['status'],
-                'jenjang_murid' => $data['jenjang_murid'],
-                'id_soal' => $data['id_soal'][$noSoal], // mengirimkan id_soal sesuai dengan nomor soal
-                'pilihan_ganda' => $pilihanGanda,
-                'jawaban' => $jawabanDetail,
-                'no_soal' => $noSoal,
-                'bobot_A' => $bobot_A, // Bobot untuk A
-                'bobot_B' => $bobot_B, // Bobot untuk B
-                'bobot_C' => $bobot_C, // Bobot untuk C
-                'bobot_D' => $bobot_D, // Bobot untuk D
-                'bobot_E' => $bobot_E, // Bobot untuk E
+        // elemen yang di loop dalam foreach dia menggunakan nilai dari setiap elemen yang di loop berarti yang setelah =>, sedangkan array lain menggunakan key (variabel setelah $as)
+        foreach ($jawaban_pilihan as $index => $value) {
+            englishZoneSoal::create([
+                'nama_lengkap' => $request->nama_lengkap,
+                'modul_soal' => $request->modul_soal,
+                'jenjang' => $request->jenjang,
+                'status' => $request->status,
+                'soal' => $request->soal,
+                'option_pilihan' => $option_pilihan[$index], // Cocokkan dengan iterasi
+                'jawaban_pilihan' => $value, // Isi jawaban
+                'tingkat_kesulitan' => $request->tingkat_kesulitan,
+                'jawaban_benar' => $request->jawaban_benar,
+                'deskripsi_jawaban' => $request->deskripsi_jawaban,
+                'tipe_upload' => $request->tipe_upload
             ]);
         }
-
-        return redirect()->back()->with('success', 'Jawaban berhasil disimpan!');
+            return redirect()->back();
+    // $soal = new englishZoneSoal;
+        // $soal->nama_lengkap = $request->nama_lengkap;
+        // $soal->modul = $request->modul;
+        // $soal->jenjang = $request->jenjang;
+        // $soal->status = $request->status;
+        // $soal->soal = $request->soal;
+        // $soal->pilihan_A = $request->pilihan_A;
+        // $soal->bobot_A = $request->bobot_A;
+        // $soal->pilihan_B = $request->pilihan_B;
+        // $soal->bobot_B = $request->bobot_B;
+        // $soal->pilihan_C = $request->pilihan_C;
+        // $soal->bobot_C = $request->bobot_C;
+        // $soal->pilihan_D = $request->pilihan_D;
+        // $soal->bobot_D = $request->bobot_D;
+        // $soal->pilihan_E = $request->pilihan_E;
+        // $soal->bobot_E = $request->bobot_E;
+        // $soal->tingkat_kesulitan = $request->tingkat_kesulitan;
+        // $soal->jawaban = $request->jawaban;
+        // $soal->deskripsi_jawaban = $request->deskripsi_jawaban;
+        // $soal->tipe_upload = $request->tipe_upload;
     }
 
 
+    // public function uploadJawaban(Request $request)
+    // {
+    //     $jawaban = $request->input('jawaban'); // Jawaban user
+    //     $nomorSoal = $request->input('id_soal'); // Nomor soal
+    //     $nilaiJawaban = $request->input('nilai_jawaban'); // Nilai jawaban user
+
+    //     foreach ($jawaban as $Soal => $value) {
+    //         // Pastikan jawaban user untuk soal ini ada
+    //         if (isset($nilaiJawaban[$Soal])) {
+    //             // Pecah nilai jawaban menjadi opsi dan nilai
+    //             [$jawabanPilihan, $optionPilihan] = explode('|', $value);
+
+    //             // Ambil nilai jawaban user untuk opsi yang dipilih
+    //             $nilai = $nilaiJawaban[$Soal][$optionPilihan] ?? 0;
+
+    //             // Simpan hanya jawaban yang dipilih user
+    //             englishZoneJawaban::create([
+    //                 'nama_lengkap' => $request->nama_lengkap,
+    //                 'email' => $request->email,
+    //                 'sekolah' => $request->sekolah,
+    //                 'kelas' => $request->kelas,
+    //                 'status' => $request->status,
+    //                 'jenjang_murid' => $request->jenjang_murid,
+    //                 'modul' => $request->modul,
+    //                 'id_soal' => $nomorSoal[$value],
+    //                 'jawaban' => $jawabanPilihan, // Jawaban yang dipilih user
+    //                 'pilihan_ganda' => $optionPilihan, // Opsi yang dipilih
+    //                 'nilai_jawaban' => $nilai, // Nilai jawaban
+    //                 'no_soal' => $Soal,
+    //             ]);
+    //         }
+    //     }
+
+    //     return redirect()->back()->with('success', 'Jawaban berhasil disimpan.');
+    // }
+
+    // controller upload jawaban soal pg menggunakan benar salah (dapat point atau tidak) (murid)
+    public function uploadJawaban(Request $request)
+    {
+        $jawaban = $request->input('jawaban'); // Jawaban user
+        $nomorSoal = $request->input('no_soal'); // Nomor soal
+        $nilaiJawaban = $request->input('nilai_jawaban'); // Nilai jawaban user
+
+        if (!$jawaban || !$nomorSoal) {
+            return redirect()->back()->withErrors(['msg' => 'Data jawaban tidak lengkap.']);
+        }
+
+        foreach ($jawaban as $noSoal => $value) {
+            // Ambil ID soal berdasarkan nomor soal
+            $idSoalKey = "id_soal{$noSoal}";
+            $soalId = $request->input($idSoalKey);
+
+            if ($soalId) {
+                // Pecah jawaban menjadi opsi dan nilai
+                [$jawabanPilihan, $optionPilihan] = explode('|', $value);
+
+                // Ambil nilai jawaban user untuk opsi yang dipilih
+                $nilai = $nilaiJawaban[$noSoal][$optionPilihan] ?? null;
+
+                if ($nilai === null) {
+                    return redirect()->back()->withErrors(['msg' => 'Nilai jawaban tidak ditemukan.']);
+                }
+
+                // Simpan jawaban user ke database
+                englishZoneJawaban::create([
+                    'nama_lengkap' => $request->nama_lengkap,
+                    'email' => $request->email,
+                    'sekolah' => $request->sekolah,
+                    'kelas' => $request->kelas,
+                    'status' => $request->status,
+                    'jenjang_murid' => $request->jenjang_murid,
+                    'modul' => $request->modul,
+                    'id_soal' => $soalId, // Gunakan ID soal yang benar
+                    'jawaban' => $jawabanPilihan, // Jawaban yang dipilih user
+                    'pilihan_ganda' => $optionPilihan, // Opsi yang dipilih
+                    'nilai_jawaban' => $nilai, // Nilai jawaban
+                    'no_soal' => $noSoal, // Nomor soal dari form
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Jawaban berhasil disimpan.');
+    }
 
 
+    // public function uploadJawaban(Request $request)
+    // {
+    //     $jawaban = $request->input('jawaban'); // Jawaban user
+    //     $nilaiJawaban = $request->input('nilai_jawaban'); // Nilai jawaban user
+
+    //     foreach ($jawaban as $noSoal => $value) {
+    //         foreach ($nilaiJawaban[$noSoal] as $optionPilihan => $nilai) {
+    //             [$jawabanPilihan, $pilihanGanda] = explode('|', $value);
+    //             englishZoneJawaban::create([
+    //                 'nama_lengkap' => $request->nama_lengkap,
+    //                 'email' => $request->email,
+    //                 'sekolah' => $request->sekolah,
+    //                 'kelas' => $request->kelas,
+    //                 'status' => $request->status,
+    //                 'jenjang_murid' => $request->jenjang_murid,
+    //                 'modul' => $request->modul,
+    //                 'id_soal' => $request->id_soal,
+    //                  'jawaban' => $jawabanPilihan, // Isi jawaban yang dipilih user
+    //                 'pilihan_ganda' => $pilihanGanda, // Opsi yang dipilih
+    //                 'nilai_jawaban' => $nilai, // Nilai jawaban
+    //                 'no_soal' => $noSoal,
+    //             ]);
+    //         }
+    //     }
+    //     return redirect()->back();
+    // }
+
+
+// controller upload jawaban soal pg menggunakan bobot setiap pilihan ganda (murid)
+    // controller untuk upload jawaban pg murid dengan option A - E dan bobot 1 - 5
+    // public function uploadJawaban(Request $request)
+    // {
+    //     $request->validate([
+    //         'jawaban' => 'required'
+    //     ], [
+    //         'jawaban.required' => 'Jawaban tidak boleh kosong!'
+    //     ]);
+    //     // Mengambil Semua Data dari Formulir
+    //     $data = $request->all();
+
+    //     // Mengambil Jawaban dari Formulir
+    //     $jawabanArray = $data['jawaban']; // Array jawaban dari formulir
+
+    //     foreach ($jawabanArray as $noSoal => $jawaban) {
+    //         // Memisahkan pilihan, jawaban, dan bobot untuk A, B, C, D, E
+    //         [$pilihanGanda, $jawabanDetail, $bobot_A, $bobot_B, $bobot_C, $bobot_D, $bobot_E, $nilai_jawaban] = explode('|', $jawaban);
+    //         // Menyimpan jawaban dan bobot ke dalam tabel
+    //         englishZoneJawaban::create([
+    //             'nama_lengkap' => $data['nama_lengkap'],
+    //             'email' => $data['email'],
+    //             'sekolah' => $data['sekolah'],
+    //             'kelas' => $data['kelas'],
+    //             'status' => $data['status'],
+    //             'jenjang_murid' => $data['jenjang_murid'],
+    //             'id_soal' => $data['id_soal'][$noSoal], // mengirimkan id_soal sesuai dengan nomor soal
+    //             'pilihan_ganda' => $pilihanGanda,
+    //             'jawaban' => $jawabanDetail,
+    //             'nilai_jawaban' => $nilai_jawaban,
+    //             'no_soal' => $noSoal,
+    //             'bobot_A' => $bobot_A, // Bobot untuk A
+    //             'bobot_B' => $bobot_B, // Bobot untuk B
+    //             'bobot_C' => $bobot_C, // Bobot untuk C
+    //             'bobot_D' => $bobot_D, // Bobot untuk D
+    //             'bobot_E' => $bobot_E, // Bobot untuk E
+    //             'modul' => $data['modul'],
+    //         ]);
+    //     }
+
+    //     return redirect()->back()->with('success', 'Jawaban berhasil disimpan!');
+    // }
 }

@@ -8,6 +8,7 @@ use App\Models\Level;
 use App\Models\Tanya;
 use Illuminate\Http\Request;
 use App\Models\englishZoneSoal;
+use App\Models\englishZoneMateri;
 use App\Models\englishZoneJawaban;
 use Illuminate\Container\Attributes\DB;
 
@@ -66,7 +67,7 @@ class webController extends Controller
     {
         // Retrieve the user from the session
         $user = session('user');
-        
+
         if (!$user) {
             return redirect('/login');
         }
@@ -82,7 +83,7 @@ class webController extends Controller
 
         $countData = $getData->mapWithKeys(function ($item) {
             return [$item->email => Tanya::onlyTrashed()->where('email_mentor', $item->email)->count()];
-        });                                                      
+        });
 
         $data = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email'); // Ambil semua data yang statusnya diterima
 
@@ -92,7 +93,7 @@ class webController extends Controller
         $paidBatchCount = [];
         $unpaidBatchCount = [];
         $waitingBatchCount = [];
-        
+
         foreach ($data as $email => $batchUsers) {
             // Hitung berapa banyak batch yang perlu dibuat
             $batchCount = ceil($batchUsers->count() / 3);  // Setiap batch berisi maksimal 3 data
@@ -130,7 +131,7 @@ class webController extends Controller
                 }
             }
         }
-        
+
         $mapelK13 = [
             [
                 'image' => 'image/pkn.png',
@@ -254,8 +255,8 @@ class webController extends Controller
             [
                 'image' => 'image/paket2.jpg',
                 'text' => 'Sesi Boot Camp for Conversation Only.',
-                'url' => '',
-                'button' => 'English Camp'
+                'url' => '/english-zone',
+                'button' => 'English Zone'
             ],
             [
                 'image' => 'image/paket3.jpg',
@@ -291,7 +292,7 @@ class webController extends Controller
         // Mengambil data mentor yang berstatus 'Mentor'
         $getData = Crud::where('status', 'Mentor')->get();
 
-        
+
         // // Mengambil jumlah Tanya berdasarkan email_mentor yang sesuai dengan email mentor
         $countData = [];
         foreach ($getData as $item) {
@@ -335,10 +336,10 @@ class webController extends Controller
 
         // $data = Star::where('status', 'Diterima')->where('email', $mentor->email)->get(); // Ambil semua data yang statusnya diterima
 
-        
+
         // $tableData = [];
         // $batchCount = ceil($data->count() / 3); // Menghitung berapa banyak batch yang perlu dibuat
-        
+
         // $paidBatchCount = 0;
         // $unpaidBatchCount = 0;
         // $waitingBatchCount = 0;
@@ -367,7 +368,7 @@ class webController extends Controller
         //         if ($batchStatus === 'pay' && $batchUsers->count() <  3) {
         //             $waitingBatchCount++;
         //         }
-        
+
         //     // Ambil informasi umum yang sama untuk semua entri dalam satu batch
         //     $nama_mentor = $batchUsers->first()->nama_mentor;
         //     $email = $batchUsers->first()->email;
@@ -455,21 +456,46 @@ class webController extends Controller
         return view('components/sidebar_beranda', compact('user', 'getData', 'dataAccept', 'validatedMentorAccepted'));
     }
 
-    public function pengayaan() {
+    public function sidebarBerandaMobile()
+    {
+        $user = session('user');
+
+        return view('components/sidebar_beranda', compact('user'));
+    }
+
+    public function pengayaan($modul) {
+        // lalu controller akan menerima parameter modul tadi dan diproses pada function pengayaan
+
         $user = session('user');
         if(!isset($user)) {
             return redirect('/login');
         }
 
-        $getSoal = englishZoneSoal::where('status_soal', 'published')->get();
-        // mengambil semua data yang id_soal (englishZoneJawaban) dengan id (englishZoneSoal) sesuai.
-        $getJawaban = englishZoneJawaban::whereIn('id_soal', $getSoal->pluck('id'))->where('email', $user->email)->get()->groupBy('id_soal');
+        // terakhir, $getSoal akan mengambil semua data yang sesuai dengan column modul englishZoneSoal dengan operator $modul yang berasal dari parameter url
+        // cara ini hampir sama dengan metode view pada crud find($id), hanya saja ini menggunakan kondisi where, karena melakukan relasi antara column modul englishZoneSoal dengan column modul englishZoneMateri
+        // get data untuk soal pilihan ganda
+        $groupedSoal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang', $user->kode_jenjang_murid)->inRandomOrder()->get()->groupBy('soal');
+        $getSoal = $groupedSoal->map(fn($materis) => $materis->first()); // Data utama tiap modul
+        $dataSoal = $groupedSoal;
 
-        return view('pengayaan', compact('user', 'getSoal', 'getJawaban'));
+        $getDataSoal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang', $user->kode_jenjang_murid)->get();
+        // mengambil semua data yang id_soal (englishZoneJawaban) dengan id (englishZoneSoal) sesuai.
+        $getJawaban = englishZoneJawaban::whereIn('id_soal', $getDataSoal->pluck('id'))->where('email', $user->email)->get()->groupBy('id_soal');
+
+        // menghitung nilai(poin) setiap soal pilihan ganda
+        $soal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang', $user->kode_jenjang_murid)->get()->groupBy('soal');
+        $jumlahSoal = $soal->count();
+        $totalNilai = 100;
+        $getPoint = $jumlahSoal > 0 ? $totalNilai / $jumlahSoal : 0;
+
+        $getNilai = englishZoneJawaban::where('email', $user->email)->where('modul', $modul)->get();
+        $countNilai = $getNilai->sum('nilai_jawaban');
+
+        return view('pengayaan', compact('user', 'getSoal', 'dataSoal', 'getJawaban', 'totalNilai', 'getPoint', 'countNilai'));
     }
 
     public function uploadMateri()
-    {        
+    {
         $user = session('user');
         if(!isset($user)) {
             return redirect('/login');
@@ -512,7 +538,7 @@ class webController extends Controller
                 'value_bobot' => 'bobot_E',
             ],
         ];
-        
+
         $user = session('user');
         if(!isset($user)) {
             return redirect('/login');
@@ -534,5 +560,5 @@ class webController extends Controller
         return view('question-for-release', compact('user','getSoal'));
     }
 
-    
+
 }

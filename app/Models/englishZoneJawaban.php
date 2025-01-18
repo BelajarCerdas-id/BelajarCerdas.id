@@ -18,11 +18,8 @@ class englishZoneJawaban extends Model
         'id_soal',
         'jawaban',
         'pilihan_ganda',
-        'bobot_A',
-        'bobot_B',
-        'bobot_C',
-        'bobot_D',
-        'bobot_E',
-        'no_soal'
+        'nilai_jawaban',
+        'no_soal',
+        'modul',
     ];
 }

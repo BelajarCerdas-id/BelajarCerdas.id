@@ -17,7 +17,7 @@ function previewPDF(event) {
         var pdfLogo = document.getElementById('pdfLogo');  // Mengakses elemen logo PDF
 
         // Menampilkan nama file PDF di bawah gambar
-        textOutput.innerHTML = truncateText(fileName, 54);
+        textOutput.innerHTML = truncateText(fileName, 30);
         textOutput2.innerHTML = formatFileSize(fileSize);
         textOutput4.innerHTML = "<i class='fas fa-circle text-[5px] text-gray-500'></i>";
 

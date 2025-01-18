@@ -12,11 +12,9 @@
 
 <body>
     <nav>
-        <div
-            class="navbar fixed z-[999] bg-[--color-default] shadow-lg text-white font-bold gap-4 flex justify-between px-10">
-            <a href="/" class="flex gap-2">
-                <img src="image/logo-sementara.png" alt="" class="w-[30px]">
-                <span class="text-lg">BelajarCerdas</span>
+        <div class="navbar fixed z-[999] bg-white shadow-lg text-white font-bold gap-4 flex justify-between px-10">
+            <a href="/" class="">
+                <img src="image/image3.png" class="w-[100px]">
             </a>
 
             <div class="NavLink gap-2 hidden md:flex">
@@ -40,6 +38,7 @@
                 <li class="hidden" onclick="hideSidebar()" id="Hide"><i class="fa-solid fa-xmark"></i></li>
             </ul>
         </div>
+
 
         <div class="Sidebar fixed top-[64px] left-[0px] z-[999] w-full h-auto bg-white shadow-lg font-bold pb-8 md:pb-0 hidden"
             id="accordion">

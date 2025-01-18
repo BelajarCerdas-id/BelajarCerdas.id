@@ -1,14 +1,11 @@
 <x-script></x-script>
 @if (isset($user))
     @if ($user->status === 'Siswa' or $user->status === 'Murid')
-        <div class="sidebar-beranda hidden md:block bg-[--color-default]">
-            <div class="logo_details">
-                <!-- <i class="bx bxl-audible icon"></i>
-                <div class="logo_name">Code Effect</div>
-                <i class="bx bx-menu" id="btn"></i> -->
-                {{-- <img src="image/logoBC-example.png" alt=""> --}}
-                <img src="image/logo-sementara.png" alt="">
-                <span class="text-lg text-white font-bold">BelajarCerdas</span>
+        <div class="sidebar-beranda hidden md:block">
+            <div class="logo_details flex items-center justify-center">
+                <a href="/">
+                    <img src="../image/image8.png" alt="" class="w-2/5">
+                </a>
             </div>
             <div class="nav-list">
                 <div class="menu-murid">
@@ -94,7 +91,7 @@
                 <!-- <i class="bx bxl-audible icon"></i>
                 <div class="logo_name">Code Effect</div>
                 <i class="bx bx-menu" id="btn"></i> -->
-                <img src="image/logoBC-example.png" alt="">
+                <img src="image/logo-BC.png" alt="">
             </div>
             <div class="nav-list">
                 <div class="menu-murid">
@@ -173,7 +170,7 @@
                 <!-- <i class="bx bxl-audible icon"></i>
                 <div class="logo_name">Code Effect</div>
                 <i class="bx bx-menu" id="btn"></i> -->
-                <img src="image/logoBC-example.png" alt="">
+                <img src="image/logo-BC.png" alt="">
             </div>
             <div class="nav-list">
                 <div class="menu-murid">
@@ -256,7 +253,7 @@
                 <!-- <i class="bx bxl-audible icon"></i>
                 <div class="logo_name">Code Effect</div>
                 <i class="bx bx-menu" id="btn"></i> -->
-                {{-- <img src="image/logoBC-example.png" alt=""> --}
+                {{-- <img src="image/logo-BC.png" alt=""> --}
                 <img src="image/logo-sementara.png" alt="">
                 <span class="text-lg text-white font-bold">BelajarCerdas</span>
             </div>
@@ -296,10 +293,9 @@
                 </div>
             </nav>
         </aside> --}}
-        <aside class="sidebar-beranda-administrator">
-            <div class="logo_details flex items-center gap-2 justify-center">
-                <img src="image/logo-sementara.png" alt="" class="w-[50px]">
-                <span class="text-lg text-white font-bold">BelajarCerdas</span>
+        <aside class="sidebar-beranda-administrator hidden md:block">
+            <div class="logo_details flex items-center justify-center">
+                <img src="image/image8.png" alt="" class="w-2/4">
             </div>
             <ul class="mt-8">
                 <li class="list-item">
@@ -369,7 +365,7 @@
                 <!-- <i class="bx bxl-audible icon"></i>
                 <div class="logo_name">Code Effect</div>
                 <i class="bx bx-menu" id="btn"></i> -->
-                <img src="../image/logoBC-example.png" alt="">
+                <img src="../image/logo-BC.png" alt="">
             </div>
             <div class="nav-list">
                 <div class="menu-murid">
@@ -441,7 +437,7 @@
                 <!-- <i class="bx bxl-audible icon"></i>
                 <div class="logo_name">Code Effect</div>
                 <i class="bx bx-menu" id="btn"></i> -->
-                <img src="../image/logoBC-example.png" alt="">
+                <img src="../image/logo-BC.png" alt="">
             </div>
             <div class="nav-list">
                 <div class="menu-murid">

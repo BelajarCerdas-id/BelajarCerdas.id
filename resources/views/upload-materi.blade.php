@@ -39,7 +39,7 @@
                                 <input type="text" name="email" value="{{ $user->email }}">
                                 <input type="text" name="status" value="{{ $user->status }}">
                             </div>
-                            <div class="flex lg:gap-12 gap-4 flex-col lg:flex-row mx-4 mt-6 mb-8">
+                            <div class="flex lg:gap-6 gap-4 flex-col lg:flex-row mx-4 mt-6 mb-8">
                                 <div class="w-full">
                                     <label class="mb-2 text-sm">Modul<sup class="text-red-500 pl-1">&#42;</sup></label>
                                     <select name="modul"
@@ -107,27 +107,73 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="flex lg:gap-12 gap-4 flex-col lg:flex-row mx-4 mb-8">
-                                <div class="w-full">
-                                    <label class="mb-2 text-sm">Judul<sup class="text-red-500 pl-1">&#42;</sup></label>
-                                    <input type="text" name="judul"
-                                        class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2 {{ $errors->has('judul') ? 'border-[1px] border-red-500' : '' }}"
-                                        placeholder="Masukkan judul materi" value="{{ @old('judul') }}">
-                                    @error('judul')
-                                        <span class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="w-full">
-                                    <label class="mb-2 text-sm">Video Materi<sup
-                                            class="text-red-500 pl-1">&#42;</sup></label>
-                                    <input type="url" name="video_materi"
-                                        class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2 {{ $errors->has('video_materi') ? 'border-[1px] border-red-500' : '' }}"
-                                        placeholder="Masukkan link video materi" value="{{ @old('video_materi') }}">
-                                    @error('video_materi')
-                                        <span class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                            <div class="w-[48.5%] mx-4 mb-8">
+                                <label class="mb-2 text-sm">
+                                    <span>Judul modul</span>
+                                    <sup class="text-red-500 pl-1">&#42;</sup>
+                                </label>
+                                <input type="text" name="judul_modul"
+                                    class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2 {{ $errors->has('judul_modul.') ? 'border-[1px] border-red-500' : '' }}"
+                                    placeholder="Masukkan judul modul" value="{{ old('judul_modul') }}">
+                                @error('judul_modul')
+                                    <span class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                @enderror
                             </div>
+                            <div id="materi-container">
+                                <!-- Iterasi untuk menampilkan materi yang ada -->
+                                @foreach (old('judul_video', ['']) as $index => $judul)
+                                    <div class="materi flex lg:gap-6 gap-4 flex-col lg:flex-row mx-4 mb-8">
+                                        {{-- data-id="{{ $index + 1 }}"> --}}
+                                        <div class="w-full">
+                                            <label class="mb-2 text-sm">
+                                                <span>Judul video</span>
+                                                <span
+                                                    class="materi-label">{{ count(old('judul_video', [''])) > 1 ? $index + 1 : '' }}</span>
+                                                <sup class="text-red-500 pl-1">&#42;</sup>
+                                            </label>
+                                            <input type="text" name="judul_video[]"
+                                                class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2 {{ $errors->has('judul_video.' . $index) ? 'border-[1px] border-red-500' : '' }}"
+                                                placeholder="Masukkan judul video" value="{{ $judul }}">
+                                            @error('judul_video.' . $index)
+                                                <span
+                                                    class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                        <div class="w-full relative">
+                                            <label class="mb-2 text-sm">
+                                                <span>Link video</span>
+                                                <span
+                                                    class="materi-label">{{ count(old('link_video', [''])) > 1 ? $index + 1 : '' }}</span>
+                                                <sup class="text-red-500 pl-1">&#42;</sup>
+                                            </label>
+                                            <input type="url" name="link_video[]"
+                                                class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2 {{ $errors->has('link_video.' . $index) ? 'border-[1px] border-red-500' : '' }}"
+                                                placeholder="Masukkan link video materi"
+                                                value="{{ old('link_video')[$index] ?? '' }}">
+                                            @error('link_video.' . $index)
+                                                <span
+                                                    class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                            @enderror
+                                            @if ($index > 0)
+                                                <button type="button"
+                                                    class="hapus-materi absolute top-0 right-2 text-red-500 font-bold">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                    <span class="text-sm">Hapus</span>
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <!-- Tombol untuk menambahkan materi -->
+                            <button id="tambah-materi" type="button"
+                                class="bg-[#4189e0] w-[200px] h-8 text-white font-bold rounded-lg mx-4 mb-6 text-sm">
+                                <i class="fas fa-plus"></i>
+                                <span>Tambah Materi</span>
+                            </button>
+
+
                             <div class="flex lg:gap-12 gap-4 flex-col lg:flex-row mx-4 mb-8">
                                 <div class="w-[48.5%]">
                                     <div class="w-2/4 h-auto">
@@ -144,7 +190,7 @@
                                                     {{-- <img id="pdfThumbnail" alt="PDF Thumbnail"
                                                             class="w-full h-full object-cover"> --}}
                                                     <div id="pdfPreviewContainer"
-                                                        class="bg-white shadow-lg rounded-lg w-80 py-2 border-[1px] border-gray-200 hidden">
+                                                        class="bg-white shadow-lg rounded-lg w-max py-2 pr-4 border-[1px] border-gray-200 hidden">
                                                         <div class="flex">
                                                             <img id="pdfLogo" class="w-[56px] h-max">
                                                             <div class="mt-2 leading-5">
@@ -198,3 +244,70 @@
 
 <script src="js/content-riwayat.js"></script> {{-- content slide --}}
 <script src="js/upload-pdf.js"></script> {{-- upload PDF(js) --}}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('materi-container'); // Container utama
+        const tambahMateriButton = document.getElementById('tambah-materi'); // Tombol tambah materi
+
+        // Fungsi untuk memperbarui label dan ID
+        function updateMateriLabels() {
+            const materiElements = container.querySelectorAll('.materi'); // Semua elemen 'materi'
+            materiElements.forEach((materi, index) => {
+                const labels = materi.querySelectorAll('.materi-label');
+                labels.forEach(label => {
+                    label.textContent = materiElements.length > 1 ? index + 1 :
+                        ''; // Perbarui nomor urut
+                });
+                materi.setAttribute('data-id', index + 1); // Update ID berdasarkan urutan
+            });
+        }
+
+        // Event untuk menambahkan materi baru
+        tambahMateriButton.addEventListener('click', function() {
+            const newMateri = document.createElement('div'); // Elemen materi baru
+            newMateri.classList.add('materi', 'flex', 'lg:gap-12', 'gap-4', 'flex-col', 'lg:flex-row',
+                'mx-4', 'mb-8');
+            newMateri.innerHTML = `
+        <div class="w-full">
+            <label class="mb-2 text-sm">
+                <span>Judul video</span>
+                <span class="materi-label"></span>
+                <sup class="text-red-500 pl-1">&#42;</sup>
+            </label>
+            <input type="text" name="judul_video[]"
+                class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2" placeholder="Masukkan judul materi" value="">
+        </div>
+        <div class="w-full relative">
+            <label class="mb-2 text-sm">
+                <span>Link video</span>
+                <span class="materi-label"></span>
+                <sup class="text-red-500 pl-1">&#42;</sup>
+            </label>
+            <input type="url" name="link_video[]"
+                class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2" placeholder="Masukkan link video materi" value="">
+            <button type="button" class="hapus-materi absolute top-0 right-2 text-red-500 font-bold">
+                <i class="fa-solid fa-trash"></i>
+                <span class="text-sm">Hapus</span>
+            </button>
+        </div>`;
+            container.appendChild(newMateri); // Tambah elemen ke container
+            updateMateriLabels(); // Perbarui label dan ID
+        });
+
+        // Event untuk menghapus materi berdasarkan ID
+        container.addEventListener('click', function(event) {
+            if (event.target.closest('.hapus-materi')) {
+                const materiToDelete = event.target.closest('.materi');
+                if (materiToDelete) {
+                    // const materiId = materiToDelete.getAttribute('data-id'); // Ambil ID dari elemen
+                    materiToDelete.remove(); // Hapus elemen dari DOM
+                    updateMateriLabels(); // Perbarui label dan ID
+                }
+            }
+        });
+
+        // Jalankan update label saat halaman dimuat
+        updateMateriLabels();
+    });
+</script>

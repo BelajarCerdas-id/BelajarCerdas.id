@@ -48,13 +48,13 @@
 //     });
 
 
-function fetchFilteredDataQuestions(status_soal, modul, jenjang, page = 1) {
+function fetchFilteredDataQuestions(status_soal, modul_soal, jenjang, page = 1) {
     $.ajax({
         url: '/filter-questions',
         method: 'GET',
         data: {
             status_soal: status_soal,
-            modul: modul,
+            modul_soal: modul_soal,
             jenjang: jenjang,
             page: page
         },
@@ -65,24 +65,20 @@ function fetchFilteredDataQuestions(status_soal, modul, jenjang, page = 1) {
                 $.each(data.data, function (index, application) {
                     $('#tableListQuestion').append(`
                         <tr class="text-xs">
-                            <td class="td-question">
+                            <td class="td-question !text-center">
                                 <input type="checkbox" name="id[]" value="${application.id}" onclick="showButton()" class="checkboxButton cursor-pointer">
                             </td>
-                            <td class="td-question">${application.modul}</td>
-                            <td class="td-question">${application.jenjang}</td>
-                            <td class="td-question !text-start">${application.soal}</td>
-                            <td class="td-question">${application.pilihan_A}</td>
-                            <td class="td-question">${application.pilihan_B}</td>
-                            <td class="td-question">${application.pilihan_C}</td>
-                            <td class="td-question">${application.pilihan_D}</td>
-                            <td class="td-question">${application.pilihan_E}</td>
-                            <td class="td-question !text-start">${application.deskripsi_jawaban}</td>
-                            <td class="td-question">
+                            <td class="td-question !text-center">${application.modul_soal}</td>
+                            <td class="td-question !text-center">${application.jenjang}</td>
+                            <td class="td-question">${application.soal}</td>
+                            <td class="td-question !text-center">${application.jawaban_benar}</td>
+                            <td class="td-question">${application.deskripsi_jawaban}</td>
+                            <td class="td-question !text-center">
                                 <button class="bg-${application.status_soal === 'published' ? 'green-500' : 'gray-300'} text-white p-2 rounded-lg">
                                     ${application.status_soal}
                                 </button>
                             </td>
-                            <td class="td-question">
+                            <td class="td-question !text-center">
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                             </td>
                         </tr>
@@ -144,26 +140,26 @@ $('#sendButton').on('click', function () {
 // filtering status_soal
 $(document).on('change', '#questionStatusFilter', function () {
     const status_soal = $(this).val();
-    const modul = $('#questionModulFilter').val();  // Ambil nilai modul
+    const modul_soal = $('#questionModulFilter').val();  // Ambil nilai modul
     const jenjang = $('#questionJenjangFilter').val(); // Ambil nilai jenjang
-    fetchFilteredDataQuestions(status_soal, modul, jenjang); // Kirim seluruhnya ke server
+    fetchFilteredDataQuestions(status_soal, modul_soal, jenjang); // Kirim seluruhnya ke server
 });
 
 // ketika memiliki lebih dari 1 filtering maka harus dilakukan seperti ini, ketika onchange pada modul maka status_soal harus ada, dst
 // filtering modul
 $(document).on('change', '#questionModulFilter', function () {
-    const modul = $(this).val();
+    const modul_soal = $(this).val();
     const status_soal = $('#questionStatusFilter').val(); // Ambil nilai status_soal
     const jenjang = $('#questionJenjangFilter').val(); // Ambil nilai jenjang
-    fetchFilteredDataQuestions(status_soal, modul, jenjang); // Kirim seluruhnya ke server
+    fetchFilteredDataQuestions(status_soal, modul_soal, jenjang); // Kirim seluruhnya ke server
 });
 
 // filtering jenjang
 $(document).on('change', '#questionJenjangFilter', function () {
     const jenjang = $(this).val();
     const status_soal = $('#questionStatusFilter').val(); // Ambil nilai status_soal
-    const modul = $('#questionModulFilter').val(); // Ambil nilai modul
-    fetchFilteredDataQuestions(status_soal, modul, jenjang); // Kirim seluruhnya ke server
+    const modul_soal = $('#questionModulFilter').val(); // Ambil nilai modul
+    fetchFilteredDataQuestions(status_soal, modul_soal, jenjang); // Kirim seluruhnya ke server
 });
 
 
@@ -171,9 +167,9 @@ $(document).on('click', '.pagination-container-question', function (event) {
     event.preventDefault();
     const page = new URL(this.href).searchParams.get('page');
     const status_soal = $('#questionStatusFilter').val();
-    const modul = $('#questionModulFilter').val();
+    const modul_soal = $('#questionModulFilter').val();
     const jenjang = $('#questionJenjangFilter').val();
-    fetchFilteredDataQuestions(page, status_soal, modul, jenjang);
+    fetchFilteredDataQuestions(page, status_soal, modul_soal, jenjang);
 });
 
 $(document).ready(function () {

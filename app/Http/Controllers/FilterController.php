@@ -147,7 +147,7 @@ public function filterMapelNote(Request $request)
 
     return response()->json([
         'data' => $data->items(),
-        'links' => (string) $data->links(),    
+        'links' => (string) $data->links(),
     ]);
 }
 
@@ -176,7 +176,7 @@ public function questionStatus(Request $request)
 {
     $user = session('user');
 
-    $query = englishZoneSoal::query();
+    $query = englishZoneSoal::query()->groupBy('soal');
 
     // filtering by status_soal
     if ($request->filled('status_soal') && $request->status_soal !== 'semua') {
@@ -184,8 +184,8 @@ public function questionStatus(Request $request)
     }
 
     // filtering by modul
-    if ($request->filled('modul') && $request->modul !== 'semua') {
-        $query->where('modul', $request->modul);
+    if ($request->filled('modul_soal') && $request->modul_soal !== 'semua') {
+        $query->where('modul_soal', $request->modul_soal);
     }
 
     // filtering by jenjang

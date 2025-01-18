@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(editor => {
                 const editorInstance = editor;
-
+                
                 // Inisialisasi array untuk menyimpan URL gambar per editor
                 previousImageUrlsMap[index] = [];
 

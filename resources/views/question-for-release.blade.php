@@ -26,9 +26,9 @@
                         <div class="border-none">
                             <option value="" class="hidden">Filter modul</option>
                             <option value="semua">Lihat Semua</option>
-                            <option value="modul 1">Modul 1</option>
-                            <option value="modul 2">Modul 2</option>
-                            <option value="modul 3">Modul 3</option>
+                            <option value="Modul 1">Modul 1</option>
+                            <option value="Modul 2">Modul 2</option>
+                            <option value="Modul 3">Modul 3</option>
                         </div>
                     </select>
                     <select name="" id="questionJenjangFilter"
@@ -43,27 +43,23 @@
                     </select>
                 </div>
                 <form action="{{ route('questionForRelease.update') }}" method="POST">
-                    <div class="relative w-full h-16">
+                    <div class="relative w-full h-9">
                         <button
                             class="absolute right-14 bg-red-500 w-[150px] h-8 text-white font-bold rounded-lg text-xs hidden"
                             id="sendButton">Publish
-                            / unpublish</button>
+                            / Unpublish</button>
                     </div>
                     <div class="overflow-x-auto">
                         @csrf
                         @method('PUT')
-                        <table class="table mb-4 table-question">
+                        <table class="table table-question">
                             <thead class="thead-question" id="tableListTable">
                                 <tr>
                                     <th class="th-question">Action</th>
                                     <th class="th-question">Modul</th>
                                     <th class="th-question">Jenjang</th>
                                     <th class="th-question">Soal</th>
-                                    <th class="th-question">Pilihan A</th>
-                                    <th class="th-question">Pilihan B</th>
-                                    <th class="th-question">Pilihan C</th>
-                                    <th class="th-question">Pilihan D</th>
-                                    <th class="th-question">Pilihan E</th>
+                                    <th class="th-question">Jawaban_benar</th>
                                     <th class="th-question">Deskripsi_jawaban</th>
                                     <th class="th-question">Status</th>
                                     <th class="th-question">Lihat</th>

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class englishZoneMateri extends Model
 {
@@ -14,9 +14,10 @@ class englishZoneMateri extends Model
         'email',
         'status',
         'modul',
-        'judul',
+        'judul_modul',
         'pdf_file',
-        'video_materi',
+        'judul_video',
+        'link_video',
         'jenjang_murid'
     ];
 }

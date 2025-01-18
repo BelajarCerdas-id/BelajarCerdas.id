@@ -2,32 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class englishZoneSoal extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'nama_lengkap',
-        'status',
-        'modul',
+        'modul_soal',
         'jenjang',
+        'status',
         'soal',
-        'pilihan_A',
-        'bobot_A',
-        'pilihan_B',
-        'bobot_B',
-        'pilihan_C',
-        'bobot_C',
-        'pilihan_D',
-        'bobot_D',
-        'pilihan_E',
-        'bobot_E',
+        'option_pilihan',
+        'jawaban_pilihan',
         'tingkat_kesulitan',
-        'jawaban',
+        'jawaban_benar',
         'deskripsi_jawaban',
         'tipe_upload',
-        'status_soal',
+        'status_soal'
     ];
 }
