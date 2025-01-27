@@ -560,5 +560,41 @@ class webController extends Controller
         return view('question-for-release', compact('user','getSoal'));
     }
 
+    public function video($modul)
+    {
+        // Mengambil informasi pengguna dari sesi
+        $user = session('user');
+
+        // Jika pengguna belum login, arahkan ke halaman login
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        // Mengambil video berdasarkan modul dari database
+        $getVideo = englishZoneMateri::where('modul', $modul)->get();
+
+        // Memastikan ada video yang ditemukan untuk modul ini
+        if ($getVideo->isEmpty()) {
+            // Menangani jika tidak ada video yang ditemukan
+            return redirect()->back()->with('error', 'Tidak ada video ditemukan untuk modul ini.');
+        }
+
+        // Menyiapkan array untuk ID video
+        $videoIds = [];
+
+        // Loop untuk mendapatkan ID video dari URL
+        foreach ($getVideo as $video) {
+            $videoId = null;
+            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $video->link_video, $matches)) {
+                $videoId = $matches[1] ?? $matches[2];
+            }
+            $videoIds[] = $videoId;
+        }
+
+        // Mengirim data ke view
+        return view('english-zone-video', compact('user', 'getVideo', 'videoIds'));
+    }
+
+
 
 }

@@ -57,10 +57,11 @@
                                 <tr>
                                     <th class="th-question">Action</th>
                                     <th class="th-question">Modul</th>
-                                    <th class="th-question">Jenjang</th>
-                                    <th class="th-question">Soal</th>
-                                    <th class="th-question">Jawaban_benar</th>
-                                    <th class="th-question">Deskripsi_jawaban</th>
+                                    <th class="th-question">Levels</th>
+                                    <th class="th-question">Question</th>
+                                    <th class="th-question">Answer</th>
+                                    <th class="th-question">Description</th>
+                                    <th class="th-question">Create_date</th>
                                     <th class="th-question">Status</th>
                                     <th class="th-question">Lihat</th>
                                 </tr>

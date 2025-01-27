@@ -1,14 +1,19 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 :root {
-    --color-default: #013a63;
+    --color-default: #60b5cf;
+    --color-second: #013a63;
     --color-hover: #4f728e;
-    --color-second: #0067ac;
     --color-white: #fff;
     --color-body: #e4e9f7;
     --color-light: #e0e0e0;
 }
 
 body {
-    font-family: sans-serif;
+    font-family: open-sans;
     text-color: white;
 }
 
@@ -202,7 +207,7 @@ input[type="radio"]:checked a {
     min-height: 110vh;
     width: 250px;
     z-index: 99;
-    background-color: var(--color-default);
+    background-color: var(--color-second);
     transition: all 0.5s ease;
     position: fixed;
     top: 0;
@@ -288,7 +293,7 @@ input[type="radio"]:checked a {
     width: 100%;
     align-items: center;
     text-decoration: none;
-    background-color: var(--color-default);
+    background-color: var(--color-second);
     position: relative;
     transition: all 0.5s ease;
     z-index: 12;
@@ -310,7 +315,7 @@ input[type="radio"]:checked a {
 
 .sidebar-beranda .menu-murid a:hover::after {
     transform: scaleX(1);
-    color: var(--color-default);
+    color: var(--color-second);
 }
 
 .sidebar-beranda .menu-murid a .link_name,
@@ -341,7 +346,7 @@ input[type="radio"]:checked a {
 .sidebar-beranda .menu-murid a:hover .link_name,
 .sidebar-beranda .menu-murid a:hover i {
     transition: all 0.5s ease;
-    color: var(--color-default);
+    color: var(--color-second);
 }
 
 .sidebar-beranda.open .menu-murid a .link_name {
@@ -397,7 +402,7 @@ input[type="radio"]:checked a {
 
 .sidebar-beranda .menu-murid.active i,
 .sidebar-beranda .menu-murid.active span {
-    color: var(--color-default);
+    color: var(--color-second);
 }
 
 .home-beranda {
@@ -431,7 +436,7 @@ input[type="radio"]:checked a {
 
 .navbar-beranda header {
     font-size: 20px;
-    color: var(--color-default);
+    color: var(--color-second);
     font-weight: bold;
 }
 
@@ -450,7 +455,7 @@ input[type="radio"]:checked a {
     display: flex;
     align-items: center;
     gap: 10px;
-    background-color: var(--color-default);
+    background-color: var(--color-second);
     width: 220px;
     border-radius: 20px;
     padding: 6px 10px;
@@ -833,27 +838,6 @@ input[type="radio"]:checked + .checked-timeline {
     justify-content: space-between;
 }
 
-.content-video-list {
-    position: relative;
-    height: 0;
-    overflow: hidden;
-    padding: 0 40px 0 100px;
-    transition: all 0.5s;
-}
-
-.list-video {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background-color: #fff;
-    border: 0.1rem solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    width: 94%;
-    height: 60px;
-    padding: 0 20px;
-}
-
 .header-title {
     font-size: 13px;
     color: #0084e9;
@@ -1169,6 +1153,439 @@ input[type="radio"]:checked + .pilihanSoal .option {
 .list-item {
     list-style: none;
 }
+
+/* input radio (index) */
+.serviceOption {
+    position: relative;
+    padding: 10px 10px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: color 0.3s ease-out;
+    overflow: hidden;
+}
+
+.serviceOption::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: #60b5cf;
+    transition: left 0.5s ease-out, right 0.5s ease-out;
+    z-index: 0;
+}
+
+.icon-service {
+    padding: 10px;
+    background-color: #60b5cf;
+    border-radius: 50%;
+    color: white;
+}
+
+input[type="radio"]:checked + .serviceOption::before {
+    left: 0;
+    right: 0;
+}
+
+input[type="radio"]:checked + .serviceOption {
+    color: white;
+}
+
+input[type="radio"]:checked + .serviceOption .icon-service {
+    background-color: white;
+    color: #60b5cf;
+}
+
+.title-service,
+.icon-service {
+    position: relative;
+    z-index: 1; /* Supaya berada di atas animasi */
+}
+
+.logos {
+    overflow: hidden;
+    padding: 60px 0;
+    background: white;
+}
+
+.logo-slide img {
+    height: 50px;
+}
+
+.logo-slide {
+    white-space: nowrap;
+}
+
+/* image slider with swiper js (about) */
+.slider-container {
+    width: 100%;
+    max-width: 1000px;
+    overflow: hidden;
+    border: 1px solid blue;
+}
+
+.swiper-wrapper {
+    height: 100%;
+    margin-bottom: 25px;
+}
+.swiper {
+    width: 100%;
+    display: flex;
+}
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px;
+}
+.swiper-slide img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+.swiper-button-prev,
+.swiper-button-next {
+    position: absolute;
+    bottom: 0%;
+    color: #60b5cf;
+}
+
+.swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+}
+.swiper-pagination-bullet-active {
+    background: #60b5cf;
+}
+
+.pagination-slider {
+    position: absolute;
+    bottom: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 35px;
+    width: 100%;
+}
+
+.pagination-slider .swiper-button-next {
+    left: 71% !important;
+    transform: translateX(-100%) !important;
+}
+
+.pagination-slider .slider-arrow {
+    position: absolute;
+    top: 10px;
+    background: #60b5cf;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    left: 30%;
+    filter: drop-shadow(0px 8px 24px rgba(18, 28, 53, 0.1));
+}
+
+.pagination-slider .slider-arrow i {
+    color: white;
+}
+
+.pagination-slider .slider-arrow::after {
+    content: "";
+}
+
+.swiper-pagination {
+    width: 100px !important;
+    left: 50% !important;
+    bottom: 14px !important;
+}
+
+.pagination-slider .swiper-pagination .swiper-pagination-bullet {
+    background: #60b5cf;
+    width: 12px;
+    height: 12px;
+}
+
+.pagination-slider .swiper-pagination .swiper-pagination-bullet-active {
+    background: #60b5cf;
+    width: 12px;
+    height: 12px;
+}
+
+/* styling video like youtube (english-zone-video) */
+.video-controls,
+.video-timer,
+.options {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* css ini buat atur posisi semua yang ada di class nya */
+}
+
+.container-materi {
+    max-width: 1000px;
+    min-height: 535px;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #000;
+    border-radius: 5px;
+    overflow: hidden;
+    /* buat hilangin list style type yang ada pada icon */
+}
+
+.container-materi.fullscreen {
+    max-width: 100%;
+    width: 100%;
+}
+
+.wrapper-video {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -15px;
+    z-index: 1;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.08s ease;
+}
+
+.container-materi.show-controls .wrapper-video {
+    bottom: 0px;
+    opacity: 1;
+    pointer-events: auto;
+    transition: all 0.13s ease;
+}
+
+.wrapper-video:before {
+    content: "";
+    bottom: 0;
+    width: 100%;
+    z-index: -1;
+    position: absolute;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7)), transparent;
+    height: calc(100% + 35px);
+}
+
+.video-timeline {
+    height: 7px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.video-timeline .progress-area {
+    height: 3px;
+    position: relative;
+    background: rgba(255, 255, 255, 0.6);
+    /* buat bikin line lurus waktunya */
+}
+
+.progress-area span {
+    position: absolute;
+    left: 50%;
+    top: -25px;
+    font-size: 13px;
+    color: #fff;
+    transform: translateX(-50%);
+    /* buat sesuain play time nya biar di atas line biru */
+    /*sesuain line biru biar posisi nya sama kaya line abu" nya */
+}
+
+.progress-area .progress-bar {
+    width: 0%;
+    height: 100%;
+    background: #2289ff;
+    position: relative;
+    /* buat bikin line sesuai dengan play time nya */
+}
+
+.progress-area .progress-bar:before {
+    content: "";
+    right: 0;
+    top: 50%;
+    height: 13px;
+    width: 13px;
+    background: inherit;
+    position: absolute;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    /* buat bikin buletan biru nya */
+}
+
+.progress-area span,
+.progress-area .progress-bar:before {
+    display: none;
+    /* buat hilangin buletan biru nya */
+}
+
+.video-timeline:hover .progress-area span,
+.video-timeline:hover .progress-area .progress-bar:before {
+    display: block;
+    /* buat munculin buletan biru nya pada saat hover ke line nya */
+}
+
+.video-controls {
+    padding: 5px 20px 10px;
+}
+
+.video-controls .options {
+    width: 100%;
+    /* buat semua group icons nya punya lebar 100% */
+}
+
+.video-controls .options:first-child {
+    justify-content: flex-start;
+    /* buat midahin class yang dipilih (bagian kiri) ke start (pojok kiri) */
+}
+
+.video-controls .options:last-child {
+    justify-content: flex-end;
+    /* buat midahin class yang dipilih (bagian kanan) ke end (pojok kanan) */
+}
+
+.options button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    color: #fff;
+    background: none;
+    font-size: 19px;
+    cursor: pointer;
+}
+
+.options button :where(i, span) {
+    width: 100%;
+    height: 100%;
+    line-height: 40px;
+    /* buat sesuain posisi icon class nya */
+}
+
+.options input {
+    height: 4px;
+    max-width: 75px;
+}
+
+.options .video-timer {
+    font-size: 14px;
+    color: #efefef;
+    margin-left: 15px;
+}
+
+.video-timer .separator {
+    font-size: 16px;
+    margin: 0px 5px;
+    font-family: "Open sans";
+}
+
+.playback-content {
+    position: relative;
+}
+
+.playback-content .speed-options {
+    position: absolute;
+    background: #fff;
+    bottom: 40px;
+    left: -40px;
+    list-style: none;
+    width: 95px;
+    border-radius: 4px;
+    /* dari bawah sini buat bikin animasi hover speed options nya */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.13s ease;
+}
+
+.playback-content .speed-options.show {
+    opacity: 1;
+    pointer-events: auto;
+    /* buat bikin animasi hover pada speed options nya */
+}
+
+.speed-options li {
+    font-size: 14px;
+    padding: 5px 0 5px 15px;
+    cursor: pointer;
+}
+
+.speed-options li.active {
+    color: #fff;
+    background: #2289ff;
+}
+
+.container-materi .video {
+    min-height: 535px;
+    width: 100%;
+    height: 100%;
+}
+
+/* ------------------------ styling POkOK BAHASAN ---------------- */
+.wrapper-pokok-bahasan {
+    position: relative;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+}
+
+.wrapper-pokok-bahasan header {
+    font-size: 20px;
+    color: black;
+    font-weight: bold;
+    margin: 20px 15px;
+}
+
+.wrapper-content-pembahasan li {
+    list-style: none;
+}
+
+.wrapper-content-pembahasan a {
+    text-decoration: none;
+    color: black;
+}
+
+.pembahasan {
+    width: 93%;
+    cursor: pointer;
+    height: 70px;
+    margin-top: 30px;
+    margin-left: 15px;
+    padding-left: 13px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.line-pembahasan {
+    width: 93%;
+    height: 1px;
+    background-color: #824d74;
+    margin: 15px 15px;
+}
+
+.gambar-pembahasan {
+    width: 80px;
+    height: 45px;
+    padding: 20px;
+    margin-right: 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #824d74;
+}
+
+.gambar-pembahasan i {
+    color: #fff;
+}
+
+.listPokokBahasan .pembahasan:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+input[type="radio"]:checked + .listPokokBahasan .pembahasan {
+    background-color: var(--color-default);
+    color: white;
+}
 @media screen and (max-width: 900px) {
     #slide1:checked ~ #controls label:nth-child(2),
     #slide2:checked ~ #controls label:nth-child(3),
@@ -1187,6 +1604,7 @@ input[type="radio"]:checked + .pilihanSoal .option {
 }
 
 /* Media Screen */
+/* Media Screen sidebar */
 @media screen and (max-width: 768px) {
     .home-beranda {
         left: 0px;
@@ -1215,12 +1633,12 @@ input[type="radio"]:checked + .pilihanSoal .option {
         gap: 8px;
     }
     .navbar-phone .menu-murid:hover {
-        background-color: var(--color-default);
+        background-color: var(--color-second);
         color: white;
     }
 
     .menu-murid.active a {
-        background-color: var(--color-default);
+        background-color: var(--color-second);
         color: whitesmoke;
     }
 
@@ -1235,5 +1653,45 @@ input[type="radio"]:checked + .pilihanSoal .option {
 
     .sidebar-beranda.open ~ .home-beranda .content {
         display: none;
+    }
+}
+
+/* Media Screen arrow pagination (about) */
+@media (max-width: 1277px) {
+    .pagination-slider .swiper-button-next {
+        left: 75% !important;
+        transform: translateX(-70%) !important;
+    }
+    .pagination-slider .swiper-button-prev {
+        left: 31% !important;
+        transform: translateX(-70%) !important;
+    }
+}
+
+@media (max-width: 891px) {
+    .pagination-slider .swiper-button-next {
+        left: 85% !important;
+        transform: translateX(-70%) !important;
+        width: 2.5rem;
+        height: 2.5rem;
+        top: 15px;
+    }
+    .pagination-slider .swiper-button-prev {
+        left: 23% !important;
+        transform: translateX(-70%) !important;
+        width: 2.5rem;
+        height: 2.5rem;
+        top: 15px;
+    }
+}
+
+@media (max-width: 762px) {
+    .pagination-slider .swiper-button-next {
+        left: 75% !important;
+        transform: translateX(-80%) !important;
+    }
+    .pagination-slider .swiper-button-prev {
+        left: 27% !important;
+        transform: translateX(-20%) !important;
     }
 }

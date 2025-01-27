@@ -4,7 +4,7 @@
         <div class="sidebar-beranda hidden md:block">
             <div class="logo_details flex items-center justify-center">
                 <a href="/">
-                    <img src="../image/image8.png" alt="" class="w-2/5">
+                    <img src="../image/imageBC.png" alt="" class="w-2/5">
                 </a>
             </div>
             <div class="nav-list">
@@ -295,7 +295,7 @@
         </aside> --}}
         <aside class="sidebar-beranda-administrator hidden md:block">
             <div class="logo_details flex items-center justify-center">
-                <img src="image/image8.png" alt="" class="w-2/4">
+                <img src="image/logoBC.png" alt="" class="w-2/4">
             </div>
             <ul class="mt-8">
                 <li class="list-item">

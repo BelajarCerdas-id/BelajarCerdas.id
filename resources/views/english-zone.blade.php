@@ -5,7 +5,7 @@
     @if ($user->status === 'Siswa')
         <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
             <div class="content-beranda">
-                <div class="bg-[--color-default] w-full h-20 shadow-lg rounded-t-xl flex items-center pl-10 mb-10">
+                <div class="bg-[--color-second] w-full h-20 shadow-lg rounded-t-xl flex items-center pl-10 mb-10">
                     <div class="text-white font-bold flex items-center gap-4">
                         <i class="fa-solid fa-file-lines text-4xl"></i>
                         <span class="text-xl">English Zone</span>
@@ -81,7 +81,7 @@
     @elseif($user->status === 'Murid')
         <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
             <div class="content-beranda">
-                <div class="bg-[--color-default] w-full h-20 shadow-lg rounded-t-xl flex items-center pl-10 mb-10">
+                <div class="bg-[--color-second] w-full h-20 shadow-lg rounded-t-xl flex items-center pl-10 mb-10">
                     <div class="text-white font-bold flex items-center gap-4">
                         <i class="fa-solid fa-file-lines text-4xl"></i>
                         <span class="text-xl">English Zone</span>
@@ -151,32 +151,11 @@
                                                         </div>
                                                     </div>
                                                     <button class="toggleButton-videoList">
-                                                        <div>
+                                                        <a href="{{ route('englishZone.video', $item->modul) }}">
                                                             <span>Lihat Video</span>
                                                             <i class="fa-solid fa-chevron-right toggle-icon"></i>
-                                                        </div>
+                                                        </a>
                                                     </button>
-                                                </div>
-
-                                                <div class="content-video-list border-4 w-full absolute left-0">
-                                                    @foreach ($allMateri[$item->modul] as $video)
-                                                        <div class="">
-                                                            <a href="{{ $video->link_video }}" target="_blank">
-                                                                <div class="list-video">
-                                                                    <div>
-                                                                        <img src="image/youtube-logo.png"
-                                                                            class="w-[30px]" alt="YouTube Logo">
-                                                                    </div>
-                                                                    <div>
-                                                                        <span
-                                                                            class="leading-[40px] text-blue-500 hover:underline">
-                                                                            {{ $video->judul_video }}
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                    @endforeach
                                                 </div>
                                             </div>
                                             <div class="box-content-bab">

@@ -74,7 +74,7 @@
 @endif
 <div class="flex justify-center items-center min-h-screen">
     <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
-        <img src="image/image3.png" alt="Logo" class="mx-auto mb-6 w-2/5">
+        <img src="image/logoBC.png" alt="Logo" class="mx-auto mb-6 w-2/5">
         <h2 class="text-xl font-semibold text-gray-800 mb-6">Selamat Datang kembali</h2>
         <form action="{{ route('login') }}" method="POST" class="flex flex-col space-y-4">
             @csrf

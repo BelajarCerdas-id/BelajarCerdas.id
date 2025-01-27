@@ -42,6 +42,10 @@ Route::get('/histori', function () {
     return view('histori-pembelian');
 });
 
+Route::get('/about', function () {
+    return view('about');
+});
+
 // ROUTES CRUD
 Route::get('/crud', [CrudController::class, 'index'])->name('crud');
 Route::get('/crud/create', [CrudController::class, 'create'])->name('crud.create');
@@ -125,6 +129,7 @@ Route::put('question-for-release/update', [englishZoneController::class, 'update
 
 Route::get('/filter-questions', [filterController::class, 'questionStatus'])->name('filter.questions');
 
+Route::get('video/{modul}', [webController::class, 'video'])->name('englishZone.video');
 
 
 // ROUTES TESTING

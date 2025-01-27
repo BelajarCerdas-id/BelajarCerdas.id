@@ -12,9 +12,9 @@
 
 <body>
     <nav>
-        <div class="navbar fixed z-[999] bg-white shadow-lg text-white font-bold gap-4 flex justify-between px-10">
+        <div class="navbar fixed z-[999] bg-white shadow-lg text-[#60b5cf] font-bold gap-4 flex justify-between px-10">
             <a href="/" class="">
-                <img src="image/image3.png" class="w-[100px]">
+                <img src="image/logoBC.png" class="w-[80px]">
             </a>
 
             <div class="NavLink gap-2 hidden md:flex">
@@ -22,14 +22,15 @@
                 <x-nav-active href="/guru" :active="request()->is('guru')">Guru</x-nav-active>
                 <x-nav-active href="/sekolah" :active="request()->is('sekolah')">Sekolah</x-nav-active>
                 <x-nav-active href="/post" :active="request()->is('post')">Post</x-nav-active>
+                <x-nav-active href="/about" :active="request()->is('about')">About</x-nav-active>
             </div>
 
             <div class="auth gap-6 lg:flex md:hidden sm:hidden hidden">
                 <a href="daftar">
-                    <button class="bg-white px-8 py-2 rounded-lg text-[#468FAF] text-sm font-bold">Daftar</button>
+                    <button class="bg-[#60b5cf] px-8 py-2 rounded-lg text-white text-sm font-bold">Daftar</button>
                 </a>
                 <a href="/login">
-                    <button class="bg-white px-8 py-2 rounded-lg text-[#468FAF] text-sm font-bold">Login</button>
+                    <button class="bg-[#60b5cf] px-8 py-2 rounded-lg text-white text-sm font-bold">Login</button>
                 </a>
             </div>
 

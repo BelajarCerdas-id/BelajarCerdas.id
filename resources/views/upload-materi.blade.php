@@ -4,7 +4,7 @@
     @if ($user->status === 'Administrator')
         <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
             <div class="content-beranda">
-                <div class="bg-[--color-default] w-full h-20 shadow-lg rounded-t-xl flex items-center pl-10 mb-10">
+                <div class="bg-[--color-second] w-full h-20 shadow-lg rounded-t-xl flex items-center pl-10 mb-10">
                     <div class="text-white font-bold flex items-center gap-4">
                         <i class="fa-solid fa-file-lines text-4xl"></i>
                         <span class="text-xl">English Zone</span>

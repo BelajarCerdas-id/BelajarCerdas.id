@@ -17,6 +17,7 @@
      <title>Document</title>
      <link rel="shortcut icon" href="#" />
      <link rel="icon" href="image/koin.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" /> {{-- swiper js CDN --}}
  </head>
 
  <body>
@@ -27,6 +28,7 @@
          {{ $slot }}
      </div>
      {{-- <x-footer></x-footer> --}}
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script> {{-- swiper js CDN --}}
  </body>
 
  </html>

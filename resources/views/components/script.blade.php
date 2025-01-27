@@ -19,6 +19,12 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script> {{-- ckeditor 5 --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script> {{-- upload pdf --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> {{-- sweetAlert CDN --}}
+
+    {{-- link for icon video --}}
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <title>Document</title>
     <link rel="shortcut icon" href="#" />
     <link rel="icon" href="image/bc-favicon.ico">

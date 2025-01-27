@@ -1,53 +1,3 @@
-// document.getElementById('questionquestionStatusFilter').addEventListener('change', function() {
-//         const status_soal_soal = this.value;
-
-//         // Kirim permintaan AJAX
-//         fetch(`/filter-questions?status_soal_soal=${status_soal_soal}`, {
-//                 method: 'GET',
-//                 headers: {
-//                     'X-Requested-With': 'XMLHttpRequest', // Untuk mengidentifikasi permintaan AJAX
-//                 }
-//             })
-//             .then(response => response.json())
-//             .then(data => {
-//                 // Hapus data lama
-//                 const tbody = document.querySelector('.tbody-question');
-//                 tbody.innerHTML = '';
-
-//                 // Tambahkan data baru
-//                 data.data.forEach(application => {
-//                     const row = `
-//                     <tr class="text-xs">
-//                         <td class="td-question">
-//                             <input type="checkbox" name="id[]" value="${application.id}"
-//                                 onclick="showButton()" class="checkboxButton cursor-pointer">
-//                         </td>
-//                         <td class="td-question !text-start w-[80px]">${application.modul}</td>
-//                         <td class="td-question !text-start">${application.jenjang}</td>
-//                         <td class="td-question !text-start">${application.soal}</td>
-//                         <td class="td-question">${application.pilihan_A}</td>
-//                         <td class="td-question">${application.pilihan_B}</td>
-//                         <td class="td-question">${application.pilihan_C}</td>
-//                         <td class="td-question">${application.pilihan_D}</td>
-//                         <td class="td-question">${application.pilihan_E}</td>
-//                         <td class="td-question !text-start">${application.deskripsi_jawaban}</td>
-//                         <td class="td-question">
-//                             <button class="button-question text-white bg-${application.status_soal_soal === 'published' ? 'green-500' : 'gray-300'} p-2 w-27 rounded-lg font-bold cursor-default">
-//                                 ${application.status_soal_soal}
-//                             </button>
-//                         </td>
-//                         <td class="td-question cursor-pointer relative border-2">
-//                             <i class="fa-solid fa-ellipsis-vertical text-lg" onclick="toggleDropdown(event, this)"></i>
-//                         </td>
-//                     </tr>
-//                 `;
-//                     tbody.insertAdjacentHTML('beforeend', row);
-//                 });
-//             })
-//             .catch(error => console.error('Error:', error));
-//     });
-
-
 function fetchFilteredDataQuestions(status_soal, modul_soal, jenjang, page = 1) {
     $.ajax({
         url: '/filter-questions',
@@ -63,6 +13,26 @@ function fetchFilteredDataQuestions(status_soal, modul_soal, jenjang, page = 1) 
             $('.pagination-container-question').empty(); // Clear previous pagination links
             if (data.data.length > 0) {
                 $.each(data.data, function (index, application) {
+                    const formatDate = (dateString) => {
+                        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+                        const date = new Date(dateString);
+                        const dayName = days[date.getDay()];
+                        const day = date.getDate();
+                        const monthName = months[date.getMonth()];
+                        const year = date.getFullYear();
+
+                        return `${dayName}, ${day}-${monthName}-${year}`;
+                    };
+                    const timeFormatter = new Intl.DateTimeFormat('id-ID', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                    });
+
+                    const createdAt = application.created_at ? `${formatDate(application.created_at)}, ${timeFormatter.format(new Date(application.created_at))}` : 'Tanggal tidak tersedia';
+
                     $('#tableListQuestion').append(`
                         <tr class="text-xs">
                             <td class="td-question !text-center">
@@ -73,6 +43,7 @@ function fetchFilteredDataQuestions(status_soal, modul_soal, jenjang, page = 1) 
                             <td class="td-question">${application.soal}</td>
                             <td class="td-question !text-center">${application.jawaban_benar}</td>
                             <td class="td-question">${application.deskripsi_jawaban}</td>
+                            <td class="td-question">${createdAt}</td>
                             <td class="td-question !text-center">
                                 <button class="bg-${application.status_soal === 'published' ? 'green-500' : 'gray-300'} text-white p-2 rounded-lg">
                                     ${application.status_soal}

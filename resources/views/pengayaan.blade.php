@@ -3,7 +3,7 @@
 
 <div class="home-beranda">
     <div class="content-beranda">
-        @if ($getJawaban && $countNilai == 0)
+        @if ($getJawaban->isNotEmpty())
             <div class="flex items-center justify-between mr-16">
                 <button
                     class="bg-[--color-default] w-32 h-10  rounded-lg text-white font-bold flex items-center justify-center gap-2">
@@ -17,7 +17,7 @@
                     {{ $countNilai }} / 100
                 </div>
             </div>
-        @else
+        {{-- @else
             <div class="flex items-center justify-between mr-16">
                 <button
                     class="bg-[--color-default] w-32 h-10  rounded-lg text-white font-bold flex items-center justify-center gap-2">
@@ -30,7 +30,7 @@
                     <span class="font-bold">Nilai :</span>
                     {{ $countNilai }} / 100
                 </div>
-            </div>
+            </div> --}}
         @endif
         <div class="relative top-2">
             <form action="{{ route('englishZoneJawaban.store') }}" method="POST" class="form">
@@ -60,7 +60,23 @@
                             </div>
                             <div class="content-accordion">
                                 <div class="wrapper-content-accordion-soal">
-                                    @if ($countNilai > 0)
+                                    @if ($getJawaban->isEmpty())
+                                        @foreach ($dataSoal[$item->soal] as $key => $value)
+                                            <input type="radio" id="pilihan__{{ $key }}_{{ $soal }}" name="jawaban[{{ $loop->parent->iteration }}]"
+                                                value="{{ $value->jawaban_pilihan }}|{{ $value->option_pilihan }}"
+                                                onclick="checkJawaban('{{ $value->option_pilihan }}', '{{ $item->jawaban_benar }}', '{{ $getPoint }}', '{{ $soal }}')">
+                                            <label for="pilihan__{{ $key }}_{{ $soal }}" class="pilihanSoal pilihan_{{ $soal }}_{{ $key }}">
+                                                <div class="option gap-1">
+                                                    <span class="text-xs">{{ chr(65 + $key) }}</span>
+                                                    <span class="text-xs">{!! $value->jawaban_pilihan !!}</span>
+                                                </div>
+                                            </label>
+
+                                            <!-- Menambahkan input tersembunyi untuk nilai_jawaban -->
+                                            <input type="hidden" id="nilai_jawaban_{{ $soal }}_{{ $value->option_pilihan }}"
+                                                name="nilai_jawaban[{{ $loop->parent->iteration }}][{{ $value->option_pilihan }}]" value="0">
+                                        @endforeach
+                                    @else
                                         @foreach ($getJawaban as $dataJawaban)
                                             @foreach ($dataJawaban as $valueJawaban)
                                                 @foreach ($dataSoal[$item->soal] as $item)
@@ -96,35 +112,13 @@
                                                 @endforeach
                                             @endforeach
                                         @endforeach
-                                    @else
-                                        @foreach ($dataSoal[$item->soal] as $key => $value)
-                                            <input type="radio"
-                                                id="pilihan__{{ $key }}_{{ $soal }}"
-                                                name="jawaban[{{ $loop->parent->iteration }}]"
-                                                value="{{ $value->jawaban_pilihan }}|{{ $value->option_pilihan }}"
-                                                onclick="checkJawaban('{{ $value->option_pilihan }}', '{{ $item->jawaban_benar }}', '{{ $getPoint }}', '{{ $soal }}')">
-                                            <label for="pilihan__{{ $key }}_{{ $soal }}"
-                                                class="pilihanSoal pilihan_{{ $soal }}_{{ $key }}">
-                                                <div class="option gap-1">
-                                                    <span class="text-xs">{{ chr(65 + $key) }}</span>
-                                                    <span class="text-xs">{!! $value->jawaban_pilihan !!}</span>
-                                                </div>
-                                            </label>
-
-                                            <!-- Menambahkan input tersembunyi untuk nilai_jawaban -->
-                                            <input type="hidden"
-                                                id="nilai_jawaban_{{ $soal }}_{{ $value->option_pilihan }}"
-                                                name="nilai_jawaban[{{ $loop->parent->iteration }}][{{ $value->option_pilihan }}]"
-                                                value="0">
-                                        @endforeach
                                     @endif
-
                                 </div>
                             </div>
                         </div>
                     </div>
                 @endforeach
-                @if (!$countNilai)
+                @if ($getJawaban->isEmpty())
                     <div class="relative">
                         <div
                             class="bg-[--color-default] w-32 h-10 rounded-lg text-white font-bold flex items-center justify-center gap-2">
@@ -136,8 +130,6 @@
                         <button
                             class="absolute right-0 top-1 bg-red-500 w-[150px] h-8 text-white font-bold rounded-lg">Kirim</button>
                     </div>
-                @else
-                    {{--  text in here --}}
                 @endif
             </form>
         </div>
