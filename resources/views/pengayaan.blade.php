@@ -135,7 +135,7 @@
         </div>
     </div>
 </div>
-
+a
 <script src="../js/accordion-soal.js"></script> {{-- accordion script --}}
 {{-- <script>
     function checkJawaban(selectedOption, correctAnswer, point, soalId) {
