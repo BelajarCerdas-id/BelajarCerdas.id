@@ -6,6 +6,8 @@
 :root {
     --color-default: #60b5cf;
     --color-second: #013a63;
+    --color-three: #4189e0;
+    --color-four: #007bff;
     --color-hover: #4f728e;
     --color-white: #fff;
     --color-body: #e4e9f7;
@@ -809,12 +811,23 @@ input[type="radio"]:checked + .checked-timeline {
     margin-top: 20px;
 }
 
-.box-content-bab {
+.box-content-accordion {
     width: 100%;
     height: 90px;
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px 0 100px;
+}
+
+.box-content-accordion-modulSertifikat {
+    width: 100%;
+    height: 90px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -848,43 +861,12 @@ input[type="radio"]:checked + .checked-timeline {
     font-size: 18px;
 }
 
-.button-link-concept {
-    font-size: 18px;
-    color: #824d74;
-    cursor: pointer;
-    border: none;
-    outline: none;
-    background: none;
-}
-
-.button-link-concept a {
-    margin-right: 10px;
-}
-
-.button-link-ppt {
-    width: 95px;
+.button-link-materi,
+.button-link-videoList,
+.button-link-pengayaan {
+    width: 135px;
     height: 30px;
-    border: 1px solid #824d74;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    cursor: pointer;
-    transition: all 0.1s;
-    outline: none;
-    background: none;
-}
-
-.button-link-ppt a {
-    text-decoration: none;
-    position: absolute;
-}
-
-.button-link-ebook {
-    width: 125px;
-    height: 30px;
-    border: 1px solid #824d74;
+    border: 1px solid var(--color-three);
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -893,11 +875,30 @@ input[type="radio"]:checked + .checked-timeline {
     cursor: pointer;
     outline: none;
     background: none;
+    gap: 12px;
+    color: var(--color-three);
+    font-weight: bold;
 }
 
-.button-link-ppt:hover,
-.button-link-ebook:hover {
-    background: #824d74;
+.button-link-lock {
+    width: 155px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    cursor: pointer;
+    outline: none;
+    background: none;
+    gap: 12px;
+    color: var(--color-three);
+    font-weight: bold;
+}
+
+.button-link-materi:hover,
+.button-link-videoList:hover,
+.button-link-pengayaan:hover {
+    background: var(--color-three);
     color: whitesmoke;
     font-weight: bolder;
 }
@@ -1012,6 +1013,15 @@ input[type="radio"]:checked + .pilihanSoal .option {
     cursor: pointer;
 }
 
+.toggle-menu2 {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    cursor: pointer;
+    margin: 0 15px;
+}
+
 .toggle-menu i {
     font-size: 12px;
     transition: all 0.4s ease;
@@ -1036,7 +1046,8 @@ input[type="radio"]:checked + .pilihanSoal .option {
     cursor: pointer;
 }
 
-.content-dropdown {
+.content-dropdown,
+.list-content-dropdown {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
@@ -1049,18 +1060,39 @@ input[type="radio"]:checked + .pilihanSoal .option {
     flex-direction: column;
     padding: 8px 15px;
     transition: all 0.4s ease;
+    font-size: 13px;
+}
+
+.list-content-dropdown a {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 27px;
+    transition: all 0.4s ease;
+    font-size: 13px;
 }
 
 .content-dropdown a:hover {
     color: yellow;
 }
 
+/* open untuk dropdown utama */
 .list-item.show .content-dropdown {
     max-height: 200px;
     opacity: 1;
 }
 
+/* open untuk dropdown sub menu */
+.content-dropdown.show .list-content-dropdown {
+    max-height: 200px;
+    opacity: 1;
+}
+
 .list-item.show #rotate {
+    transform: rotate(-180deg);
+}
+
+/* rotate untuk dropdown sub menu */
+.content-dropdown.show #rotate2 {
     transform: rotate(-180deg);
 }
 

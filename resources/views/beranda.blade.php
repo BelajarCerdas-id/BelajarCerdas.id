@@ -445,7 +445,172 @@
             </div>
         </div>
     @elseif($user->status === 'Administrator')
-        fvbdf
+        <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
+            <div class="content-beranda">
+                <header class="text-3xl">
+                    Dashboard
+                </header>
+                <main>
+                    <section>
+                        <div class="grid grid-cols-12 gap-6">
+                            <div
+                                class="col-span-12 sm:col-span-6 xl:col-span-4 shadow-lg bg-white px-6 py-6 flex gap-4">
+                                <div
+                                    class="bg-[#A294F9] w-20 h-18 flex items-center justify-center rounded-xl text-white">
+                                    <i class="fa-solid fa-user text-2xl"></i>
+                                </div>
+                                <div class="flex flex-col leading-8">
+                                    <span class="">Murid B2C</span>
+                                    <span>{{ $getDataSiswa->count() }} Murid</span>
+                                </div>
+                            </div>
+                            <div
+                                class="col-span-12 sm:col-span-6 xl:col-span-4 shadow-lg bg-white px-6 py-6 flex gap-4">
+                                <div
+                                    class="bg-[--color-three] w-20 h-18 flex items-center justify-center rounded-xl text-white">
+                                    <i class="fa-solid fa-users text-2xl"></i>
+                                </div>
+                                <div class="flex flex-col leading-8">
+                                    <span class="">Murid B2B & B2G</span>
+                                    <span>{{ $getDataMurid->count() }} Murid</span>
+                                </div>
+                            </div>
+                            <div
+                                class="col-span-12 sm:col-span-6 xl:col-span-4 shadow-lg bg-white px-6 py-6 flex gap-4">
+                                <div
+                                    class="bg-[#79D7BE] w-20 h-18 flex items-center justify-center rounded-xl text-white">
+                                    <i class="fa-solid fa-school text-2xl"></i>
+                                </div>
+                                <div class="flex flex-col leading-8">
+                                    <span class="">Sekolah Terdaftar</span>
+                                    <span>{{ $getDataMurid->count() }} Sekolah</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!---- chart TANYA harian  ----->
+                    <div class="grid grid-cols-12 gap-6">
+                        <div class="col-span-12 shadow-lg p-4">
+                            <div class="!h-[520px]">
+                                <canvas id="myChart-days"
+                                    data-chart-tanya-harian="{{ route('getChartDataTanyaHarian') }}">
+                                </canvas>
+                            </div>
+                            <div class="flex justify-center gap-10 mt-4">
+                                <button id="prevMonth"
+                                    class="w-10 h-10 flex items-center justify-center bg-[--color-three] rounded-full text-white">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                </button>
+
+                                <span id="monthDisplay" class="mt-2"></span>
+
+                                <button id="nextMonth"
+                                    class="w-10 h-10 flex items-center justify-center bg-[--color-three] rounded-full text-white">
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!---- chart TANYA bulanan  ----->
+                    <div class="grid grid-cols-12 gap-6 mt-20">
+                        <div class="col-span-12 xl:col-span-6 bg-white shadow-lg p-4">
+
+                            <canvas id="myChart-months"
+                                data-chart-tanya-bulanan="{{ route('getChartDataTanyaBulanan') }}">
+                            </canvas>
+
+                            <div class="flex justify-center gap-10 mt-4">
+                                <button id="prevYear"
+                                    class="w-10 h-10 flex items-center justify-center bg-[--color-three] rounded-full text-white">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                </button>
+
+                                <span id="yearDisplay" class="mt-2"></span>
+
+                                <button id="nextYear"
+                                    class="w-10 h-10 flex items-center justify-center bg-[--color-three] rounded-full text-white">
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!---- chart TANYA tahunan  ----->
+                        <div class="col-span-12 xl:col-span-6 bg-white shadow-lg p-4">
+                            <canvas id="myChart-years"
+                                data-chart-tanya-tahunan="{{ route('getChartDataTanyaTahunan') }}">
+                            </canvas>
+                        </div>
+                    </div>
+                    <!---- list mentor active & table laporan pengguna TANYA terbanyak  ----->
+                    <section>
+                        <div class="grid grid-cols-12 gap-6 rounded-lg mt-20">
+                            <div
+                                class="col-span-12 xl:col-span-4 h-40 bg-white shadow-lg flex flex-col items-center justify-center leading-10">
+                                <span>Jumlah Mentor Aktif</span>
+                                <span
+                                    class="text-[--color-default] font-bold text-2xl">{{ $countDataMentor->count() }}</span>
+                            </div>
+                            <div class="overflow-x-auto col-span-12 xl:col-span-8 bg-white shadow-lg p-6">
+                                <div class="flex justify-between border-b-[1px] border-gray-400">
+                                    <span class="">Laporan Pengguna Tanya Terbanyak</span>
+                                    <span>{{ $countDataTanyaAll->count() }}</span>
+                                </div>
+                                <table class="table mt-4">
+                                    <!-- head -->
+                                    <thead>
+                                        <tr>
+                                            <th class="th-question">No</th>
+                                            <th class="th-question">Nama Lengkap</th>
+                                            <th class="th-question">Email</th>
+                                            <th class="th-question">No.Hp</th>
+                                            <th class="th-question">Kelas</th>
+                                            <th class="th-question">Asal Sekolah</th>
+                                            <th class="th-question">Total BerTANYA</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($sortedSiswa as $value)
+                                            <tr>
+                                                <td class="td-question !text-center">
+                                                    {{ $loop->iteration === 1 ? '1st' : ($loop->iteration === 2 ? '2nd' : ($loop->iteration === 3 ? '3rd' : $loop->iteration)) }}
+                                                </td>
+                                                <td class="td-question">
+                                                    {{ $value->nama_lengkap }}
+                                                </td>
+                                                <td class="td-question">
+                                                    {{ $value->email }}
+                                                </td>
+                                                <td class="td-question !text-center">
+                                                    {{ $value->no_hp }}
+                                                </td>
+                                                <td class="td-question !text-center">
+                                                    {{ $value->kelas }}
+                                                </td>
+                                                <td class="td-question">
+                                                    {{ $value->sekolah }}
+                                                </td>
+                                                <td class="td-question !text-center">
+                                                    {{ $value->jumlah_tanya }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+            </div>
+        </div>
+    @elseif($user->status === 'Sales')
+        <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
+            <div class="content-beranda"></div>
+        </div>
+    @elseif($user->status === 'Admin Sales')
+        <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
+            <div class="content-beranda"></div>
+        </div>
     @else
         <div class="flex flex-col min-h-screen items-center justify-center">
             <p>ALERT SEMENTARA</p>
@@ -458,7 +623,7 @@
 
 
 <script src="js/tanya-TL-ajax.js"></script>
-
+<script src="js/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const menuItems = document.querySelectorAll('.menu-murid a');

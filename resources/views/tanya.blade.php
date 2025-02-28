@@ -1,7 +1,7 @@
 @include('components/sidebar_beranda')
 @extends('components/sidebar_beranda_mobile')
 @if (isset($user))
-    @if ($user->status === 'Siswa')
+    @if ($user->status === 'Siswa' or $user->status === 'Murid')
         <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
             <div class="content-beranda">
                 <div class="bg-[--color-second] w-full h-20 shadow-lg rounded-t-xl flex items-center pl-10 mb-10">
@@ -41,83 +41,81 @@
                                 <input type="text" name="fase" value="{{ $user->fase }}">
                                 <input type="text" name="kelas" value="{{ $user->kelas }}">
                                 <input type="text" name="no_hp" value="{{ $user->no_hp }}">
-                                {{-- <input type="text" name="jam_tanya" id="jam_tanya"> --}}
                             </div>
-                            <div class="flex lg:gap-12 gap-4 flex-col lg:flex-row">
-                                <div class="w-full">
+                            <!--- Option kelas & Mata pelajaran ----->
+                            <div class="grid grid-cols-12 gap-8">
+                                <!--- Option kelas ----->
+                                <div class="col-span-12 lg:col-span-6 flex flex-col">
                                     <label class="mb-2 text-sm">Kelas<sup class="text-red-500 pl-1">&#42;</sup></label>
-                                    @if (isset($user))
-                                        @if ($user->fase === 'Fase A')
-                                            <select name="kelas" id="id_kelas"
-                                                class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 {{ $errors->has('kelas') ? 'border-[1px] border-red-500' : '' }}">
-                                                <option value="" class="hidden">Pilih Kelas</option>
-                                                <option value="Kelas 1"
-                                                    {{ @old('kelas') === 'Kelas 1' ? 'selected' : '' }}>
-                                                    Kelas 1
-                                                </option>
-                                                <option value="Kelas 2"
-                                                    {{ @old('kelas') === 'Kelas 2' ? 'selected' : '' }}>
-                                                    Kelas 2
-                                                </option>
-                                            </select>
-                                        @elseif($user->fase === 'Fase F+')
-                                            <select name="kelas" id="id_kelas"
-                                                class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 {{ $errors->has('kelas') ? 'border-[1px] border-red-500' : '' }}">
-                                                <option value="" class="hidden">Pilih Kelas</option>
-                                                <option value="Kelas 11"
-                                                    {{ @old('kelas') === 'Kelas 11' ? 'selected' : '' }}>
-                                                    Kelas 11
-                                                </option>
-                                                <option value="Kelas 12"
-                                                    {{ @old('kelas') === 'Kelas 12' ? 'selected' : '' }}>
-                                                    Kelas 12
-                                                </option>
-                                            </select>
-                                        @else
-                                        @endif
+                                    @if ($user->fase === 'Fase A')
+                                        <select name="kelas" id="id_kelas"
+                                            class="bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer {{ $errors->has('kelas') ? 'border-[1px] border-red-400 shadow-[0_0_10px_0_red]' : '' }}">
+                                            <option value="" class="hidden">Pilih Kelas</option>
+                                            <option value="Kelas 1" {{ @old('kelas') === 'Kelas 1' ? 'selected' : '' }}>
+                                                Kelas 1
+                                            </option>
+                                            <option value="Kelas 2" {{ @old('kelas') === 'Kelas 2' ? 'selected' : '' }}>
+                                                Kelas 2
+                                            </option>
+                                        </select>
+                                    @elseif($user->fase === 'Fase F+')
+                                        <select name="kelas" id="id_kelas"
+                                            class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 {{ $errors->has('kelas') ? 'border-[1px] border-red-500' : '' }}">
+                                            <option value="" class="hidden">Pilih Kelas</option>
+                                            <option value="Kelas 11"
+                                                {{ @old('kelas') === 'Kelas 11' ? 'selected' : '' }}>
+                                                Kelas 11
+                                            </option>
+                                            <option value="Kelas 12"
+                                                {{ @old('kelas') === 'Kelas 12' ? 'selected' : '' }}>
+                                                Kelas 12
+                                            </option>
+                                        </select>
                                     @else
-                                        <p>Tidak Ada Akses.</p>
                                     @endif
                                     @error('kelas')
                                         <span class="text-red-500 font-bold text-sm mt-1 pl-2">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="w-full">
+                                <!--- Option Mata pelajaran ----->
+                                <div class="col-span-12 lg:col-span-6 flex flex-col">
                                     <label class="mb-2 text-sm">Mata Pelajaran<sup
                                             class="text-red-500 pl-1">&#42;</sup></label>
                                     <select name="mapel" id="id_mapel"
-                                        class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 {{ $errors->has('mapel') ? 'border-[1px] border-red-500' : '' }}">
+                                        class="bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer {{ $errors->has('mapel') ? 'border-[1px] border-red-400 shadow-[0_0_10px_0_red]' : '' }}">
                                         <option value="" class="hidden">Pilih mata pelajaran</option>
                                     </select>
                                     @error('mapel')
                                         <span class="text-red-500 font-bold text-sm mt-1 pl-2">{{ $message }}</span>
                                     @enderror
                                 </div>
+                                <!--- Option Bab ----->
+                                <div class="col-span-12 lg:col-span-6 flex flex-col">
+                                    <label class="mb-2 text-sm">Bab<sup class="text-red-500 pl-1">&#42;</sup></label>
+                                    <select name="bab" id="id_bab"
+                                        class="bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer {{ $errors->has('mapel') ? 'border-[1px] border-red-400 shadow-[0_0_10px_0_red]' : '' }}">
+                                        <option value="" class="hidden">Pilih Bab</option>
+                                    </select>
+                                    @error('bab')
+                                        <span class="text-red-500 font-bold text-sm mt-1 pl-2">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
-                            <div class="lg:w-2/4 w-full lg:pr-5 my-4">
-                                <label class="mb-2 text-sm">Bab<sup class="text-red-500 pl-1">&#42;</sup></label>
-                                <select name="bab" id="id_bab"
-                                    class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 {{ $errors->has('bab') ? 'border-[1px] border-red-500' : '' }}">
-                                    <option value="" class="hidden">Pilih Bab</option>
-                                </select>
-                                @error('bab')
-                                    <span class="text-red-500 font-bold text-sm mt-1 pl-2">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="flex lg:gap-10 gap-4 flex-col lg:flex-row">
-                                <div class="w-full h-44 relative">
+                            <!--- Kolom Pertanyaan & Upload image pertanyaan ----->
+                            <div class="grid grid-cols-12 gap-8 my-8">
+                                <!--- Kolom Pertanyaan ----->
+                                <div class="col-span-12 lg:col-span-6 flex flex-col h-44 relative">
                                     <label class="mb-2 text-sm">Pertanyaan<sup
                                             class="text-red-500 pl-1">&#42;</sup></label>
                                     <textarea name="pertanyaan"
-                                        class="w-full h-20 bg-gray-100 outline-none rounded-xl text-xs p-2 resize-none mt-2 {{ $errors->has('pertanyaan') ? 'border-[1px] border-red-500' : '' }}"
+                                        class="p-2 resize-none bg-white shadow-lg h-32 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer {{ $errors->has('pertanyaan') ? 'border-[1px] border-red-400 shadow-[0_0_10px_0_red]' : '' }}"
                                         placeholder="Masukkan Pertanyaan">{{ @old('pertanyaan') }}</textarea>
-                                    <button
-                                        class="absolute right-0 bottom-0 bg-red-500 w-[150px] h-8 text-white font-bold rounded-lg">Kirim</button>
                                     @error('pertanyaan')
                                         <span class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="w-full">
+                                <!--- Upload image pertanyaan ----->
+                                <div class="col-span-12 lg:col-span-6">
                                     <div class="w-2/4 h-auto">
                                         <span class="text-sm">Upload Gambar<sup>&#42;Optional</sup></span>
                                         <div class="text-xs mt-1">
@@ -135,9 +133,8 @@
                                             </div>
                                             <div class="text-icon"></div>
                                         </div>
-
                                         <div
-                                            class="content-upload w-[200px] h-10 bg-red-500 text-white font-bold rounded-lg mt-6">
+                                            class="content-upload w-[200px] h-10 bg-[#4189e0] hover:bg-blue-500 text-white font-bold rounded-lg mt-6">
                                             <label for="file-upload"
                                                 class="w-full h-full flex justify-center items-center cursor-pointer gap-2">
                                                 <i class="fa-solid fa-arrow-up-from-bracket"></i>
@@ -155,6 +152,13 @@
                                         @enderror
                                     </div>
                                 </div>
+                            </div>
+                            <!--- Button form ----->
+                            <div class="flex justify-end mt-8">
+                                <button
+                                    class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all">
+                                    Kirim
+                                </button>
                             </div>
                         </form>
                         <!-- Modal for displaying the image -->

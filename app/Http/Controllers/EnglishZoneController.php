@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Crud;
+use App\Models\modulLock;
 use App\Models\englishZone;
 use Illuminate\Http\Request;
 use App\Models\englishZoneSoal;
@@ -26,7 +27,18 @@ class EnglishZoneController extends Controller
         // Group materi berdasarkan modul
         $groupedMateri = englishZoneMateri::where('jenjang_murid', $user->kode_jenjang_murid)->get()->groupBy('modul');
 
-    // Ambil data utama per modul (satu per modul) dan semua data materi lainnya
+        $completedModules = modulLock::where('nama_lengkap', $user->nama_lengkap)->where('is_completed', true)->pluck('module_id')->toArray();
+
+        // Tandai module yang terkunci
+        foreach ($groupedMateri as $modul => $materis) {
+            $mainMateri = $materis->first(); // Ambil satu materi utama dari setiap modul
+
+            $mainMateri->is_locked = !in_array($mainMateri->id, $completedModules) &&
+            ($mainMateri->modul !== 'Modul 1' && !in_array($mainMateri->id - 1, $completedModules));
+            // Jika modul bukan Modul 1, tandai modul sebelumnya sebagai terkunci jika belum diselesaikan)
+        }
+
+        // Ambil data utama per modul (satu per modul) dan semua data materi lainnya
         $mainMateri = $groupedMateri->map(fn($materis) => $materis->first()); // Data utama tiap modul
         $allMateri = $groupedMateri; // Semua data materi, termasuk video
         $getSoal = englishZoneSoal::all();
@@ -44,7 +56,7 @@ class EnglishZoneController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function uploadMateriStore(Request $request)
     {
         $request->validate([
             'nama_lengkap' => 'required',
@@ -55,17 +67,32 @@ class EnglishZoneController extends Controller
             'judul_video.*' => 'required',
             'link_video.*' => 'required',
             'jenjang_murid' => 'required',
-            'pdf_file' => 'required|max:10000',
+            'materi_pdf' => 'required|max:10000',
+            'modul_download' => $request->modul === 'Final Exam' ? 'required|max:10000' : 'nullable|max:10000',
         ], [
             'modul.required' => 'Harap pilih modul!',
             'jenjang_murid.required' => 'Harap pilih jenjang!',
+            'materi_pdf.required' => 'Harap upload pdf!',
+            'materi_pdf.max' => 'Ukuran file melebihi ukuran maksimal yang ditentukan!',
+            'modul_download.required' => 'Harap upload modul!',
+            'modul_download.max' => 'Ukuran file melebihi ukuran maksimal yang ditentukan!',
+            'judul_modul' => 'Harap isi judul modul!',
             'judul_video.*.required' => 'Judul video harus diisi!',
             'link_video.*.required' => 'Link video harus diisi!',
         ]);
 
-        if ($request->hasFile('pdf_file')) {
-            $filename = time() . $request->file('pdf_file')->getClientOriginalName();
-            $request->file('pdf_file')->move(public_path('englishZone_pdf'), $filename);
+        // Inisialisasi variabel untuk menyimpan nama file certificate
+        $filename = null; // Inisialisasi variabel agar tidak undefined
+        $modulDownload = null;
+
+        if ($request->hasFile('materi_pdf')) {
+            $filename = time() . $request->file('materi_pdf')->getClientOriginalName();
+            $request->file('materi_pdf')->move(public_path('englishZone_pdf'), $filename);
+        }
+
+        if ($request->hasFile('modul_download')) {
+            $modulDownload = time() . $request->file('modul_download')->getClientOriginalName();
+            $request->file('modul_download')->move(public_path('englishZone_modul'), $modulDownload);
         }
 
         $judul_video = $request->input('judul_video');
@@ -78,7 +105,8 @@ class EnglishZoneController extends Controller
                 'status' => $request->status,
                 'modul' => $request->modul,
                 'judul_modul' => $request->judul_modul,
-                'pdf_file' => $filename,
+                'materi_pdf' => $filename,
+                'modul_download' => $modulDownload,
                 'judul_video' => $value,
                 'link_video' => $link_video[$index],
                 'jenjang_murid' => $request->jenjang_murid,
@@ -185,7 +213,7 @@ class EnglishZoneController extends Controller
     }
 
     // controller upload soal (administrator)
-    public function uploadSoal(Request $request) {
+    public function uploadSoalStore(Request $request) {
         $request->validate([
             'nama_lengkap' => 'required',
             'modul_soal' => 'required',
@@ -291,8 +319,17 @@ class EnglishZoneController extends Controller
     // }
 
     // controller upload jawaban soal pg menggunakan benar salah (dapat point atau tidak) (murid)
-    public function uploadJawaban(Request $request)
+    public function uploadJawaban(Request $request, $id)
     {
+        $user = session('user');
+        $module = englishZoneMateri::findOrFail($id);
+
+        // update status module sebagai selesai
+        modulLock::updateOrCreate(
+            ['nama_lengkap' => $user->nama_lengkap, 'module_id' => $module->id],
+            ['is_completed' => true]
+        );
+
         $jawaban = $request->input('jawaban'); // Jawaban user
         $nomorSoal = $request->input('no_soal'); // Nomor soal
         $nilaiJawaban = $request->input('nilai_jawaban'); // Nilai jawaban user
@@ -338,33 +375,96 @@ class EnglishZoneController extends Controller
         return redirect()->back()->with('success', 'Jawaban berhasil disimpan.');
     }
 
+    public function pengayaan($modul, $id) {
+        // lalu controller akan menerima parameter modul tadi dan diproses pada function pengayaan
 
-    // public function uploadJawaban(Request $request)
-    // {
-    //     $jawaban = $request->input('jawaban'); // Jawaban user
-    //     $nilaiJawaban = $request->input('nilai_jawaban'); // Nilai jawaban user
+        $user = session('user');
+        if(!isset($user)) {
+            return redirect('/login');
+        }
 
-    //     foreach ($jawaban as $noSoal => $value) {
-    //         foreach ($nilaiJawaban[$noSoal] as $optionPilihan => $nilai) {
-    //             [$jawabanPilihan, $pilihanGanda] = explode('|', $value);
-    //             englishZoneJawaban::create([
-    //                 'nama_lengkap' => $request->nama_lengkap,
-    //                 'email' => $request->email,
-    //                 'sekolah' => $request->sekolah,
-    //                 'kelas' => $request->kelas,
-    //                 'status' => $request->status,
-    //                 'jenjang_murid' => $request->jenjang_murid,
-    //                 'modul' => $request->modul,
-    //                 'id_soal' => $request->id_soal,
-    //                  'jawaban' => $jawabanPilihan, // Isi jawaban yang dipilih user
-    //                 'pilihan_ganda' => $pilihanGanda, // Opsi yang dipilih
-    //                 'nilai_jawaban' => $nilai, // Nilai jawaban
-    //                 'no_soal' => $noSoal,
-    //             ]);
-    //         }
-    //     }
-    //     return redirect()->back();
-    // }
+        $module = englishZoneMateri::findOrFail($id);
+
+        // terakhir, $getSoal akan mengambil semua data yang sesuai dengan column modul englishZoneSoal dengan operator $modul yang berasal dari parameter url
+        // cara ini hampir sama dengan metode view pada crud find($id), hanya saja ini menggunakan kondisi where, karena melakukan relasi antara column modul englishZoneSoal dengan column modul englishZoneMateri
+        // get data untuk soal pilihan ganda
+        $groupedSoal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang', $user->kode_jenjang_murid)->inRandomOrder()->get()->groupBy('soal');
+        $getSoal = $groupedSoal->map(fn($materis) => $materis->first()); // Data utama tiap modul
+        $dataSoal = $groupedSoal;
+
+        $getDataSoal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang', $user->kode_jenjang_murid)->get();
+        // mengambil semua data yang id_soal (englishZoneJawaban) dengan id (englishZoneSoal) sesuai.
+        $getJawaban = englishZoneJawaban::whereIn('id_soal', $getDataSoal->pluck('id'))->where('email', $user->email)->get()->groupBy('id_soal');
+
+        // menghitung nilai(poin) setiap soal pilihan ganda
+        $soal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang', $user->kode_jenjang_murid)->get()->groupBy('soal');
+        $jumlahSoal = $soal->count();
+        $totalNilai = 100;
+        $getPoint = $jumlahSoal > 0 ? $totalNilai / $jumlahSoal : 0;
+
+        $getNilai = englishZoneJawaban::where('email', $user->email)->where('modul', $modul)->get();
+        $countNilai = $getNilai->sum('nilai_jawaban');
+
+        return view('pengayaan', compact('user', 'getSoal', 'dataSoal', 'getJawaban', 'totalNilai', 'getPoint', 'countNilai', 'module'));
+    }
+
+    public function questionForRelease()
+    {
+        $user = session('user');
+
+        if(!isset($user)) {
+            return redirect('/login');
+        }
+
+        $getSoal = englishZoneSoal::paginate(20);
+
+        return view('question-for-release', compact('user','getSoal'));
+    }
+
+    public function video($modul)
+    {
+        // Mengambil informasi pengguna dari sesi
+        $user = session('user');
+
+        // Jika pengguna belum login, arahkan ke halaman login
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        // Mengambil video berdasarkan modul dari database
+        $getVideo = englishZoneMateri::where('modul', $modul)->get();
+
+        // Memastikan ada video yang ditemukan untuk modul ini
+        if ($getVideo->isEmpty()) {
+            // Menangani jika tidak ada video yang ditemukan
+            return redirect()->back()->with('error', 'Tidak ada video ditemukan untuk modul ini.');
+        }
+
+        // Menyiapkan array untuk ID video
+        $videoIds = [];
+
+        // Loop untuk mendapatkan ID video dari URL
+        foreach ($getVideo as $video) {
+            $videoId = null;
+            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $video->link_video, $matches)) {
+                $videoId = $matches[1] ?? $matches[2];
+            }
+            $videoIds[] = $videoId;
+        }
+
+        // Mengirim data ke view
+        return view('english-zone-video', compact('user', 'getVideo', 'videoIds'));
+    }
+
+    public function certificate()
+    {
+        $user = session('user');
+        if(!isset($user)) {
+            return redirect('/login');
+        }
+
+        return view('certif', compact('user'));
+    }
 
 
 // controller upload jawaban soal pg menggunakan bobot setiap pilihan ganda (murid)

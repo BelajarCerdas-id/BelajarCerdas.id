@@ -32,12 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 //     shouldNotGroupWhenFull: true // ini true agar ketika lebar editor sudah tidak sesuai maka toolbar akan dibungkus ke dalam baris baru (simple nya responsif)
                 // }
                 toolbar: {
-                    shouldNotGroupWhenFull: true
-                }
+                    shouldNotGroupWhenFull: true,
+                },
             })
             .then(editor => {
                 const editorInstance = editor;
-                
+
                 // Inisialisasi array untuk menyimpan URL gambar per editor
                 previousImageUrlsMap[index] = [];
 

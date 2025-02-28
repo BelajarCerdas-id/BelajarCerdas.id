@@ -1,12 +1,12 @@
 @include('components/sidebar_beranda')
 @extends('components/sidebar_beranda_mobile')
 
-<div class="home-beranda">
+<div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
     <div class="content-beranda">
         @if ($getJawaban->isNotEmpty())
             <div class="flex items-center justify-between mr-16">
                 <button
-                    class="bg-[--color-default] w-32 h-10  rounded-lg text-white font-bold flex items-center justify-center gap-2">
+                    class="bg-[--color-second] w-32 h-10  rounded-lg text-white font-bold flex items-center justify-center gap-2">
                     <a href="{{ route('englishZone.index') }}">
                         <i class="fas fa-chevron-left"></i>
                         <span>Kembali</span>
@@ -17,23 +17,9 @@
                     {{ $countNilai }} / 100
                 </div>
             </div>
-        {{-- @else
-            <div class="flex items-center justify-between mr-16">
-                <button
-                    class="bg-[--color-default] w-32 h-10  rounded-lg text-white font-bold flex items-center justify-center gap-2">
-                    <a href="{{ route('englishZone.index') }}">
-                        <i class="fas fa-chevron-left"></i>
-                        <span>Kembali</span>
-                    </a>
-                </button>
-                <div class="">
-                    <span class="font-bold">Nilai :</span>
-                    {{ $countNilai }} / 100
-                </div>
-            </div> --}}
         @endif
         <div class="relative top-2">
-            <form action="{{ route('englishZoneJawaban.store') }}" method="POST" class="form">
+            <form action="{{ route('englishZoneJawaban.store', $module->id) }}" method="POST" class="form">
                 @csrf
                 <div class="hidden">
                     <input type="text" name="nama_lengkap" value="{{ $user->nama_lengkap }}">
@@ -62,10 +48,13 @@
                                 <div class="wrapper-content-accordion-soal">
                                     @if ($getJawaban->isEmpty())
                                         @foreach ($dataSoal[$item->soal] as $key => $value)
-                                            <input type="radio" id="pilihan__{{ $key }}_{{ $soal }}" name="jawaban[{{ $loop->parent->iteration }}]"
+                                            <input type="radio"
+                                                id="pilihan__{{ $key }}_{{ $soal }}"
+                                                name="jawaban[{{ $loop->parent->iteration }}]"
                                                 value="{{ $value->jawaban_pilihan }}|{{ $value->option_pilihan }}"
                                                 onclick="checkJawaban('{{ $value->option_pilihan }}', '{{ $item->jawaban_benar }}', '{{ $getPoint }}', '{{ $soal }}')">
-                                            <label for="pilihan__{{ $key }}_{{ $soal }}" class="pilihanSoal pilihan_{{ $soal }}_{{ $key }}">
+                                            <label for="pilihan__{{ $key }}_{{ $soal }}"
+                                                class="pilihanSoal pilihan_{{ $soal }}_{{ $key }}">
                                                 <div class="option gap-1">
                                                     <span class="text-xs">{{ chr(65 + $key) }}</span>
                                                     <span class="text-xs">{!! $value->jawaban_pilihan !!}</span>
@@ -73,8 +62,10 @@
                                             </label>
 
                                             <!-- Menambahkan input tersembunyi untuk nilai_jawaban -->
-                                            <input type="hidden" id="nilai_jawaban_{{ $soal }}_{{ $value->option_pilihan }}"
-                                                name="nilai_jawaban[{{ $loop->parent->iteration }}][{{ $value->option_pilihan }}]" value="0">
+                                            <input type="hidden"
+                                                id="nilai_jawaban_{{ $soal }}_{{ $value->option_pilihan }}"
+                                                name="nilai_jawaban[{{ $loop->parent->iteration }}][{{ $value->option_pilihan }}]"
+                                                value="0">
                                         @endforeach
                                     @else
                                         @foreach ($getJawaban as $dataJawaban)
@@ -121,22 +112,22 @@
                 @if ($getJawaban->isEmpty())
                     <div class="relative">
                         <div
-                            class="bg-[--color-default] w-32 h-10 rounded-lg text-white font-bold flex items-center justify-center gap-2">
+                            class="bg-[--color-second] w-32 h-10 rounded-lg text-white font-bold flex items-center justify-center gap-2">
                             <a href="{{ route('englishZone.index') }}">
                                 <i class="fas fa-chevron-left"></i>
                                 <span>Kembali</span>
                             </a>
                         </div>
                         <button
-                            class="absolute right-0 top-1 bg-red-500 w-[150px] h-8 text-white font-bold rounded-lg">Kirim</button>
+                            class="absolute right-0 top-1 bg-[#4189e0] hover:bg-blue-500 w-[150px] h-8 text-white font-bold rounded-lg">Kirim</button>
                     </div>
                 @endif
             </form>
         </div>
     </div>
 </div>
-a
-<script src="../js/accordion-soal.js"></script> {{-- accordion script --}}
+
+<script src="../../js/accordion-soal.js"></script> {{-- accordion script --}}
 {{-- <script>
     function checkJawaban(selectedOption, correctAnswer, point, soalId) {
         // Ambil semua input hidden nilai_jawaban untuk soal tertentu

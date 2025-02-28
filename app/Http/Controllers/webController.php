@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\englishZoneSoal;
 use App\Models\englishZoneMateri;
 use App\Models\englishZoneJawaban;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Container\Attributes\DB;
 
 class webController extends Controller
@@ -131,6 +132,34 @@ class webController extends Controller
                 }
             }
         }
+
+        // for beranda administrator
+        $getDataSiswa = Crud::where('status', 'Siswa')->get();
+        $getDataMurid = Crud::where('status', 'Murid')->get();
+        $countDataMentor = Crud::where('status', 'Mentor')->get();
+        $groupedTanya  = Tanya::onlyTrashed()->get()->groupBy('email');
+
+        $getTanya = $groupedTanya->map(function ($item) {
+            return $item->first();
+        });
+
+        $dataTanya = $groupedTanya;
+
+        $getSiswa = Crud::where('status', 'Siswa')->orWhere('status', 'Murid')->get();
+        // Ambil jumlah Tanya untuk semua email dalam satu kali loop
+        $countSiswaTanya = Tanya::onlyTrashed()
+            ->whereIn('email', $getSiswa->pluck('email'))
+            ->get()
+            ->groupBy('email')
+            ->map(fn($items) => $items->count()); // Hitung jumlah Tanya per email
+
+        // Tambahkan jumlah Tanya ke dalam objek siswa tanpa looping manual
+        // each() → Memasukkan jumlah Tanya ke dalam setiap objek siswa tanpa membuat objek baru.
+        $sortedSiswa = $getSiswa->each(function ($siswa) use ($countSiswaTanya) {
+            $siswa->jumlah_tanya = $countSiswaTanya[$siswa->email] ?? 0; // Default 0 jika tidak ada
+        })->sortByDesc('jumlah_tanya')->take(10); // Urutkan & ambil 10 terbesar
+
+        $countDataTanyaAll = Tanya::withTrashed()->get();
 
         $mapelK13 = [
             [
@@ -277,7 +306,7 @@ class webController extends Controller
                 'button' => 'CATATAN'
             ],
         ];
-        return view('beranda', compact('user', 'mapelK13', 'mapelMerdeka', 'packetSiswa', 'getTanyaTL', 'getData', 'countData', 'dataAccept',  'validatedMentorAccepted', 'paidBatchCount', 'unpaidBatchCount', 'waitingBatchCount', 'totalPaidCount', 'totalUnpaidCount', 'totalWaitingUnpaidCount'));
+        return view('beranda', compact('user', 'mapelK13', 'mapelMerdeka', 'packetSiswa', 'getTanyaTL', 'getData', 'countData', 'dataAccept',  'validatedMentorAccepted', 'paidBatchCount', 'unpaidBatchCount', 'waitingBatchCount', 'totalPaidCount', 'totalUnpaidCount', 'totalWaitingUnpaidCount', 'getDataSiswa', 'getDataMurid', 'getTanya', 'countSiswaTanya', 'getSiswa', 'sortedSiswa', 'countDataTanyaAll', 'countDataMentor'));
     }
 
     public function laporan()
@@ -463,36 +492,6 @@ class webController extends Controller
         return view('components/sidebar_beranda', compact('user'));
     }
 
-    public function pengayaan($modul) {
-        // lalu controller akan menerima parameter modul tadi dan diproses pada function pengayaan
-
-        $user = session('user');
-        if(!isset($user)) {
-            return redirect('/login');
-        }
-
-        // terakhir, $getSoal akan mengambil semua data yang sesuai dengan column modul englishZoneSoal dengan operator $modul yang berasal dari parameter url
-        // cara ini hampir sama dengan metode view pada crud find($id), hanya saja ini menggunakan kondisi where, karena melakukan relasi antara column modul englishZoneSoal dengan column modul englishZoneMateri
-        // get data untuk soal pilihan ganda
-        $groupedSoal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang', $user->kode_jenjang_murid)->inRandomOrder()->get()->groupBy('soal');
-        $getSoal = $groupedSoal->map(fn($materis) => $materis->first()); // Data utama tiap modul
-        $dataSoal = $groupedSoal;
-
-        $getDataSoal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang', $user->kode_jenjang_murid)->get();
-        // mengambil semua data yang id_soal (englishZoneJawaban) dengan id (englishZoneSoal) sesuai.
-        $getJawaban = englishZoneJawaban::whereIn('id_soal', $getDataSoal->pluck('id'))->where('email', $user->email)->get()->groupBy('id_soal');
-
-        // menghitung nilai(poin) setiap soal pilihan ganda
-        $soal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang', $user->kode_jenjang_murid)->get()->groupBy('soal');
-        $jumlahSoal = $soal->count();
-        $totalNilai = 100;
-        $getPoint = $jumlahSoal > 0 ? $totalNilai / $jumlahSoal : 0;
-
-        $getNilai = englishZoneJawaban::where('email', $user->email)->where('modul', $modul)->get();
-        $countNilai = $getNilai->sum('nilai_jawaban');
-
-        return view('pengayaan', compact('user', 'getSoal', 'dataSoal', 'getJawaban', 'totalNilai', 'getPoint', 'countNilai'));
-    }
 
     public function uploadMateri()
     {
@@ -506,46 +505,57 @@ class webController extends Controller
 
     public function uploadSoal()
     {
-        $englishZoneBobot= [
-            [
-                'title_editor' => 'Pilihan A',
-                'title_bobot' => 'Bobot A',
-                'value_editor' => 'pilihan_A',
-                'value_bobot' => 'bobot_A',
-            ],
-            [
-                'title_editor' => 'Pilihan B',
-                'title_bobot' => 'Bobot B',
-                'value_editor' => 'pilihan_B',
-                'value_bobot' => 'bobot_B',
-            ],
-            [
-                'title_editor' => 'Pilihan C',
-                'title_bobot' => 'Bobot C',
-                'value_editor' => 'pilihan_C',
-                'value_bobot' => 'bobot_C',
-            ],
-            [
-                'title_editor' => 'Pilihan D',
-                'title_bobot' => 'Bobot D',
-                'value_editor' => 'pilihan_D',
-                'value_bobot' => 'bobot_D',
-            ],
-            [
-                'title_editor' => 'Pilihan E',
-                'title_bobot' => 'Bobot E',
-                'value_editor' => 'pilihan_E',
-                'value_bobot' => 'bobot_E',
-            ],
-        ];
-
         $user = session('user');
         if(!isset($user)) {
             return redirect('/login');
         }
 
-        return view('upload-soal', compact('user', 'englishZoneBobot'));
+        return view('upload-soal', compact('user'));
     }
+
+    // controller upload soal bobot a - e
+    // public function uploadSoal()
+    // {
+    //     $englishZoneBobot= [
+    //         [
+    //             'title_editor' => 'Pilihan A',
+    //             'title_bobot' => 'Bobot A',
+    //             'value_editor' => 'pilihan_A',
+    //             'value_bobot' => 'bobot_A',
+    //         ],
+    //         [
+    //             'title_editor' => 'Pilihan B',
+    //             'title_bobot' => 'Bobot B',
+    //             'value_editor' => 'pilihan_B',
+    //             'value_bobot' => 'bobot_B',
+    //         ],
+    //         [
+    //             'title_editor' => 'Pilihan C',
+    //             'title_bobot' => 'Bobot C',
+    //             'value_editor' => 'pilihan_C',
+    //             'value_bobot' => 'bobot_C',
+    //         ],
+    //         [
+    //             'title_editor' => 'Pilihan D',
+    //             'title_bobot' => 'Bobot D',
+    //             'value_editor' => 'pilihan_D',
+    //             'value_bobot' => 'bobot_D',
+    //         ],
+    //         [
+    //             'title_editor' => 'Pilihan E',
+    //             'title_bobot' => 'Bobot E',
+    //             'value_editor' => 'pilihan_E',
+    //             'value_bobot' => 'bobot_E',
+    //         ],
+    //     ];
+
+    //     $user = session('user');
+    //     if(!isset($user)) {
+    //         return redirect('/login');
+    //     }
+
+    //     return view('upload-soal', compact('user', 'englishZoneBobot'));
+    // }
 
     public function questionForRelease()
     {
@@ -560,41 +570,24 @@ class webController extends Controller
         return view('question-for-release', compact('user','getSoal'));
     }
 
-    public function video($modul)
+    public function certificate()
     {
-        // Mengambil informasi pengguna dari sesi
         $user = session('user');
-
-        // Jika pengguna belum login, arahkan ke halaman login
-        if (!$user) {
+        if(!isset($user)) {
             return redirect('/login');
         }
 
-        // Mengambil video berdasarkan modul dari database
-        $getVideo = englishZoneMateri::where('modul', $modul)->get();
-
-        // Memastikan ada video yang ditemukan untuk modul ini
-        if ($getVideo->isEmpty()) {
-            // Menangani jika tidak ada video yang ditemukan
-            return redirect()->back()->with('error', 'Tidak ada video ditemukan untuk modul ini.');
-        }
-
-        // Menyiapkan array untuk ID video
-        $videoIds = [];
-
-        // Loop untuk mendapatkan ID video dari URL
-        foreach ($getVideo as $video) {
-            $videoId = null;
-            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $video->link_video, $matches)) {
-                $videoId = $matches[1] ?? $matches[2];
-            }
-            $videoIds[] = $videoId;
-        }
-
-        // Mengirim data ke view
-        return view('english-zone-video', compact('user', 'getVideo', 'videoIds'));
+        return view('certif', compact('user'));
     }
 
+    public function inputDataSekolah()
+    {
+        $user = session('user');
 
+        if(!isset($user)) {
+            return redirect('/login');
+        }
 
+        return view('input-sekolah', compact('user'));
+    }
 }

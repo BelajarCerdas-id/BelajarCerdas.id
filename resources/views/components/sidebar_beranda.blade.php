@@ -4,7 +4,7 @@
         <div class="sidebar-beranda hidden md:block">
             <div class="logo_details flex items-center justify-center">
                 <a href="/">
-                    <img src="../image/imageBC.png" alt="" class="w-2/5">
+                    <img src="../image/logoBC.png" alt="" class="w-2/5">
                 </a>
             </div>
             <div class="nav-list">
@@ -88,9 +88,6 @@
     @elseif($user->status === 'Guru')
         <div class="sidebar-beranda hidden md:block">
             <div class="logo_details">
-                <!-- <i class="bx bxl-audible icon"></i>
-                <div class="logo_name">Code Effect</div>
-                <i class="bx bx-menu" id="btn"></i> -->
                 <img src="image/logo-BC.png" alt="">
             </div>
             <div class="nav-list">
@@ -147,13 +144,6 @@
                 {{-- Navbar for PC --}}
                 <div class="navbar-beranda">
                     <header>Beranda</header>
-                    <!-- <div class="information-account">
-                            <div class="notification">
-                            <i class="fa-solid fa-bell"></i>
-                        </div>
-                        <div class="coin">
-                            <i class="fa-solid fa-coins"></i>
-                        </div> -->
                     <div class="profile">
                         <i class="fa-solid fa-user"></i>
                         <div class="information-profile">
@@ -167,9 +157,6 @@
     @elseif($user->status === 'Mentor')
         <div class="sidebar-beranda hidden md:block">
             <div class="logo_details">
-                <!-- <i class="bx bxl-audible icon"></i>
-                <div class="logo_name">Code Effect</div>
-                <i class="bx bx-menu" id="btn"></i> -->
                 <img src="image/logo-BC.png" alt="">
             </div>
             <div class="nav-list">
@@ -248,51 +235,6 @@
     @elseif ($user->status === 'Admin')
 
     @elseif($user->status === 'Administrator')
-        {{-- <aside class="sidebar-beranda hidden md:block">
-            <div class="logo_details">
-                <!-- <i class="bx bxl-audible icon"></i>
-                <div class="logo_name">Code Effect</div>
-                <i class="bx bx-menu" id="btn"></i> -->
-                {{-- <img src="image/logo-BC.png" alt=""> --}
-                <img src="image/logo-sementara.png" alt="">
-                <span class="text-lg text-white font-bold">BelajarCerdas</span>
-            </div>
-            <nav>
-                <div class="sidebar">
-                    <a href="#" class="menu-item">Beranda</a>
-
-                    <div class="menu-item">
-                        <span class="toggle-dropdown">Kelas Pintar Regular</span>
-                        <div class="content-dropdown">
-                            <a href="#">Manage Content</a>
-                            <a href="#">Content for Release</a>
-                        </div>
-                    </div>
-
-                    <div class="menu-item">
-                        <span class="toggle-dropdown">Question</span>
-                        <div class="content-dropdown">
-                            <a href="#">Manage Question</a>
-                            <a href="#">Question for Release</a>
-                        </div>
-                    </div>
-
-                    <a href="#" class="menu-item">Games</a>
-
-                    <div class="menu-item">
-                        <span class="toggle-dropdown">Syllabus & Service</span>
-                        <div class="content-dropdown">
-                            <a href="#">Manage Syllabus</a>
-                            <a href="#">Guru Ahli</a>
-                        </div>
-                    </div>
-
-                    <a href="#" class="menu-item">Document IKM</a>
-                    <a href="#" class="menu-item">TANYA</a>
-                    <a href="#" class="menu-item">PTN</a>
-                </div>
-            </nav>
-        </aside> --}}
         <aside class="sidebar-beranda-administrator hidden md:block">
             <div class="logo_details flex items-center justify-center">
                 <img src="image/logoBC.png" alt="" class="w-2/4">
@@ -301,7 +243,19 @@
                 <li class="list-item">
                     <div class="toggle-menu">
                         <i class="fas fa-house"></i>
-                        <a href="#">Beranda</a>
+                        <a href="/beranda">Beranda</a>
+                    </div>
+                </li>
+                <li class="list-item">
+                    <div class="dropdown-menu">
+                        <div class="toggle-menu">
+                            <i class="fa-solid fa-question !text-lg"></i>
+                            <span class="toggle-dropdown">TANYA</span>
+                            <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
+                        </div>
+                        <div class="content-dropdown">
+                            <a href="">List Mentor</a>
+                        </div>
                     </div>
                 </li>
                 <li class="list-item">
@@ -318,19 +272,6 @@
                         </div>
                     </div>
                 </li>
-                <li class="list-item">
-                    <div class="dropdown-menu">
-                        <div class="toggle-menu">
-                            <i class="fas fa-house"></i>
-                            <span class="toggle-dropdown">TANYA</span>
-                            <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
-                        </div>
-                        <div class="content-dropdown">
-                            <a href="">Lorem Ipsum</a>
-                            <a href="">Lorem Ipsum</a>
-                        </div>
-                    </div>
-                </li>
             </ul>
         </aside>
 
@@ -340,12 +281,6 @@
                 <div class="navbar-beranda">
                     <header>Beranda</header>
                     <div class="information-account">
-                        <div class="notification">
-                            <i class="fa-solid fa-bell"></i>
-                        </div>
-                        <div class="coin">
-                            <i class="fa-solid fa-coins"></i>
-                        </div>
                         <div class="profile">
                             <i class="fa-solid fa-user"></i>
                             <div class="information-profile">
@@ -362,9 +297,6 @@
     @elseif($user->status === 'Team Leader')
         <div class="sidebar-beranda hidden md:block">
             <div class="logo_details">
-                <!-- <i class="bx bxl-audible icon"></i>
-                <div class="logo_name">Code Effect</div>
-                <i class="bx bx-menu" id="btn"></i> -->
                 <img src="../image/logo-BC.png" alt="">
             </div>
             <div class="nav-list">
@@ -434,9 +366,6 @@
     @elseif($user->status === 'XR')
         <div class="sidebar-beranda hidden md:block">
             <div class="logo_details">
-                <!-- <i class="bx bxl-audible icon"></i>
-                <div class="logo_name">Code Effect</div>
-                <i class="bx bx-menu" id="btn"></i> -->
                 <img src="../image/logo-BC.png" alt="">
             </div>
             <div class="nav-list">
@@ -486,18 +415,141 @@
                 {{-- Navbar for PC --}}
                 <div class="navbar-beranda">
                     <header>Beranda</header>
-                    <!-- <div class="information-account">
-                            <div class="notification">
-                            <i class="fa-solid fa-bell"></i>
-                        </div>
-                        <div class="coin">
-                            <i class="fa-solid fa-coins"></i>
-                        </div> -->
                     <div class="profile">
                         <i class="fa-solid fa-user"></i>
                         <div class="information-profile">
                             <span class="name">{{ $user->nama_lengkap }}</span>
                             <span class="class">{{ $user->status }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @elseif($user->status === 'Sales')
+        <aside class="sidebar-beranda-administrator hidden md:block">
+            <div class="logo_details flex items-center justify-center">
+                <img src="../image/logoBC.png" alt="" class="w-2/4">
+            </div>
+            <ul class="mt-8">
+                <li class="list-item">
+                    <div class="toggle-menu">
+                        <i class="fas fa-house"></i>
+                        <a href="/beranda">Beranda</a>
+                    </div>
+                </li>
+                <li class="list-item">
+                    <div class="dropdown-menu">
+                        <!-- Dropdown utama -->
+                        <div class="toggle-menu">
+                            <i class="fas fa-house"></i>
+                            <span class="toggle-dropdown">Administrasi Sales</span>
+                            <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
+                        </div>
+
+                        <div class="content-dropdown">
+                            <!-- Dropdown kedua (sub menu) -->
+                            <div class="toggle-menu2">
+                                <span class="toggle-dropdown">Visitasi</span>
+                                <i class="fas fa-chevron-down absolute right-0" id="rotate2"></i>
+                            </div>
+
+                            <div class="list-content-dropdown">
+                                <a href="{{ route('jadwalKunjungan') }}">jadwal Kunjungan</a>
+                                <a href="{{ route('dataKunjungan') }}">Data Kunjungan</a>
+                                <a href="{{ route('cetakPKS') }}">Cetak PKS</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </aside>
+
+        <div class="home-beranda hidden md:block">
+            <div class="content">
+                {{-- Navbar for PC --}}
+                <div class="navbar-beranda">
+                    <header>Beranda</header>
+                    <div class="information-account">
+                        <div class="profile">
+                            <i class="fa-solid fa-user"></i>
+                            <div class="information-profile">
+                                <span class="name">{{ $user->nama_lengkap }}</span>
+                                <span class="class">{{ $user->status }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @elseif($user->status === 'Admin Sales')
+        <aside class="sidebar-beranda-administrator hidden md:block">
+            <div class="logo_details flex items-center justify-center">
+                <img src="image/logoBC.png" alt="" class="w-2/4">
+            </div>
+            <ul class="mt-8">
+                <li class="list-item">
+                    <div class="toggle-menu">
+                        <i class="fas fa-house"></i>
+                        <a href="/beranda">Beranda</a>
+                    </div>
+                </li>
+                <li class="list-item">
+                    <div class="dropdown-menu">
+                        <!-- Dropdown utama -->
+                        <div class="toggle-menu">
+                            <i class="fas fa-house"></i>
+                            <span class="toggle-dropdown">Master Data</span>
+                            <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
+                        </div>
+
+                        <div class="content-dropdown">
+                            <!-- Dropdown kedua (sub menu) -->
+                            <div class="toggle-menu2">
+                                <span class="toggle-dropdown">Input Data</span>
+                                <i class="fas fa-chevron-down absolute right-0" id="rotate2"></i>
+                            </div>
+
+                            <div class="list-content-dropdown">
+                                <a href="">Input Data Siswa</a>
+                                <a href="/input-sekolah">Input Data Sekolah</a>
+                            </div>
+                        </div>
+
+                        <div class="content-dropdown">
+                            <!-- Dropdown ketiga (sub menu) -->
+                            <div class="toggle-menu2">
+                                <span class="toggle-dropdown">Management Data</span>
+                                <i class="fas fa-chevron-down absolute right-0" id="rotate2"></i>
+                            </div>
+
+                            <div class="list-content-dropdown">
+                                <a href="">Data Siswa</a>
+                                <a href="">Data Sekolah</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-item">
+                    <div class="toggle-menu">
+                        <i class="fas fa-house"></i>
+                        <a href="{{ route('suratPKS') }}">Surat PKS</a>
+                    </div>
+                </li>
+            </ul>
+        </aside>
+
+        <div class="home-beranda hidden md:block">
+            <div class="content">
+                {{-- Navbar for PC --}}
+                <div class="navbar-beranda">
+                    <header>Beranda</header>
+                    <div class="information-account">
+                        <div class="profile">
+                            <i class="fa-solid fa-user"></i>
+                            <div class="information-profile">
+                                <span class="name">{{ $user->nama_lengkap }}</span>
+                                <span class="class">{{ $user->status }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -513,22 +565,60 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const toggles = document.querySelectorAll(".toggle-menu");
+        const toggles = document.querySelectorAll(".toggle-menu"); // Dropdown utama
+        const toggles2 = document.querySelectorAll(".toggle-menu2"); // Sub-dropdown
 
+        // Fungsi untuk menutup semua dropdown
+        function closeAllSubDropdowns(except = null) {
+            document.querySelectorAll(".content-dropdown").forEach(dropdown => {
+                if (dropdown !== except) {
+                    dropdown.classList.remove("show");
+                }
+            });
+        }
+
+        function closeAllListDropdowns(except = null) {
+            document.querySelectorAll(".list-content-dropdown").forEach(dropdown => {
+                if (dropdown !== except) {
+                    dropdown.classList.remove("show");
+                }
+            });
+        }
+
+        // Event listener untuk dropdown utama
         toggles.forEach(toggle => {
             toggle.addEventListener("click", () => {
-                const parent = toggle.closest(
-                    '.list-item'); // Mendapatkan elemen dropdown-menu
+                const parent = toggle.closest('.list-item'); // Cari elemen utama
 
-                // Toggle visibilitas dropdown
+                // Toggle dropdown utama
                 parent.classList.toggle("show");
 
-                // Tutup dropdown lain jika perlu
+                // Tutup dropdown lain yang tidak diklik
                 document.querySelectorAll(".list-item").forEach(dropdown => {
                     if (dropdown !== parent) {
                         dropdown.classList.remove("show");
                     }
                 });
+
+                // Tutup semua sub-dropdown saat dropdown utama berubah
+                closeAllSubDropdowns();
+            });
+        });
+
+        // Event listener untuk sub-dropdown (toggle-menu2)
+        toggles2.forEach(toggle => {
+            toggle.addEventListener("click", () => {
+                const parent = toggle.closest('.content-dropdown'); // Cari elemen sub-dropdown
+
+                if (parent.classList.contains("show")) {
+                    // Jika sudah terbuka, tutup
+                    parent.classList.remove("show");
+                } else {
+                    // Jika belum terbuka, tutup yang lain lalu buka yang ini
+                    closeAllSubDropdowns();
+                    closeAllListDropdowns();
+                    parent.classList.add("show");
+                }
             });
         });
     });

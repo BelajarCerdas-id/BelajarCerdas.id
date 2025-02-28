@@ -26,74 +26,68 @@
                             <input type="hidden" name="status" value="{{ $user->status }}">
                             <input type="hidden" name="tipe_upload" value="Soal">
                             <div class="mx-6 my-4 w-full text-sm">
-                                <div class="flex gap-6">
-                                    <div class="w-full">
+                                <div class="grid grid-cols-12 gap-6">
+                                    <div class="col-span-12 md:col-span-6">
                                         <span class="mb-2">
                                             Modul
                                             <sup class="text-red-500 pl-1">&#42;</sup>
                                         </span>
                                         <select name="modul_soal"
-                                            class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2 {{ $errors->has('modul') ? 'border-[1px] border-red-500' : '' }}">
+                                            class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2 {{ $errors->has('modul_soal') ? 'border-[1px] border-red-500' : '' }}">
                                             <option value="" class="hidden">Pilih Modul</option>
-                                            <option value="Modul 1" {{ @old('modul') === 'Modul 1' ? 'selected' : '' }}>
-                                                Modul 1
+                                            <option value="Modul 1"
+                                                {{ @old('modul_soal') === 'Modul 1' ? 'selected' : '' }}>Modul 1
                                             </option>
-                                            <option value="Modul 2" {{ @old('modul') === 'Modul 2' ? 'selected' : '' }}>
-                                                Modul 2
+                                            <option value="Modul 2"
+                                                {{ @old('modul_soal') === 'Modul 2' ? 'selected' : '' }}>Modul 2
                                             </option>
-                                            <option value="Modul 3" {{ @old('modul') === 'Modul 3' ? 'selected' : '' }}>
-                                                Modul 3
+                                            <option value="Modul 3"
+                                                {{ @old('modul_soal') === 'Modul 3' ? 'selected' : '' }}>Modul 3
                                             </option>
-                                            <option value="Modul 4" {{ @old('modul') === 'Modul 4' ? 'selected' : '' }}>
-                                                Modul 4
+                                            <option value="Modul 4"
+                                                {{ @old('modul_soal') === 'Modul 4' ? 'selected' : '' }}>Modul 4
                                             </option>
                                             <option value="Modul 5"
-                                                {{ @old('modul') === 'Modul 5' ? 'selected' : '' }}>
-                                                Modul 5
+                                                {{ @old('modul_soal') === 'Modul 5' ? 'selected' : '' }}>Modul 5
                                             </option>
                                             <option value="Modul 6"
-                                                {{ @old('modul') === 'Modul 6' ? 'selected' : '' }}>
-                                                Modul 6
+                                                {{ @old('modul_soal') === 'Modul 6' ? 'selected' : '' }}>Modul 6
                                             </option>
                                             <option value="Modul 7"
-                                                {{ @old('modul') === 'Modul 7' ? 'selected' : '' }}>
-                                                Modul 7
+                                                {{ @old('modul_soal') === 'Modul 7' ? 'selected' : '' }}>Modul 7
                                             </option>
                                             <option value="Modul 8"
-                                                {{ @old('modul') === 'Modul 8' ? 'selected' : '' }}>
-                                                Modul 8
+                                                {{ @old('modul_soal') === 'Modul 8' ? 'selected' : '' }}>Modul 8
                                             </option>
                                             <option value="Modul 9"
-                                                {{ @old('modul') === 'Modul 9' ? 'selected' : '' }}>
-                                                Modul 9
+                                                {{ @old('modul_soal') === 'Modul 9' ? 'selected' : '' }}>Modul 9
                                             </option>
                                             <option value="Modul 10"
-                                                {{ @old('modul') === 'Modul 10' ? 'selected' : '' }}>
-                                                Modul 10
+                                                {{ @old('modul_soal') === 'Modul 10' ? 'selected' : '' }}>Modul 10
                                             </option>
                                             <option value="Modul 11"
-                                                {{ @old('modul') === 'Modul 11' ? 'selected' : '' }}>
-                                                Modul 11
+                                                {{ @old('modul_soal') === 'Modul 11' ? 'selected' : '' }}>Modul 11
                                             </option>
-                                            <option value="Modul 12"
-                                                {{ @old('modul') === 'Modul 12' ? 'selected' : '' }}>
-                                                Modul 12
+                                            <option
+                                                value="Modul 12"{{ @old('modul_soal') === 'Modul 12' ? 'selected' : '' }}>
+                                                Modul 12</option>
+                                            <option value="Final Exam"
+                                                {{ @old('modul_soal') === 'Final Exam' ? 'selected' : '' }}>Final Exam
                                             </option>
                                         </select>
                                         @error('modul_soal')
                                             <span class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="w-full">
+                                    <div class="col-span-12 md:col-span-6 mb-4">
                                         <span class="mb-2">
                                             Jenjang
                                             <sup class="text-red-500 pl-1">&#42;</sup>
                                         </span>
                                         <select name="jenjang"
-                                            class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2 {{ $errors->has('jenjang_murid') ? 'border-[1px] border-red-500' : '' }}">
+                                            class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2 {{ $errors->has('jenjang') ? 'border-[1px] border-red-500' : '' }}">
                                             <option value="" class="hidden">Pilih Jenjang</option>
-                                            <option value="SD" {{ @old('jenjang') === 'SD' ? 'selected' : '' }}>
-                                                SD
+                                            <option value="SD" {{ @old('jenjang') === 'SD' ? 'selected' : '' }}>SD
                                             </option>
                                             <option value="SMP" {{ @old('jenjang') === 'SMP' ? 'selected' : '' }}>
                                                 SMP</option>
@@ -107,14 +101,71 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="leading-10">
+                                <!---- Responsive mobile  ----->
+                                <div class="grid grid-cols-12 gap-6 md:hidden">
+                                    <div class="col-span-12">
+                                        <span class="mb-2">
+                                            Tingkat Kesulitan
+                                            <sup class="text-red-500 pl-1">&#42;</sup>
+                                        </span>
+                                        <select name="tingkat_kesulitan"
+                                            class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2 {{ $errors->has('tingkat_kesulitan') ? 'border-[1px] border-red-500' : '' }}">
+                                            <option value="" class="hidden">Pilih Jenjang</option>
+                                            <option class="hidden">Pilih tingkat kesulitan</option>
+                                            <option value="Mudah"
+                                                {{ old('tingkat_kesulitan') == 'Mudah' ? 'selected' : '' }}>Mudah
+                                            </option>
+                                            <option value="Sedang"
+                                                {{ old('tingkat_kesulitan') == 'Sedang' ? 'selected' : '' }}>Sedang
+                                            </option>
+                                            <option value="Sulit"
+                                                {{ old('tingkat_kesulitan') == 'Sulit' ? 'selected' : '' }}>Sulit
+                                            </option>
+                                        </select>
+                                        @error('tingkat_kesulitan')
+                                            <span class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-span-12">
+                                        <span>
+                                            Jawaban Benar
+                                            <sup class="text-red-500 pl-1">&#42;</sup>
+                                        </span>
+                                        <select name="jawaban_benar" id="jawaban_benar_mobile"
+                                            class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2 {{ $errors->has('jawaban_benar') ? 'border-[1px] border-red-500' : '' }}">
+                                            {{-- option add in javascript --}}
+                                        </select>
+                                        @error('jawaban_benar')
+                                            <span class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="leading-10 mb-6">
                                     <span>
                                         Soal
                                         <sup class="text-red-500 pl-1">&#42;</sup>
                                     </span>
-                                    <textarea name="soal" class="editor"></textarea>
+                                    <textarea name="soal" class="editor">{{ @old('soal') }}</textarea>
+                                    @error('soal')
+                                        <span class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                    @enderror
                                 </div>
-                                <div class="gap-8 mt-10">
+
+                                <!--- Reponsive Mobile  ---->
+                                <div class="w-full md:hidden mb-8">
+                                    <span>
+                                        Deskripsi Jawaban
+                                        <sup class="text-red-500 pl-1">&#42;</sup>
+                                    </span>
+                                    <textarea name="deskripsi_jawaban" id="" class="editor">{{ @old('deskripsi_jawaban') }}</textarea>
+                                    @error('deskripsi_jawaban')
+                                        <span class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <!----  Responsive Dekstop  ---->
+                                <div class="hidden md:block gap-8 mt-10">
                                     <div class="flex gap-6">
                                         <div class="jawaban mb-8 w-full">
                                             <span>
@@ -123,16 +174,24 @@
                                             </span>
                                             <textarea name="jawaban_pilihan[]" id="" class="editor"></textarea>
                                             <input type="hidden" name="option_pilihan[]" value="A">
+                                            @error('jawaban_pilihan.*')
+                                                <span
+                                                    class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                         <div class="w-full">
                                             <span>
                                                 Jawaban Benar
                                                 <sup class="text-red-500 pl-1">&#42;</sup>
                                             </span>
-                                            <select name="jawaban_benar" id="jawaban_benar"
+                                            <select name="jawaban_benar" id="jawaban_benar_dekstop"
                                                 class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2 {{ $errors->has('jawaban_benar') ? 'border-[1px] border-red-500' : '' }}">
                                                 {{-- option add in javascript --}}
                                             </select>
+                                            @error('jawaban_benar')
+                                                <span
+                                                    class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="flex gap-6">
@@ -143,19 +202,34 @@
                                                 <input type="hidden" name="option_pilihan[]" value="B">
                                             </span>
                                             <textarea name="jawaban_pilihan[]" id="" class="editor"></textarea>
+                                            @error('jawaban_pilihan.*')
+                                                <span
+                                                    class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                         <div class="w-full">
-                                            <span>
-                                                Tigkat Kesulitan
+                                            <span class="mb-2">
+                                                Tingkat Kesulitan
                                                 <sup class="text-red-500 pl-1">&#42;</sup>
                                             </span>
                                             <select name="tingkat_kesulitan"
-                                                class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2 {{ $errors->has('jawaban_benar') ? 'border-[1px] border-red-500' : '' }}">
+                                                class="w-full bg-gray-100 outline-none rounded-xl text-xs p-3 cursor-pointer mt-2 mb-2 {{ $errors->has('tingkat_kesulitan') ? 'border-[1px] border-red-500' : '' }}">
+                                                <option value="" class="hidden">Pilih Jenjang</option>
                                                 <option class="hidden">Pilih tingkat kesulitan</option>
-                                                <option>Mudah</option>
-                                                <option>Sedang</option>
-                                                <option>Sulit</option>
+                                                <option value="Mudah"
+                                                    {{ old('tingkat_kesulitan') == 'Mudah' ? 'selected' : '' }}>Mudah
+                                                </option>
+                                                <option value="Sedang"
+                                                    {{ old('tingkat_kesulitan') == 'Sedang' ? 'selected' : '' }}>Sedang
+                                                </option>
+                                                <option value="Sulit"
+                                                    {{ old('tingkat_kesulitan') == 'Sulit' ? 'selected' : '' }}>Sulit
+                                                </option>
                                             </select>
+                                            @error('tingkat_kesulitan')
+                                                <span
+                                                    class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="flex gap-6">
@@ -166,6 +240,10 @@
                                             </span>
                                             <textarea name="jawaban_pilihan[]" id="" class="editor"></textarea>
                                             <input type="hidden" name="option_pilihan[]" value="C">
+                                            @error('jawaban_pilihan.*')
+                                                <span
+                                                    class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                            @enderror
                                         </div>
 
                                         <div class="w-full">
@@ -173,23 +251,62 @@
                                                 Deskripsi Jawaban
                                                 <sup class="text-red-500 pl-1">&#42;</sup>
                                             </span>
-                                            <textarea name="deskripsi_jawaban" id="" class="editor"></textarea>
+                                            <textarea name="deskripsi_jawaban" id="" class="editor">{{ @old('deskripsi_jawaban') }}</textarea>
+                                            @error('deskripsi_jawaban')
+                                                <span
+                                                    class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
-                                    <div id="jawaban-container" class="w-2/4">
-                                        <div class="jawaban">
-                                        </div>
+                                </div>
+                                <!--- Reponsive phone   ---->
+                                {{-- <div class="sm:grid grid-cols-12 gap-6 md:hidden">
+                                    <div class="jawaban mb-8 col-span-12">
+                                        <span>
+                                            Jawaban A
+                                            <sup class="text-red-500 pl-1">&#42;</sup>
+                                        </span>
+                                        <textarea name="jawaban_pilihan[]" id="" class="editor"></textarea>
+                                        <input type="hidden" name="option_pilihan[]" value="A">
+                                        @error('jawaban_pilihan.*')
+                                            <span class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                        @enderror
                                     </div>
-                                    <div class="flex justify-between">
-                                        <!-- Tombol Tambah Jawaban -->
-                                        <button id="tambah-jawaban" type="button"
-                                            class="bg-[#4189e0] w-[200px] h-8 text-white font-bold rounded-lg mt-8 text-sm">
-                                            <i class="fas fa-plus"></i>
-                                            <span>Tambah Materi</span>
-                                        </button>
-                                        <button
-                                            class="bg-red-500 w-[150px] h-8 text-white font-bold rounded-lg mt-8 text-sm">Kirim</button>
+                                    <div class="jawaban mb-8 col-span-12">
+                                        <span>
+                                            Jawaban B
+                                            <sup class="text-red-500 pl-1">&#42;</sup>
+                                            <input type="hidden" name="option_pilihan[]" value="B">
+                                        </span>
+                                        <textarea name="jawaban_pilihan[]" id="" class="editor"></textarea>
+                                        @error('jawaban_pilihan.*')
+                                            <span class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                        @enderror
                                     </div>
+                                    <div class="jawaban mb-8 col-span-12">
+                                        <span>
+                                            Jawaban C
+                                            <sup class="text-red-500 pl-1">&#42;</sup>
+                                        </span>
+                                        <textarea name="jawaban_pilihan[]" id="" class="editor"></textarea>
+                                        <input type="hidden" name="option_pilihan[]" value="C">
+                                        @error('jawaban_pilihan.*')
+                                            <span class="text-red-500 font-bold text-sm pl-2">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div> --}}
+                                <div id="jawaban-container" class="w-full md:w-2/4">
+                                    <div class="jawaban"></div>
+                                </div>
+                                <!-- Tombol Tambah Jawaban (mobile & dekstop) -->
+                                <button id="tambah-jawaban" type="button"
+                                    class="bg-[#4189e0] w-full md:w-[200px] h-8 text-white font-bold rounded-lg mt-8 text-sm">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Tambah Jawaban</span>
+                                </button>
+                                <div class="w-full flex justify-end">
+                                    <button
+                                        class="bg-red-500 w-[150px] h-8 text-white font-bold rounded-lg mt-14 md:mt-8 text-sm">Kirim</button>
                                 </div>
                             </div>
                         </div>
@@ -257,7 +374,11 @@
         // Inisialisasi CKEditor 5 untuk textarea baru
         const newTextarea = jawabanItem.querySelector('.editor');
         if (!newTextarea.classList.contains('ckeditor-initialized')) {
-            ClassicEditor.create(newTextarea).then(editor => {
+            ClassicEditor.create(newTextarea, {
+                toolbar: {
+                    shouldNotGroupWhenFull: true // Pastikan toolbar tetap terlihat
+                }
+            }).then(editor => {
                 newTextarea.classList.add('ckeditor-initialized');
             }).catch(error => {
                 console.error('Terjadi error saat inisialisasi CKEditor:', error);
@@ -278,8 +399,17 @@
         const jawabanContainer = document.getElementById('jawaban-container');
         const jawabanItems = jawabanContainer.querySelectorAll('.jawaban-item');
 
-        const select = document.getElementById('jawaban_benar');
-        select.innerHTML = `
+        // select option for mobile & dekstop
+        const selectMobile = document.getElementById('jawaban_benar_mobile');
+        selectMobile.innerHTML = `
+        <option class="hidden">Pilih jawaban benar</option>
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+    `;
+
+        const selectDekstop = document.getElementById('jawaban_benar_dekstop');
+        selectDekstop.innerHTML = `
         <option class="hidden">Pilih jawaban benar</option>
         <option>A</option>
         <option>B</option>
@@ -288,10 +418,17 @@
 
         jawabanItems.forEach((item, index) => {
             const abjad = String.fromCharCode(68 + index); // 68 adalah kode untuk "D"
-            const option = document.createElement('option');
-            option.value = abjad;
-            option.textContent = abjad;
-            select.appendChild(option);
+
+            // foreach option for mobile & dekstop
+            const optionMobile = document.createElement('option');
+            optionMobile.value = abjad;
+            optionMobile.textContent = abjad;
+            selectMobile.appendChild(optionMobile);
+
+            const optionDekstop = document.createElement('option');
+            optionDekstop.value = abjad;
+            optionDekstop.textContent = abjad;
+            selectDekstop.appendChild(optionDekstop);
         });
 
         // Sembunyikan tombol "Tambah Jawaban" jika jumlah jawaban sudah mencapai 5

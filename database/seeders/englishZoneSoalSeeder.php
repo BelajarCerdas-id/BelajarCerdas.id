@@ -13,6 +13,6 @@ class englishZoneSoalSeeder extends Seeder
      */
     public function run(): void
     {
-        englishZoneSoal::factory()->count(100)->create();
+        // englishZoneSoal::factory()->count(100)->create();
     }
 }

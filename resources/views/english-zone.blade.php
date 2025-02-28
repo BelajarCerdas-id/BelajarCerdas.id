@@ -121,7 +121,7 @@
                                     </button>
                                     <div class="content-accordion">
                                         <div class="wrapper-content-accordion1">
-                                            <div class="box-content-bab">
+                                            <div class="box-content-accordion">
                                                 <div class="title-content-bab">
                                                     <div class="logo-content-bab"></div>
                                                     <div class="header-title">
@@ -131,13 +131,20 @@
                                                         <span> {{ $item->judul_modul }} </span>
                                                     </div>
                                                 </div>
-                                                <button class="button-link-concept" formaction="">
-                                                    <div onclick="showMateri(this)"
-                                                        data-pdf="{{ asset('englishZone_pdf/' . $item->pdf_file) }}#toolbar=0">
+                                                @if ($item->is_locked)
+                                                    <button class="button-link-lock" onclick="showAlertLock()">
                                                         Lihat Materi
-                                                        <i class="fa-solid fa-chevron-right"></i>
-                                                    </div>
-                                                </button>
+                                                        <i class="fa-solid fa-lock"></i>
+                                                    </button>
+                                                @else
+                                                    <button class="button-link-materi">
+                                                        <div onclick="showMateri(this)"
+                                                            data-pdf="{{ asset('englishZone_pdf/' . $item->pdf_file) }}#toolbar=0">
+                                                            Lihat Materi
+                                                            <i class="fa-solid fa-chevron-right"></i>
+                                                        </div>
+                                                    </button>
+                                                @endif
                                             </div>
                                             <div class="accordion-video-list">
                                                 <div class="box-video-list">
@@ -150,15 +157,22 @@
                                                             <span>{{ $item->judul_modul }}</span>
                                                         </div>
                                                     </div>
-                                                    <button class="toggleButton-videoList">
-                                                        <a href="{{ route('englishZone.video', $item->modul) }}">
+                                                    @if ($item->is_locked)
+                                                        <button class="button-link-lock" onclick="showAlertLock()">
                                                             <span>Lihat Video</span>
-                                                            <i class="fa-solid fa-chevron-right toggle-icon"></i>
-                                                        </a>
-                                                    </button>
+                                                            <i class="fa-solid fa-lock"></i>
+                                                        </button>
+                                                    @else
+                                                        <button class="button-link-videoList">
+                                                            <a href="{{ route('englishZone.video', $item->modul) }}">
+                                                                <span>Lihat Video</span>
+                                                                <i class="fa-solid fa-chevron-right toggle-icon"></i>
+                                                            </a>
+                                                        </button>
+                                                    @endif
                                                 </div>
                                             </div>
-                                            <div class="box-content-bab">
+                                            <div class="box-content-accordion">
                                                 <div class="title-content-bab">
                                                     <div class="logo-content-bab"></div>
                                                     <div class="header-title">
@@ -168,12 +182,81 @@
                                                         <span> {{ $item->judul_modul }} </span>
                                                     </div>
                                                 </div>
-                                                <button class="button-link-ebook" formaction="">
-                                                    {{-- mengirimkan ke route tujuan dengan parameter url modul, hasil url (pengayaan/modul 1, dst) --}}
-                                                    <a href="{{ route('pengayaan', $item->modul) }}"> Lihat Soal
-                                                    </a>
-                                                </button>
+                                                @if ($item->is_locked)
+                                                    <button class="button-link-lock" onclick="showAlertLock()">
+                                                        Lihat Soal
+                                                        <i class="fas fa-lock"></i>
+                                                    </button>
+                                                @else
+                                                    <button class="button-link-pengayaan">
+                                                        <a
+                                                            href="{{ route('pengayaan', ['modul' => $item->modul, 'id' => $item->id]) }}">
+                                                            Lihat Soal
+                                                            <i class="fas fa-chevron-right"></i>
+                                                        </a>
+                                                    </button>
+                                                @endif
                                             </div>
+                                            @if ($item->modul === 'Final Exam')
+                                                <div class="grid grid-cols-12 gap-8">
+                                                    <div class="col-span-12 lg:col-span-6">
+                                                        <div class="box-content-accordion-modulSertifikat">
+                                                            <div class="title-content-bab">
+                                                                <div class="logo-content-bab"></div>
+                                                                <div class="header-title">
+                                                                    <span> Final Test </span>
+                                                                </div>
+                                                                <div class="bottom-title">
+                                                                    <span> Modul </span>
+                                                                </div>
+                                                            </div>
+                                                            @if ($item->is_locked)
+                                                                <button class="button-link-lock"
+                                                                    onclick="showAlertDownloadModul()">
+                                                                    Download Modul
+                                                                    <i class="fas fa-lock"></i>
+                                                                </button>
+                                                            @else
+                                                                <button class="button-link-pengayaan">
+                                                                    {{-- mengirimkan ke route tujuan dengan parameter url modul, hasil url (pengayaan/modul 1, dst) --}}
+                                                                    <a
+                                                                        href="{{ route('pengayaan', ['modul' => $item->modul, 'id' => $item->id]) }}">
+                                                                        Download Modul
+                                                                        <i class="fas fa-chevron-right"></i>
+                                                                    </a>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-span-12 lg:col-span-6">
+                                                        <div class="box-content-accordion-modulSertifikat">
+                                                            <div class="title-content-bab">
+                                                                <div class="logo-content-bab"></div>
+                                                                <div class="header-title">
+                                                                    <span> Final Test </span>
+                                                                </div>
+                                                                <div class="bottom-title">
+                                                                    <span> Sertifikat </span>
+                                                                </div>
+                                                            </div>
+                                                            @if ($item->is_locked)
+                                                                <button class="button-link-lock"
+                                                                    onclick="showAlertDownloadCertificate()">
+                                                                    Download Sertifikat
+                                                                    <i class="fas fa-lock"></i>
+                                                                </button>
+                                                            @else
+                                                                <button class="button-link-pengayaan" formaction="">
+                                                                    <a href="{{ route('generateCertificate') }}">
+                                                                        Download Sertifikat
+                                                                        <i class="fas fa-chevron-right"></i>
+                                                                    </a>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -193,7 +276,6 @@
                                 <button>close</button>
                             </form>
                         </dialog>
-
                     </div>
                     <div class="w-full h-auto hidden" id="riwayat">
                         riwayat
@@ -222,6 +304,31 @@
 <script src="js/content-riwayat.js"></script> {{-- content slide --}}
 {{-- <script src="js/accordion.js"></script> accordion script --}}
 
+<script>
+    function showAlertLock() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Harap selesaikan modul sebelumnya untuk membuka modul ini!',
+        });
+    }
+
+    function showAlertDownloadModul() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Harap selesaikan final test terlebih dahulu untuk mendownload modul!',
+        });
+    }
+
+    function showAlertDownloadCertificate() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Harap selesaikan final test terlebih dahulu untuk mendownload Sertifikat!',
+        });
+    }
+</script>
 <script>
     function showMateri(element) {
         const pdfUrl = element.getAttribute('data-pdf');

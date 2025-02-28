@@ -96,6 +96,10 @@
                 <div class="col-span-12 md:col-span-6 flex justify-center items-center">
                     <!-- Background Elements -->
                     <div class="bg-[--color-default] w-52 h-52 md:w-80 md:h-80 rounded-full relative">
+                        <div class="w-[300px] md:w-[460px] relative left-[-24%] md:left-[-23%] top-[-25%] z-20">
+                            <!-- Image -->
+                            <img src="image/asset_belajarcerdas2-01.png" alt="Person with laptop" class="">
+                        </div>
                         <div class="absolute inset-0">
                             <div class="absolute top-0 left-0 bg-[--color-default] w-6 h-6 md:w-10 md:h-10 rounded-full"></div>
                         </div>
@@ -103,9 +107,8 @@
                             <div class="absolute bottom-0 right-0 bg-[--color-default] w-8 h-8 md:w-14 md:h-14 rounded-full"></div>
                         </div>
                     </div>
-                    <!-- Image Placeholder -->
-                    <!-- <img src="image/logoCompany.png" alt="Person with laptop"
-                        class="relative z-10 max-w-xs mx-auto"> -->
+
+
                 </div>
                 <!-- Right Side: Text Content -->
                 <div class="flex flex-col justify-center col-span-12 md:col-span-6 relative">
