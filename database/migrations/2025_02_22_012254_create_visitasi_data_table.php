@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('jenjang_sekolah');
             $table->string('sekolah');
             $table->string('status_sekolah');
-            $table->date('tanggal_mulai');
-            $table->date('tanggal_akhir');
+            $table->date('tanggal_mulai')->nullable();
+            $table->date('tanggal_akhir')->nullable();
             $table->enum('status_kunjungan', ['Pending', 'Belum dikunjungi', 'Telah dikunjungi'])->default('Belum dikunjungi');
             $table->timestamps();
         });

@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\Crud;
 use App\Models\modulLock;
 use App\Models\englishZone;
 use Illuminate\Http\Request;
@@ -18,16 +16,12 @@ class EnglishZoneController extends Controller
      */
     public function index()
     {
-        $user = session('user');
 
-        if(!$user) {
-            return redirect('/login');
-        }
         // mencari jenjang murid yang sesuai dengan jenjang murid user login
         // Group materi berdasarkan modul
-        $groupedMateri = englishZoneMateri::where('jenjang_murid', $user->kode_jenjang_murid)->get()->groupBy('modul');
+        $groupedMateri = englishZoneMateri::where('jenjang_murid', session('user')->kode_jenjang_murid)->get()->groupBy('modul');
 
-        $completedModules = modulLock::where('nama_lengkap', $user->nama_lengkap)->where('is_completed', true)->pluck('module_id')->toArray();
+        $completedModules = modulLock::where('nama_lengkap', session('user')->nama_lengkap)->where('is_completed', true)->pluck('module_id')->toArray();
 
         // Tandai module yang terkunci
         foreach ($groupedMateri as $modul => $materis) {
@@ -42,7 +36,7 @@ class EnglishZoneController extends Controller
         $mainMateri = $groupedMateri->map(fn($materis) => $materis->first()); // Data utama tiap modul
         $allMateri = $groupedMateri; // Semua data materi, termasuk video
         $getSoal = englishZoneSoal::all();
-        return view('english-zone', compact('user', 'mainMateri', 'allMateri', 'getSoal'));
+        return view('english-zone', compact( 'mainMateri', 'allMateri', 'getSoal'));
     }
 
     /**
@@ -386,7 +380,7 @@ class EnglishZoneController extends Controller
         $module = englishZoneMateri::findOrFail($id);
 
         // terakhir, $getSoal akan mengambil semua data yang sesuai dengan column modul englishZoneSoal dengan operator $modul yang berasal dari parameter url
-        // cara ini hampir sama dengan metode view pada crud find($id), hanya saja ini menggunakan kondisi where, karena melakukan relasi antara column modul englishZoneSoal dengan column modul englishZoneMateri
+        // cara ini hampir sama dengan metode view pada userAccount find($id), hanya saja ini menggunakan kondisi where, karena melakukan relasi antara column modul englishZoneSoal dengan column modul englishZoneMateri
         // get data untuk soal pilihan ganda
         $groupedSoal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang', $user->kode_jenjang_murid)->inRandomOrder()->get()->groupBy('soal');
         $getSoal = $groupedSoal->map(fn($materis) => $materis->first()); // Data utama tiap modul

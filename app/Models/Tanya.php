@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Tanya extends Model
 {
-    use HasFactory, softDeletes;
+        use HasFactory, SoftDeletes;
     protected $fillable = [
         'nama_lengkap',
         'email',
@@ -29,8 +29,10 @@ class Tanya extends Model
         'jawaban',
         'image_jawab',
         'status',
-        'alasan_ditolak'
+        'alasan_ditolak',
+        'status_soal'
     ];
 
     protected $dates = ['created_at'];
+
 }

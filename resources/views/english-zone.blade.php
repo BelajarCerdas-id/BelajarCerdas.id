@@ -1,64 +1,64 @@
 @include('components/sidebar_beranda')
 @extends('components/sidebar_beranda_mobile')
 
-@if (isset($user))
-    @if ($user->status === 'Siswa')
-        <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
-            <div class="content-beranda">
-                <div class="bg-[--color-second] w-full h-20 shadow-lg rounded-t-xl flex items-center pl-10 mb-10">
-                    <div class="text-white font-bold flex items-center gap-4">
-                        <i class="fa-solid fa-file-lines text-4xl"></i>
-                        <span class="text-xl">English Zone</span>
+
+@if (session('user')->status === 'Siswa')
+    <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
+        <div class="content-beranda">
+            <div class="bg-[--color-second] w-full h-20 shadow-lg rounded-t-xl flex items-center pl-10 mb-10">
+                <div class="text-white font-bold flex items-center gap-4">
+                    <i class="fa-solid fa-file-lines text-4xl"></i>
+                    <span class="text-xl">English Zone</span>
+                </div>
+            </div>
+            <div class="flex mt-10">
+                <div class="w-full hover:bg-gray-100" onclick="content()">
+                    <input type="radio" class="hidden" name="radio" id="radio1" checked>
+                    <div class="checked-timeline">
+                        <label for="radio1" class="cursor-pointer">
+                            <span class="text-lg flex justify-center relative top-1">Materi</span>
+                            <div class="w-full border-b-[1px] border-gray-200 h-2"></div>
+                        </label>
                     </div>
                 </div>
-                <div class="flex mt-10">
-                    <div class="w-full hover:bg-gray-100" onclick="content()">
-                        <input type="radio" class="hidden" name="radio" id="radio1" checked>
-                        <div class="checked-timeline">
-                            <label for="radio1" class="cursor-pointer">
-                                <span class="text-lg flex justify-center relative top-1">Materi</span>
-                                <div class="w-full border-b-[1px] border-gray-200 h-2"></div>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="w-full hover:bg-gray-100" onclick="riwayat()">
-                        <input type="radio" class="hidden" name="radio" id="radio2">
-                        <div class="checked-timeline">
-                            <label for="radio2" class="cursor-pointer">
-                                <span class="text-lg flex justify-center relative top-1">Riwayat</span>
-                                <div class="w-full border-b-[1px] border-gray-200 h-2"></div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="relative w-full h-auto overflow-hidden bg-white shadow-lg">
-                    <div class="w-full h-auto" id="content">
-                        materi
-                    </div>
-                    <div class="w-full h-auto hidden" id="riwayat">
-                        riwayat
+                <div class="w-full hover:bg-gray-100" onclick="riwayat()">
+                    <input type="radio" class="hidden" name="radio" id="radio2">
+                    <div class="checked-timeline">
+                        <label for="radio2" class="cursor-pointer">
+                            <span class="text-lg flex justify-center relative top-1">Riwayat</span>
+                            <div class="w-full border-b-[1px] border-gray-200 h-2"></div>
+                        </label>
                     </div>
                 </div>
             </div>
+            <div class="relative w-full h-auto overflow-hidden bg-white shadow-lg">
+                <div class="w-full h-auto" id="content">
+                    materi
+                </div>
+                <div class="w-full h-auto hidden" id="riwayat">
+                    riwayat
+                </div>
+            </div>
         </div>
-    @elseif($user->status === 'Mentor')
-        <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
-            <div class="content-beranda">
-                <form action="{{ route('englishZone.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <label>Judul PDF:</label>
-                    <input type="text" name="mentor" value="{{ $user->nama_lengkap }}" required><br><br>
+    </div>
+@elseif(session('user')->status === 'Mentor')
+    <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
+        <div class="content-beranda">
+            <form action="{{ route('englishZone.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <label>Judul PDF:</label>
+                <input type="text" name="mentor" value="{{ $user->nama_lengkap }}" required><br><br>
 
-                    <label>File PDF:</label>
-                    <input type="file" name="pdf_file" accept="application/pdf" required><br><br>
+                <label>File PDF:</label>
+                <input type="file" name="pdf_file" accept="application/pdf" required><br><br>
 
-                    <button type="submit">Unggah PDF</button>
-                    @foreach ($get as $item)
-                        <span>{{ $item->mentor }}</span>
-                        <a href="{{ route('englishZone.show', $item->id) }}" target="_blank">Lihat</a>
-                    @endforeach
-                    <input type="url" class="border-4">
-                    {{-- @foreach ($get as $data)
+                <button type="submit">Unggah PDF</button>
+                @foreach ($get as $item)
+                    <span>{{ $item->mentor }}</span>
+                    <a href="{{ route('englishZone.show', $item->id) }}" target="_blank">Lihat</a>
+                @endforeach
+                <input type="url" class="border-4">
+                {{-- @foreach ($get as $data)
                         <div>
                             <h3>Mentor: {{ $data->mentor }}</h3>
 
@@ -75,40 +75,41 @@
                         </div>
                         <hr>
                     @endforeach --}}
-                </form>
-            </div>
+            </form>
         </div>
-    @elseif($user->status === 'Murid')
-        <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
-            <div class="content-beranda">
-                <div class="bg-[--color-second] w-full h-20 shadow-lg rounded-t-xl flex items-center pl-10 mb-10">
-                    <div class="text-white font-bold flex items-center gap-4">
-                        <i class="fa-solid fa-file-lines text-4xl"></i>
-                        <span class="text-xl">English Zone</span>
+    </div>
+@elseif(session('user')->status === 'Murid')
+    <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
+        <div class="content-beranda">
+            <div class="bg-[--color-second] w-full h-20 shadow-lg rounded-t-xl flex items-center pl-10 mb-10">
+                <div class="text-white font-bold flex items-center gap-4">
+                    <i class="fa-solid fa-file-lines text-4xl"></i>
+                    <span class="text-xl">English Zone</span>
+                </div>
+            </div>
+            <div class="flex mt-10">
+                <div class="w-full hover:bg-gray-100" onclick="content()">
+                    <input type="radio" class="hidden" name="radio" id="radio1" checked>
+                    <div class="checked-timeline">
+                        <label for="radio1" class="cursor-pointer">
+                            <span class="text-lg flex justify-center relative top-1">Materi</span>
+                            <div class="w-full border-b-[1px] border-gray-200 h-2"></div>
+                        </label>
                     </div>
                 </div>
-                <div class="flex mt-10">
-                    <div class="w-full hover:bg-gray-100" onclick="content()">
-                        <input type="radio" class="hidden" name="radio" id="radio1" checked>
-                        <div class="checked-timeline">
-                            <label for="radio1" class="cursor-pointer">
-                                <span class="text-lg flex justify-center relative top-1">Materi</span>
-                                <div class="w-full border-b-[1px] border-gray-200 h-2"></div>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="w-full hover:bg-gray-100" onclick="riwayat()">
-                        <input type="radio" class="hidden" name="radio" id="radio2">
-                        <div class="checked-timeline">
-                            <label for="radio2" class="cursor-pointer">
-                                <span class="text-lg flex justify-center relative top-1">Riwayat</span>
-                                <div class="w-full border-b-[1px] border-gray-200 h-2"></div>
-                            </label>
-                        </div>
+                <div class="w-full hover:bg-gray-100" onclick="riwayat()">
+                    <input type="radio" class="hidden" name="radio" id="radio2">
+                    <div class="checked-timeline">
+                        <label for="radio2" class="cursor-pointer">
+                            <span class="text-lg flex justify-center relative top-1">Riwayat</span>
+                            <div class="w-full border-b-[1px] border-gray-200 h-2"></div>
+                        </label>
                     </div>
                 </div>
-                <div class="relative w-full h-auto overflow-hidden bg-white shadow-lg">
-                    <div class="w-full h-auto" id="content">
+            </div>
+            <div class="relative w-full h-auto overflow-hidden bg-white shadow-lg">
+                <div class="w-full h-auto" id="content">
+                    @if ($mainMateri->isNotEmpty())
                         @foreach ($mainMateri as $modul => $item)
                             <div class="container-accordion">
                                 <div class="wrapper-content-accordion">
@@ -276,29 +277,31 @@
                                 <button>close</button>
                             </form>
                         </dialog>
-                    </div>
-                    <div class="w-full h-auto hidden" id="riwayat">
-                        riwayat
-                    </div>
+                    @else
+                        <div class="flex justify-center items-center min-h-[70vh]">
+                            Tidak ada Materi
+                        </div>
+                    @endif
+                </div>
+                <div class="w-full h-auto hidden" id="riwayat">
+                    riwayat
                 </div>
             </div>
         </div>
-    @elseif($user->status === 'Guru')
+    </div>
+@elseif(session('user')->status === 'Guru')
 
-    @elseif($user->status === 'Administrator')
-        <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
-            <div class="content-beranda">
+@elseif(session('user')->status === 'Administrator')
+    <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
+        <div class="content-beranda">
 
-            </div>
         </div>
-    @else
-        <div class="flex flex-col min-h-screen items-center justify-center">
-            <p>ALERT SEMENTARA</p>
-            <p>You do not have access to this pages.</p>
-        </div>
-    @endif
+    </div>
 @else
-    <p>You are not logged in.</p>
+    <div class="flex flex-col min-h-screen items-center justify-center">
+        <p>ALERT SEMENTARA</p>
+        <p>You do not have access to this pages.</p>
+    </div>
 @endif
 
 <script src="js/content-riwayat.js"></script> {{-- content slide --}}

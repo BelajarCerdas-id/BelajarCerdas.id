@@ -17,9 +17,9 @@ function openModal() {
     var imgSrc = document.querySelector('#imagePreview img').src;
     var modalImage = document.getElementById('modalImage');
     modalImage.src = imgSrc;
-    document.getElementById('imageModal').showModal();
+    document.getElementById('my_modal_1').showModal();
 }
 
     function closeModal() {
-        document.getElementById('imageModal').close();
+        document.getElementById('my_modal_1').close();
     }

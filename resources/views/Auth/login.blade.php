@@ -80,7 +80,7 @@
             @csrf
             <div class="w-full">
                 <input type="text" name="email" placeholder="Masukkan Email"
-                    class="w-full text-sm border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#4179e0] focus:border-transparent {{ $errors->has('email') ? 'border-[1px] border-red-500' : '' }}"
+                    class="w-full bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md text-sm px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] {{ $errors->has('email') ? 'border-[1px] border-red-500' : '' }}"
                     value="{{ @old('email') }}">
                 @error('email')
                     <span class="text-red-500 font-bold text-xs pt-2 flex flex-start">{{ $message }}</span>
@@ -88,7 +88,7 @@
             </div>
             <div class="w-full">
                 <input type="password" name="password" placeholder="Masukkan Password"
-                    class="w-full text-sm border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#4179e0] focus:border-transparent {{ $errors->has('password') ? 'border-[1px] border-red-500' : '' }}"
+                    class="w-full bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md text-sm px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] {{ $errors->has('password') ? 'border-[1px] border-red-500' : '' }}"
                     value="{{ @old('password') }}">
                 @error('password')
                     <span class="text-red-500 font-bold text-xs pt-2 flex flex-start">{{ $message }}</span>

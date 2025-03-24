@@ -14,6 +14,7 @@
         "vite": "^5.0"
     },
     "dependencies": {
-        "sweetalert2": "^11.15.10"
+        "sweetalert2": "^11.15.10",
+        "xlsx": "^0.18.5"
     }
 }

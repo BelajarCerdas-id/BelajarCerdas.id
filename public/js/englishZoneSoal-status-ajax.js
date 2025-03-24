@@ -35,21 +35,21 @@ function fetchFilteredDataQuestions(status_soal, modul_soal, jenjang, page = 1) 
 
                     $('#tableListQuestion').append(`
                         <tr class="text-xs">
-                            <td class="td-question !text-center">
+                            <td class="td-table !text-center">
                                 <input type="checkbox" name="id[]" value="${application.id}" onclick="showButton()" class="checkboxButton cursor-pointer">
                             </td>
-                            <td class="td-question !text-center">${application.modul_soal}</td>
-                            <td class="td-question !text-center">${application.jenjang}</td>
-                            <td class="td-question">${application.soal}</td>
-                            <td class="td-question !text-center">${application.jawaban_benar}</td>
-                            <td class="td-question">${application.deskripsi_jawaban}</td>
-                            <td class="td-question">${createdAt}</td>
-                            <td class="td-question !text-center">
+                            <td class="td-table !text-center">${application.modul_soal}</td>
+                            <td class="td-table !text-center">${application.jenjang}</td>
+                            <td class="td-table">${application.soal}</td>
+                            <td class="td-table !text-center">${application.jawaban_benar}</td>
+                            <td class="td-table">${application.deskripsi_jawaban}</td>
+                            <td class="td-table">${createdAt}</td>
+                            <td class="td-table !text-center">
                                 <button class="bg-${application.status_soal === 'published' ? 'green-500' : 'gray-300'} text-white p-2 rounded-lg">
                                     ${application.status_soal}
                                 </button>
                             </td>
-                            <td class="td-question !text-center">
+                            <td class="td-table !text-center">
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                             </td>
                         </tr>

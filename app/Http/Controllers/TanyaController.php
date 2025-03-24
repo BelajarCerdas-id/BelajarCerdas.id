@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\Crud;
+use App\Models\userAccount;
 use App\Models\Star;
 use App\Models\Tanya;
 use App\Models\testing;
@@ -14,43 +14,40 @@ class TanyaController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // index for tanya siswa & murid
     public function index()
     {
+        // mengambil tanggal hari ini
+        $today = now();
+
         // ambil semua data di tanya (belum di soft delete)
-        $user = session('user');
         $getTanya = Tanya::paginate(1);
-
-        // Check if the user is logged in
-        if (!$user) {
-            return redirect('/login');
-        }
-
-        // Ensure the user's email exists
-        if (!isset($user->email)) {
-            return redirect('/login')->withErrors(['' => '']);
-        }
 
         // Retrieve questions related to the user's email
         //session data based on email
-        $historyStudent = Tanya::where('email', $user->email)->orderBy('created_at', 'desc')->take(3)->get();
-        $historyStudentAnswered = Tanya::onlyTrashed()->where('email', $user->email)->where('status', 'Diterima')->orderBy('created_at', 'desc')->take(3)->get();
-        $historyStudentReject = Tanya::onlyTrashed()->where('email', $user->email)->where('status', 'Ditolak')->orderBy('created_at', 'desc')->take(3)->get();
+        $historyStudent = Tanya::where('email', session('user')->email)->orderBy('created_at', 'desc')->whereDate('created_at', $today)->get();
+        // history terjawab
+        $historyStudentAnswered = Tanya::onlyTrashed()->where('email', session('user')->email)->where('status', 'Diterima')->orderBy('created_at', 'desc')->whereDate('created_at', $today)->take(3)->get();
+        // history ditolak
+        $historyStudentReject = Tanya::onlyTrashed()->where('email', session('user')->email)->where('status', 'Ditolak')->orderBy('created_at', 'desc')->whereDate('created_at', $today)->take(3)->get();
         // kalau session data tidak mengambil data yang telah di soft delete, onlyTrashed nya hapus aja jadi langsung Tanya::where
-        $siswaHistoryRestore = Tanya::onlyTrashed()->where('email', $user->email)->orderBy('created_at', 'desc')->paginate(2); // dataSiswa session tanya for page siswa (after soft delete)
-        $teacherHistoryRestore = Tanya::onlyTrashed()->where('email_mentor', $user->email)->orderBy('created_at', 'desc')->get(); // getStore session tanya for page guru (after soft delete)
+        $siswaHistoryRestore = Tanya::onlyTrashed()->where('email', session('user')->email)->orderBy('created_at', 'desc')->paginate(2); // dataSiswa session tanya for page siswa (after soft delete)
+        $teacherHistoryRestore = Tanya::onlyTrashed()->where('email_mentor', session('user')->email)->orderBy('created_at', 'desc')->get(); // getStore session tanya for page guru (after soft delete)
 
-        $getData = Crud::where('status', 'Mentor')->get();
+        $getData = userAccount::where('status', 'Mentor')->get();
 
         $dataAccept = Tanya::onlyTrashed()->whereIn('email_mentor', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email_mentor');
         $validatedMentorAccepted = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email');
 
+        // limit tanya harian
+        $getLimitedTanya = Tanya::where('email', session('user')->email)->whereDate('created_at', $today)->get();
+
+        $countDataTanyaUser = Tanya::onlyTrashed()->where('email', session('user')->email)->where('status_soal', 'Belum Dibaca')->get();
         // Mengurutkan data berdasarkan urutan asli atau ID
         // $combinedHistory = $combinedHistory->sortBy('id'); // Ganti 'id' dengan atribut yang relevan jika diperlukan (id di hidden karena tidak butuh, tapi biarin aja)
 
-
-
         // Pass user data and filtered questions to the view
-        return view('tanya', compact('user', 'getTanya', 'historyStudent', 'historyStudentAnswered', 'historyStudentReject', 'teacherHistoryRestore', 'siswaHistoryRestore', 'dataAccept', 'validatedMentorAccepted'));
+        return view('Tanya.tanya', compact('getTanya', 'historyStudent', 'historyStudentAnswered', 'historyStudentReject', 'teacherHistoryRestore', 'siswaHistoryRestore', 'dataAccept', 'validatedMentorAccepted', 'getLimitedTanya', 'countDataTanyaUser'));
     }
 
     /**
@@ -58,24 +55,19 @@ class TanyaController extends Controller
      */
     public function create()
     {
-        // 
+        //
     }
 
     /**
      * Store a newly created resource in storage.
      */
+    // store for tanya siswa & murid
     public function store(Request $request)
     {
         $user = session('user');
         if(!isset($user->email)) {
             return redirect('/login');
         }
-
-        $getRestore = Tanya::withTrashed()->get();
-        $historyStudent = Tanya::where('email', $user->email)->orderBy('created_at', 'desc')->take(3)->get();
-        $siswaHistoryRestore = Tanya::onlyTrashed()->where('email', $user->email)->orderBy('created_at', 'desc')->paginate(2); // dataSiswa session tanya for page siswa (after soft delete)
-        $historyStudentAnswered = Tanya::onlyTrashed()->where('email', $user->email)->where('status', 'Diterima')->orderBy('created_at', 'desc')->take(3)->get();
-        $historyStudentReject = Tanya::onlyTrashed()->where('email', $user->email)->where('status', 'Ditolak')->orderBy('created_at', 'desc')->take(3)->get();
 
         // Ensure the user's email exists
         if (!isset($user->email)) {
@@ -95,10 +87,10 @@ class TanyaController extends Controller
             'image_tanya' => 'image|mimes:jpg,jpeg,png|max:2000'
         ], [
             'nama_lengkap.required' => 'Nama harus diisi',
-            'kelas.required' => 'Pilih Kelas',
-            'mapel.required' => 'Pilih Mata Pelajaran',
-            'bab.required' => 'Pilih Bab',
-            'pertanyaan.required' => 'Pertanyaan harus diisi',
+            'kelas.required' => 'Harap Pilih Kelas!',
+            'mapel.required' => 'Harap Pilih Mata Pelajaran!',
+            'bab.required' => 'Harap Pilih Bab!',
+            'pertanyaan.required' => 'Pertanyaan harus diisi!',
             'image_tanya.max' => 'File gambar melebihi jumlah ukuran maksimal'
         ]);
 
@@ -123,7 +115,7 @@ class TanyaController extends Controller
             'image_tanya' => $validatedData['image_tanya'],
         ]);
 
-        return view('tanya', compact('user', 'dataSiswa', 'getRestore', 'historyStudent', 'siswaHistoryRestore', 'historyStudentAnswered', 'historyStudentReject'));
+        return redirect()->back()->with('success', 'Pertanyaan berhasil dikirim!');
     }
 
     /**
@@ -139,51 +131,47 @@ class TanyaController extends Controller
      */
     public function edit(string $id)
     {
-        $user = session('user');
         $getTanya = Tanya::find($id); // for answer
         $postReject = Tanya::withTrashed()->findOrFail($id); // for reject
         $getRestore = Tanya::withTrashed()->findOrFail($id);
 
-        if(!$getTanya) { // if getTanya null, user will directed to the pages tanya
-            return redirect('/tanya');
-        }
-        return view('view', compact('getTanya', 'postReject', 'getRestore', 'user'));
+        return view('Tanya.view', compact('getTanya', 'postReject', 'getRestore'));
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-{
-    // Validasi input
-    $validatedData = $request->validate([
-        'jawaban' => 'required',
-        'image_jawab' => 'nullable|image|mimes:jpg,png,jpeg|max:2048'
-    ], [
-        'jawaban.required' => 'Jawaban tidak boleh kosong',
-        'image_jawab.max' => 'File gambar melebihi jumlah ukuran maksimal'
-    ]);
-    
-    // Cari record yang akan diupdate
-    $getTanya = Tanya::find($id);
-    // Update data lain
-    $getTanya->mentor = $request->mentor;
-    $getTanya->id_mentor = $request->id_mentor;
-    $getTanya->asal_mengajar = $request->asal_mengajar;
-    $getTanya->email_mentor = $request->email_mentor;
-    $getTanya->jawaban = $request->jawaban;
-    $getTanya->status = $request->status;
+    {
+        // Validasi input
+        $validatedData = $request->validate([
+            'jawaban' => 'required',
+            'image_jawab' => 'nullable|image|mimes:jpg,png,jpeg|max:2048'
+        ], [
+            'jawaban.required' => 'Jawaban tidak boleh kosong',
+            'image_jawab.max' => 'File gambar melebihi jumlah ukuran maksimal'
+        ]);
 
-    if ($request->hasFile('image_jawab')) {
-        $filename = time() . $request->file('image_jawab')->getClientOriginalName();
-        $request->file('image_jawab')->move(public_path('images_tanya'), $filename);
-        $getTanya->image_jawab = $filename; // Simpan nama file baru ke database
+        // Cari record yang akan diupdate
+        $getTanya = Tanya::find($id);
+        // Update data lain
+        $getTanya->mentor = $request->mentor;
+        $getTanya->id_mentor = $request->id_mentor;
+        $getTanya->asal_mengajar = $request->asal_mengajar;
+        $getTanya->email_mentor = $request->email_mentor;
+        $getTanya->jawaban = $request->jawaban;
+        $getTanya->status = $request->status;
+
+        if ($request->hasFile('image_jawab')) {
+            $filename = time() . $request->file('image_jawab')->getClientOriginalName();
+            $request->file('image_jawab')->move(public_path('images_tanya'), $filename);
+            $getTanya->image_jawab = $filename; // Simpan nama file baru ke database
+        }
+            $getTanya->save(); // save all update's in database
+            $getTanya->delete(); // delete data after update data (supaya masuk ke softdelete)
+
+        return redirect('/tanya')->with('success', 'Data berhasil diupdate!');
     }
-        $getTanya->save(); // save all update's in database
-        $getTanya->delete(); // delete data after update data (supaya masuk ke softdelete)
-
-    return redirect('/tanya')->with('success', 'Data berhasil diupdate!');
-}
 
 
     public function updateReject(Request $request, string $id)
@@ -223,10 +211,24 @@ class TanyaController extends Controller
 
     public function viewRestore(string $id)
     {
-        $user = session('user');
-        $getRestore = Tanya::withTrashed()->findOrFail($id); 
+        $getRestore = Tanya::withTrashed()->findOrFail($id);
         // findOrFail berfungsi untuk mencari semua record berdasarkan primary key (biasanya ID)
         // withTrashed mengambil semua record termasuk yang telah dihapus
-        return view('restore', compact('getRestore', 'user'));
+        return view('Tanya.restore', compact('getRestore'));
     }
+
+public function updateStatusSoal($email)
+{
+    $getTanya = Tanya::onlyTrashed()->where('email', $email)->get();
+
+    foreach ($getTanya as $tanya) {
+        $tanya->update(['status_soal' => 'Telah Dibaca']);
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Status berhasil diperbarui!',
+    ]);
+}
+
 }

@@ -15,7 +15,7 @@
 }
 
 body {
-    font-family: open-sans;
+    font-family: "Poppins", sans-serif;
     text-color: white;
 }
 
@@ -209,7 +209,7 @@ input[type="radio"]:checked a {
     min-height: 110vh;
     width: 250px;
     z-index: 99;
-    background-color: var(--color-second);
+    background-color: #153569;
     transition: all 0.5s ease;
     position: fixed;
     top: 0;
@@ -489,8 +489,8 @@ input[type="radio"]:checked a {
 }
 
 input[type="radio"]:checked + .historyTanya {
-    color: red;
-    border-bottom: 2px solid red;
+    color: #4189e0;
+    border-bottom: 2px solid #4189e0;
 }
 
 .pagination {
@@ -531,8 +531,8 @@ input[type="radio"] {
 }
 
 input[type="radio"]:checked + .checked-timeline {
-    color: red;
-    border-bottom: 2px solid red;
+    color: #4189e0 !important;
+    border-bottom: 2px solid #4189e0 !important;
 }
 
 .home-beranda .content {
@@ -1135,32 +1135,32 @@ input[type="radio"]:checked + .pilihanSoal .option {
 }
 
 /* Styling untuk tabel secara keseluruhan */
-.table-question {
+.table-data {
     width: 100%;
     border-collapse: collapse; /* Menggabungkan border antara sel */
 }
 
 /* Styling untuk setiap sel dalam tabel (th dan td) */
-.th-question {
+.th-table {
     border: 2px solid #ddd; /* Menambahkan border ke setiap sel */
     padding: 8px; /* Memberikan ruang di dalam sel */
     text-align: center; /* Menyelaraskan teks di tengah */
 }
 
-.td-question {
+.td-table {
     border: 2px solid #ddd; /* Menambahkan border ke setiap sel */
     padding: 8px; /* Memberikan ruang di dalam sel */
     text-align: justify; /* Menyelaraskan teks justify */
 }
 
 /* Styling untuk header */
-.thead-question {
+.thead-table {
     background-color: #f2f2f2; /* Warna latar belakang untuk header */
     font-weight: bold; /* Membuat teks header lebih tebal */
 }
 
 /* Styling untuk baris yang memiliki status 'published' */
-.td-question {
+.td-table {
     color: white;
 }
 
@@ -1617,6 +1617,64 @@ input[type="radio"]:checked + .serviceOption .icon-service {
 input[type="radio"]:checked + .listPokokBahasan .pembahasan {
     background-color: var(--color-default);
     color: white;
+}
+
+/* untuk menghilangkan arrow up & down pada input type number */
+/* Untuk semua browser */
+input[type="number"] {
+    -moz-appearance: textfield; /* Firefox */
+    appearance: textfield;
+}
+
+/* Untuk Chrome, Safari, Edge */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Untuk Microsoft Edge */
+input[type="number"]::-ms-clear,
+input[type="number"]::-ms-reveal {
+    display: none;
+}
+
+.flatpickr-day.today {
+    background: var(--color-default) !important; /* Kuning */
+    color: white !important;
+    border-radius: 50%;
+    font-weight: bold;
+    border: none;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.today.selected {
+    background: #007bff !important; /* Biru */
+    color: #fff !important;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+/* Scrollbar lebih tipis (TANYA) */
+#dailyTanya::-webkit-scrollbar {
+    width: 2px !important; /* Paksa agar lebih tipis */
+}
+
+/* Warna scrollbar */
+#dailyTanya::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    border-radius: 10px !important;
+}
+
+/* Track scrollbar */
+#dailyTanya::-webkit-scrollbar-track {
+    background-color: transparent !important;
+}
+
+/* Untuk Firefox */
+#dailyTanya {
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent !important;
 }
 @media screen and (max-width: 900px) {
     #slide1:checked ~ #controls label:nth-child(2),

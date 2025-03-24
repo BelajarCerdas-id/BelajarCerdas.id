@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Crud;
 use App\Models\Star;
 use App\Models\Tanya;
 use App\Models\Keynote;
 use Illuminate\Http\Request;
 use App\Models\englishZoneSoal;
+use App\Models\userAccount;
 use Illuminate\Support\Facades\Log;
 
 class FilterController extends Controller
@@ -51,7 +51,7 @@ public function filterHistoryTeacher(Request $request)
         $query->where('status', $request->status);
     }
 
-    $data = $query->orderBy('created_at', 'desc')->paginate(10);
+    $data = $query->orderBy('updated_at', 'desc')->paginate(10);
 
     return response()->json([
         'data' => $data->items(),
@@ -155,7 +155,7 @@ public function filterListMentor()
 {
     $user = session('user');
 
-    $query = Crud::where('status', 'Mentor');
+    $query = userAccount::where('status', 'Mentor');
     $countData = [];
 
     $countData = $query->get()->mapWithKeys(function ($item) {

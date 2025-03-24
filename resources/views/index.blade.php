@@ -1,8 +1,6 @@
-<x-layout>
-    {{-- <x-slot:title>{{ $title }}</x-slot:title> --}}
-</x-layout>
+<x-navbar></x-navbar>
 
-<header>
+{{-- <header>
     <main>
         <section class="grid grid-cols-12 relative">
             <div class="col-span-12 md:col-span-6 px-4 md:pl-12">
@@ -29,10 +27,295 @@
             </div>
         </section>
     </main>
+</header> --}}
+
+<header>
+    <main>
+        <!---- size lg, dst ----->
+        <section class="hidden lg:grid grid-cols-12 relative">
+            <div class="col-span-12 lg:col-span-6 flex items-center justify-center relative">
+                <div class="absolute bottom-0 left-0">
+                    <div
+                        class="relative left-[-50px] bottom-[-40px] h-28 w-28 bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
+                    </div>
+                </div>
+                <div
+                    class="w-14 h-60 flex flex-col items-center justify-center gap-6 text-2xl bg-[--color-default] text-white rounded-r-2xl">
+                    <i class="fa-brands fa-twitter"></i>
+                    <i class="fa-brands fa-facebook-f"></i>
+                    <i class="fa-brands fa-instagram"></i>
+                    <i class="fa-brands fa-youtube"></i>
+                </div>
+                <div class="w-full md:text-left h-full flex flex-col justify-center gap-2 px-14">
+                    <div class="text-2xl font-bold">
+                        <span>Lebih Dari Sekedar</span>
+                        <span class="text-[--color-default]">Edutech</span>
+                    </div>
+                    <div class="text-4xl sm:text-5xl md:text-4xl lg:text-5xl font-bold">
+                        <span>Belajar Cerdas</span>
+                    </div>
+                    <div class="text-3xl sm:text-4xl md:text-5xl font-bold mt-[1px] !leading-[60px]">
+                        <span>Raih Prestasi</span>
+                        <span class="">Lebih Tinggi!</span>
+                    </div>
+                    <div class="w-full xl:w-[78%] flex flex-wrap mt-[1px]">
+                        <span class="text-justify leading-6 flex-grow">
+                            Belajar Cerdas ID adalah platform edukasi inovatif yang membantumu memahami materi dengan
+                            lebih
+                            mudah, cepat, dan efektif.
+                            Dengan metode pembelajaran yang interaktif dan berbasis konsep, kami siap menemanimu meraih
+                            prestasi terbaik!.
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 lg:col-span-6 h-[550px] relative flex justify-center">
+                <!----- rounded mid  ----->
+                <div
+                    class="absolute left-[-60px] top-[30%] h-28 w-28 bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
+                </div>
+                <!----- rounded right  ----->
+                <div
+                    class="absolute right-0 top-[20%] h-28 w-14 bg-white shadow-[0_10px_24px_rgba(0,0,0,0.23)] rounded-l-full">
+                </div>
+
+                <div
+                    class="absolute bottom-[-60px] xl:bottom-[-90px] w-full h-full max-h-[425px] max-w-[425px] xl:max-h-[480px] xl:max-w-[480px] bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
+                    <!---- image in here ---->
+                    <img src="image/aset orang landing page 3.png" alt=""
+                        class="relative h-[640px] xl:h-[679px] top-[-215px] left-[40px] xl:top-[-200px] xl:left-[72px]">
+                </div>
+                <img src="image/asset landing page.png" alt="" class="w-full h-full">
+            </div>
+            {{-- <div class="absolute bottom-0">
+                <div class="flex gap-8 max-w-max">
+                    <div class="flex gap-4 w-[550px] bg-white rounded-full p-4 shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
+                        <div class="flex items-center w-[200px]">
+                            <img src="image/asset icon landing page.png" alt="" class="w-full">
+                        </div>
+                        <div class="">
+                            <span class="font-bold">TANYA MAFIA</span>
+                            <p class="text-sm text-justify">Tanya adalah fitur dari BelajarCerdas.id yang mempermudah
+                                siswa mendapatkan jawaban atas
+                                pertanyaan mereka. Siswa yang login setiap hari akan menerima 10 koin gratis, dan setiap
+                                pertanyaan yang diajukan juga menambah 1 koin. TANYA MAFIA
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 w-[550px] bg-white rounded-full p-4 shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
+                        <div class="flex items-center w-[200px]">
+                            <img src="image/asset icon landing page.png" alt="" class="w-full">
+                        </div>
+                        <div class="">
+                            <span class="font-bold">TANYA MAFIA</span>
+                            <p class="text-sm text-justify">Tanya adalah fitur dari BelajarCerdas.id yang mempermudah
+                                siswa mendapatkan jawaban atas
+                                pertanyaan mereka. Siswa yang login setiap hari akan menerima 10 koin gratis, dan setiap
+                                pertanyaan yang diajukan juga menambah 1 koin. TANYA MAFIA
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 w-[550px] bg-white rounded-full p-4 shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
+                        <div class="flex items-center w-[200px]">
+                            <img src="image/asset icon landing page.png" alt="" class="w-full">
+                        </div>
+                        <div class="">
+                            <span class="font-bold">TANYA MAFIA</span>
+                            <p class="text-sm text-justify">Tanya adalah fitur dari BelajarCerdas.id yang mempermudah
+                                siswa mendapatkan jawaban atas
+                                pertanyaan mereka. Siswa yang login setiap hari akan menerima 10 koin gratis, dan setiap
+                                pertanyaan yang diajukan juga menambah 1 koin. TANYA MAFIA
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div> --}}
+        </section>
+
+
+        <section class="grid grid-cols-12 lg:hidden relative">
+            {{-- <div class="col-span-12 border border-green-500 h-[400px] sm:h-[500px] relative flex justify-center">
+                <!----- rounded mid  ----->
+                <div
+                    class="absolute left-[-60px] top-[30%] h-28 w-28 bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
+                </div>
+                <!----- rounded right  ----->
+                <div
+                    class="absolute right-[-1px] top-[20%] h-28 w-14 bg-white shadow-[0_10px_24px_rgba(0,0,0,0.23)] rounded-l-full">
+                </div>
+
+                <div
+                    class="absolute bottom-[-130px] w-full h-full max-h-[300px] max-w-[300px] sm:max-h-[400px] sm:max-w-[400px] bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
+                    <!---- image in here ---->
+                </div>
+                <img src="image/asset landing page.png" alt="" class="w-full h-full">
+            </div> --}}
+
+            <div class="col-span-12 border border-yellow-500 flex items-center justify-center">
+                <div class="w-full md:text-left h-full border border-red-500 flex flex-col justify-center gap-2">
+                    <div class="text-2xl font-bold">
+                        <span>Lebih Dari Sekedar</span>
+                        <span class="text-[--color-default]">Edutech</span>
+                    </div>
+                    <div class="text-4xl sm:text-5xl md:text-bg-red-50 font-bold">
+                        <span>Belajar Cerdas</span>
+                    </div>
+                    <div class="text-3xl sm:text-4xl md:text-5xl font-bold mt-[1px] !leading-[60px]">
+                        <span>Raih Prestasi</span>
+                        <span class="">Lebih Tinggi!</span>
+                    </div>
+                    <div class="w-full xl:w-[78%] border-2 flex flex-wrap mt-[1px]">
+                        <span class="text-justify leading-6 flex-grow">
+                            Belajar Cerdas ID adalah platform edukasi inovatif yang membantumu memahami materi dengan
+                            lebih
+                            mudah, cepat, dan efektif.
+                            Dengan metode pembelajaran yang interaktif dan berbasis konsep, kami siap menemanimu meraih
+                            prestasi terbaik!.
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {{-- <div class="col-span-12 border border-green-500 h-[400px] sm:h-[500px] relative flex justify-center">
+                <!----- rounded mid  ----->
+                <div
+                    class="absolute left-[-60px] top-[30%] h-28 w-28 bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
+                </div>
+                <!----- rounded right  ----->
+                <div
+                    class="absolute right-[-1px] top-[20%] h-28 w-14 bg-white shadow-[0_10px_24px_rgba(0,0,0,0.23)] rounded-l-full">
+                </div>
+
+                <div
+                    class="absolute bottom-[-130px] w-full h-full max-h-[300px] max-w-[300px] sm:max-h-[400px] sm:max-w-[400px] bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
+                    <!---- image in here ---->
+                </div>
+                <img src="image/asset landing page.png" alt="" class="w-full h-full">
+            </div>
+            <div class="col-span-12 border border-yellow-500 flex items-center justify-center">
+                <div class="w-full md:text-left h-full border border-red-500 flex flex-col justify-center gap-2 px-14">
+                    <div class="text-2xl font-bold">
+                        <span>Lebih Dari Sekedar</span>
+                        <span class="text-[--color-default]">Edutech</span>
+                    </div>
+                    <div class="text-4xl sm:text-5xl md:text-bg-red-50
+                        <span>Belajar Cerdas</span>
+                    </div>
+                    <div class="text-3xl sm:text-4xl md:text-5xl font-bold mt-[1px] !leading-[60px]">
+                        <span>Raih Prestasi</span>
+                        <span class="">Lebih Tinggi!</span>
+                    </div>
+                    <div class="w-full xl:w-[78%] border-2 flex flex-wrap mt-[1px]">
+                        <span class="text-justify leading-6 flex-grow">
+                            Belajar Cerdas ID adalah platform edukasi inovatif yang membantumu memahami materi dengan
+                            lebih
+                            mudah, cepat, dan efektif.
+                            Dengan metode pembelajaran yang interaktif dan berbasis konsep, kami siap menemanimu meraih
+                            prestasi terbaik!.
+                        </span>
+                    </div>
+                </div>
+            </div> --}}
+
+        </section>
+    </main>
 </header>
 
+
+
+<!-- Header -->
+{{-- <header class="flex justify-between items-center px-8 py-4 bg-white shadow-md">
+    <div class="flex items-center space-x-4">
+        <div class="h-16 w-16 bg-white rounded-full shadow-lg flex justify-center items-center border">
+            <img src="https://via.placeholder.com/50" alt="Logo" class="h-12">
+        </div>
+        <h1 class="text-xl font-bold text-[#30AADD]">Belajar Cerdas</h1>
+    </div>
+    <nav class="hidden md:flex space-x-6 font-medium">
+        <a href="#" class="hover:text-[#30AADD]">About Us</a>
+        <a href="#" class="hover:text-[#30AADD]">Contact Us</a>
+        <a href="#" class="hover:text-[#30AADD]">Services</a>
+    </nav>
+    <div class="flex items-center space-x-4">
+        <div class="relative w-48 hidden md:flex items-center bg-gray-200 rounded-full px-3 py-1">
+            <input type="text" placeholder="Search..." class="bg-transparent w-full focus:outline-none">
+            <svg class="h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+            </svg>
+        </div>
+        <button class="bg-[#30AADD] text-white px-4 py-2 rounded-full">Log In</button>
+    </div>
+</header>
+
+<!-- Hero Section -->
+<section class="flex flex-col md:flex-row items-center p-12 space-y-6 md:space-y-0 md:space-x-8">
+    <div class="w-full md:w-1/2">
+        <h2 class="text-4xl font-bold leading-tight">Belajar Cerdas<br>Raih Prestasi Lebih Tinggi!</h2>
+        <p class="text-gray-600 mt-4">Belajar Cerdas adalah platform edukasi inovatif yang membantumu memahami materi
+            dengan lebih mudah, cepat, dan efektif.</p>
+    </div>
+    <div class="w-full md:w-1/2 flex justify-center">
+        <img src="image/asset landing page.png" alt="Learning Illustration" class="w-[400px]">
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 px-8 py-12">
+    <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+        <img src="https://via.placeholder.com/50" class="h-12">
+        <div>
+            <h3 class="text-lg font-bold">Tanya Mafia</h3>
+            <p class="text-sm text-gray-600">Dapatkan solusi dari tutor terbaik secara real-time.</p>
+        </div>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+        <img src="https://via.placeholder.com/50" class="h-12">
+        <div>
+            <h3 class="text-lg font-bold">Halo Guru</h3>
+            <p class="text-sm text-gray-600">Konsultasi langsung dengan guru untuk memahami materi.</p>
+        </div>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+        <img src="https://via.placeholder.com/50" class="h-12">
+        <div>
+            <h3 class="text-lg font-bold">English Zone</h3>
+            <p class="text-sm text-gray-600">Belajar bahasa Inggris dengan mentor pilihan.</p>
+        </div>
+    </div>
+</section> --}}
+
+{{-- <main>
+    <section class="grid grid-cols-12 h-[600px]">
+        <div class="col-span-6 h-[600px] border border-red-500 flex justify-center">
+            <div class="w-[425px] flex flex-col gap-2 border border-yellow-500">
+                <div class="text-xl leading-10">
+                    <span>Lebih Dari Sekedar</span>
+                    <span class="text-[--color-default] font-bold">Edutech</span>
+                </div>
+                <div class="text-6xl font-bold leading-[55px]">
+                    <p>Belajar Cerdas</p>
+                    <p>Raih Prestasi</p>
+                    <p>Lebih Tinggi!</p>
+                </div>
+                <div class="border-b-4 border-[#5ef2d5] h-2 w-[64%]"></div>
+                <p class="text-justify leading-6">
+                    Belajar Cerdas ID adalah platform edukasi inovatif yang membantumu memahami materi dengan lebih
+                    mudah, cepat, dan efektif.
+                    Dengan metode pembelajaran yang interaktif dan berbasis konsep, kami siap menemanimu meraih prestasi
+                    terbaik!.
+                </p>
+            </div>
+        </div>
+        <div class="col-span-6 h-[600px] border border-blue-500">
+            <img src="image/asset landing page.png" alt="" class="w-full h-full">
+        </div>
+    </section>
+</main> --}}
+
 <div
-    class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 lg:grid-cols-4 gap-2 mx-2 lg:w-[90%] xl:w-max lg:mx-auto mt-40">
+    class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 lg:grid-cols-4 gap-2 mx-2 lg:w-[90%] xl:w-max lg:mx-auto mt-40 border-2">
     @foreach ($packets as $packet)
         <article class="xl:w-[225px] xl:h-max bg-white shadow-lg rounded-lg overflow-hidden relative ... border-[1px]">
             <section class="relative top-[-10px]">
@@ -69,72 +352,76 @@
     @endforeach
 </div>
 
-    <div class="relative flex justify-center items-center min-h-screen p-6">
-        <!-- Main Content -->
-        <div class="relative rounded-lg shadow-xl border-[1px] border-gray-200 w-full max-w-[1500px] h-auto p-6 md:p-10">
-            <!-- Icon Top Element -->
-            <div class="absolute right-4 top-10 md:right-10 md:top-8">
-                <div class="relative w-8 md:w-12">
-                    <!-- Diagonal Line 1 -->
-                    <div class="absolute inset-0 bg-[--color-default] rotate-45 w-full h-2 md:h-3"></div>
-                    <!-- Diagonal Line 2 -->
-                    <div class="absolute inset-0 bg-[--color-default] -rotate-45 w-full h-2 md:h-3"></div>
-                </div>
+<div class="relative flex justify-center items-center min-h-screen p-6">
+    <!-- Main Content -->
+    <div class="relative rounded-lg shadow-xl border-[1px] border-gray-200 w-full max-w-[1500px] h-auto p-6 md:p-10">
+        <!-- Icon Top Element -->
+        <div class="absolute right-4 top-10 md:right-10 md:top-8">
+            <div class="relative w-8 md:w-12">
+                <!-- Diagonal Line 1 -->
+                <div class="absolute inset-0 bg-[--color-default] rotate-45 w-full h-2 md:h-3"></div>
+                <!-- Diagonal Line 2 -->
+                <div class="absolute inset-0 bg-[--color-default] -rotate-45 w-full h-2 md:h-3"></div>
             </div>
-            <!-- Icon Bottom Element -->
-            <div class="absolute right-4 bottom-10 md:right-10 md:bottom-12">
-                <div class="relative w-8 md:w-12">
-                    <!-- Diagonal Line 1 -->
-                    <div class="absolute inset-0 bg-[--color-default] w-full h-2 md:h-3"></div>
-                    <!-- Diagonal Line 2 -->
-                    <div class="absolute inset-0 bg-[--color-default] rotate-90 w-full h-2 md:h-3"></div>
-                </div>
+        </div>
+        <!-- Icon Bottom Element -->
+        <div class="absolute right-4 bottom-10 md:right-10 md:bottom-12">
+            <div class="relative w-8 md:w-12">
+                <!-- Diagonal Line 1 -->
+                <div class="absolute inset-0 bg-[--color-default] w-full h-2 md:h-3"></div>
+                <!-- Diagonal Line 2 -->
+                <div class="absolute inset-0 bg-[--color-default] rotate-90 w-full h-2 md:h-3"></div>
             </div>
-            <!-- Left Side: Image -->
-            <div class="relative grid grid-cols-1 md:grid-cols-12 gap-6 h-auto my-20">
-                <!-- Left Content -->
-                <div class="col-span-12 md:col-span-6 flex justify-center items-center">
-                    <!-- Background Elements -->
-                    <div class="bg-[--color-default] w-52 h-52 md:w-80 md:h-80 rounded-full relative">
-                        <div class="w-[300px] md:w-[460px] relative left-[-24%] md:left-[-23%] top-[-25%] z-20">
-                            <!-- Image -->
-                            <img src="image/asset_belajarcerdas2-01.png" alt="Person with laptop" class="">
-                        </div>
-                        <div class="absolute inset-0">
-                            <div class="absolute top-0 left-0 bg-[--color-default] w-6 h-6 md:w-10 md:h-10 rounded-full"></div>
-                        </div>
-                        <div class="absolute inset-[-10px]">
-                            <div class="absolute bottom-0 right-0 bg-[--color-default] w-8 h-8 md:w-14 md:h-14 rounded-full"></div>
+        </div>
+        <!-- Left Side: Image -->
+        <div class="relative grid grid-cols-1 md:grid-cols-12 gap-6 h-auto my-20">
+            <!-- Left Content -->
+            <div class="col-span-12 md:col-span-6 flex justify-center items-center">
+                <!-- Background Elements -->
+                <div class="bg-[--color-default] w-52 h-52 md:w-80 md:h-80 rounded-full relative">
+                    <div class="w-[300px] md:w-[460px] relative left-[-24%] md:left-[-23%] top-[-25%] z-20">
+                        <!-- Image -->
+                        <img src="image/asset_belajarcerdas2-01.png" alt="Person with laptop" class="">
+                    </div>
+                    <div class="absolute inset-0">
+                        <div class="absolute top-0 left-0 bg-[--color-default] w-6 h-6 md:w-10 md:h-10 rounded-full">
                         </div>
                     </div>
+                    <div class="absolute inset-[-10px]">
+                        <div
+                            class="absolute bottom-0 right-0 bg-[--color-default] w-8 h-8 md:w-14 md:h-14 rounded-full">
+                        </div>
+                    </div>
+                </div>
 
 
+            </div>
+            <!-- Right Side: Text Content -->
+            <div class="flex flex-col justify-center col-span-12 md:col-span-6 relative">
+                <h1 class="text-4xl md:text-4xl font-bold text-gray-800 absolute top-0 md:top-6">
+                    BelajarCerdas.<span class="text-[--color-default]">id</span>
+                </h1>
+                <div class="mt-20">
+                    <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8 text-justify">
+                        BelajarCerdas.id hadir sebagai solusi inovatif di dunia pendidikan, menggabungkan kekuatan
+                        teknologi online dengan pendekatan offline yang personal.
+                    </p>
                 </div>
-                <!-- Right Side: Text Content -->
-                <div class="flex flex-col justify-center col-span-12 md:col-span-6 relative">
-                    <h1 class="text-4xl md:text-4xl font-bold text-gray-800 absolute top-0 md:top-6">
-                        BelajarCerdas.<span class="text-[--color-default]">id</span>
-                    </h1>
-                    <div class="mt-20">
-                        <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8 text-justify">
-                            BelajarCerdas.id hadir sebagai solusi inovatif di dunia pendidikan, menggabungkan kekuatan
-                            teknologi online dengan pendekatan offline yang personal.
-                        </p>
-                    </div>
-                    <div class="mt-4">
-                        <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8 text-justify">
-                            Kami percaya bahwa belajar bukan hanya tentang siswa, tetapi juga tentang memberdayakan guru untuk
-                            menciptakan pengalaman belajar yang seamless dan efektif.
-                        </p>
-                    </div>
-                    <button
-                        class="mt-6 px-6 py-3 bg-[#ffc000] font-bold rounded-full shadow-md hover:bg-yellow-600 w-full md:w-[160px] mb-20">
-                        KNOW MORE
-                    </button>
+                <div class="mt-4">
+                    <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8 text-justify">
+                        Kami percaya bahwa belajar bukan hanya tentang siswa, tetapi juga tentang memberdayakan guru
+                        untuk
+                        menciptakan pengalaman belajar yang seamless dan efektif.
+                    </p>
                 </div>
+                <button
+                    class="mt-6 px-6 py-3 bg-[#ffc000] font-bold rounded-full shadow-md hover:bg-yellow-600 w-full md:w-[160px] mb-20">
+                    KNOW MORE
+                </button>
             </div>
         </div>
     </div>
+</div>
 
 <div class="relative flex justify-center items-center p-6">
     <!-- Main Content -->
@@ -186,7 +473,8 @@
                 </div>
                 <div class="my-4">
                     <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8 text-justify">
-                        Kami tidak hanya menawarkan produk, tetapi menciptakan pengalaman yang relevan dan bermakna bagi konsumen kami. Dengan pendekatan Konsep STAR,
+                        Kami tidak hanya menawarkan produk, tetapi menciptakan pengalaman yang relevan dan bermakna bagi
+                        konsumen kami. Dengan pendekatan Konsep STAR,
                         tujuan kami adalah:
                     </p>
                 </div>
@@ -195,20 +483,23 @@
                     <div class="flex gap-2">
                         <img src="image/globe-icon.png" alt="" class="w-6 object-contain">
                         <span class="text-justify text-sm">
-                            Menghadirkan Pembelajaran yang Relevan dan Bermakna. Kami fokus menjual konsep dan pengalaman, bukan sekadar produk.
+                            Menghadirkan Pembelajaran yang Relevan dan Bermakna. Kami fokus menjual konsep dan
+                            pengalaman, bukan sekadar produk.
                         </span>
                     </div>
                     <div class="flex gap-2">
                         <img src="image/science-icon.png" alt="" class="w-6 object-contain">
                         <span class="text-justify text-sm">
-                            Menyediakan Solusi Pendidikan yang Seamless. Menggabungkan pembelajaran online dan offline untuk menyelesaikan
+                            Menyediakan Solusi Pendidikan yang Seamless. Menggabungkan pembelajaran online dan offline
+                            untuk menyelesaikan
                             tantangan.
                         </span>
                     </div>
                     <div class="flex gap-2">
                         <img src="image/telescope-icon.png" alt="" class="w-6 object-contain">
                         <span class="text-justify text-sm">
-                            Menjangkau prospek yang sesuai: sekolah, guru, dan siswa yang berkeputusan untuk berinvestasi dalam pendidikan
+                            Menjangkau prospek yang sesuai: sekolah, guru, dan siswa yang berkeputusan untuk
+                            berinvestasi dalam pendidikan
                             berkualitas.
                         </span>
                     </div>
@@ -245,28 +536,31 @@
             <div class="col-span-12 md:col-span-6 flex justify-center items-center">
                 <!-- Background Elements -->
                 <div class="w-full h-full flex flex-col gap-10">
-                        <input type="radio" id="tanyaServiceRadio" name="radioService" checked>
-                        <label for="tanyaServiceRadio" class="flex items-center gap-4 serviceOption" onclick="tanyaServiceContent()">
-                            <div class="icon-service">
-                                <i class="fa-regular fa-circle-question text-4xl"></i>
-                            </div>
-                            <div class="title-service">
-                                <h1 class="font-bold">Tanya</h1>
-                                <span>Tanya: Jawaban untuk Rasa ingin Tahu Anda</span>
-                            </div>
-                        </label>
-                        <input type="radio" id="haloGurServiceRadio" name="radioService">
-                        <label for="haloGurServiceRadio" class="flex items-center gap-4 serviceOption" onclick="haloGurServiceContent()">
-                            <div class="icon-service">
-                                <i class="fa-solid fa-jedi text-4xl"></i>
-                            </div>
-                            <div class="title-service">
-                                <h1 class="font-bold">Halo Guru</h1>
-                                <span>Koneksi Langsung dengan Mentor Terbaik</span>
-                            </div>
-                        </label>
+                    <input type="radio" id="tanyaServiceRadio" name="radioService" checked>
+                    <label for="tanyaServiceRadio" class="flex items-center gap-4 serviceOption"
+                        onclick="tanyaServiceContent()">
+                        <div class="icon-service">
+                            <i class="fa-regular fa-circle-question text-4xl"></i>
+                        </div>
+                        <div class="title-service">
+                            <h1 class="font-bold">Tanya</h1>
+                            <span>Tanya: Jawaban untuk Rasa ingin Tahu Anda</span>
+                        </div>
+                    </label>
+                    <input type="radio" id="haloGurServiceRadio" name="radioService">
+                    <label for="haloGurServiceRadio" class="flex items-center gap-4 serviceOption"
+                        onclick="haloGurServiceContent()">
+                        <div class="icon-service">
+                            <i class="fa-solid fa-jedi text-4xl"></i>
+                        </div>
+                        <div class="title-service">
+                            <h1 class="font-bold">Halo Guru</h1>
+                            <span>Koneksi Langsung dengan Mentor Terbaik</span>
+                        </div>
+                    </label>
                     <input type="radio" id="englishZoneServiceRadio" name="radioService">
-                    <label for="englishZoneServiceRadio" class="flex items-center gap-4 serviceOption" onclick="englishZoneServiceContent()">
+                    <label for="englishZoneServiceRadio" class="flex items-center gap-4 serviceOption"
+                        onclick="englishZoneServiceContent()">
                         <div class="icon-service">
                             <i class="fa-solid fa-microscope text-4xl"></i>
                         </div>
@@ -276,7 +570,8 @@
                         </div>
                     </label>
                     <input type="radio" id="bimbelMapelUmumServiceRadio" name="radioService">
-                    <label for="bimbelMapelUmumServiceRadio" class="flex items-center gap-4 serviceOption" onclick="bimbelMapelUmumServiceContent()">
+                    <label for="bimbelMapelUmumServiceRadio" class="flex items-center gap-4 serviceOption"
+                        onclick="bimbelMapelUmumServiceContent()">
                         <div class="icon-service">
                             <i class="fa-solid fa-globe text-4xl"></i>
                         </div>
@@ -298,56 +593,73 @@
                     <div class="border-b-4 border-[--color-default] mt-14 md:mt-20 w-96"></div>
                 </div>
                 <div class="relative w-full h-80 flex overflow-hidden flex-col mt-6">
-                    <div class="absolute w-full h-full flex flex-col right-0 duration-700 ease-out" id="tanyaServiceContent">
+                    <div class="absolute w-full h-full flex flex-col right-0 duration-700 ease-out"
+                        id="tanyaServiceContent">
                         <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8">
-                            Tanya adalah fitur dari BelajarCerdas.id yang mempermudah siswa mendapatkan jawaban atas pertanyaan mereka. Siswa
+                            Tanya adalah fitur dari BelajarCerdas.id yang mempermudah siswa mendapatkan jawaban atas
+                            pertanyaan mereka. Siswa
                             yang
-                            login setiap hari akan menerima 10 koin gratis, dan setiap pertanyaan yang diajukan juga menambah 1 koin. Dengan
+                            login setiap hari akan menerima 10 koin gratis, dan setiap pertanyaan yang diajukan juga
+                            menambah 1 koin. Dengan
                             hanya 5
                             koin per pertanyaan, siswa bisa belajar lebih efektif dan interaktif.
                         </p>
                         <p class="mt-4 text-gray-600 text-sm md:text-base leading-6 md:leading-8">
-                            Jika membutuhkan tambahan koin, siswa dapat membelinya dengan harga Rp3.000 per koin.* Dengan Tanya, siswa dapat
+                            Jika membutuhkan tambahan koin, siswa dapat membelinya dengan harga Rp3.000 per koin.*
+                            Dengan Tanya, siswa dapat
                             belajar
                             kapan saja dengan bimbingan langsung dari tim ahli kami.
                         </p>
                     </div>
-                    <div class="absolute w-full h-full flex flex-col right-[-100%] duration-700 ease-out" id="haloGurServiceContent">
+                    <div class="absolute w-full h-full flex flex-col right-[-100%] duration-700 ease-out"
+                        id="haloGurServiceContent">
                         <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8">
-                            Halo Guru adalah layanan yang menghubungkan siswa dengan mentor secara langsung melalui chat. Siswa dan mentor dapat
-                            mendaftar secara mandiri, dan siswa memiliki kebebasan untuk memilih mentor dari daftar yang tersedia. Dengan
+                            Halo Guru adalah layanan yang menghubungkan siswa dengan mentor secara langsung melalui
+                            chat. Siswa dan mentor dapat
+                            mendaftar secara mandiri, dan siswa memiliki kebebasan untuk memilih mentor dari daftar yang
+                            tersedia. Dengan
                             pendekatan
                             crowdsource, pertanyaan siswa dijawab secara cepat dan akurat.
                         </p>
                         <p class="mt-4 text-gray-600 text-sm md:text-base leading-6 md:leading-8">
-                            Layanan ini dirancang untuk memberikan pengalaman belajar yang fleksibel dan personal, memastikan setiap siswa
-                            mendapatkan bimbingan sesuai kebutuhan mereka. Halo Guru adalah solusi tepat untuk belajar efektif dengan bimbingan
+                            Layanan ini dirancang untuk memberikan pengalaman belajar yang fleksibel dan personal,
+                            memastikan setiap siswa
+                            mendapatkan bimbingan sesuai kebutuhan mereka. Halo Guru adalah solusi tepat untuk belajar
+                            efektif dengan bimbingan
                             ahli
                             kapan saja.
                         </p>
                     </div>
-                    <div class="absolute w-full h-full flex flex-col right-[-100%] duration-700 ease-out" id="englishZoneServiceContent">
+                    <div class="absolute w-full h-full flex flex-col right-[-100%] duration-700 ease-out"
+                        id="englishZoneServiceContent">
                         <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8">
-                            English Zone adalah layanan pembelajaran bahasa Inggris yang menghubungkan siswa dengan mentor pilihan mereka. Siswa
+                            English Zone adalah layanan pembelajaran bahasa Inggris yang menghubungkan siswa dengan
+                            mentor pilihan mereka. Siswa
                             dan
-                            mentor dapat mendaftar secara mandiri, dan interaksi berlangsung melalui Zoom dengan durasi 90 menit per sesi.
+                            mentor dapat mendaftar secara mandiri, dan interaksi berlangsung melalui Zoom dengan durasi
+                            90 menit per sesi.
                         </p>
                         <p class="mt-4 text-gray-600 text-sm md:text-base leading-6 md:leading-8">
-                            Dirancang untuk mendukung kemajuan dalam keterampilan bahasa Inggris, English Zone memberikan pengalaman belajar
+                            Dirancang untuk mendukung kemajuan dalam keterampilan bahasa Inggris, English Zone
+                            memberikan pengalaman belajar
                             yang
                             interaktif, fleksibel, dan fokus pada pencapaian hasil terbaik.
                         </p>
                     </div>
-                    <div class="absolute w-full h-full flex flex-col right-[-100%] duration-700 ease-out" id="bimbelMapelUmumServiceContent">
+                    <div class="absolute w-full h-full flex flex-col right-[-100%] duration-700 ease-out"
+                        id="bimbelMapelUmumServiceContent">
                         <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8">
-                            Bimbel Umum menyediakan berbagai mata pelajaran, mulai dari sains, sosial, hingga bahasa, yang dirancang untuk
+                            Bimbel Umum menyediakan berbagai mata pelajaran, mulai dari sains, sosial, hingga bahasa,
+                            yang dirancang untuk
                             memenuhi
-                            kebutuhan belajar siswa. Dengan pembelajaran online yang fleksibel, siswa dapat mengakses video pembelajaran
+                            kebutuhan belajar siswa. Dengan pembelajaran online yang fleksibel, siswa dapat mengakses
+                            video pembelajaran
                             interaktif,
                             modul yang komprehensif, dan latihan soal untuk memperdalam pemahaman.
                         </p>
                         <p class="mt-4 text-gray-600 text-sm md:text-base leading-6 md:leading-8">
-                            Layanan ini memberikan pengalaman belajar yang terstruktur dan mendukung siswa mencapai prestasi terbaik mereka di
+                            Layanan ini memberikan pengalaman belajar yang terstruktur dan mendukung siswa mencapai
+                            prestasi terbaik mereka di
                             berbagai bidang akademik.
                         </p>
                     </div>

@@ -52,18 +52,18 @@
                     <div class="overflow-x-auto">
                         @csrf
                         @method('PUT')
-                        <table class="table table-question">
-                            <thead class="thead-question" id="tableListTable">
+                        <table class="table table-data">
+                            <thead class="thead-table" id="tableListTable">
                                 <tr>
-                                    <th class="th-question">Action</th>
-                                    <th class="th-question">Modul</th>
-                                    <th class="th-question">Levels</th>
-                                    <th class="th-question">Question</th>
-                                    <th class="th-question">Answer</th>
-                                    <th class="th-question">Description</th>
-                                    <th class="th-question">Create_date</th>
-                                    <th class="th-question">Status</th>
-                                    <th class="th-question">Lihat</th>
+                                    <th class="th-table">Action</th>
+                                    <th class="th-table">Modul</th>
+                                    <th class="th-table">Levels</th>
+                                    <th class="th-table">Question</th>
+                                    <th class="th-table">Answer</th>
+                                    <th class="th-table">Description</th>
+                                    <th class="th-table">Create_date</th>
+                                    <th class="th-table">Status</th>
+                                    <th class="th-table">Lihat</th>
                                 </tr>
                             </thead>
                             <tbody class="tbody-question" id="tableListQuestion">

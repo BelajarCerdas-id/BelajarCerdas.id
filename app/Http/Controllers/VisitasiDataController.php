@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\masterData;
+use App\Models\dataSuratPks;
+use App\Models\sekolahPks;
 use App\Models\visitasiData;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,7 @@ class VisitasiDataController extends Controller
         if(!$user) {
             return redirect()->route('login');
         }
-        return view('visitasi.jadwal-kunjungan', compact('user'));
+        return view('PKS.visitasi.jadwal-kunjungan', compact('user'));
     }
 
     public function dataKunjungan() {
@@ -45,7 +46,7 @@ class VisitasiDataController extends Controller
             ->whereDate('tanggal_akhir', '<', $today)
             ->update(['status_kunjungan' => 'Pending']);
 
-        return view('visitasi.data-kunjungan', compact('user', 'getVisitasiData'));
+        return view('PKS.visitasi.data-kunjungan', compact('user', 'getVisitasiData'));
     }
 
     public function cetakPKS() {
@@ -55,14 +56,40 @@ class VisitasiDataController extends Controller
             return redirect()->route('login');
         }
 
+        // mengambil data sekolah yang sudah dikunjungi
         $getDataSekolahPKS = visitasiData::where('status_kunjungan', 'Telah dikunjungi')->get();
 
-        $getPaketKerjasamaPKS = masterData::whereIn('sekolah', $getDataSekolahPKS->pluck('sekolah'))->get()->groupBy('sekolah');
+        // mengambil data sekolah yang sama dengan data sekolah yang sudah dikunjungi
+        $getPaketKerjasamaPKS = dataSuratPks::whereIn('sekolah', $getDataSekolahPKS->pluck('sekolah'))->get();
 
-        $groupedData = $getPaketKerjasamaPKS->map(fn($item) => $item->first());
-        $dataPaketKerjasama = $getPaketKerjasamaPKS;
+        $today = now();
 
-        return view('visitasi.cetak-pks', compact('user', 'getDataSekolahPKS', 'groupedData', 'dataPaketKerjasama'));
+        // 1. Jika status PKS tidak aktif, tetapi tanggal_mulai masih di masa depan -> ubah ke 'Belum Dimulai'
+        dataSuratPks::where('status_paket_kerjasama', 'PKS tidak aktif')
+            ->where('status_pks', 'PKS')
+            ->whereDate('tanggal_mulai', '>', $today)
+            ->update(['status_paket_kerjasama' => 'Belum Dimulai']);
+
+        // 2. Jika status PKS tidak aktif atau 'Belum Dimulai', tetapi tanggal_mulai sudah dimulai dan masih dalam periode kerja sama -> ubah ke 'Sedang Aktif'
+        dataSuratPks::whereIn('status_paket_kerjasama', ['PKS tidak aktif', 'Belum Dimulai'])
+            ->where('status_pks', 'PKS')
+            ->whereDate('tanggal_mulai', '<=', $today)
+            ->whereDate('tanggal_akhir', '>=', $today)
+            ->update(['status_paket_kerjasama' => 'Sedang Aktif']);
+
+        // 3. Jika status sudah 'Sedang Aktif', tetapi tanggal_akhir telah lewat -> ubah ke 'Selesai'
+        dataSuratPks::where('status_paket_kerjasama', 'Sedang Aktif')
+            ->where('status_pks', 'PKS')
+            ->whereDate('tanggal_akhir', '<', $today)
+            ->update(['status_paket_kerjasama' => 'Selesai']);
+
+        // Ambil data pertama kali yang di-insert untuk englishZone berdasarkan sekolah
+        $getDataPKS = dataSuratPks::whereIn('sekolah', $getDataSekolahPKS->pluck('sekolah'))->orderBy('created_at', 'asc')->get();
+        $firstContract = $getDataPKS->groupBy(['sekolah', 'paket_kerjasama'])
+            ->map(fn($group) => $group->map(fn($items) => $items->first()->id));
+
+
+        return view('PKS.surat-pks.cetak-pks', compact('user', 'getPaketKerjasamaPKS', 'firstContract'));
     }
 
     public function visitasiDataStore(Request $request)
@@ -112,7 +139,7 @@ class VisitasiDataController extends Controller
         }
 
         $updateStatus->update([
-            'status_kunjungan' => $request->status_kunjungan
+            'status_kunjungan' => $request->status_kunjungan,
         ]);
 
         return redirect()->back()->with('success', 'Status kunjungan berhasil diubah!');

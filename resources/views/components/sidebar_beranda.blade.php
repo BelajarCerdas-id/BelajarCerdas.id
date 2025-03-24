@@ -1,565 +1,598 @@
 <x-script></x-script>
-@if (isset($user))
-    @if ($user->status === 'Siswa' or $user->status === 'Murid')
-        <div class="sidebar-beranda hidden md:block">
-            <div class="logo_details flex items-center justify-center">
-                <a href="/">
-                    <img src="../image/logoBC.png" alt="" class="w-2/5">
-                </a>
-            </div>
-            <div class="nav-list">
-                <div class="menu-murid">
-                    <a href="/beranda">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Beranda</span>
-                    </a>
-                    <span class="tooltip">Beranda</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="/histori">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Pembelian</span>
-                    </a>
-                    <span class="tooltip">Pembelian</span>
-                </div>
-                <div>
-                    <span class="text_name">LMS</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Belajar Cerdas</span>
-                    </a>
-                    <span class="tooltip">Belajar Cerdas</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Laporan</span>
-                    </a>
-                    <span class="tooltip">Laporan</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Administrasi</span>
-                    </a>
-                    <span class="tooltip">Administrasi</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Tentang Sekolah</span>
-                    </a>
-                    <span class="tooltip">Tentang Sekolah</span>
-                </div>
-                <div class="hideSidebar cursor-pointer" id="close">
-                    <i class="fa-solid fa-chevron-left" id="log_outt"></i>
-                    <span>Sembunyikan</span>
-                </div>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button class="text-white font-bold">Logout</button>
-                </form>
-            </div>
+@if (session('user')->status === 'Siswa' or session('user')->status === 'Murid')
+    <div class="sidebar-beranda hidden md:block">
+        <div class="logo_details flex items-center justify-center">
+            <a href="/">
+                <img src="../image/logoBC.png" alt="" class="w-2/5">
+            </a>
         </div>
-        <div class="home-beranda hidden md:block">
-            <div class="content">
-                {{-- Navbar for PC --}}
-                <div class="navbar-beranda">
-                    <header>Beranda</header>
-                    <!-- <div class="information-account">
+        <div class="nav-list">
+            <div class="menu-murid">
+                <a href="/beranda">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Beranda</span>
+                </a>
+                <span class="tooltip">Beranda</span>
+            </div>
+            <div class="menu-murid">
+                <a href="/histori">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Pembelian</span>
+                </a>
+                <span class="tooltip">Pembelian</span>
+            </div>
+            <div>
+                <span class="text_name">LMS</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Belajar Cerdas</span>
+                </a>
+                <span class="tooltip">Belajar Cerdas</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Laporan</span>
+                </a>
+                <span class="tooltip">Laporan</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Administrasi</span>
+                </a>
+                <span class="tooltip">Administrasi</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Tentang Sekolah</span>
+                </a>
+                <span class="tooltip">Tentang Sekolah</span>
+            </div>
+            <div class="hideSidebar cursor-pointer" id="close">
+                <i class="fa-solid fa-chevron-left" id="log_outt"></i>
+                <span>Sembunyikan</span>
+            </div>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="text-white font-bold">Logout</button>
+            </form>
+        </div>
+    </div>
+    <div class="home-beranda hidden md:block !z-[-1]">
+        <div class="content">
+            {{-- Navbar for PC --}}
+            <div class="navbar-beranda">
+                <header>Beranda</header>
+                <!-- <div class="information-account">
                             <div class="notification">
                             <i class="fa-solid fa-bell"></i>
                         </div>
                         <div class="coin">
                             <i class="fa-solid fa-coins"></i>
                         </div> -->
-                    <div class="profile">
-                        <i class="fa-solid fa-user"></i>
-                        <div class="information-profile">
-                            <span class="name">{{ $user->nama_lengkap }}</span>
-                            <span class="class">{{ $user->kelas }}</span>
-                        </div>
+                <div class="profile">
+                    <i class="fa-solid fa-user"></i>
+                    <div class="information-profile">
+                        <span class="name">{{ session('user')->nama_lengkap ?? '' }}</span>
+                        <span class="class">{{ session('user')->kelas ?? '' }}</span>
                     </div>
                 </div>
             </div>
         </div>
-    @elseif($user->status === 'Guru')
-        <div class="sidebar-beranda hidden md:block">
-            <div class="logo_details">
-                <img src="image/logo-BC.png" alt="">
-            </div>
-            <div class="nav-list">
-                <div class="menu-murid">
-                    <a href="/beranda">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Beranda</span>
-                    </a>
-                    <span class="tooltip">Beranda</span>
-                </div>
-                <div>
-                    <span class="text_name">LMS</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Belajar Cerdas</span>
-                    </a>
-                    <span class="tooltip">Belajar Cerdas</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Laporan</span>
-                    </a>
-                    <span class="tooltip">Laporan</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Administrasi</span>
-                    </a>
-                    <span class="tooltip">Administrasi</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Tentang Sekolah</span>
-                    </a>
-                    <span class="tooltip">Tentang Sekolah</span>
-                </div>
-                <div class="hideSidebar cursor-pointer" id="close">
-                    <i class="fa-solid fa-chevron-left" id="log_outt"></i>
-                    <span>Sembunyikan</span>
-                </div>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button class="text-white font-bold">Logout</button>
-                </form>
-            </div>
+    </div>
+@elseif(session('user')->status === 'Guru')
+    <div class="sidebar-beranda hidden md:block">
+        <div class="logo_details">
+            <img src="image/logo-BC.png" alt="">
         </div>
-        <div class="home-beranda hidden md:block">
-            <div class="content">
-                {{-- Navbar for PC --}}
-                <div class="navbar-beranda">
-                    <header>Beranda</header>
-                    <div class="profile">
-                        <i class="fa-solid fa-user"></i>
-                        <div class="information-profile">
-                            <span class="name">{{ $user->nama_lengkap }}</span>
-                            <span class="class">{{ $user->kelas }}</span>
-                        </div>
+        <div class="nav-list">
+            <div class="menu-murid">
+                <a href="/beranda">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Beranda</span>
+                </a>
+                <span class="tooltip">Beranda</span>
+            </div>
+            <div>
+                <span class="text_name">LMS</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Belajar Cerdas</span>
+                </a>
+                <span class="tooltip">Belajar Cerdas</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Laporan</span>
+                </a>
+                <span class="tooltip">Laporan</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Administrasi</span>
+                </a>
+                <span class="tooltip">Administrasi</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Tentang Sekolah</span>
+                </a>
+                <span class="tooltip">Tentang Sekolah</span>
+            </div>
+            <div class="hideSidebar cursor-pointer" id="close">
+                <i class="fa-solid fa-chevron-left" id="log_outt"></i>
+                <span>Sembunyikan</span>
+            </div>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="text-white font-bold">Logout</button>
+            </form>
+        </div>
+    </div>
+    <div class="home-beranda hidden md:block">
+        <div class="content">
+            {{-- Navbar for PC --}}
+            <div class="navbar-beranda">
+                <header>Beranda</header>
+                <div class="profile">
+                    <i class="fa-solid fa-user"></i>
+                    <div class="information-profile">
+                        <span class="name">{{ session('user')->nama_lengkap ?? '' }}</span>
+                        <span class="class">{{ session('user')->kelas ?? '' }}</span>
                     </div>
                 </div>
             </div>
         </div>
-    @elseif($user->status === 'Mentor')
-        <div class="sidebar-beranda hidden md:block">
-            <div class="logo_details">
-                <img src="image/logo-BC.png" alt="">
-            </div>
-            <div class="nav-list">
-                <div class="menu-murid">
-                    <a href="/beranda">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Beranda</span>
-                    </a>
-                    <span class="tooltip">Beranda</span>
-                </div>
-                <div>
-                    <span class="text_name">LMS</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Belajar Cerdas</span>
-                    </a>
-                    <span class="tooltip">Belajar Cerdas</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Laporan</span>
-                    </a>
-                    <span class="tooltip">Laporan</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Administrasi</span>
-                    </a>
-                    <span class="tooltip">Administrasi</span>
-                </div>
-                <div class="hideSidebar cursor-pointer" id="close">
-                    <i class="fa-solid fa-chevron-left" id="log_outt"></i>
-                    <span>Sembunyikan</span>
-                </div>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button class="text-white font-bold">Logout</button>
-                </form>
-            </div>
+    </div>
+@elseif(session('user')->status === 'Mentor')
+    <div class="sidebar-beranda hidden md:block">
+        <div class="logo_details">
+            <img src="../image/logoBC.png" alt="">
         </div>
-        <div class="home-beranda hidden md:block">
-            <div class="content">
-                {{-- Navbar for PC --}}
-                <div class="navbar-beranda">
-                    <header>Beranda</header>
-                    <div class="information-account">
-                        <div class="">
-                            {{-- @if ($dataAccept[$user->email]->count() >= 8 && $validatedMentorAccepted[$user->email]->count() >= 8)
+        <div class="nav-list">
+            <div class="menu-murid">
+                <a href="/beranda">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Beranda</span>
+                </a>
+                <span class="tooltip">Beranda</span>
+            </div>
+            <div>
+                <span class="text_name">LMS</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Belajar Cerdas</span>
+                </a>
+                <span class="tooltip">Belajar Cerdas</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Laporan</span>
+                </a>
+                <span class="tooltip">Laporan</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Administrasi</span>
+                </a>
+                <span class="tooltip">Administrasi</span>
+            </div>
+            <div class="hideSidebar cursor-pointer" id="close">
+                <i class="fa-solid fa-chevron-left" id="log_outt"></i>
+                <span>Sembunyikan</span>
+            </div>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="text-white font-bold">Logout</button>
+            </form>
+        </div>
+    </div>
+    <div class="home-beranda hidden md:block">
+        <div class="content">
+            {{-- Navbar for PC --}}
+            <div class="navbar-beranda">
+                <header>Beranda</header>
+                <div class="information-account">
+                    <div class="">
+                        {{-- @if ($dataAccept[$user->email]->count() >= 8 && $validatedMentorAccepted[$user->email]->count() >= 8)
                                 <i class="fas fa-medal text-3xl text-[#C0C0C0]"></i>
                             @elseif($dataAccept[$user->email]->count() >= 1 && $validatedMentorAccepted[$user->email]->count() >= 1)
                                 <i class="fas fa-medal text-5xl text-[#CD7F32]"></i>
                             @endif --}}
-                        </div>
-                        {{-- <div class="notification">
+                    </div>
+                    {{-- <div class="notification">
                             <i class="fa-solid fa-bell"></i>
                         </div>
                         <div class="coin">
                             <i class="fa-solid fa-coins"></i>
                         </div> --}}
 
-                        <div class="profile">
-                            <i class="fa-solid fa-user"></i>
-                            <div class="information-profile">
-                                <span class="name">{{ $user->nama_lengkap }}</span>
-                                <span class="class">{{ $user->sekolah }}</span>
-                            </div>
+                    <div class="profile">
+                        <i class="fa-solid fa-user"></i>
+                        <div class="information-profile">
+                            <span class="name">{{ session('user')->nama_lengkap ?? '' }}</span>
+                            <span class="class">{{ session('user')->sekolah ?? '' }}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    @elseif ($user->status === 'Admin')
+    </div>
+@elseif (session('user')->status === 'Admin')
 
-    @elseif($user->status === 'Administrator')
-        <aside class="sidebar-beranda-administrator hidden md:block">
-            <div class="logo_details flex items-center justify-center">
-                <img src="image/logoBC.png" alt="" class="w-2/4">
-            </div>
-            <ul class="mt-8">
-                <li class="list-item">
+@elseif(session('user')->status === 'Administrator')
+    <aside class="sidebar-beranda-administrator hidden md:block">
+        <div class="logo_details flex items-center justify-center">
+            <img src="image/logoBC.png" alt="" class="w-2/4">
+        </div>
+        <ul class="mt-8">
+            <li class="list-item">
+                <div class="toggle-menu">
+                    <i class="fas fa-house"></i>
+                    <a href="/beranda">Beranda</a>
+                </div>
+            </li>
+            <li class="list-item">
+                <div class="dropdown-menu">
+                    <div class="toggle-menu">
+                        <i class="fa-solid fa-question !text-lg"></i>
+                        <span class="toggle-dropdown">TANYA</span>
+                        <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
+                    </div>
+                    <div class="content-dropdown">
+                        <a href="">List Mentor</a>
+                    </div>
+                </div>
+            </li>
+            <li class="list-item">
+                <div class="dropdown-menu">
                     <div class="toggle-menu">
                         <i class="fas fa-house"></i>
-                        <a href="/beranda">Beranda</a>
+                        <span class="toggle-dropdown">English Zone</span>
+                        <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
                     </div>
-                </li>
-                <li class="list-item">
-                    <div class="dropdown-menu">
-                        <div class="toggle-menu">
-                            <i class="fa-solid fa-question !text-lg"></i>
-                            <span class="toggle-dropdown">TANYA</span>
-                            <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
-                        </div>
-                        <div class="content-dropdown">
-                            <a href="">List Mentor</a>
-                        </div>
+                    <div class="content-dropdown">
+                        <a href="/upload-materi">Upload Materi</a>
+                        <a href="/upload-soal">Upload Soal</a>
+                        <a href="/question-for-release">Question For Release</a>
                     </div>
-                </li>
-                <li class="list-item">
-                    <div class="dropdown-menu">
-                        <div class="toggle-menu">
-                            <i class="fas fa-house"></i>
-                            <span class="toggle-dropdown">English Zone</span>
-                            <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
-                        </div>
-                        <div class="content-dropdown">
-                            <a href="/upload-materi">Upload Materi</a>
-                            <a href="/upload-soal">Upload Soal</a>
-                            <a href="/question-for-release">Question For Release</a>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </aside>
+                </div>
+            </li>
+        </ul>
+    </aside>
 
-        <div class="home-beranda hidden md:block">
-            <div class="content">
-                {{-- Navbar for PC --}}
-                <div class="navbar-beranda">
-                    <header>Beranda</header>
-                    <div class="information-account">
-                        <div class="profile">
-                            <i class="fa-solid fa-user"></i>
-                            <div class="information-profile">
-                                <span class="name">{{ $user->nama_lengkap }}</span>
-                                <span class="class">{{ $user->status }}</span>
-                            </div>
+    <div class="home-beranda hidden md:block">
+        <div class="content">
+            {{-- Navbar for PC --}}
+            <div class="navbar-beranda">
+                <header>Beranda</header>
+                <div class="information-account">
+                    <div class="profile">
+                        <i class="fa-solid fa-user"></i>
+                        <div class="information-profile">
+                            <span class="name">{{ session('user')->nama_lengkap ?? '' }}</span>
+                            <span class="class">{{ session('user')->status ?? '' }}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    @elseif($user->status === 'Wakil Kepala Sekolah' or $user->status === 'Kepala Sekolah')
+    </div>
+@elseif(session('user')->status === 'Wakil Kepala Sekolah' or session('user')->status === 'Kepala Sekolah')
 
-    @elseif($user->status === 'Team Leader')
-        <div class="sidebar-beranda hidden md:block">
-            <div class="logo_details">
-                <img src="../image/logo-BC.png" alt="">
-            </div>
-            <div class="nav-list">
-                <div class="menu-murid">
-                    <a href="/beranda">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Beranda</span>
-                    </a>
-                    <span class="tooltip">Beranda</span>
-                </div>
-                <div>
-                    <span class="text_name">LMS</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Belajar Cerdas</span>
-                    </a>
-                    <span class="tooltip">Belajar Cerdas</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="/laporan">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Laporan</span>
-                    </a>
-                    <span class="tooltip">Laporan</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Administrasi</span>
-                    </a>
-                    <span class="tooltip">Administrasi</span>
-                </div>
-                <div class="hideSidebar cursor-pointer" id="close">
-                    <i class="fa-solid fa-chevron-left" id="log_outt"></i>
-                    <span>Sembunyikan</span>
-                </div>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button class="text-white font-bold">Logout</button>
-                </form>
-            </div>
+@elseif(session('user')->status === 'Team Leader')
+    <div class="sidebar-beranda hidden md:block">
+        <div class="logo_details">
+            <img src="../image/logo-BC.png" alt="">
         </div>
-        <div class="home-beranda hidden md:block">
-            <div class="content">
-                {{-- Navbar for PC --}}
-                <div class="navbar-beranda">
-                    <header>Beranda</header>
-                    <!-- <div class="information-account">
+        <div class="nav-list">
+            <div class="menu-murid">
+                <a href="/beranda">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Beranda</span>
+                </a>
+                <span class="tooltip">Beranda</span>
+            </div>
+            <div>
+                <span class="text_name">LMS</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Belajar Cerdas</span>
+                </a>
+                <span class="tooltip">Belajar Cerdas</span>
+            </div>
+            <div class="menu-murid">
+                <a href="/laporan">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Laporan</span>
+                </a>
+                <span class="tooltip">Laporan</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Administrasi</span>
+                </a>
+                <span class="tooltip">Administrasi</span>
+            </div>
+            <div class="hideSidebar cursor-pointer" id="close">
+                <i class="fa-solid fa-chevron-left" id="log_outt"></i>
+                <span>Sembunyikan</span>
+            </div>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="text-white font-bold">Logout</button>
+            </form>
+        </div>
+    </div>
+    <div class="home-beranda hidden md:block">
+        <div class="content">
+            {{-- Navbar for PC --}}
+            <div class="navbar-beranda">
+                <header>Beranda</header>
+                <!-- <div class="information-account">
                             <div class="notification">
                             <i class="fa-solid fa-bell"></i>
                         </div>
                         <div class="coin">
                             <i class="fa-solid fa-coins"></i>
                         </div> -->
+                <div class="profile">
+                    <i class="fa-solid fa-user"></i>
+                    <div class="information-profile">
+                        <span class="name">{{ session('user')->nama_lengkap ?? '' }}</span>
+                        <span class="class">{{ session('user')->status ?? '' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@elseif(session('user')->status === 'XR')
+    <div class="sidebar-beranda hidden md:block">
+        <div class="logo_details">
+            <img src="../image/logo-BC.png" alt="">
+        </div>
+        <div class="nav-list">
+            <div class="menu-murid">
+                <a href="/beranda">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Beranda</span>
+                </a>
+                <span class="tooltip">Beranda</span>
+            </div>
+            <div>
+                <span class="text_name">LMS</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Belajar Cerdas</span>
+                </a>
+                <span class="tooltip">Belajar Cerdas</span>
+            </div>
+            <div class="menu-murid">
+                <a href="/laporan">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Laporan</span>
+                </a>
+                <span class="tooltip">Laporan</span>
+            </div>
+            <div class="menu-murid">
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Administrasi</span>
+                </a>
+                <span class="tooltip">Administrasi</span>
+            </div>
+            <div class="hideSidebar cursor-pointer" id="close">
+                <i class="fa-solid fa-chevron-left" id="log_outt"></i>
+                <span>Sembunyikan</span>
+            </div>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="text-white font-bold">Logout</button>
+            </form>
+        </div>
+    </div>
+    <div class="home-beranda hidden md:block">
+        <div class="content">
+            {{-- Navbar for PC --}}
+            <div class="navbar-beranda">
+                <header>Beranda</header>
+                <div class="profile">
+                    <i class="fa-solid fa-user"></i>
+                    <div class="information-profile">
+                        <span class="name">{{ session('user')->nama_lengkap ?? '' }}</span>
+                        <span class="class">{{ session('user')->status ?? '' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@elseif(session('user')->status === 'Sales')
+    <aside class="sidebar-beranda-administrator hidden md:block">
+        <div class="logo_details flex items-center justify-center">
+            <img src="../image/logoBC.png" alt="" class="w-2/4">
+        </div>
+        <ul class="mt-8">
+            <li class="list-item">
+                <a href="/beranda">
+                    <div class="toggle-menu">
+                        <i class="fas fa-house"></i>
+                        <span>Beranda</span>
+                    </div>
+                </a>
+            </li>
+            <li class="list-item">
+                <div class="dropdown-menu">
+                    <!-- Dropdown utama -->
+                    <div class="toggle-menu">
+                        <i class="fas fa-house"></i>
+                        <span class="toggle-dropdown">Administrasi Sales</span>
+                        <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
+                    </div>
+
+                    <div class="content-dropdown">
+                        <!-- Dropdown kedua (sub menu) -->
+                        <div class="toggle-menu2">
+                            <span class="toggle-dropdown">Visitasi</span>
+                            <i class="fas fa-chevron-down absolute right-0" id="rotate2"></i>
+                        </div>
+
+                        <div class="list-content-dropdown">
+                            <a href="{{ route('jadwalKunjungan') }}">Buat Jadwal Kunjungan</a>
+                            <a href="{{ route('dataKunjungan') }}">Laporan Kunjungan</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="list-item">
+                <div class="dropdown-menu">
+                    <!-- Dropdown utama -->
+                    <div class="toggle-menu">
+                        <i class="fas fa-house"></i>
+                        <span class="toggle-dropdown">Management Surat PKS</span>
+                        <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
+                    </div>
+
+                    <div class="content-dropdown">
+                        <a href="{{ route('input-surat-pks') }}">Buat Surat PKS</a>
+                        <a href="{{ route('cetakPKS') }}">Cetak Surat PKS</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </aside>
+
+    <div class="home-beranda hidden md:block">
+        <div class="content">
+            {{-- Navbar for PC --}}
+            <div class="navbar-beranda">
+                <header>Beranda</header>
+                <div class="information-account">
                     <div class="profile">
                         <i class="fa-solid fa-user"></i>
                         <div class="information-profile">
-                            <span class="name">{{ $user->nama_lengkap }}</span>
-                            <span class="class">{{ $user->status }}</span>
+                            <span class="name">{{ session('user')->nama_lengkap ?? '' }}</span>
+                            <span class="class">{{ session('user')->status ?? '' }}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    @elseif($user->status === 'XR')
-        <div class="sidebar-beranda hidden md:block">
-            <div class="logo_details">
-                <img src="../image/logo-BC.png" alt="">
-            </div>
-            <div class="nav-list">
-                <div class="menu-murid">
-                    <a href="/beranda">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Beranda</span>
-                    </a>
-                    <span class="tooltip">Beranda</span>
-                </div>
-                <div>
-                    <span class="text_name">LMS</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Belajar Cerdas</span>
-                    </a>
-                    <span class="tooltip">Belajar Cerdas</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="/laporan">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Laporan</span>
-                    </a>
-                    <span class="tooltip">Laporan</span>
-                </div>
-                <div class="menu-murid">
-                    <a href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="link_name">Administrasi</span>
-                    </a>
-                    <span class="tooltip">Administrasi</span>
-                </div>
-                <div class="hideSidebar cursor-pointer" id="close">
-                    <i class="fa-solid fa-chevron-left" id="log_outt"></i>
-                    <span>Sembunyikan</span>
-                </div>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button class="text-white font-bold">Logout</button>
-                </form>
-            </div>
+    </div>
+@elseif(session('user')->status === 'Admin Sales')
+    <aside class="sidebar-beranda-administrator hidden md:block">
+        <div class="logo_details flex items-center justify-center">
+            <img src="image/logoBC.png" alt="" class="w-2/4">
         </div>
-        <div class="home-beranda hidden md:block">
-            <div class="content">
-                {{-- Navbar for PC --}}
-                <div class="navbar-beranda">
-                    <header>Beranda</header>
-                    <div class="profile">
-                        <i class="fa-solid fa-user"></i>
-                        <div class="information-profile">
-                            <span class="name">{{ $user->nama_lengkap }}</span>
-                            <span class="class">{{ $user->status }}</span>
-                        </div>
-                    </div>
+        <ul class="mt-8">
+            <li class="list-item">
+                <div class="toggle-menu">
+                    <i class="fas fa-house"></i>
+                    <a href="/beranda">Beranda</a>
                 </div>
-            </div>
-        </div>
-    @elseif($user->status === 'Sales')
-        <aside class="sidebar-beranda-administrator hidden md:block">
-            <div class="logo_details flex items-center justify-center">
-                <img src="../image/logoBC.png" alt="" class="w-2/4">
-            </div>
-            <ul class="mt-8">
-                <li class="list-item">
+            </li>
+            <li class="list-item">
+                <div class="dropdown-menu">
+                    <!-- Dropdown utama -->
                     <div class="toggle-menu">
                         <i class="fas fa-house"></i>
-                        <a href="/beranda">Beranda</a>
+                        <span class="toggle-dropdown">Master Data PKS</span>
+                        <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
                     </div>
-                </li>
-                <li class="list-item">
-                    <div class="dropdown-menu">
-                        <!-- Dropdown utama -->
-                        <div class="toggle-menu">
-                            <i class="fas fa-house"></i>
-                            <span class="toggle-dropdown">Administrasi Sales</span>
-                            <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
+
+                    <div class="content-dropdown">
+                        <!-- Dropdown kedua (sub menu) -->
+                        <div class="toggle-menu2">
+                            <span class="toggle-dropdown">Input PKS</span>
+                            <i class="fas fa-chevron-down absolute right-0" id="rotate2"></i>
                         </div>
 
-                        <div class="content-dropdown">
-                            <!-- Dropdown kedua (sub menu) -->
-                            <div class="toggle-menu2">
-                                <span class="toggle-dropdown">Visitasi</span>
-                                <i class="fas fa-chevron-down absolute right-0" id="rotate2"></i>
-                            </div>
-
-                            <div class="list-content-dropdown">
-                                <a href="{{ route('jadwalKunjungan') }}">jadwal Kunjungan</a>
-                                <a href="{{ route('dataKunjungan') }}">Data Kunjungan</a>
-                                <a href="{{ route('cetakPKS') }}">Cetak PKS</a>
-                            </div>
+                        <div class="list-content-dropdown">
+                            <a href="{{ route('input-murid') }}">Data Civitas Sekolah</a>
                         </div>
                     </div>
-                </li>
-            </ul>
-        </aside>
 
-        <div class="home-beranda hidden md:block">
-            <div class="content">
-                {{-- Navbar for PC --}}
-                <div class="navbar-beranda">
-                    <header>Beranda</header>
-                    <div class="information-account">
-                        <div class="profile">
-                            <i class="fa-solid fa-user"></i>
-                            <div class="information-profile">
-                                <span class="name">{{ $user->nama_lengkap }}</span>
-                                <span class="class">{{ $user->status }}</span>
-                            </div>
+                    <div class="content-dropdown">
+                        <!-- Dropdown ketiga (sub menu) -->
+                        <div class="toggle-menu2">
+                            <span class="toggle-dropdown">Management PKS</span>
+                            <i class="fas fa-chevron-down absolute right-0" id="rotate2"></i>
+                        </div>
+
+                        <div class="list-content-dropdown">
+                            <a href="{{ route('data-sekolah-pks') }}">Data Civitas Sekolah</a>
+                            <a href="{{ route('data-sekolah') }}">Data Sekolah</a>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    @elseif($user->status === 'Admin Sales')
-        <aside class="sidebar-beranda-administrator hidden md:block">
-            <div class="logo_details flex items-center justify-center">
-                <img src="image/logoBC.png" alt="" class="w-2/4">
-            </div>
-            <ul class="mt-8">
-                <li class="list-item">
+            </li>
+
+            <li class="list-item">
+                <div class="dropdown-menu">
+                    <!-- Dropdown utama -->
                     <div class="toggle-menu">
                         <i class="fas fa-house"></i>
-                        <a href="/beranda">Beranda</a>
+                        <span class="toggle-dropdown">Templates</span>
+                        <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
                     </div>
-                </li>
-                <li class="list-item">
-                    <div class="dropdown-menu">
-                        <!-- Dropdown utama -->
-                        <div class="toggle-menu">
-                            <i class="fas fa-house"></i>
-                            <span class="toggle-dropdown">Master Data</span>
-                            <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
+
+                    <div class="content-dropdown">
+                        <!-- Dropdown ketiga (sub menu) -->
+                        <div class="toggle-menu2">
+                            <span class="toggle-dropdown">BulkUpload Services</span>
+                            <i class="fas fa-chevron-down absolute right-0" id="rotate2"></i>
                         </div>
 
-                        <div class="content-dropdown">
-                            <!-- Dropdown kedua (sub menu) -->
-                            <div class="toggle-menu2">
-                                <span class="toggle-dropdown">Input Data</span>
-                                <i class="fas fa-chevron-down absolute right-0" id="rotate2"></i>
-                            </div>
-
-                            <div class="list-content-dropdown">
-                                <a href="">Input Data Siswa</a>
-                                <a href="/input-sekolah">Input Data Sekolah</a>
-                            </div>
-                        </div>
-
-                        <div class="content-dropdown">
-                            <!-- Dropdown ketiga (sub menu) -->
-                            <div class="toggle-menu2">
-                                <span class="toggle-dropdown">Management Data</span>
-                                <i class="fas fa-chevron-down absolute right-0" id="rotate2"></i>
-                            </div>
-
-                            <div class="list-content-dropdown">
-                                <a href="">Data Siswa</a>
-                                <a href="">Data Sekolah</a>
-                            </div>
+                        <div class="list-content-dropdown">
+                            <a href="{{ route('bulk-upload-civitas-sekolah') }}">Civitas Sekolah</a>
+                            <a href="">Soal EnglishZone</a>
                         </div>
                     </div>
-                </li>
-                <li class="list-item">
-                    <div class="toggle-menu">
-                        <i class="fas fa-house"></i>
+
+                    <div class="content-dropdown">
                         <a href="{{ route('suratPKS') }}">Surat PKS</a>
                     </div>
-                </li>
-            </ul>
-        </aside>
+                </div>
+            </li>
+        </ul>
+    </aside>
 
-        <div class="home-beranda hidden md:block">
-            <div class="content">
-                {{-- Navbar for PC --}}
-                <div class="navbar-beranda">
-                    <header>Beranda</header>
-                    <div class="information-account">
-                        <div class="profile">
-                            <i class="fa-solid fa-user"></i>
-                            <div class="information-profile">
-                                <span class="name">{{ $user->nama_lengkap }}</span>
-                                <span class="class">{{ $user->status }}</span>
-                            </div>
+    <div class="home-beranda hidden md:block">
+        <div class="content">
+            {{-- Navbar for PC --}}
+            <div class="navbar-beranda">
+                <header>Beranda</header>
+                <div class="information-account">
+                    <div class="profile">
+                        <i class="fa-solid fa-user"></i>
+                        <div class="information-profile">
+                            <span class="name">{{ session('user')->nama_lengkap ?? '' }}</span>
+                            <span class="class">{{ session('user')->status ?? '' }}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    @else
-        <p>You do not have access to this dashboard.</p>
-    @endif
+    </div>
 @else
-    <p>You are not logged in.</p>
+    <p>You do not have access to this dashboard.</p>
 @endif
 
 

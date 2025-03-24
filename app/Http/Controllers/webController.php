@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Crud;
+use App\Models\userAccount;
 use App\Models\Star;
 use App\Models\Level;
 use App\Models\Tanya;
@@ -66,16 +66,10 @@ class webController extends Controller
 
     public function beranda()
     {
-        // Retrieve the user from the session
         $user = session('user');
-
-        if (!$user) {
-            return redirect('/login');
-        }
-
         $getTanyaTL = Tanya::onlyTrashed()->get();
 
-        $getData = Crud::where('status', 'Mentor')->get();
+        $getData = userAccount::where('status', 'Mentor')->get();
 
         $dataAccept = Tanya::onlyTrashed()->whereIn('email_mentor', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email_mentor');
         $validatedMentorAccepted = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email');
@@ -134,9 +128,9 @@ class webController extends Controller
         }
 
         // for beranda administrator
-        $getDataSiswa = Crud::where('status', 'Siswa')->get();
-        $getDataMurid = Crud::where('status', 'Murid')->get();
-        $countDataMentor = Crud::where('status', 'Mentor')->get();
+        $getDataSiswa = userAccount::where('status', 'Siswa')->get();
+        $getDataMurid = userAccount::where('status', 'Murid')->get();
+        $countDataMentor = userAccount::where('status', 'Mentor')->get();
         $groupedTanya  = Tanya::onlyTrashed()->get()->groupBy('email');
 
         $getTanya = $groupedTanya->map(function ($item) {
@@ -145,7 +139,7 @@ class webController extends Controller
 
         $dataTanya = $groupedTanya;
 
-        $getSiswa = Crud::where('status', 'Siswa')->orWhere('status', 'Murid')->get();
+        $getSiswa = userAccount::where('status', 'Siswa')->orWhere('status', 'Murid')->get();
         // Ambil jumlah Tanya untuk semua email dalam satu kali loop
         $countSiswaTanya = Tanya::onlyTrashed()
             ->whereIn('email', $getSiswa->pluck('email'))
@@ -319,7 +313,7 @@ class webController extends Controller
 
         // Controller laporan Team Leader
         // Mengambil data mentor yang berstatus 'Mentor'
-        $getData = Crud::where('status', 'Mentor')->get();
+        $getData = userAccount::where('status', 'Mentor')->get();
 
 
         // // Mengambil jumlah Tanya berdasarkan email_mentor yang sesuai dengan email mentor
@@ -349,7 +343,7 @@ class webController extends Controller
         $user = session('user');
 
         // Ambil data mentor berdasarkan ID
-        $mentor = Crud::find($id);  // Mengambil data mentor berdasarkan ID yang dikirimkan
+        $mentor = userAccount::find($id);  // Mengambil data mentor berdasarkan ID yang dikirimkan
 
         // Ambil semua pertanyaan yang di-trashed berdasarkan email_mentor dari mentor yang dipilih
         $getLaporan = Tanya::onlyTrashed()->where('email_mentor', $mentor->email)->where('status', 'Diterima')->orderBy('created_at', 'desc')->paginate(10);
@@ -476,20 +470,17 @@ class webController extends Controller
 
     public function sidebarBeranda()
     {
-        $user = session('user');
-        $getData = Crud::where('status', 'Mentor')->get();
+        $getData = userAccount::where('status', 'Mentor')->get();
 
         $dataAccept = Tanya::onlyTrashed()->whereIn('email_mentor', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email_mentor');
         $validatedMentorAccepted = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email');
 
-        return view('components/sidebar_beranda', compact('user', 'getData', 'dataAccept', 'validatedMentorAccepted'));
+        return view('components/sidebar_beranda', compact( 'getData', 'dataAccept', 'validatedMentorAccepted'));
     }
 
     public function sidebarBerandaMobile()
     {
-        $user = session('user');
-
-        return view('components/sidebar_beranda', compact('user'));
+        return view('components/sidebar_beranda');
     }
 
 
@@ -578,16 +569,5 @@ class webController extends Controller
         }
 
         return view('certif', compact('user'));
-    }
-
-    public function inputDataSekolah()
-    {
-        $user = session('user');
-
-        if(!isset($user)) {
-            return redirect('/login');
-        }
-
-        return view('input-sekolah', compact('user'));
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Crud;
+use App\Models\userAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,7 +25,7 @@ class AuthController extends Controller
         ]);
 
         // Use a raw SQL query to fetch the user
-        $user = DB::table('cruds')->where('email', $request->email)->first();
+        $user = userAccount::where('email', $request->email)->first();
 
         // Check if user exists and verify password
         if ($user && $user->password === $request->password) {
@@ -58,10 +59,10 @@ class AuthController extends Controller
             'Email.unique' => 'Email sudah terdaftar',
             'password.required' => 'Password harus diisi',
             'no_hp.required' => 'No.HP harus diisi',
-            'no_hp.unique' => 'No.HP sudah terdaftar',  
+            'no_hp.unique' => 'No.HP sudah terdaftar',
             'status.required' => 'Status harus diisi'
         ]);
-        $user = DB::table('cruds')->insert([
+        $user = userAccount::create([
             'nama_lengkap' => $request->input('nama_lengkap'),
             'sekolah' => $request->input('sekolah'),
             'fase' => $request->input('fase'),
@@ -71,17 +72,18 @@ class AuthController extends Controller
             'no_hp' => $request->input('no_hp'),
             'status' => $request->input('status')
         ]);
+
         if($user == TRUE) {
             return redirect()->route('login');
         }else {
-            '';    
+            '';
         }
-        
+
     }
 
     public function logout(Request $request)
     {
         Session::flush();
         return redirect('/login');
-    }    
+    }
 }

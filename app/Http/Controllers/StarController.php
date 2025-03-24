@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Crud;
+use App\Models\userAccount;
 use App\Models\Star;
 use App\Models\Tanya;
 use Illuminate\Http\Request;
@@ -41,7 +41,7 @@ class StarController extends Controller
             // validasi alert
         ]);
 
-        $mentor = Crud::find($request->id);
+        $mentor = userAccount::find($request->id);
 
         // Membuat data baru di database
         Star::create([
@@ -123,7 +123,7 @@ class StarController extends Controller
     {
         // Mengambil data berdasarkan email dan batch
         $users = Star::where('email', $email)->where('status', 'Diterima')->get();
-        $backRoute = Crud::find($request->id);
+        $backRoute = userAccount::find($request->id);
 
         // Menentukan start dan end berdasarkan batch yang dikirim
         $start = ($batch - 1) * 3;
