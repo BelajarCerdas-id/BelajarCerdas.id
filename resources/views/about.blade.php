@@ -49,15 +49,19 @@
                         </div>
                         <div class="mt-14 md:mt-20">
                             <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8 text-justify">
-                                BelajarCerdas.id lahir dari visi Kunto Widyasmoro, seorang ahli IT yang berkomitmen untuk menciptakan solusi pendidikan
-                                modern yang relevan dengan kebutuhan zaman. Dengan latar belakang yang kuat dalam pengembangan teknologi, ia merancang
+                                BelajarCerdas.id lahir dari visi Kunto Widyasmoro, seorang ahli IT yang berkomitmen
+                                untuk menciptakan solusi pendidikan
+                                modern yang relevan dengan kebutuhan zaman. Dengan latar belakang yang kuat dalam
+                                pengembangan teknologi, ia merancang
                                 platform ini untuk menghubungkan dunia pembelajaran online dan offline secara seamless.
                             </p>
                         </div>
                         <div class="mt-4">
                             <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8 text-justify">
-                                Dedikasinya untuk memajukan pendidikan tidak hanya berfokus pada siswa, tetapi juga memberdayakan guru agar dapat
-                                menciptakan pengalaman belajar yang lebih baik. Melalui BelajarCerdas.id, Kunto Widyasmoro ingin memastikan bahwa setiap
+                                Dedikasinya untuk memajukan pendidikan tidak hanya berfokus pada siswa, tetapi juga
+                                memberdayakan guru agar dapat
+                                menciptakan pengalaman belajar yang lebih baik. Melalui BelajarCerdas.id, Kunto
+                                Widyasmoro ingin memastikan bahwa setiap
                                 individu, di mana pun mereka berada, memiliki akses ke pembelajaran yang berkualitas.
                             </p>
                         </div>
@@ -70,7 +74,8 @@
     <section>
         <article class="relative flex justify-center items-center min-h-screen p-6">
             <!-- Main Content -->
-            <div class="relative rounded-lg shadow-xl border-[1px] border-gray-200 w-full max-w-[1500px] h-auto p-6 md:p-10">
+            <div
+                class="relative rounded-lg shadow-xl border-[1px] border-gray-200 w-full max-w-[1500px] h-auto p-6 md:p-10">
                 <!-- Icon Top Element -->
                 <div class="absolute right-4 top-10 md:right-10 md:top-8">
                     <div class="relative w-8 md:w-12">
@@ -95,8 +100,10 @@
                             <span>Team</span>
                         </h1>
                         <p class="text-justify">
-                            Kami bangga memiliki tim yang terdiri dari individu-individu kompeten dari berbagai latar belakang dan keahlian. Setiap
-                            anggota tim kami tidak hanya memiliki pengalaman mendalam di bidangnya masing-masing, tetapi juga memahami dunia
+                            Kami bangga memiliki tim yang terdiri dari individu-individu kompeten dari berbagai latar
+                            belakang dan keahlian. Setiap
+                            anggota tim kami tidak hanya memiliki pengalaman mendalam di bidangnya masing-masing, tetapi
+                            juga memahami dunia
                             pendidikan dengan sangat baik.
                         </p>
                     </div>
@@ -130,24 +137,24 @@
                                                 </div>
                                             </div>
                                         </figure>
-                                        <figure class="swiper-slide">
+                                        {{-- <figure class="swiper-slide">
                                             <div class="w-24 h-24 lg:w-32 lg:h-32 rounded-full bg-[#60b5cf] relative">
                                                 <div
                                                     class="absolute -bottom-2 -right-2 bg-red-500 w-12 h-12 md:w-14 md:h-14 rounded-full text-2xl flex justify-center items-center">
                                                     <i class="fas fa-microscope"></i>
                                                 </div>
                                             </div>
-                                        </figure>
-                                        <figure class="swiper-slide">
+                                        </figure> --}}
+                                        {{-- <figure class="swiper-slide">
                                             <div class="w-24 h-24 lg:w-32 lg:h-32 rounded-full bg-[#60b5cf] relative">
                                                 <div
                                                     class="absolute -bottom-2 -right-2 bg-red-500 w-12 h-12 md:w-14 md:h-14 rounded-full text-2xl flex justify-center items-center">
                                                     <i class="fas fa-microscope"></i>
                                                 </div>
                                             </div>
-                                        </figure>
+                                        </figure> --}}
                                     </div>
-                                    <div class="pagination-slider">
+                                    <div class="pagination-slider-our-team">
                                         <div class="swiper-button-prev slider-arrow">
                                             <i class="fa-solid fa-arrow-left"></i>
                                         </div>
@@ -168,27 +175,27 @@
 
 <script>
     var swiper = new Swiper(".swiper", {
-            spaceBetween: 5, // Jarak antar kartu
-            loop: true, // Mengaktifkan loop agar terus berjalan
-            navigation: {
-                nextEl: ".swiper-button-next",
-                prevEl: ".swiper-button-prev",
+        spaceBetween: 5, // Jarak antar kartu
+        loop: true, // Mengaktifkan loop agar terus berjalan
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+            dynamicBullets: true,
+        },
+        breakpoints: {
+            0: {
+                slidesPerView: 2, // Menampilkan 2 kartu dalam satu tampilan
             },
-            pagination: {
-                el: ".swiper-pagination",
-                clickable: true,
-                dynamicBullets: true,
+            768: {
+                slidesPerView: 2,
             },
-            breakpoints: {
-                0: {
-                    slidesPerView: 2, // Menampilkan 3 kartu dalam satu tampilan
-                },
-                768: {
-                    slidesPerView: 2,
-                },
-                1024: {
-                    slidesPerView: 3,
-                },
-            }
-        });
+            1024: {
+                slidesPerView: 3,
+            },
+        }
+    });
 </script>

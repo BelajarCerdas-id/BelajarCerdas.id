@@ -1,6 +1,25 @@
-@include('components/sidebar_beranda')
-@extends('components/sidebar_beranda_mobile') <!-- Menggunakan layout dengan modal -->
-@if ($user->status === 'Siswa')
+@include('components/sidebar_beranda', ['headerSideNav' => 'Beranda'])
+
+<!-- ALERT tanya access -->
+@if (session('error'))
+    <script>
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "{{ session('error') }}!",
+        });
+    </script>
+@endif
+@if (session('alertAccess'))
+    <script>
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "{{ session('alertAccess') }}",
+        });
+    </script>
+@endif
+@if (Auth::user()->role === 'Siswa')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0"> {{-- mt ini berguna untuk ketika sidebar lagi terbuka dan di responsif ke layar hp, content didalam sini turun supaya tidak bentrok sama extends sidebar mobile dan bisa dibuka --}}
         <div class="content-beranda mt-[120px]">
             <div class="max-w-full mx-6">
@@ -111,7 +130,7 @@
             </div>
         </div>
     </div>
-@elseif ($user->status === 'Murid')
+@elseif (Auth::user()->role === 'Murid')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0"> {{-- mt ini berguna untuk ketika sidebar lagi terbuka dan di responsif ke layar hp, content didalam sini turun supaya tidak bentrok sama extends sidebar mobile dan bisa dibuka --}}
         <div class="content-beranda mt-[120px]">
             <div class="max-w-full mx-6">
@@ -195,14 +214,13 @@
                             <div id="timestamp" class="text-center text-lg font-bold"></div>
                         </div>
                     </div>
-                    <div class="lg:col-span-3 md:col-span-5 col-span-5">
+                    <div class="lg:col-span-3 md:col-span-5 col-span-5 border-2">
                         <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                             @foreach ($packetSiswa as $packet)
                                 <div class="w-full h-full relative ... border-[1px] border-gray-200 rounded-lg">
                                     <header>
-                                        <div class="w-full h-[110px] border-[1px] border-gray-200">
-                                            <img src="{{ $packet['image'] }}" alt=""
-                                                class="w-full h-full object-cover">
+                                        <div class="w-full h-[140px] border-[1px] border-gray-200">
+                                            <img src="{{ $packet['image'] }}" alt="" class="w-full h-full">
                                         </div>
 
                                         <section class="mt-10 w-full h-16 text-center">
@@ -222,18 +240,9 @@
                     </div>
                 </div>
             </div>
-            @if (session('error'))
-                <script>
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "{{ session('error') }}!",
-                    });
-                </script>
-            @endif
         </div>
     </div>
-@elseif (session('user')->status === 'Mentor')
+@elseif (Auth::user()->role === 'Mentor')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0"> {{-- mt ini berguna untuk ketika sidebar lagi terbuka dan di responsif ke layar hp, content didalam sini turun supaya tidak bentrok sama extends sidebar mobile dan bisa dibuka --}}
         <div class="content-beranda mt-[120px]">
             <div class="max-w-full mx-6">
@@ -348,13 +357,13 @@
         </div>
     </div>
     </div>
-@elseif(session('user')->status === 'Admin')
+@elseif(Auth::user()->role === 'Admin')
 
-@elseif(session('user')->status === 'Wakil Kepala Sekolah')
+@elseif(Auth::user()->role === 'Wakil Kepala Sekolah')
 
-@elseif(session('user')->status === 'Kepala Sekolah')
+@elseif(Auth::user()->role === 'Kepala Sekolah')
 
-@elseif(session('user')->status === 'Team Leader')
+@elseif(Auth::user()->role === 'Team Leader')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0"> {{-- mt ini berguna untuk ketika sidebar lagi terbuka dan di responsif ke layar hp, content didalam sini turun supaya tidak bentrok sama extends sidebar mobile dan bisa dibuka --}}
         <div class="content-beranda mt-[120px]">
             <header class="text-2xl mb-8 font-bold">List Pertanyaan</header>
@@ -392,7 +401,7 @@
             </div>
         </div>
     </div>
-@elseif(session('user')->status === 'XR')
+@elseif(Auth::user()->role === 'XR')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
         <div class="content-beranda mt-[120px]">
             <header class="text-2xl mb-8 font-bold">List Mentor</header>
@@ -449,7 +458,7 @@
             </div>
         </div>
     </div>
-@elseif(session('user')->status === 'Administrator')
+@elseif(Auth::user()->role === 'Administrator')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
         <div class="content-beranda">
             <header class="text-3xl">
@@ -576,7 +585,7 @@
                                                 {{ $loop->iteration === 1 ? '1st' : ($loop->iteration === 2 ? '2nd' : ($loop->iteration === 3 ? '3rd' : $loop->iteration)) }}
                                             </td>
                                             <td class="td-question">
-                                                {{ $value->nama_lengkap }}
+                                                {{ $value->Profile->nama_lengkap }}
                                             </td>
                                             <td class="td-question">
                                                 {{ $value->email }}
@@ -585,10 +594,10 @@
                                                 {{ $value->no_hp }}
                                             </td>
                                             <td class="td-question !text-center">
-                                                {{ $value->kelas }}
+                                                {{ $value->Profile->kelas }}
                                             </td>
                                             <td class="td-question">
-                                                {{ $value->sekolah }}
+                                                {{ $value->Profile->sekolah }}
                                             </td>
                                             <td class="td-question !text-center">
                                                 {{ $value->jumlah_tanya }}
@@ -603,11 +612,11 @@
             </main>
         </div>
     </div>
-@elseif(session('user')->status === 'Sales')
+@elseif(Auth::user()->role === 'Sales')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
         <div class="content-beranda"></div>
     </div>
-@elseif(session('user')->status === 'Admin Sales')
+@elseif(Auth::user()->role === 'Admin Sales')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
         <div class="content-beranda"></div>
     </div>

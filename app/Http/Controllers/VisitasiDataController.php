@@ -83,6 +83,18 @@ class VisitasiDataController extends Controller
             ->whereDate('tanggal_akhir', '<', $today)
             ->update(['status_paket_kerjasama' => 'Selesai']);
 
+        // 4. Jika status sudah 'Sedang Aktif', tetapi tanggal_mulai masih di masa depan -> ubah ke 'Belum Dimulai'
+        dataSuratPks::where('status_paket_kerjasama', 'Sedang Aktif')
+            ->where('status_pks', 'PKS')
+            ->whereDate('tanggal_mulai', '>', $today)
+            ->update(['status_paket_kerjasama' => 'Belum Dimulai']);
+
+        // 5. Jika status 'Belum Dimulai', tetapi tanggal_mulai sudah dimulai dan masih dalam periode kerja sama -> ubah ke 'Sedang Aktif'
+        dataSuratPks::where('status_paket_kerjasama', 'Belum Dimulai')
+            ->where('status_pks', 'PKS')
+            ->whereDate('tanggal_mulai', '<=', $today)
+            ->update(['status_paket_kerjasama' => 'Sedang Aktif']);
+
         // Ambil data pertama kali yang di-insert untuk englishZone berdasarkan sekolah
         $getDataPKS = dataSuratPks::whereIn('sekolah', $getDataSekolahPKS->pluck('sekolah'))->orderBy('created_at', 'asc')->get();
         $firstContract = $getDataPKS->groupBy(['sekolah', 'paket_kerjasama'])

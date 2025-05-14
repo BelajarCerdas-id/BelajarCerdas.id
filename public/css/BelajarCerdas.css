@@ -295,7 +295,6 @@ input[type="radio"]:checked a {
     width: 100%;
     align-items: center;
     text-decoration: none;
-    background-color: var(--color-second);
     position: relative;
     transition: all 0.5s ease;
     z-index: 12;
@@ -440,6 +439,9 @@ input[type="radio"]:checked a {
     font-size: 20px;
     color: var(--color-second);
     font-weight: bold;
+    display: flex;
+    gap: 14px;
+    align-items: center;
 }
 
 .information-account {
@@ -1047,7 +1049,8 @@ input[type="radio"]:checked + .pilihanSoal .option {
 }
 
 .content-dropdown,
-.list-content-dropdown {
+.list-content-dropdown,
+.content-dropdown-histori-pembelian {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
@@ -1055,7 +1058,7 @@ input[type="radio"]:checked + .pilihanSoal .option {
     font-size: 12px;
 }
 
-.content-dropdown a {
+.content-dropdown .link-href {
     display: flex;
     flex-direction: column;
     padding: 8px 15px;
@@ -1063,7 +1066,7 @@ input[type="radio"]:checked + .pilihanSoal .option {
     font-size: 13px;
 }
 
-.list-content-dropdown a {
+.list-content-dropdown .link-href {
     display: flex;
     flex-direction: column;
     padding: 8px 27px;
@@ -1071,7 +1074,7 @@ input[type="radio"]:checked + .pilihanSoal .option {
     font-size: 13px;
 }
 
-.content-dropdown a:hover {
+.content-dropdown .link-href:hover {
     color: yellow;
 }
 
@@ -1087,6 +1090,12 @@ input[type="radio"]:checked + .pilihanSoal .option {
     opacity: 1;
 }
 
+/* open untuk dropdown histori pembelian siswa & murid */
+.list-item.show .content-dropdown-histori-pembelian {
+    max-height: 400px;
+    opacity: 1;
+}
+
 .list-item.show #rotate {
     transform: rotate(-180deg);
 }
@@ -1094,6 +1103,11 @@ input[type="radio"]:checked + .pilihanSoal .option {
 /* rotate untuk dropdown sub menu */
 .content-dropdown.show #rotate2 {
     transform: rotate(-180deg);
+}
+
+/* rotate untuk dropdown navbar-components (homepage dll) */
+.list-item.show #rotate-navbar-component {
+    transform: rotate(90deg);
 }
 
 /* Sembunyikan dropdown menu secara default */
@@ -1254,7 +1268,6 @@ input[type="radio"]:checked + .serviceOption .icon-service {
     width: 100%;
     max-width: 1000px;
     overflow: hidden;
-    border: 1px solid blue;
 }
 
 .swiper-wrapper {
@@ -1283,15 +1296,7 @@ input[type="radio"]:checked + .serviceOption .icon-service {
     color: #60b5cf;
 }
 
-.swiper-pagination-bullet {
-    width: 10px;
-    height: 10px;
-}
-.swiper-pagination-bullet-active {
-    background: #60b5cf;
-}
-
-.pagination-slider {
+.pagination-slider-our-team {
     position: absolute;
     bottom: 0px;
     display: flex;
@@ -1301,12 +1306,12 @@ input[type="radio"]:checked + .serviceOption .icon-service {
     width: 100%;
 }
 
-.pagination-slider .swiper-button-next {
+.pagination-slider-our-team .swiper-button-next {
     left: 71% !important;
     transform: translateX(-100%) !important;
 }
 
-.pagination-slider .slider-arrow {
+.pagination-slider-our-team .slider-arrow {
     position: absolute;
     top: 10px;
     background: #60b5cf;
@@ -1317,30 +1322,38 @@ input[type="radio"]:checked + .serviceOption .icon-service {
     filter: drop-shadow(0px 8px 24px rgba(18, 28, 53, 0.1));
 }
 
-.pagination-slider .slider-arrow i {
+.pagination-slider-our-team .slider-arrow i {
     color: white;
 }
 
-.pagination-slider .slider-arrow::after {
+.pagination-slider-our-team,
+.slider-arrow::after,
+.button-slider,
+.slider-arrow::after {
     content: "";
 }
 
-.swiper-pagination {
+.pagination-slider-kata-mitra,
+.slider-arrow::after,
+.button-slider,
+.slider-arrow::after .swiper-pagination {
     width: 100px !important;
     left: 50% !important;
     bottom: 14px !important;
 }
 
-.pagination-slider .swiper-pagination .swiper-pagination-bullet {
-    background: #60b5cf;
+.pagination-slider-our-team .swiper-pagination-bullet,
+.pagination-slider-kata-mitra .swiper-pagination-bullet {
     width: 12px;
     height: 12px;
 }
 
-.pagination-slider .swiper-pagination .swiper-pagination-bullet-active {
+.pagination-slider-our-team .swiper-pagination-bullet-active {
     background: #60b5cf;
-    width: 12px;
-    height: 12px;
+}
+
+.pagination-slider-kata-mitra .swiper-pagination-bullet-active {
+    background: white;
 }
 
 /* styling video like youtube (english-zone-video) */
@@ -1676,6 +1689,280 @@ input[type="number"]::-ms-reveal {
     scrollbar-width: thin !important;
     scrollbar-color: rgba(0, 0, 0, 0.2) transparent !important;
 }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.animate-fadeIn {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* efek shaking after error */
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    50% {
+        transform: translateX(5px);
+    }
+    75% {
+        transform: translateX(-5px);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.animate-shake {
+    animation: shake 0.4s ease-in-out;
+}
+
+/* ----------------------- Css BuyCoin ------------------ */
+.wrapper-paket {
+    position: relative;
+    width: 500px;
+    height: 200px;
+}
+
+.content-paket {
+    width: 100%;
+    height: 50px;
+    border: 0.1em solid rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    margin: 20px 0 10px;
+    padding: 0 25px;
+}
+
+.header-content-paket {
+    font-weight: bolder;
+    font-size: 18px;
+}
+
+.wrapper-payment-method {
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    width: 400px;
+    height: 380px;
+    background: #fff;
+    border: 0.1em solid rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.container-content-paket {
+    position: absolute;
+    width: 400px;
+    flex-direction: column;
+    right: -1px;
+}
+
+.container-content-paket1 {
+    position: absolute;
+    width: 400px;
+    flex-direction: column;
+    right: -400px;
+}
+
+.container-content-paket2 {
+    position: absolute;
+    width: 400px;
+    flex-direction: column;
+    right: -400px;
+}
+
+.container-content-paket3 {
+    position: absolute;
+    width: 400px;
+    right: -400px;
+    flex-direction: column;
+}
+
+.wrapper-paket-payment {
+    display: flex;
+    justify-content: center;
+    margin-top: 15%;
+    gap: 80px;
+}
+
+.header-paket {
+    position: relative;
+    top: 30px;
+    padding: 0 20px;
+    font-size: 14px;
+}
+
+.header-content {
+    position: relative;
+    top: 140px;
+    padding: 0 20px;
+    font-weight: bolder;
+}
+
+.price-paket {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    margin-top: 160px;
+    margin-bottom: 10px;
+}
+
+.price-total {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    font-weight: bolder;
+    margin-top: 10px;
+}
+
+.line-spacing-text {
+    width: 90%;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.1);
+    margin-left: 20px;
+}
+
+.button-buy {
+    width: 90%;
+    height: 40px;
+    margin-left: 20px;
+    border-radius: 30px;
+    background: #ad7be9;
+    border: none;
+    outline: none;
+    color: whitesmoke;
+    font-weight: bolder;
+    cursor: pointer;
+    margin-top: 50px;
+}
+
+.button-buy:hover {
+    background-color: #824d74;
+}
+
+.button-buy1 {
+    width: 90%;
+    height: 40px;
+    margin-left: 20px;
+    border-radius: 30px;
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    outline: none;
+    color: rgba(0, 0, 0, 0.25);
+    font-weight: bolder;
+    font-size: 18px;
+    margin-top: 50px;
+}
+
+/*------------------------------- css buycoin siswa (onclick content) -------------------------*/
+input[type="radio"]:checked + label .paket-koin {
+    border: 3px solid #4189e0;
+}
+
+.logo-payment-card {
+    display: flex;
+    align-items: center;
+    width: 470px;
+    height: 50px;
+    gap: 10px;
+    cursor: pointer;
+}
+
+input:checked + .content-menu {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+input:checked + .content-menu::after {
+    content: "done";
+    font-family: "Material Icons";
+    font-size: 20px;
+    font-weight: bolder;
+    color: palevioletred;
+    position: relative;
+    left: -30px;
+    /* after buat centang nya biar ada di sebelah kanan text dan logo */
+}
+
+/* ---------- accordion choose payment ------------- */
+.container-accordion-payment {
+    max-width: 530px;
+    width: 100%;
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.content-method-payment {
+    /* padding: 0 15px; */
+    margin: 10px 0;
+    overflow: hidden;
+    /* buat hilangin content payment nya */
+    border-bottom: 0.04em solid rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+.content-method-payment.open {
+    padding-bottom: 10px;
+}
+
+.content-method-payment header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 50px;
+}
+
+.content-method-payment .choose-payment {
+    height: 0;
+    /* buat hilangin content payment nya */
+    transition: all 0.2s linear;
+}
+
+.choose-payment .content-menu {
+    display: flex;
+    /* buat flex in span text nya sama centang */
+    width: 100%;
+    height: 50px;
+    align-items: center;
+}
+
+.choose-payment span {
+    display: flex;
+}
+
+.btn-close {
+    position: absolute;
+    right: 70px;
+    top: 80px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.choose-payment input {
+    display: none;
+}
+
+input[type="radio"]:checked + label.checked-dropdown-mapel {
+    background-color: rgba(0, 0, 0, 0.03); /* Warna abu transparan */
+    color: gray;
+}
+
 @media screen and (max-width: 900px) {
     #slide1:checked ~ #controls label:nth-child(2),
     #slide2:checked ~ #controls label:nth-child(3),

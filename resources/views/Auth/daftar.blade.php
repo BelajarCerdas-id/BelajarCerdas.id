@@ -64,8 +64,8 @@
                                 {{-- <option value="{{ $item->kode }}">{{ $item->fase }}</option> --}}
                                 {{-- cegah refresh selected after validation  --}}
                                 <option value="{{ $item->kode }}"
-                                    {{ old('fase') == $item->kode ? 'selected' : '' }}>
-                                    {{ $item->fase }}</option>
+                                    {{ old('nama_fase') == $item->kode ? 'selected' : '' }}>
+                                    {{ $item->nama_fase }}</option>
                             @endforeach
                         </select>
                         @error('fase')

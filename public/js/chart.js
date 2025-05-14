@@ -5,7 +5,7 @@ const getChartDataTanyaTahunan = document.getElementById('myChart-years').getAtt
 // SCRIPT CHART UNTUK DATA TANYA HARIAN (ADMINISTRATOR)
 document.addEventListener("DOMContentLoaded", function () {
         const monthDisplay = document.getElementById("monthDisplay");
-        let currentMonth = new Date().getMonth(); // Pastikan bulan dalam rentang (1-12)
+        let currentMonth = new Date().getMonth() + 1; // Pastikan bulan dalam rentang (1-12)
         let currentYear = new Date().getFullYear();
         const prevMonthBtn = document.getElementById("prevMonth");
         const nextMonthBtn = document.getElementById("nextMonth");

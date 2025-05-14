@@ -1,0 +1,36 @@
+
+  2025-05-10 01:32:02 Running ["artisan" transactions:update-expired] .................................. 964.22ms DONE
+  ⇂ Update transaksi pending yang sudah melewati batas waktu menjadi kadaluarsa  
+
+
+  2025-05-10 01:32:06 Running ["artisan" transactions:update-expired] .................................. 630.05ms DONE
+  ⇂ Update transaksi pending yang sudah melewati batas waktu menjadi kadaluarsa  
+
+
+  2025-05-10 01:32:10 Running ["artisan" transactions:update-expired] .................................. 632.64ms DONE
+  ⇂ Update transaksi pending yang sudah melewati batas waktu menjadi kadaluarsa  
+
+
+  2025-05-10 01:32:12 Running ["artisan" transactions:update-expired] .................................. 632.41ms DONE
+  ⇂ Update transaksi pending yang sudah melewati batas waktu menjadi kadaluarsa  
+
+
+  2025-05-10 01:32:17 Running ["artisan" transactions:update-expired] .................................. 860.98ms DONE
+  ⇂ Update transaksi pending yang sudah melewati batas waktu menjadi kadaluarsa  
+
+
+  2025-05-10 01:32:51 Running ["artisan" transactions:update-expired] .................................. 640.52ms DONE
+  ⇂ Update transaksi pending yang sudah melewati batas waktu menjadi kadaluarsa  
+
+
+  2025-05-10 01:35:17 Running ["artisan" transactions:update-expired] .................................. 856.05ms DONE
+  ⇂ Update transaksi pending yang sudah melewati batas waktu menjadi kadaluarsa  
+
+
+  2025-05-10 01:35:22 Running ["artisan" transactions:update-expired] .................................. 633.97ms DONE
+  ⇂ Update transaksi pending yang sudah melewati batas waktu menjadi kadaluarsa  
+
+
+  2025-05-10 01:35:26 Running ["artisan" transactions:update-expired] .................................. 634.58ms DONE
+  ⇂ Update transaksi pending yang sudah melewati batas waktu menjadi kadaluarsa  
+

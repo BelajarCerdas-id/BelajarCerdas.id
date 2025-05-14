@@ -1,5 +1,5 @@
 <x-script></x-script>
-@if (session('user')->status === 'Siswa' or session('user')->status === 'Murid')
+@if (Auth::user()->role === 'Siswa' or Auth::user()->role === 'Murid')
     <div class="navbar-beranda-phone w-full h-20 flex justify-between items-center md:hidden bg-[--color-second] px-6 ">
         <div class="flex items-center h-full">
             <i class="fas fa-bars text-2xl relative top-1 cursor-pointer text-white" onclick="togglePopup()"></i>
@@ -85,7 +85,7 @@
             </main>
         </div>
     </div>
-@elseif(session('user')->status === 'Administrator')
+@elseif(Auth::user()->role === 'Administrator')
     <div
         class="navbar-beranda-phone w-full h-20 flex justify-between items-center md:hidden bg-[--color-default] px-6 ">
         <div class="flex items-center">
@@ -110,7 +110,7 @@
                     <div class="profile-account flex flex-col items-center px-2 my-6">
                         <i class="fas fa-circle-user text-5xl text-gray-500"></i>
                         <span>{{ session('user')->nama_lengkap ?? '' }}</span>
-                        <span class="text-xs">{{ session('user')->status ?? '' }}</span>
+                        <span class="text-xs">{{ Auth::user()->role ?? '' }}</span>
                     </div>
                     <div class="navbar-phone">
                         <div class="nav-list">

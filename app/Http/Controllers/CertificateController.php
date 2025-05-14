@@ -8,31 +8,6 @@ use App\Models\englishZoneCertificate;
 
 class CertificateController extends Controller
 {
-
-    public function certificateStore(Request $request)
-    {
-        $user = session('user');
-
-        $request->validate([
-            'certificate' => 'required|max:2000'
-        ], [
-            'image.required' => 'Harap untuk upload Certificate!',
-            'image.max' => 'Ukuran file melebihi ukuran maksimal yang ditentukan!'
-        ]);
-
-        if ($request->hasFile('certificate')) {
-            $certificate = time() . $request->file('certificate')->getClientOriginalName();
-            $request->file('certificate')->move(public_path('englishZone_certificate'), $certificate);
-        }
-
-        englishZoneCertificate::create([
-            'nama_lengkap' => $request->nama_lengkap,
-            'status' => $request->status,
-            'certificate' => $certificate
-        ]);
-
-        return redirect()->back();
-    }
     public function generateCertificate()
     {
         // Ambil data pengguna (pastikan pengguna sudah login)

@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class OfficeProfiles extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'nama_lengkap'
+    ];
+
+    public function userAccount()
+    {
+        return $this->belongsTo(userAccount::class);
+    }
+}

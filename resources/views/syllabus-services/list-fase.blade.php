@@ -1,0 +1,315 @@
+@include('components/sidebar_beranda', [
+    'linkBackButton' => route('kurikulum.index'),
+    'backButton' => "<i class='fa-solid fa-chevron-left'></i>",
+    'headerSideNav' => 'Fase',
+])
+@extends('components/sidebar_beranda_mobile')
+
+@if (Auth::user()->role === 'Administrator')
+    <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
+        <div class="content-beranda">
+            @if (session('success-insert-data-fase'))
+                @include('components.alert.success-insert-data', [
+                    'message' => session('success-insert-data-fase'),
+                ])
+            @endif
+            @if (session('success-update-data-fase'))
+                @include('components.alert.success-insert-data', [
+                    'message' => session('success-update-data-fase'),
+                ])
+            @endif
+            @if (session('success-delete-data-fase'))
+                @include('components.alert.success-insert-data', [
+                    'message' => session('success-delete-data-fase'),
+                ])
+            @endif
+            <main>
+                <section class="bg-white shadow-lg p-6 rounded-lg border-gray-200 border-[1px]">
+                    <!---- Form input kurikulum  ---->
+                    @if ($nama_kurikulum === 'Kurikulum Nasional')
+                        <form action="{{ route('fase.store', [$id]) }}" method="POST">
+                            @csrf
+                            <label class="text-sm">Nama Fase</label>
+                            <div class="flex relative max-w-lg mt-2">
+                                <div class="flex gap-2 w-full">
+                                    <input type="text" name="nama_fase"
+                                        class="w-full bg-white shadow-lg h-11 border-gray-200 border-[2px] outline-none rounded-full text-xs px-2
+                                    focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]
+                                    {{ $errors->has('nama_fase') && session('formError') === 'create' ? 'border-[1px] border-red-400' : '' }}"
+                                        value="{{ $errors->has('nama_fase') && session('formError') === 'create' ? old('nama_fase') : '' }}"
+                                        placeholder="Masukkan Nama Fase">
+                                    <button
+                                        class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-full shadow-md transition-all h-max text-md">
+                                        Tambah
+                                    </button>
+                                </div>
+                            </div>
+                            @if ($errors->has('nama_fase') && session('formError') === 'create')
+                                <span
+                                    class="text-red-500 font-bold text-xs pt-2">{{ $errors->first('nama_fase') }}</span>
+                            @endif
+                        </form>
+
+                        <div class="border-b-2 border-gray-200 mt-4"></div>
+
+                        <!---- Table list data fase  ---->
+                        @if ($dataFase->isNotEmpty())
+                            <div class="overflow-x-auto mt-8 pb-20">
+                                <table class="table w-full border-collapse border border-gray-300">
+                                    <thead class="font-bold">
+                                        <tr>
+                                            <th class="border border-gray-300 w-[80%]">
+                                                Fase
+                                            </th>
+                                            <th class="!text-center border border-gray-300">
+                                                Detail
+                                            </th>
+                                            <th class="!text-center border border-gray-300">
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($dataFase as $item)
+                                            <tr>
+                                                <td class="border border-gray-300">
+                                                    {{ $item->nama_fase }}
+                                                </td>
+                                                <td class="!text-center border border-gray-300">
+                                                    <a
+                                                        href="{{ route('mapel.index', [$item->Kurikulum->nama_kurikulum, $item->kurikulum_id, $item->nama_fase, $item->id]) }}">
+                                                        <div class="text-[#4189e0]">
+                                                            <span>Detail</span>
+                                                            <i class="fas fa-chevron-right text-xs"></i>
+                                                        </div>
+                                                    </a>
+                                                </td>
+                                                <td class="!text-center border border-gray-300">
+                                                    <div class="dropdown dropdown-left">
+                                                        <div tabindex="0" role="button">
+                                                            <i class="fa-solid fa-ellipsis-vertical cursor-pointer"></i>
+                                                        </div>
+                                                        <ul tabindex="0"
+                                                            class="dropdown-content menu bg-base-100 rounded-box z-1 w-max p-2 shadow-sm  z-[9999]">
+                                                            <li class="text-xs"
+                                                                onclick="editFase(this, {{ $item->id }})"
+                                                                data-id-fase="{{ $item->id }}"
+                                                                data-nama-fase="{{ $item->nama_fase }}"
+                                                                data-action-fase="{{ route('fase.update', [$id, $item->id]) }}">
+                                                                <a>
+                                                                    <i class="fa-solid fa-pen text-[#4189e0]"></i>
+                                                                    Edit Fase
+                                                                </a>
+                                                            </li>
+                                                            </li>
+                                                            <li class="text-xs" onclick="historyFase(this)"
+                                                                data-nama_lengkap="{{ $item->UserAccount->profile->nama_lengkap }}"
+                                                                data-status="{{ $item->UserAccount->role }}"
+                                                                data-updated_at="[{{ $item->updated_at->locale('id')->translatedFormat('d-M-Y, H:i:s') }}]">
+                                                                <a>
+                                                                    <i class="fa-solid fa-eye text-[#4189e0]"></i>
+                                                                    View History
+                                                                </a>
+                                                            </li>
+                                                            <li class="text-xs"
+                                                                onclick="deleteFase(this, {{ $item->id }})">
+                                                                <a>
+                                                                    <i class="fa-solid fa-trash text-red-500"></i>
+                                                                    Delete Fase
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!---- modal edit fase ---->
+                            @foreach ($dataFase as $item)
+                                <dialog id="my_modal_1_{{ $item->id }}" class="modal">
+                                    <div class="modal-box bg-white w-max">
+                                        <form id="faseForm_{{ $item->id }}"
+                                            action="{{ route('fase.update', [$id, $item->id]) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <span class="text-xl font-bold flex justify-center">Edit Fase</span>
+                                            <div class="mt-4 w-80">
+                                                <!---- Form kurikulum ---->
+                                                <label class="text-sm">Nama Fase</label>
+                                                <input type="text" id="nama_fase_{{ $item->id }}"
+                                                    name="nama_fase"
+                                                    class="w-full bg-white shadow-lg h-11 border-gray-200 border-[1px] outline-none rounded-full text-xs px-2 mt-2
+                                                    {{ $errors->has('nama_fase') && session('formErrorId') == $item->id ? 'border-red-400' : 'focus:border-[dodgerblue] focus:shadow-[0_0_6px_0_dodgerblue]' }}"
+                                                    value="{{ $errors->has('nama_fase') && session('formErrorId') == $item->id ? old('nama_fase') : $item->nama_fase }}"
+                                                    placeholder="Masukkan Nama Fase">
+                                                @if (session('formErrorId') == $item->id)
+                                                    <span
+                                                        class="text-red-500 font-bold text-xs pt-2">{{ $errors->first('nama_fase') }}</span>
+                                                @endif
+                                            </div>
+                                            <!---- button submit ---->
+                                            <div class="flex justify-end mt-8">
+                                                <button id="submit-button"
+                                                    class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all">
+                                                    Simpan
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <form method="dialog" class="modal-backdrop">
+                                        <button>close</button>
+                                    </form>
+                                </dialog>
+                                <!---- modal delete bab  ---->
+                                <dialog id="my_modal_3_{{ $item->id }}" class="modal">
+                                    <div class="modal-box bg-white">
+                                        <h3 class="font-bold text-lg text-red-600">Konfirmasi Hapus</h3>
+                                        <p class="py-4">Semua yang berkaitan dengan fase ini akan dihapus secara
+                                            permanen.
+                                            Apakah kamu
+                                            yakin
+                                            ingin menghapus fase ini?</p>
+                                        <div class="modal-action">
+                                            <span id="hapus-modal" class="btn"
+                                                onclick="closeModal(this, {{ $item->id }} )">Batal</span>
+                                            <form action="{{ route('fase.delete', $item->id) }}" method="POST">
+                                                @method('DELETE')
+                                                @csrf
+                                                <button class="btn btn-error text-white">
+                                                    Ya, Hapus
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <form method="dialog" class="modal-backdrop">
+                                        <button>close</button>
+                                    </form>
+                                </dialog>
+                            @endforeach
+                            <!---- modal history fase  ---->
+                            <dialog id="my_modal_2" class="modal">
+                                <div class="modal-box bg-white text-center">
+                                    <span class="text-2xl">History Fase</span>
+                                    <div class="flex items-center justify-between mt-6">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fa-solid fa-circle-user text-5xl"></i>
+                                            <div class="flex flex-col text-start">
+                                                <span id="text-nama_lengkap"></span>
+                                                <span id="text-status" class="text-sm"></span>
+                                                <span id="text-updated_at" class="text-xs leading-6"></span>
+                                            </div>
+                                        </div>
+                                        <div class="">
+                                            <span class="text-[#4189e0] text-sm">Publisher</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <form method="dialog" class="modal-backdrop">
+                                    <button>close</button>
+                                </form>
+                            </dialog>
+                        @else
+                            <div class="flex justify-center items-center mt-8">
+                                <span class="text-sm">Belum ada fase</span>
+                            </div>
+                        @endif
+                    @else
+                        a
+                    @endif
+
+
+                </section>
+            </main>
+        </div>
+    </div>
+@else
+    <p>You do not have access to this pages.</p>
+@endif
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        setTimeout(function() {
+            document.getElementById('alertSuccess').remove();
+        }, 3000);
+
+        document.getElementById('btnClose').addEventListener('click', function() {
+            document.getElementById('alertSuccess').remove();
+        })
+    });
+</script>
+
+<script>
+    function editFase(element, id) {
+        let modal = document.getElementById('my_modal_1_' + id);
+        let faseId = element.getAttribute('data-id-fase');
+        let namaFase = element.getAttribute('data-nama-fase');
+        let actionFase = element.getAttribute('data-action-fase');
+        let inputNamaFase = document.getElementById('nama_fase_' + id);
+
+        document.getElementById('nama_fase_' + id).value = namaFase;
+
+        document.getElementById('faseForm_' + id).setAttribute('action', actionFase);
+
+        inputNamaFase.value = namaFase;
+        modal.showModal();
+
+        inputNamaFase.blur();
+    }
+
+    function historyFase(element) {
+        const modal = document.getElementById('my_modal_2');
+        const namaLengkap = element.getAttribute('data-nama_lengkap');
+        const status = element.getAttribute('data-status');
+        const updatedAt = element.getAttribute('data-updated_at');
+
+        document.getElementById('text-nama_lengkap').innerText = namaLengkap;
+        document.getElementById('text-status').innerText = status;
+        document.getElementById('text-updated_at').innerText = updatedAt;
+
+        modal.showModal();
+    }
+
+    function deleteFase(element, id) {
+        const modal = document.getElementById('my_modal_3_' + id);
+        modal.showModal();
+    }
+</script>
+
+
+<script>
+    document.getElementById('submit-button').addEventListener('click', function() {
+        const form = document.querySelector('#my_modal_1 form[action]');
+        form.submit(); // Submit the form
+    });
+</script>
+
+@if (session('formErrorId'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let modalId = "my_modal_1_" + {{ session('formErrorId') }}
+            let modal = document.getElementById(modalId);
+            if (modal) {
+                modal.showModal();
+            }
+        });
+    </script>
+@endif
+
+<!---- buat hapus border dan text error ketika after validasi ------>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Cek semua inputan dan hapus error message ketika user mengetik
+        document.querySelectorAll('input, select, textarea').forEach(function(el) {
+            el.addEventListener('input', function() {
+                // Hapus error class
+                el.classList.remove('border-red-400');
+                const errorMessage = el.nextElementSibling;
+                if (errorMessage && errorMessage.classList.contains('text-red-500')) {
+                    errorMessage.remove();
+                }
+            });
+        });
+    });
+</script>

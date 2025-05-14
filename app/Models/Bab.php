@@ -8,4 +8,44 @@ use Illuminate\Database\Eloquent\Model;
 class Bab extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'nama_bab',
+        'kode',
+        'mapel_id',
+        'fase_id',
+        'kurikulum_id',
+    ];
+
+    // buat nentuin bab publish atau unpublish di fitur yang di aktifkan
+    public function BabFeatureStatuses()
+    {
+        return $this->hasMany(BabFeatureStatus::class, 'bab_id');
+    }
+
+    public function Mapel()
+    {
+        return $this->belongsTo(Mapel::class, 'mapel_id');
+    }
+
+    public function Fase()
+    {
+        return $this->belongsTo(Fase::class, 'fase_id');
+    }
+
+    public function Kurikulum()
+    {
+        return $this->belongsTo(Kurikulum::class, 'kurikulum_id');
+    }
+
+    public function UserAccount()
+    {
+        return $this->belongsTo(UserAccount::class, 'user_id');
+    }
+
+    Public function Tanya()
+    {
+        return $this->hasOne(Tanya::class, 'bab_id');
+    }
 }

@@ -17,7 +17,7 @@
                                         <sup class="text-red-500">&#42;</sup>
                                     </label>
                                     <select id="provinsi" name="provinsi"
-                                        class="bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer {{ $errors->has('provinsi') ? 'border-[1px] border-red-400' : '' }}">
+                                        class="bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] {{ $errors->has('provinsi') ? 'border-[1px] border-red-400' : '' }}">
                                         <option value="" class="hidden">Pilih Provinsi</option>
                                     </select>
                                     @error('provinsi')
@@ -30,7 +30,7 @@
                                         <sup class="text-red-500">&#42;</sup>
                                     </label>
                                     <select id="kabupaten" name="kab_kota"
-                                        class="bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer {{ $errors->has('kab_kota') ? 'border-[1px] border-red-400' : '' }}">
+                                        class="bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] {{ $errors->has('kab_kota') ? 'border-[1px] border-red-400' : '' }}">
                                         <option value="" class="hidden">Pilih Kabupaten / Kota</option>
                                     </select>
                                     @error('kab_kota')
@@ -45,7 +45,7 @@
                                         <sup class="text-red-500">&#42;</sup>
                                     </label>
                                     <select id="kecamatan" name="kecamatan"
-                                        class="col-span-12 bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer {{ $errors->has('kecamatan') ? 'border-[1px] border-red-400' : '' }}">
+                                        class="col-span-12 bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] {{ $errors->has('kecamatan') ? 'border-[1px] border-red-400' : '' }}">
                                         <option value="" class="hidden">Pilih Kecamatan</option>
                                     </select>
                                     @error('kecamatan')
@@ -58,7 +58,7 @@
                                         <sup class="text-red-500">&#42;</sup>
                                     </label>
                                     <select id="jenjang_sekolah" name="jenjang_sekolah"
-                                        class="col-span-12 bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer {{ $errors->has('jenjang_sekolah') ? 'border-[1px] border-red-400' : '' }}">
+                                        class="col-span-12 bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] {{ $errors->has('jenjang_sekolah') ? 'border-[1px] border-red-400' : '' }}">
                                         <option value="" class="hidden">Pilih Jenjang</option>
                                         <option value="SD" {{ @old('jenjang_sekolah') === 'SD' ? 'selected' : '' }}>
                                             SD
@@ -88,11 +88,11 @@
                                         <sup class="text-red-500">&#42;</sup>
                                     </label>
                                     {{-- <select id="sekolah"
-                                        class="bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer">
+                                        class="bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]">
                                         <option value="">Pilih sekolah</option>
                                     </select> --}}
                                     <input type="text" name="sekolah"
-                                        class="col-span-6 bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer {{ $errors->has('sekolah') ? 'border-[1px] border-red-400' : '' }}"
+                                        class="col-span-6 bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] {{ $errors->has('sekolah') ? 'border-[1px] border-red-400' : '' }}"
                                         value="{{ @old('sekolah') }}" placeholder="Masukkan Nama Sekolah">
                                     @error('sekolah')
                                         <span class="text-red-500 font-bold text-sm pl-2 mt-2">{{ $message }}</span>
@@ -104,7 +104,7 @@
                                         <sup class="text-red-500">&#42;</sup>
                                     </label>
                                     <select name="status_sekolah"
-                                        class="col-span-12 bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer {{ $errors->has('status_sekolah') ? 'border-[1px] border-red-400' : '' }}">
+                                        class="col-span-12 bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] {{ $errors->has('status_sekolah') ? 'border-[1px] border-red-400' : '' }}">
                                         <option value="" class="hidden">Pilih Status Sekolah</option>
                                         <option value="B2B"
                                             {{ @old('status_sekolah') === 'B2B' ? 'selected' : '' }}>

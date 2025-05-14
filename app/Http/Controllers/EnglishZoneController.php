@@ -7,21 +7,25 @@ use Illuminate\Http\Request;
 use App\Models\englishZoneSoal;
 use App\Models\englishZoneMateri;
 use App\Models\englishZoneJawaban;
+use App\Models\englishZoneCertificate;
+use App\Models\EnglishZoneUser;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class EnglishZoneController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-
         // mencari jenjang murid yang sesuai dengan jenjang murid user login
         // Group materi berdasarkan modul
-        $groupedMateri = englishZoneMateri::where('jenjang_murid', session('user')->kode_jenjang_murid)->get()->groupBy('modul');
+        $EnglishZoneUser = EnglishZoneUser::where('user_id', Auth::user()->id)->first();
 
-        $completedModules = modulLock::where('nama_lengkap', session('user')->nama_lengkap)->where('is_completed', true)->pluck('module_id')->toArray();
+        $jenjangModulUser = $EnglishZoneUser->FeaturePricesVariant->variant_name;
+
+        $groupedMateri = englishZoneMateri::where('modul_jenjang', $jenjangModulUser)->get()->groupBy('modul');
+
+        $completedModules = modulLock::where('nama_lengkap', Auth::user()->Profile->nama_lengkap)->where('is_completed', true)->pluck('module_id')->toArray();
 
         // Tandai module yang terkunci
         foreach ($groupedMateri as $modul => $materis) {
@@ -36,36 +40,29 @@ class EnglishZoneController extends Controller
         $mainMateri = $groupedMateri->map(fn($materis) => $materis->first()); // Data utama tiap modul
         $allMateri = $groupedMateri; // Semua data materi, termasuk video
         $getSoal = englishZoneSoal::all();
-        return view('english-zone', compact( 'mainMateri', 'allMateri', 'getSoal'));
+        return view('english-zone.Student.english-zone', compact( 'mainMateri', 'allMateri', 'getSoal'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function uploadMateri()
     {
-        //
+        return view('english-zone.Administrator.upload-materi');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function uploadMateriStore(Request $request)
     {
+        $user = Auth::user();
+
         $request->validate([
-            'nama_lengkap' => 'required',
-            'email' => 'required',
-            'status' => 'required',
             'modul' => 'required',
             'judul_modul' => 'required',
             'judul_video.*' => 'required',
             'link_video.*' => 'required',
-            'jenjang_murid' => 'required',
+            'modul_jenjang' => 'required',
             'materi_pdf' => 'required|max:10000',
             'modul_download' => $request->modul === 'Final Exam' ? 'required|max:10000' : 'nullable|max:10000',
         ], [
             'modul.required' => 'Harap pilih modul!',
-            'jenjang_murid.required' => 'Harap pilih jenjang!',
+            'modul_jenjang.required' => 'Harap pilih jenjang!',
             'materi_pdf.required' => 'Harap upload pdf!',
             'materi_pdf.max' => 'Ukuran file melebihi ukuran maksimal yang ditentukan!',
             'modul_download.required' => 'Harap upload modul!',
@@ -94,26 +91,51 @@ class EnglishZoneController extends Controller
 
         foreach ($judul_video as $index => $value) {
             englishZoneMateri::create([
-                'nama_lengkap' => $request->nama_lengkap,
-                'email' => $request->email,
-                'status' => $request->status,
+                'user_id' => $user->id,
                 'modul' => $request->modul,
                 'judul_modul' => $request->judul_modul,
                 'materi_pdf' => $filename,
                 'modul_download' => $modulDownload,
                 'judul_video' => $value,
                 'link_video' => $link_video[$index],
-                'jenjang_murid' => $request->jenjang_murid,
+                'modul_jenjang' => $request->modul_jenjang,
             ]);
         }
 
-        return redirect()->back()->with('success', 'Data berhasil disimpan.');
+        return redirect()->back()->with('success-insert-materi-englishZone', 'Materi berhasil ditambahkan.');
     }
 
+    public function certificateStore(Request $request)
+    {
+        $certificateData = englishZoneCertificate::all();
 
-    /**
-     * Display the specified resource.
-     */
+        $validator = Validator::make($request->all(), [
+            'certificate' => 'required|max:2000'
+        ], [
+            'certificate.required' => 'Harap untuk upload Certificate!',
+            'certificate.max' => 'Ukuran file melebihi ukuran maksimal yang ditentukan!'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->with('formErrorId', 'sertifikat')->withInput();
+        }
+
+        if ($request->hasFile('certificate')) {
+            $certificate = time() . $request->file('certificate')->getClientOriginalName();
+            $request->file('certificate')->move(public_path('englishZone_certificate'), $certificate);
+        }
+
+        if($certificateData->isEmpty()) {
+            englishZoneCertificate::create([
+                'nama_lengkap' => $request->nama_lengkap,
+                'status' => $request->status,
+                'certificate' => $certificate
+            ]);
+            return redirect()->back();
+        } else {
+            return redirect()->back()->with('failed-insert-certificate', 'Sertifikat telah terdaftar');
+        }
+    }
 
     // controller show pdf in pdfviewer (ga kepake tapi simpen aja)
     public function show(string $id)
@@ -129,17 +151,6 @@ class EnglishZoneController extends Controller
         // return view('englishZone-view', compact('filePath'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     // controller update status_soal (administrator)
     public function update(Request $request)
     {
@@ -162,15 +173,6 @@ class EnglishZoneController extends Controller
         }
 
         return redirect()->back()->with('success', 'Status soal dan pilihan berhasil diperbarui.');
-    }
-
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 
     // controller upload image ckeditor
@@ -206,13 +208,18 @@ class EnglishZoneController extends Controller
         return response()->json(['message' => 'Gambar tidak ditemukan'], 404);
     }
 
+    public function uploadSoal()
+    {
+        return view('english-zone.Administrator.upload-soal');
+    }
+
     // controller upload soal (administrator)
     public function uploadSoalStore(Request $request) {
+        $user = Auth::user();
+
         $request->validate([
-            'nama_lengkap' => 'required',
             'modul_soal' => 'required',
-            'jenjang' => 'required',
-            'status' => 'required',
+            'jenjang_soal' => 'required',
             'soal' => 'required',
             'option_pilihan.*' => 'required',
             'jawaban_pilihan.*' => 'required',
@@ -221,10 +228,8 @@ class EnglishZoneController extends Controller
             'deskripsi_jawaban' => 'required',
             'tipe_upload' => 'required'
         ], [
-            'nama_lengkap.required' => 'Harap isi nama lengkap!',
             'modul_soal.required' => 'Harap pilih modul!',
-            'jenjang.required' => 'Harap pilih jenjang!',
-            'status.required' => 'Harap pilih status!',
+            'jenjang_soal.required' => 'Harap pilih jenjang!',
             'soal.required' => 'Harap isi soal!',
             'option_pilihan.*.required' => 'Harap isi pilihan jawaban!',
             'jawaban_pilihan.*.required' => 'Harap isi pilihan jawaban!',
@@ -239,10 +244,9 @@ class EnglishZoneController extends Controller
         // elemen yang di loop dalam foreach dia menggunakan nilai dari setiap elemen yang di loop berarti yang setelah =>, sedangkan array lain menggunakan key (variabel setelah $as)
         foreach ($jawaban_pilihan as $index => $value) {
             englishZoneSoal::create([
-                'nama_lengkap' => $request->nama_lengkap,
+                'user_id' => $user->id,
                 'modul_soal' => $request->modul_soal,
-                'jenjang' => $request->jenjang,
-                'status' => $request->status,
+                'jenjang_soal' => $request->jenjang_soal,
                 'soal' => $request->soal,
                 'option_pilihan' => $option_pilihan[$index], // Cocokkan dengan iterasi
                 'jawaban_pilihan' => $value, // Isi jawaban
@@ -252,7 +256,7 @@ class EnglishZoneController extends Controller
                 'tipe_upload' => $request->tipe_upload
             ]);
         }
-            return redirect()->back();
+            return redirect()->back()->with('success-insert-soal-englishZone', 'Soal berhasil ditambahkan!');
     // $soal = new englishZoneSoal;
         // $soal->nama_lengkap = $request->nama_lengkap;
         // $soal->modul = $request->modul;
@@ -312,15 +316,20 @@ class EnglishZoneController extends Controller
     //     return redirect()->back()->with('success', 'Jawaban berhasil disimpan.');
     // }
 
-    // controller upload jawaban soal pg menggunakan benar salah (dapat point atau tidak) (murid)
+    // controller upload jawaban soal pg menggunakan benar salah (dapat point atau tidak) (student)
     public function uploadJawaban(Request $request, $id)
     {
-        $user = session('user');
+        $user = Auth::user();
+
+        $jenjangModuleUser = EnglishZoneUser::where('user_id', $user->id)->first();
+
+        $jenjangSoalUser = $jenjangModuleUser->FeaturePricesVariant->variant_name;
+
         $module = englishZoneMateri::findOrFail($id);
 
         // update status module sebagai selesai
         modulLock::updateOrCreate(
-            ['nama_lengkap' => $user->nama_lengkap, 'module_id' => $module->id],
+            ['nama_lengkap' => $user->Profile->nama_lengkap, 'module_id' => $module->id],
             ['is_completed' => true]
         );
 
@@ -334,7 +343,7 @@ class EnglishZoneController extends Controller
 
         foreach ($jawaban as $noSoal => $value) {
             // Ambil ID soal berdasarkan nomor soal
-            $idSoalKey = "id_soal{$noSoal}";
+            $idSoalKey = "soal_id{$noSoal}";
             $soalId = $request->input($idSoalKey);
 
             if ($soalId) {
@@ -350,14 +359,10 @@ class EnglishZoneController extends Controller
 
                 // Simpan jawaban user ke database
                 englishZoneJawaban::create([
-                    'nama_lengkap' => $request->nama_lengkap,
-                    'email' => $request->email,
-                    'sekolah' => $request->sekolah,
-                    'kelas' => $request->kelas,
-                    'status' => $request->status,
-                    'jenjang_murid' => $request->jenjang_murid,
+                    'user_id' => $user->id,
+                    'jenjang_soal_user' => $jenjangSoalUser,
                     'modul' => $request->modul,
-                    'id_soal' => $soalId, // Gunakan ID soal yang benar
+                    'soal_id' => $soalId, // Gunakan ID soal yang benar
                     'jawaban' => $jawabanPilihan, // Jawaban yang dipilih user
                     'pilihan_ganda' => $optionPilihan, // Opsi yang dipilih
                     'nilai_jawaban' => $nilai, // Nilai jawaban
@@ -372,59 +377,44 @@ class EnglishZoneController extends Controller
     public function pengayaan($modul, $id) {
         // lalu controller akan menerima parameter modul tadi dan diproses pada function pengayaan
 
-        $user = session('user');
-        if(!isset($user)) {
-            return redirect('/login');
-        }
-
         $module = englishZoneMateri::findOrFail($id);
+
+        $EnglishZoneUser = EnglishZoneUser::where('user_id', Auth::user()->id)->first();
+
+        $jenjangModulUser = $EnglishZoneUser->FeaturePricesVariant->variant_name;
 
         // terakhir, $getSoal akan mengambil semua data yang sesuai dengan column modul englishZoneSoal dengan operator $modul yang berasal dari parameter url
         // cara ini hampir sama dengan metode view pada userAccount find($id), hanya saja ini menggunakan kondisi where, karena melakukan relasi antara column modul englishZoneSoal dengan column modul englishZoneMateri
         // get data untuk soal pilihan ganda
-        $groupedSoal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang', $user->kode_jenjang_murid)->inRandomOrder()->get()->groupBy('soal');
+        $groupedSoal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang_soal', $jenjangModulUser)->get()->groupBy('soal'); // sementara jangan pake inRamdomOrder() buat acak pg
         $getSoal = $groupedSoal->map(fn($materis) => $materis->first()); // Data utama tiap modul
         $dataSoal = $groupedSoal;
 
-        $getDataSoal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang', $user->kode_jenjang_murid)->get();
+        $getDataSoal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang_soal', $jenjangModulUser)->get();
         // mengambil semua data yang id_soal (englishZoneJawaban) dengan id (englishZoneSoal) sesuai.
-        $getJawaban = englishZoneJawaban::whereIn('id_soal', $getDataSoal->pluck('id'))->where('email', $user->email)->get()->groupBy('id_soal');
+        $getJawaban = englishZoneJawaban::whereIn('soal_id', $getDataSoal->pluck('id'))->where('user_id', Auth::user()->id)->get()->groupBy('soal_id');
 
         // menghitung nilai(poin) setiap soal pilihan ganda
-        $soal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang', $user->kode_jenjang_murid)->get()->groupBy('soal');
+        $soal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang_soal', $jenjangModulUser)->get()->groupBy('soal');
         $jumlahSoal = $soal->count();
         $totalNilai = 100;
         $getPoint = $jumlahSoal > 0 ? $totalNilai / $jumlahSoal : 0;
 
-        $getNilai = englishZoneJawaban::where('email', $user->email)->where('modul', $modul)->get();
+        $getNilai = englishZoneJawaban::where('user_id', Auth::user()->id)->where('modul', $modul)->get();
         $countNilai = $getNilai->sum('nilai_jawaban');
 
-        return view('pengayaan', compact('user', 'getSoal', 'dataSoal', 'getJawaban', 'totalNilai', 'getPoint', 'countNilai', 'module'));
+        return view('english-zone.Student.pengayaan', compact('getSoal', 'dataSoal', 'getJawaban', 'totalNilai', 'getPoint', 'countNilai', 'module'));
     }
 
     public function questionForRelease()
     {
-        $user = session('user');
-
-        if(!isset($user)) {
-            return redirect('/login');
-        }
-
         $getSoal = englishZoneSoal::paginate(20);
 
-        return view('question-for-release', compact('user','getSoal'));
+        return view('english-zone.Administrator.question-for-release', compact('getSoal'));
     }
 
     public function video($modul)
     {
-        // Mengambil informasi pengguna dari sesi
-        $user = session('user');
-
-        // Jika pengguna belum login, arahkan ke halaman login
-        if (!$user) {
-            return redirect('/login');
-        }
-
         // Mengambil video berdasarkan modul dari database
         $getVideo = englishZoneMateri::where('modul', $modul)->get();
 
@@ -447,7 +437,7 @@ class EnglishZoneController extends Controller
         }
 
         // Mengirim data ke view
-        return view('english-zone-video', compact('user', 'getVideo', 'videoIds'));
+        return view('english-zone.Student.english-zone-video', compact( 'getVideo', 'videoIds'));
     }
 
     public function certificate()

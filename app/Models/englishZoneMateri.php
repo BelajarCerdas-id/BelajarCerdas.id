@@ -5,26 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class englishZoneMateri extends Model
+class EnglishZoneMateri extends Model
 {
     use HasFactory;
     protected $fillable = [
-    'nama_lengkap',
-    'email',
-    'status',
+    'user_id',
     'modul',
     'judul_modul',
     'materi_pdf',
     'judul_video',
     'link_video',
     'modul_download',
-    'jenjang_murid',
+    'modul_jenjang',
     ];
 
     public function modulLock()
     {
+        return $this->hasMany(modulLock::class);
+    }
 
-    return $this->hasMany(modulLock::class);
-
+    public function UserAccount()
+    {
+        return $this->belongsTo(UserAccount::class, 'user_id');
     }
 }

@@ -32,24 +32,25 @@ function fetchFilteredDataQuestions(status_soal, modul_soal, jenjang, page = 1) 
                     });
 
                     const createdAt = application.created_at ? `${formatDate(application.created_at)}, ${timeFormatter.format(new Date(application.created_at))}` : 'Tanggal tidak tersedia';
+                    const limitString = (str, limit) => (str ? (str.length > limit ? str.substring(0, limit) + '...' : str) : '-');
 
                     $('#tableListQuestion').append(`
                         <tr class="text-xs">
                             <td class="td-table !text-center">
                                 <input type="checkbox" name="id[]" value="${application.id}" onclick="showButton()" class="checkboxButton cursor-pointer">
                             </td>
-                            <td class="td-table !text-center">${application.modul_soal}</td>
-                            <td class="td-table !text-center">${application.jenjang}</td>
-                            <td class="td-table">${application.soal}</td>
-                            <td class="td-table !text-center">${application.jawaban_benar}</td>
-                            <td class="td-table">${application.deskripsi_jawaban}</td>
-                            <td class="td-table">${createdAt}</td>
-                            <td class="td-table !text-center">
+                            <td class="td-table !text-center text-black">${application.modul_soal}</td>
+                            <td class="td-table !text-center text-black">${application.jenjang_soal}</td>
+                            <td class="td-table text-black">${limitString(application.soal, 125)}</td>
+                            <td class="td-table !text-center text-black">${application.jawaban_benar}</td>
+                            <td class="td-table text-black">${limitString(application.deskripsi_jawaban, 125)}</td>
+                            <td class="td-table !text-center text-black">${createdAt}</td>
+                            <td class="td-table !text-center text-black">
                                 <button class="bg-${application.status_soal === 'published' ? 'green-500' : 'gray-300'} text-white p-2 rounded-lg">
                                     ${application.status_soal}
                                 </button>
                             </td>
-                            <td class="td-table !text-center">
+                            <td class="td-table !text-center text-black">
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                             </td>
                         </tr>

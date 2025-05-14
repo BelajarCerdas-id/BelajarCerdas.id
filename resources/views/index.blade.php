@@ -1,39 +1,15 @@
 <x-navbar></x-navbar>
 
-{{-- <header>
-    <main>
-        <section class="grid grid-cols-12 relative">
-            <div class="col-span-12 md:col-span-6 px-4 md:pl-12">
-                <div class=" md:text-left flex flex-col justify-center h-full">
-                    <p class="text-4xl md:text-4xl lg:text-6xl xl:text-7xl">
-                        <span>Belajar Mandiri<br> atau dengan <br> bantuan tutor</span>
-                    </p>
-                    <p class="mt-2">
-                        <span>Solusi lengkap dan terjangkau – <br>
-                            belajar jadi lebih mudah dan asyik!</span>
-                    </p>
-                    <div class="flex flex-col md:flex-row gap-2 mt-4">
-                        <button
-                            class="border-2 outline-none w-full md:w-32 h-10 rounded-full text-sm hover:bg-[--color-default] hover:text-white font-bold">Daftar</button>
-                        <a href="/login">
-                            <button
-                                class="border-2 outline-none w-full md:w-32 h-10 rounded-full text-sm hover:bg-[--color-default] hover:text-white font-bold">Masuk</button>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-span-5 hidden md:block">
-                <img src="image/software tester-amico.png" alt="">
-            </div>
-        </section>
-    </main>
-</header> --}}
-
 <header>
     <main>
         <!---- size lg, dst ----->
         <section class="hidden lg:grid grid-cols-12 relative">
-            <div class="col-span-12 lg:col-span-6 flex items-center justify-center relative">
+            <div class="col-span-12 md:col-span-6 flex items-center justify-center relative">
+                {{-- <div class="absolute top-[-40px] left-0">
+                    <div
+                        class="relative left-[-50px] h-28 w-28 bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
+                    </div>
+                </div> --}}
                 <div class="absolute bottom-0 left-0">
                     <div
                         class="relative left-[-50px] bottom-[-40px] h-28 w-28 bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
@@ -69,7 +45,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-12 lg:col-span-6 h-[550px] relative flex justify-center">
+            <div class="col-span-12 md:col-span-6 h-[550px] relative flex justify-center">
                 <!----- rounded mid  ----->
                 <div
                     class="absolute left-[-60px] top-[30%] h-28 w-28 bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
@@ -221,99 +197,6 @@
     </main>
 </header>
 
-
-
-<!-- Header -->
-{{-- <header class="flex justify-between items-center px-8 py-4 bg-white shadow-md">
-    <div class="flex items-center space-x-4">
-        <div class="h-16 w-16 bg-white rounded-full shadow-lg flex justify-center items-center border">
-            <img src="https://via.placeholder.com/50" alt="Logo" class="h-12">
-        </div>
-        <h1 class="text-xl font-bold text-[#30AADD]">Belajar Cerdas</h1>
-    </div>
-    <nav class="hidden md:flex space-x-6 font-medium">
-        <a href="#" class="hover:text-[#30AADD]">About Us</a>
-        <a href="#" class="hover:text-[#30AADD]">Contact Us</a>
-        <a href="#" class="hover:text-[#30AADD]">Services</a>
-    </nav>
-    <div class="flex items-center space-x-4">
-        <div class="relative w-48 hidden md:flex items-center bg-gray-200 rounded-full px-3 py-1">
-            <input type="text" placeholder="Search..." class="bg-transparent w-full focus:outline-none">
-            <svg class="h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.3-4.3"></path>
-            </svg>
-        </div>
-        <button class="bg-[#30AADD] text-white px-4 py-2 rounded-full">Log In</button>
-    </div>
-</header>
-
-<!-- Hero Section -->
-<section class="flex flex-col md:flex-row items-center p-12 space-y-6 md:space-y-0 md:space-x-8">
-    <div class="w-full md:w-1/2">
-        <h2 class="text-4xl font-bold leading-tight">Belajar Cerdas<br>Raih Prestasi Lebih Tinggi!</h2>
-        <p class="text-gray-600 mt-4">Belajar Cerdas adalah platform edukasi inovatif yang membantumu memahami materi
-            dengan lebih mudah, cepat, dan efektif.</p>
-    </div>
-    <div class="w-full md:w-1/2 flex justify-center">
-        <img src="image/asset landing page.png" alt="Learning Illustration" class="w-[400px]">
-    </div>
-</section>
-
-<!-- Features Section -->
-<section class="grid grid-cols-1 md:grid-cols-3 gap-6 px-8 py-12">
-    <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
-        <img src="https://via.placeholder.com/50" class="h-12">
-        <div>
-            <h3 class="text-lg font-bold">Tanya Mafia</h3>
-            <p class="text-sm text-gray-600">Dapatkan solusi dari tutor terbaik secara real-time.</p>
-        </div>
-    </div>
-    <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
-        <img src="https://via.placeholder.com/50" class="h-12">
-        <div>
-            <h3 class="text-lg font-bold">Halo Guru</h3>
-            <p class="text-sm text-gray-600">Konsultasi langsung dengan guru untuk memahami materi.</p>
-        </div>
-    </div>
-    <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
-        <img src="https://via.placeholder.com/50" class="h-12">
-        <div>
-            <h3 class="text-lg font-bold">English Zone</h3>
-            <p class="text-sm text-gray-600">Belajar bahasa Inggris dengan mentor pilihan.</p>
-        </div>
-    </div>
-</section> --}}
-
-{{-- <main>
-    <section class="grid grid-cols-12 h-[600px]">
-        <div class="col-span-6 h-[600px] border border-red-500 flex justify-center">
-            <div class="w-[425px] flex flex-col gap-2 border border-yellow-500">
-                <div class="text-xl leading-10">
-                    <span>Lebih Dari Sekedar</span>
-                    <span class="text-[--color-default] font-bold">Edutech</span>
-                </div>
-                <div class="text-6xl font-bold leading-[55px]">
-                    <p>Belajar Cerdas</p>
-                    <p>Raih Prestasi</p>
-                    <p>Lebih Tinggi!</p>
-                </div>
-                <div class="border-b-4 border-[#5ef2d5] h-2 w-[64%]"></div>
-                <p class="text-justify leading-6">
-                    Belajar Cerdas ID adalah platform edukasi inovatif yang membantumu memahami materi dengan lebih
-                    mudah, cepat, dan efektif.
-                    Dengan metode pembelajaran yang interaktif dan berbasis konsep, kami siap menemanimu meraih prestasi
-                    terbaik!.
-                </p>
-            </div>
-        </div>
-        <div class="col-span-6 h-[600px] border border-blue-500">
-            <img src="image/asset landing page.png" alt="" class="w-full h-full">
-        </div>
-    </section>
-</main> --}}
-
 <div
     class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 lg:grid-cols-4 gap-2 mx-2 lg:w-[90%] xl:w-max lg:mx-auto mt-40 border-2">
     @foreach ($packets as $packet)
@@ -344,8 +227,10 @@
                         </div>
                         <span class="font-bold text-xs md:text-base">{{ $packet['Price'] }}</span>
                     </div>
-                    <button
-                        class="bg-[--color-second] w-[90%] rounded-full h-[40px] text-white font-bold text-xs md:text-sm mt-4">{{ $packet['Button'] }}</button>
+                    <a href="{{ $packet['Link'] }}">
+                        <button
+                            class="bg-[--color-second] w-[90%] rounded-full h-[40px] text-white font-bold text-xs md:text-sm mt-4">{{ $packet['Button'] }}</button>
+                    </a>
                 </footer>
             </section>
         </article>
@@ -359,9 +244,9 @@
         <div class="absolute right-4 top-10 md:right-10 md:top-8">
             <div class="relative w-8 md:w-12">
                 <!-- Diagonal Line 1 -->
-                <div class="absolute inset-0 bg-[--color-default] rotate-45 w-full h-2 md:h-3"></div>
+                <div class="absolute inset-0 bg-[--color-default] rotate-[70deg] w-full h-2 md:h-3"></div>
                 <!-- Diagonal Line 2 -->
-                <div class="absolute inset-0 bg-[--color-default] -rotate-45 w-full h-2 md:h-3"></div>
+                <div class="absolute inset-0 bg-[--color-default] rotate-[-70deg] w-full h-2 md:h-3"></div>
             </div>
         </div>
         <!-- Icon Bottom Element -->
@@ -370,7 +255,7 @@
                 <!-- Diagonal Line 1 -->
                 <div class="absolute inset-0 bg-[--color-default] w-full h-2 md:h-3"></div>
                 <!-- Diagonal Line 2 -->
-                <div class="absolute inset-0 bg-[--color-default] rotate-90 w-full h-2 md:h-3"></div>
+                <div class="absolute inset-0 bg-[--color-default] rotate-[45deg] w-full h-2 md:h-3"></div>
             </div>
         </div>
         <!-- Left Side: Image -->
@@ -387,7 +272,7 @@
                         <div class="absolute top-0 left-0 bg-[--color-default] w-6 h-6 md:w-10 md:h-10 rounded-full">
                         </div>
                     </div>
-                    <div class="absolute inset-[-10px]">
+                    <div class="absolute inset-[-20px]">
                         <div
                             class="absolute bottom-0 right-0 bg-[--color-default] w-8 h-8 md:w-14 md:h-14 rounded-full">
                         </div>
@@ -430,9 +315,9 @@
         <div class="absolute right-4 top-10 md:right-10 md:top-8">
             <div class="relative w-8 md:w-12">
                 <!-- Diagonal Line 1 -->
-                <div class="absolute inset-0 bg-[--color-default] rotate-45 w-full h-2 md:h-3"></div>
+                <div class="absolute inset-0 bg-[--color-default] rotate-[70deg] w-full h-2 md:h-3"></div>
                 <!-- Diagonal Line 2 -->
-                <div class="absolute inset-0 bg-[--color-default] -rotate-45 w-full h-2 md:h-3"></div>
+                <div class="absolute inset-0 bg-[--color-default] rotate-[-70deg] w-full h-2 md:h-3"></div>
             </div>
         </div>
         <!-- Icon Bottom Element -->
@@ -441,7 +326,7 @@
                 <!-- Diagonal Line 1 -->
                 <div class="absolute inset-0 bg-[--color-default] w-full h-2 md:h-3"></div>
                 <!-- Diagonal Line 2 -->
-                <div class="absolute inset-0 bg-[--color-default] rotate-90 w-full h-2 md:h-3"></div>
+                <div class="absolute inset-0 bg-[--color-default] rotate-[45deg] w-full h-2 md:h-3"></div>
             </div>
         </div>
         <!-- Left Side: Image -->
@@ -450,11 +335,11 @@
             <div class="col-span-12 md:col-span-6 flex justify-center items-center">
                 <!-- image  -->
                 <div class="flex flex-col gap-4">
-                    <img src="image/icon1-ourGoals.png" alt="Person with laptop"
+                    <img src="{{ asset('image/icon1-ourGoals.png') }}" alt="Person with laptop"
                         class="relative z-10 w-full max-h-[300px] object-cover mx-auto">
-                    <img src="image/icon2-ourGoals.png" alt="Person with laptop"
+                    <img src="{{ asset('image/icon2-ourGoals.png') }}" alt="Person with laptop"
                         class="relative z-10 w-full max-h-[300px] object-cover mx-auto">
-                    <img src="image/icon3-ourGoals.png" alt="Person with laptop"
+                    <img src="{{ asset('image/icon3-ourGoals.png') }}" alt="Person with laptop"
                         class="relative z-10 w-full max-h-[300px] object-cover mx-auto">
                 </div>
             </div>
@@ -481,14 +366,14 @@
                 <!-- Right Side: icon text Content -->
                 <div class="flex flex-col gap-4">
                     <div class="flex gap-2">
-                        <img src="image/globe-icon.png" alt="" class="w-6 object-contain">
+                        <img src="{{ asset('image/globe-icon.png') }}" alt="" class="w-6 object-contain">
                         <span class="text-justify text-sm">
                             Menghadirkan Pembelajaran yang Relevan dan Bermakna. Kami fokus menjual konsep dan
                             pengalaman, bukan sekadar produk.
                         </span>
                     </div>
                     <div class="flex gap-2">
-                        <img src="image/science-icon.png" alt="" class="w-6 object-contain">
+                        <img src="{{ asset('image/science-icon.png') }}" alt="" class="w-6 object-contain">
                         <span class="text-justify text-sm">
                             Menyediakan Solusi Pendidikan yang Seamless. Menggabungkan pembelajaran online dan offline
                             untuk menyelesaikan
@@ -496,7 +381,8 @@
                         </span>
                     </div>
                     <div class="flex gap-2">
-                        <img src="image/telescope-icon.png" alt="" class="w-6 object-contain">
+                        <img src="{{ asset('image/telescope-icon.png') }}" alt=""
+                            class="w-6 object-contain">
                         <span class="text-justify text-sm">
                             Menjangkau prospek yang sesuai: sekolah, guru, dan siswa yang berkeputusan untuk
                             berinvestasi dalam pendidikan
@@ -516,9 +402,9 @@
         <div class="absolute right-4 top-10 md:right-10 md:top-8">
             <div class="relative w-8 md:w-12">
                 <!-- Diagonal Line 1 -->
-                <div class="absolute inset-0 bg-[--color-default] rotate-45 w-full h-2 md:h-3"></div>
+                <div class="absolute inset-0 bg-[--color-default] rotate-[70deg] w-full h-2 md:h-3"></div>
                 <!-- Diagonal Line 2 -->
-                <div class="absolute inset-0 bg-[--color-default] -rotate-45 w-full h-2 md:h-3"></div>
+                <div class="absolute inset-0 bg-[--color-default] rotate-[-70deg] w-full h-2 md:h-3"></div>
             </div>
         </div>
         <!-- Icon Bottom Element -->
@@ -527,7 +413,7 @@
                 <!-- Diagonal Line 1 -->
                 <div class="absolute inset-0 bg-[--color-default] w-full h-2 md:h-3"></div>
                 <!-- Diagonal Line 2 -->
-                <div class="absolute inset-0 bg-[--color-default] rotate-90 w-full h-2 md:h-3"></div>
+                <div class="absolute inset-0 bg-[--color-default] rotate-[45deg] w-full h-2 md:h-3"></div>
             </div>
         </div>
         <!-- Left Side: Image -->

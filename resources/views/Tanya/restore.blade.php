@@ -1,5 +1,5 @@
 <x-script></x-script>
-@if (session('user')->status === 'Siswa' or session('user')->status === 'Murid')
+@if (Auth::user()->role === 'Siswa' or Auth::user()->role === 'Murid')
     <main>
         <section>
             <div class="grid grid-cols-8 gap-2 mx-2 lg:w-[90%] lg:mx-auto mt-20">
@@ -10,15 +10,15 @@
                         <div class="col-span-6">
                             <div class="">
                                 <span class="text-gray-900 font-medium">Nama Siswa :</span>
-                                <span>{{ $getRestore->nama_lengkap }}</span>
+                                <span>{{ $getRestore->Student->StudentProfiles->nama_lengkap }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Sekolah :</span>
-                                <span>{{ $getRestore->sekolah }}</span>
+                                <span>{{ $getRestore->Student->StudentProfiles->sekolah }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Kelas :</span>
-                                <span>{{ $getRestore->kelas }}</span>
+                                <span>{{ $getRestore->Kelas->kelas }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Jam berTANYA :</span>
@@ -33,11 +33,11 @@
                     <div class="mx-4 my-8 leading-8">
                         <div class="">
                             <span>Mata Pelajaran :</span>
-                            {{ $getRestore->mapel }}
+                            {{ $getRestore->Mapel->mata_pelajaran }}
                         </div>
                         <div class="">
                             <span>Bab :</span>
-                            {{ $getRestore->bab }}
+                            {{ $getRestore->Bab->nama_bab }}
                         </div>
                     </div>
 
@@ -92,11 +92,11 @@
                         <div class="col-span-6">
                             <div class="">
                                 <span class="text-gray-900 font-medium">Mentor :</span>
-                                <span>{{ $getRestore->mentor }}</span>
+                                <span>{{ $getRestore->Mentor->MentorProfiles->nama_lengkap }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Asal Mengajar :</span>
-                                <span>{{ $getRestore->asal_mengajar }}</span>
+                                <span>{{ $getRestore->Mentor->MentorProfiles->sekolah_mengajar }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Jam Terjawab :</span>
@@ -112,7 +112,13 @@
                         <span>Jawaban</span>
                         <div class="max-h-40 h-40 my-2 p-2 bg-white shadow-xl border-[1px] border-gray-200 rounded-md overflow-y-auto text-sm resize-none"
                             disabled>
-                            {{ $getRestore->jawaban }}
+                            @if (isset($getRestore) && is_object($getRestore) && !empty($getRestore->jawaban))
+                                {{ $getRestore->jawaban }}
+                            @else
+                                <div class="w-full h-full flex items-center justify-center cursor-default">
+                                    <p>Jawaban tidak tersedia</p>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
@@ -161,7 +167,7 @@
             </div>
         </section>
     </main>
-@elseif (session('user')->status === 'Mentor')
+@elseif (Auth::user()->role === 'Mentor')
     <main>
         <section>
             <div class="grid grid-cols-8 gap-2 mx-2 lg:w-[90%] lg:mx-auto mt-20">
@@ -172,15 +178,15 @@
                         <div class="col-span-6">
                             <div class="">
                                 <span class="text-gray-900 font-medium">Nama Siswa :</span>
-                                <span>{{ $getRestore->nama_lengkap }}</span>
+                                <span>{{ $getRestore->Student->StudentProfiles->nama_lengkap }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Sekolah :</span>
-                                <span>{{ $getRestore->sekolah }}</span>
+                                <span>{{ $getRestore->Student->StudentProfiles->sekolah }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Kelas :</span>
-                                <span>{{ $getRestore->kelas }}</span>
+                                <span>{{ $getRestore->Kelas->kelas }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Jam berTANYA :</span>
@@ -195,11 +201,11 @@
                     <div class="mx-4 my-8 leading-8">
                         <div class="">
                             <span>Mata Pelajaran :</span>
-                            {{ $getRestore->mapel }}
+                            {{ $getRestore->Mapel->mata_pelajaran }}
                         </div>
                         <div class="">
                             <span>Bab :</span>
-                            {{ $getRestore->bab }}
+                            {{ $getRestore->Bab->nama_bab }}
                         </div>
                     </div>
 
@@ -254,11 +260,11 @@
                         <div class="col-span-6">
                             <div class="">
                                 <span class="text-gray-900 font-medium">Mentor :</span>
-                                <span>{{ $getRestore->mentor }}</span>
+                                <span>{{ $getRestore->Mentor->MentorProfiles->nama_lengkap }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Asal Mengajar :</span>
-                                <span>{{ $getRestore->asal_mengajar }}</span>
+                                <span>{{ $getRestore->Mentor->MentorProfiles->sekolah_mengajar }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Jam Terjawab :</span>

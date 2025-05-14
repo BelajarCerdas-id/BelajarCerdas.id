@@ -7,7 +7,6 @@ use App\Models\dataSuratPks;
 use App\Models\sekolahPks;
 use App\Models\userAccount;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class PksController extends Controller
 {

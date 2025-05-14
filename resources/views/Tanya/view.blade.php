@@ -1,19 +1,19 @@
 <x-script></x-script>
-@if (session('user')->status === 'Siswa' or session('user')->status === 'Murid')
+@if (Auth::user()->role === 'Siswa' or Auth::user()->role === 'Murid')
     <div class="grid lg:grid-cols-2 border-[1px] border-gray-400 gap-8 mx-20">
         <div class="lg:col-span-1 bg-white shadow-lg h-max">
             <header class="grid border-b-[1px] border-gray-200 pb-2">
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Nama Siswa :</span>
-                    <span>{{ $getTanya->nama_lengkap }}</span>
+                    <span>{{ $getTanya->Student->StudentProfiles->nama_lengkap }}</span>
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Sekolah :</span>
-                    <span>{{ $getTanya->sekolah }}</span>
+                    <span>{{ $getTanya->Student->StudentProfiles->sekolah }}</span>
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Kelas :</span>
-                    <span>{{ $getTanya->kelas }}</span>
+                    <span>{{ $getTanya->Kelas->kelas }}</span>
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Jam Tanya :</span>
@@ -23,11 +23,11 @@
             <div class="w-full mt-2 mx-2">
                 <div class="flex gap-2 text-lg mb-1">
                     <span class="text-gray-900 font-medium">Mata Pelajaran :</span>
-                    <span>{{ $getTanya->mapel }}</span>
+                    <span>{{ $getTanya->Mapel->mata_pelajaran }}</span>
                 </div>
                 <div class="flex gap-2 text-lg">
                     <span class="text-gray-900 font-medium">Bab :</span>
-                    <span>{{ $getTanya->bab }}</span>
+                    <span>{{ $getTanya->Bab->nama_bab }}</span>
                 </div>
             </div>
             <div class="flex mx-6 my-6 gap-12">
@@ -131,7 +131,7 @@
             </form>
         </div>
     </div>
-@elseif (session('user')->status === 'Mentor')
+@elseif (Auth::user()->role === 'Mentor')
     <main>
         <section>
             <div class="grid grid-cols-8 gap-2 mx-2 lg:w-[90%] lg:mx-auto mt-20">
@@ -142,15 +142,15 @@
                         <div class="col-span-6">
                             <div class="">
                                 <span class="text-gray-900 font-medium">Nama Siswa :</span>
-                                <span>{{ $getRestore->nama_lengkap }}</span>
+                                <span>{{ $getRestore->Student->StudentProfiles->nama_lengkap }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Sekolah :</span>
-                                <span>{{ $getRestore->sekolah }}</span>
+                                <span>{{ $getRestore->Student->StudentProfiles->sekolah }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Kelas :</span>
-                                <span>{{ $getRestore->kelas }}</span>
+                                <span>{{ $getRestore->Kelas->kelas }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Jam berTANYA :</span>
@@ -165,11 +165,11 @@
                     <div class="mx-4 my-8 leading-8">
                         <div class="">
                             <span>Mata Pelajaran :</span>
-                            {{ $getTanya->mapel }}
+                            {{ $getTanya->Mapel->mata_pelajaran }}
                         </div>
                         <div class="">
                             <span>Bab :</span>
-                            {{ $getTanya->bab }}
+                            {{ $getTanya->Bab->nama_bab }}
                         </div>
                     </div>
 
@@ -234,8 +234,8 @@
                         </form>
                     </dialog>
                 </div>
-
                 <!---- sisi TANYA mentor ----->
+
                 <!---- upload jawaban ----->
                 <div
                     class="col-span-8 md:col-span-4 bg-white shadow-lg border-[1px] border-gray-200 rounded-md relative">
@@ -243,13 +243,6 @@
                         enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
-                        <input type="hidden" name="id_mentor" value="{{ session('user')->id }}">
-                        <div class="input-hidden">
-                            <input type="hidden" name="mentor" value="{{ session('user')->nama_lengkap }}">
-                            <input type="hidden" name="asal_mengajar" value="{{ session('user')->sekolah }}">
-                            <input type="hidden" name="email_mentor" value="{{ session('user')->email }}">
-                            <input type="hidden" name="status" value="Diterima">
-                        </div>
                         <div class="border-b-[1px] border-gray-200 mt-32"></div>
                         <!---- jawaban dan image Tanya mentor ----->
 
@@ -257,11 +250,11 @@
                         <div class="mt-8 md:mt-32 mx-8">
                             <label>Jawaban</label>
                             <textarea name="jawaban"
-                                class="h-40 w-full bg-white border-[1px] border-gray-200 shadow-lg shadow-gray-200 drop-shadow-xl outline-none rounded-lg text-xs p-4 resize-none mt-2 focus-within:border-[1px] focus-within:border-[dodgerblue] focus-within:shadow-[0_0_9px_0_dodgerblue] {{ $errors->has('jawaban') ? 'border-[1px] border-red-500 shadow-[0_0_20px_0_red]' : '' }}"
+                                class="h-40 w-full bg-white border-[1px] border-gray-200 shadow-lg shadow-gray-200 drop-shadow-xl outline-none rounded-lg text-xs p-4 resize-none mt-2 focus-within:border-[1px] focus-within:border-[dodgerblue] focus-within:shadow-[0_0_9px_0_dodgerblue] {{ $errors->has('jawaban') ? 'border-[1px] border-red-400' : '' }}"
                                 placeholder="Masukkan Jawaban"></textarea>
                         </div>
                         @error('jawaban')
-                            <span class="text-red-500 font-bold text-md pl-8">{{ $message }}</span>
+                            <span class="text-red-500 font-bold text-sm pl-8">{{ $message }}</span>
                         @enderror
                         <!---- image ----->
                         <div class="w-max my-8 mx-8">
@@ -310,17 +303,10 @@
                         </div>
                     </form>
                 </div>
-                <!---- modal image mentor ----->
+                <!-- Modal for displaying the image -->
                 <dialog id="my_modal_2" class="modal">
                     <div class="modal-box bg-white">
-                        @if (isset($getRestore) && is_object($getRestore) && !empty($getRestore->image_jawab))
-                            <img src="{{ asset('images_tanya/' . $getRestore->image_jawab) }}" alt=""
-                                class="object-cover w-full">
-                        @else
-                            <div class="h-full w-full flex items-center justify-center">
-                                <p>Gambar tidak tersedia</p>
-                            </div>
-                        @endif
+                        <img id="modalImage" alt="" class="w-full h-auto">
                     </div>
                     <form method="dialog" class="modal-backdrop">
                         <button>close</button>
@@ -340,13 +326,6 @@
                         @error('alasan_ditolak')
                             <span class="text-red-500 font-bold text-sm">{{ $message }}</span>
                         @enderror
-                        <div class="input-hidden">
-                            <input type="hidden" name="id_mentor" value="{{ session('user')->id }}">
-                            <input type="hidden" name="mentor" value="{{ session('user')->nama_lengkap }}">
-                            <input type="hidden" name="asal_mengajar" value="{{ session('user')->sekolah }}">
-                            <input type="hidden" name="email_mentor" value="{{ session('user')->email }}">
-                            <input type="hidden" name="status" value="Ditolak">
-                        </div>
                         <div class="flex flex-col">
                             <input type="radio" name="alasan_ditolak" id="reason1"
                                 value="gambar tidak sesuai dengan pertanyaan">
@@ -385,13 +364,15 @@
     <p>You do not have access to this dashboard.</p>
 @endif
 
+
+
 <script>
     function togglePopup() {
         document.getElementById("popup-1").classList.toggle("active");
     }
 </script>
 
-<script>
+{{-- <script>
     function openModal() {
         var imgSrc = document.querySelector('#imagePreview img').src;
         var modalImage = document.getElementById('modalImage');
@@ -402,7 +383,7 @@
     function closeModal() {
         document.getElementById('imageModal').close();
     }
-</script>
+</script> --}}
 
 
 <script>
@@ -439,15 +420,16 @@
         reader.readAsDataURL(file);
     }
 
+    // popup result upload image
     function openModal() {
         var imgSrc = document.querySelector('#imagePreview img').src;
         var modalImage = document.getElementById('modalImage');
         modalImage.src = imgSrc;
-        document.getElementById('imageModal').showModal();
+        document.getElementById('my_modal_2').showModal();
     }
 
     function closeModal() {
-        document.getElementById('imageModal').close();
+        document.getElementById('my_modal_2').close();
     }
 </script>
 

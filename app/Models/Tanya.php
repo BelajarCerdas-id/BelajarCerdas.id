@@ -8,31 +8,54 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Tanya extends Model
 {
-        use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes;
     protected $fillable = [
-        'nama_lengkap',
-        'email',
-        'sekolah',
-        'fase',
-        'kelas',
-        'mapel',
-        'bab',
+        'user_id',
+        'fase_id',
+        'kelas_id',
+        'mapel_id',
+        'bab_id',
+        'harga_koin',
         'pertanyaan',
         'image_tanya',
-        'no_hp',
-        'jam_tanya',
-        'jam_jawab',
-        'mentor',
-        'id_mentor',
-        'email_mentor',
-        'asal_mengajar',
+        'status_soal_student',
+        'mentor_id',
         'jawaban',
         'image_jawab',
-        'status',
+        'status_soal',
         'alasan_ditolak',
-        'status_soal'
     ];
 
     protected $dates = ['created_at'];
+
+    public function Student()
+    {
+        return $this->belongsTo(UserAccount::class, 'user_id');
+    }
+
+    public function Mentor()
+    {
+        return $this->belongsTo(UserAccount::class, 'mentor_id');
+    }
+
+    public function Fase()
+    {
+        return $this->belongsTo(Fase::class, 'fase_id');
+    }
+
+    public function Kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'kelas_id');
+    }
+
+    public function Mapel()
+    {
+        return $this->belongsTo(Mapel::class, 'mapel_id');
+    }
+
+    public function Bab()
+    {
+        return $this->belongsTo(Bab::class, 'bab_id');
+    }
 
 }

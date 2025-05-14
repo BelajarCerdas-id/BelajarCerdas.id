@@ -4,34 +4,42 @@ use App\Models\Web;
 use App\Models\Post;
 use Illuminate\Support\Arr;
 use App\Http\Controllers\User;
+use App\Http\Middleware\TanyaAccess;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OtpController;
+use App\Http\Controllers\PksController;
+use App\Http\Middleware\AuthMiddleware;
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\StarController;
 use App\Http\Controllers\testController;
 use App\Http\Controllers\ChartController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\TanyaController;
+use App\Http\Middleware\CheckEnglishZone;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\FilterController;
-use App\Http\Controllers\ModuleController;
-use App\Http\Controllers\CatatanController;
-use App\Http\Controllers\CertificateController;
-use App\Http\Controllers\EnglishZoneController;
-use App\Http\Controllers\AuthController; // login daftar
-use App\Http\Controllers\CrudController; // database client
 use App\Http\Controllers\ImportController;
-use App\Http\Controllers\PksController;
+use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\CatatanController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScrapperController;
 use App\Http\Controllers\SuratPKSController;
-use App\Http\Controllers\UsersController; //database client (percobaan)
+use App\Http\Controllers\SyllabusController;
+use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\EnglishZoneController;
+use App\Http\Controllers\MitraCerdasController;
 use App\Http\Controllers\VisitasiDataController;
+use App\Http\Controllers\AuthController; // login daftar
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CrudController; // database client
+use App\Http\Controllers\UsersController; //database client (percobaan)
 use App\Http\Controllers\webController; // data biasa seperti foreach (tidak dari database) dan lain lain (jika ada selain foreach)
-use App\Http\Middleware\AuthMiddleware;
-use App\Http\Middleware\CheckEnglishZone;
 
 Route::get('/', [webController::class, 'index'])->name('homePage');
-Route::get('/guru', [webController::class, 'guru']);
+Route::get('/mitra-cerdas', [webController::class, 'mitraCerdas'])->name('mitraCerdas');
+Route::get('/siswa', [webController::class, 'siswa'])->name('siswa');
 
 Route::get('/sekolah', function() {
     return view('sekolah', ['title' => 'Sekolah']);
@@ -49,9 +57,6 @@ Route::get('/posts/{post:slug}', function (Post $post) { //mengembalikan kolom s
     return view('viewPost', ['title' => 'single post', 'post' => $post]);
 });
 
-Route::get('/histori', function () {
-    return view('histori-pembelian');
-});
 
 Route::get('/certif', function () {
     return view('certif');
@@ -67,30 +72,127 @@ Route::fallback(function () {
 
 
 
+// ROUTES AUTH
 
-Route::put('/data-pks-sekolah/update/{id}', [PksController::class, 'updateDataPksSekolah'])->name('dataPksSekolah.update');
+// ROUTES VIEWS REGISTER STUDENT & MENTOR
+Route::get('/daftar-mentor', [AuthController::class, 'registerMentor'])->name('daftar.mentor');
+Route::get('/daftar', [AuthController::class, 'indexRegister'])->name('daftar.user');
+Route::get('/daftar-siswa', [AuthController::class, 'registerStudent'])->name('daftar.siswa');
 
-// MIDDLEWARE LOGIN
-Route::middleware([AuthMiddleware::class])->group(function () {
+// CRUD STUDENT
+Route::post('/register/validate-step/student', [AuthController::class, 'validateStepFormStudent'])->name('register.validateStepFormStudent');
+Route::post('/register/student/store', [AuthController::class, 'registerStudentStore'])->name('registerStudent.store');
 
-    // ENGLISH ZONE
+// CRUD MENTOR
+Route::post('/register/validate-step/mentor', [AuthController::class, 'validateStepFormMentor'])->name('register.validateStepFormMentor');
+Route::post('/register/mentor/store', [AuthController::class, 'registerMentorStore'])->name('registerMentor.store');
+
+// ROUTES OTP REGISTER
+Route::post('/register/send-otp-mail/student', [AuthController::class, 'sendOtpMailStudent'])->name('register.sendOtpMailStudent');
+Route::post('/register/send-otp-mail/mentor', [AuthController::class, 'sendOtpMailMentor'])->name('register.sendOtpMailMentor');
+
+// ROUTES LOGIN
+Route::get('/login', fn() => view('Auth.login'))->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+
+// ROUTE LOGOUT
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+// COIN CHECKOUT
+Route::get('/tanya-coin', [TanyaController::class, 'coinPackage'])->name('coinPackage');
+Route::post('/checkout', [TanyaController::class, 'checkout'])->name('checkout');
+Route::post('/checkout-pending/{id}', [TanyaController::class, 'checkoutPending'])->name('checkout.pending');
+
+    // MIDDLEWARE LOGIN
+    Route::middleware([AuthMiddleware::class])->group(function () {
+        // BERANDA
+        Route::get('/beranda', [webController::class, 'beranda'])->name('beranda');
+
+        // HISTORY PEMBELIAN
+        // View
+        Route::get('/histori-pembelian', [webController::class, 'historiPembelian'])->name('historiPembelian.index');
+        Route::get('/histori-koin', [webController::class, 'historiKoin'])->name('historiKoin.index');
+
+        // paginate history pembelian
+        Route::get('/paginate-histori-pembelian-success', [FilterController::class, 'paginateHistoryPurchaseSuccess'])->name('historiPembelianSuccess.paginate');
+        Route::get('/paginate-histori-pembelian-waiting', [FilterController::class, 'paginateHistoryPurchaseWaiting'])->name('historiPembelianWaiting.paginate');
+        Route::get('/paginate-histori-pembelian-failed', [FilterController::class, 'paginateHistoryPurchaseFailed'])->name('historiPembelianFailed.paginate');
+
+        // PROFILE USER
+        // View
+        Route::get('/profile', [ProfileController::class, 'profileUser'])->name('profile');
+        Route::get('/atur-ulang-sandi', [ProfileController::class, 'aturUlangSandi'])->name('aturUlangSandi');
+
+        // CRUD edit profile user
+
+        // Student
+        Route::put('/update-personal-information-student/{id}', [ProfileController::class, 'updatePersonalInformationStudent'])->name('updatePersonalInformationStudent.update');
+        Route::put('/update-pendidikan-student/{id}', [ProfileController::class, 'updatePendidikanStudent'])->name('updatePendidikanStudent.update');
+
+        //Mentor
+        Route::put('/update-personal-information-mentor/{id}', [ProfileController::class, 'updatePersonalInformationMentor'])->name('updatePersonalInformationMentor.update');
+        Route::put('/update-pendidikan-mentor/{id}', [ProfileController::class, 'updatePendidikanMentor'])->name('updatePendidikanMentor.update');
+
+
+
+        // CRUD atur ulang sandi
+        Route::put('/atur-ulang-sandi-update/{id}', [ProfileController::class, 'AturUlangSandiUpdate'])->name('aturUlangSandi.update');
+
+    // ENGLISH ZONE ACCESS MIDDLEWARE
     Route::middleware([CheckEnglishZone::class])->group(function () {
-        Route::get('/english-zone', [EnglishZoneController::class, 'index'])->name('englishZone.index');
+    });
+    Route::get('/english-zone', [EnglishZoneController::class, 'index'])->name('englishZone.index');
+
+    // TANYA ACCESS MIDDLEWARE
+    Route::middleware([TanyaAccess::class])->group(function () {
+        // VIEWS
+        Route::get('/tanya', [TanyaController::class, 'index'])->name('tanya.index'); // page tanya (siswa & murid & mentor)
+        Route::get('/view/{id}', [TanyaController::class, 'edit'])->name('tanya.edit'); // page jawab soal siswa (mentor)
+        Route::get('/history/restore/{id}', [TanyaController::class, 'viewRestore'])->name('getRestore.edit'); // page riwayat tanya siswa (siswa & murid)
+        Route::get('/restore/{id}', [TanyaController::class, 'updateStatusSoalRestore'])->name('tanya.updateStatusSoalRestore');
+
+        // CRUD TANYA
+        Route::put('/updateAnswer/{id}', [TanyaController::class, 'update'])->name('tanya.update'); // page update jawab soal siswa (mentor)
+        Route::put('/updateReject/{id}', [TanyaController::class, 'updateReject'])->name('tanya.reject'); // page update tolak soal siswa (mentor)
+        Route::put('updateStatusSoalAnswered/{id}', [TanyaController::class, 'markQuestionAsReadById'])->name('tanya.updateStatusSoalById');
+        Route::put('updateAllStatusSoalAnswered/{id}', [TanyaController::class, 'markAllQuestionsAsReadById'])->name('tanya.updateAllStatusSoalById');
+        Route::put('updateAllStatusSoalRejected/{email}', [TanyaController::class, 'markAllQuestionsRejectedAsReadById'])->name('tanya.updateAllStatusSoalRejectedById');
+        Route::post('/history/{id}/restore', [TanyaController::class, 'restore'])->name('tanya.restore');
     });
 
-    // BERANDA
-    Route::get('/beranda', [webController::class, 'beranda'])->name('beranda');
 
-    // TANYA
+    Route::get('/tanya/access', [TanyaController::class, 'tanyaAccess'])->name('tanya.access'); // page tanya access (administrator)
+    Route::post('/tanya-acccess-store', [TanyaController::class, 'tanyaAccessStore'])->name('tanyaAccessStore'); // insert data tanya access (administrator)
+    Route::put('/tanya-acccess-update/{id}', [TanyaController::class, 'updateTanyaAccess'])->name('tanyaAccessUpdate'); // insert data tanya access (administrator)
+
+    //ROUTES SYLLABUS-SERVICES
     // VIEWS
-    Route::get('/tanya', [TanyaController::class, 'index'])->name('tanya.index'); // page tanya (siswa & murid & mentor)
-    Route::get('/view/{id}', [TanyaController::class, 'edit'])->name('tanya.edit'); // page jawab soal siswa (mentor)
-    Route::get('/history/restore/{id}', [TanyaController::class, 'viewRestore'])->name('getRestore.edit'); // page riwayat tanya siswa
-    // CRUD TANYA
-    Route::put('/updateAnswer/{id}', [TanyaController::class, 'update'])->name('tanya.update'); // page update jawab soal siswa (mentor)
-    Route::put('/updateReject/{id}', [TanyaController::class, 'updateReject'])->name('tanya.reject'); // page update tolak soal siswa (mentor)
-    Route::post('/history/{id}/restore', [TanyaController::class, 'restore'])->name('tanya.restore');
-    Route::put('updateStatusSoal/{email}', [TanyaController::class, 'updateStatusSoal'])->name('tanya.updateStatusSoal');
+    Route::get('/syllabus/curiculum', [SyllabusController::class, 'curiculum'])->name('kurikulum.index');
+    Route::get('/syllabus/curiculum/{nama_kurikulum}/{id}/fase', [SyllabusController::class, 'fase'])->name('fase.index');
+    Route::get('/syllabus/curiculum/{nama_kurikulum}/{kurikulum_id}/{nama_fase}/{id}/mapel', [SyllabusController::class, 'mapel'])->name('mapel.index');
+    Route::get('/syllabus/curiculum/{nama_kurikulum}/{kurikulum_id}/{nama_fase}/{fase_id}/{mata_pelajaran}/{id}/bab', [SyllabusController::class, 'bab'])->name('bab.index');
+    // CRUD
+    Route::post('/syllabus/curiculum/store', [SyllabusController::class, 'curiculumStore'])->name('kurikulum.store');
+    Route::put('/syllabus/curiculum/update/{id}', [SyllabusController::class, 'curiculumUpdate'])->name('kurikulum.update');
+    Route::delete('/syllabus/curiculum/delete/{id}', [SyllabusController::class, 'curiculumDelete'])->name('kurikulum.delete');
+
+    Route::post('/syllabus/{id}/fase/store', [SyllabusController::class, 'faseStore'])->name('fase.store');
+    Route::put('/syllabus/{nama_kurikulum}/fase/update/{id}', [SyllabusController::class, 'faseUpdate'])->name('fase.update');
+    Route::delete('/syllabus/curiculum/fase/delete/{id}', [SyllabusController::class, 'faseDelete'])->name('fase.delete');
+
+    Route::post('/syllabus/curiculum/{id}/{kurikulum_id}//store', [SyllabusController::class, 'mapelStore'])->name('mapel.store');
+    Route::put('/syllabus/curiculum/mapel/update/{id}', [SyllabusController::class, 'mapelUpdate'])->name('mapel.update');
+    Route::put('/syllabus/curiculum/mapel/activate/{id}', [SyllabusController::class, 'mapelActivate'])->name('mapel.activate');
+    Route::delete('/syllabus/curiculum/mapel/delete/{id}', [SyllabusController::class, 'mapelDelete'])->name('mapel.delete');
+
+
+    Route::post('/syllabus/curiculum/{id}/{kurikulum_id}/{fase_id}/bab', [SyllabusController::class, 'babStore'])->name('bab.store');
+    Route::put('/syllabus/curiculum/bab/update/{mata_pelajaran}/{nama_fase}/{kode_kurikulum}/{id}', [SyllabusController::class, 'babUpdate'])->name('bab.update');
+    Route::put('/syllabus/curiculum/bab/activate/{id}', [SyllabusController::class, 'babActivate'])->name('bab.activate');
+    Route::delete('/syllabus/curiculum/bab/delete/{id}', [SyllabusController::class, 'babDelete'])->name('bab.delete');
+
+
 
     // ROUTES PKS (data sekolah & data murid pks)
     // VIEWS input data
@@ -109,12 +211,23 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::get('/data-pks-sekolah/view/{sekolah}', [PksController::class, 'viewDataPksSekolah'])->name('data-pks-sekolah.edit');
     Route::get('/upload-bulk-upload', [PksController::class, 'bulkUploadCivitasSekolah'])->name('bulk-upload-civitas-sekolah');
     Route::post('/upload-bulk-upload-store', [PksController::class, 'bulkUploadCivitasSekolahStore'])->name('bulk-upload-civitas-sekolah.store');
+    Route::put('/data-pks-sekolah/update/{id}', [PksController::class, 'updateDataPksSekolah'])->name('dataPksSekolah.update');
 
     //ROUTES IMPORT EXCEL
     Route::post('/import-data-murid', [ImportController::class, 'importDataMurid'])->name('import-data-murid');
 
     // ROUTES EXPORT TEMPLATE BULK UPLOAD EXCEL
     Route::get('/export-template-excel', [PKSController::class, 'generateTemplateExcel'])->name('BulkUpload-excel');
+
+    // ROUTES LIST MENTOR
+    // VIEWS
+    Route::get('/mentor', [MitraCerdasController::class, 'mentorView'])->name('list.mentor');
+    Route::get('/mentor/aktif', [MitraCerdasController::class, 'mentorAktifView'])->name('list.mentor.aktif');
+
+    // CRUD list mentor
+    Route::put('/active/mentor/{id}', [MitraCerdasController::class, 'listMentorUpdate'])->name('activeMentor.update');
+    Route::put('/feature-active/mentor/{id}', [MitraCerdasController::class, 'mentorFeatureActive'])->name('activeFeatureMentor.update');
+    // CRUD list mentor active
 
     // ROUTES TEMPLATE SIDEBAR
     Route::get('/sidebar', [WebController::class, 'sidebarBeranda']);
@@ -124,7 +237,7 @@ Route::middleware([AuthMiddleware::class])->group(function () {
 
 
 Route::get('/getCertificate', [CertificateController::class, 'generateCertificate'])->name('generateCertificate');
-Route::post('/certificate', [CertificateController::class, 'certificateStore'])->name('certificate.store');
+Route::post('/certificate', [EnglishZoneController::class, 'certificateStore'])->name('certificate.store');
 // ROUTES CRUD
 Route::get('/crud', [CrudController::class, 'index'])->name('crud');
 Route::get('/crud/create', [CrudController::class, 'create'])->name('crud.create');
@@ -133,22 +246,17 @@ Route::delete('/crud/destroy/{id}', [CrudController::class, 'destroy'])->name('c
 Route::get('/crud/{id}/edit', [CrudController::class, 'edit'])->name('crud.edit');
 Route::put('/crud/update/{id}', [CrudController::class, 'update'])->name('crud.update');
 
-// ROUTES AUTH
-Route::get('/daftar', fn() => view('Auth.daftar'))->name('daftar');
-Route::post('/daftar', [AuthController::class, 'daftar']);
-Route::get('/login', fn() => view('Auth.login'))->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
 
 
 // ROUTES DROPDOWN FASE, KELAS, MAPEL, BAB (AJAX)
 Route::get('/kelas/{id}', [KelasController::class, 'getKelas']);
 Route::get('/mapel/{id}', [KelasController::class, 'getMapel']);
-Route::get('/bab/{id}', [KelasController::class, 'getBab']);
+Route::get('/bab/{kode_mapel}/{kode_fase}', [KelasController::class, 'getBab']);
 
-Route::get('fase', [KelasController::class, 'fase'])->name('fase.index');
-Route::get('kelas/{id}', [KelasController::class, 'kelas']);
-Route::get('/daftar', [KelasController::class, 'fase'])->name('daftar');
+// Route::get('fase', [KelasController::class, 'fase'])->name('fase.index');
+// Route::get('kelas/{id}', [KelasController::class, 'kelas']);
+// Route::get('/daftar', [KelasController::class, 'fase'])->name('daftar');
 
 // ROUTES END TO END TANYA (SISWA DAN MENTOR)
 
@@ -183,12 +291,11 @@ Route::post('/update-payment-status/{email}/{batch}', [StarController::class, 'u
 
 // ROUTES ENGLISH ZONE
 // Routes View
-
-Route::get('upload-materi', [WebController::class, 'uploadMateri']);
-Route::get('/upload-soal', [webController::class, 'uploadSoal']);
+Route::get('upload-materi', [EnglishZoneController::class, 'uploadMateri'])->name('englisHone.uploadMateri');
+Route::get('/upload-soal', [EnglishZoneController::class, 'uploadSoal'])->name('englishZone.uploadSoal');
 // lalu route akan mendapatkan parameter yang dikirim oleh href tadi yang akan di proses oleh controller
 Route::get('/pengayaan/{modul}/{id}', [EnglishZoneController::class, 'pengayaan'])->name('pengayaan');
-Route::get('question-for-release', [EnglishZoneController::class, 'questionForRelease']);
+Route::get('question-for-release', [EnglishZoneController::class, 'questionForRelease'])->name('englishZone.questionForRelease');
 
 // Routes CRUD
 Route::post('/upload-materi', [EnglishZoneController::class, 'uploadMateriStore'])->name('englishZone.uploadMateri');
@@ -245,3 +352,7 @@ Route::post('/test/{id}/restore', [testController::class, 'restore'])->name('tes
 Route::get('/modules', [ModuleController::class, 'index'])->name('modules.index');
 Route::get('/modules/{id}', [ModuleController::class, 'show'])->name('modules.show');
 Route::post('/modules/{id}/complete', [ModuleController::class, 'complete'])->name('modules.complete');
+
+Route::get('/insert', [CommentController::class, 'insertPage']);
+Route::get('/comments', [CommentController::class, 'viewPage']);
+Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');

@@ -5,14 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class englishZoneSoal extends Model
+class EnglishZoneSoal extends Model
 {
     use HasFactory;
-
     protected $fillable = [
-        'nama_lengkap',
+        'user_id',
         'modul_soal',
-        'jenjang',
+        'jenjang_soal',
         'status',
         'soal',
         'option_pilihan',
@@ -23,4 +22,9 @@ class englishZoneSoal extends Model
         'tipe_upload',
         'status_soal'
     ];
+
+    public function UserAccount()
+    {
+        return $this->belongsTo(UserAccount::class, 'user_id');
+    }
 }

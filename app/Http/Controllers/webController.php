@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TransactionFailed;
 use App\Models\userAccount;
 use App\Models\Star;
 use App\Models\Level;
@@ -10,8 +11,10 @@ use Illuminate\Http\Request;
 use App\Models\englishZoneSoal;
 use App\Models\englishZoneMateri;
 use App\Models\englishZoneJawaban;
+use App\Models\Transactions;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Container\Attributes\DB;
+use Illuminate\Support\Facades\Auth;
 
 class webController extends Controller
 {
@@ -24,6 +27,7 @@ class webController extends Controller
                 'Desc2' => 'HaloGuru, Catatan, TANYA, PTN, dan English Zone',
                 'Discount' => 'Rp. 7.000.000 ',
                 'Price' => 'Rp. 1.300.000/Tahun',
+                'Link' => '/tanya-coin',
                 'Button' => 'Langganan Sekarang'
             ],
             [
@@ -32,6 +36,7 @@ class webController extends Controller
                 'Desc2' => '96 kali pembelajaran hybrid dan 20 kali Try Out',
                 'Discount' => 'Rp. 7.000.000',
                 'Price' => 'Rp. 1.300.000/Tahun',
+                'Link' => '/tanya-coin',
                 'Button' => 'Langganan Sekarang'
             ],
             [
@@ -40,6 +45,7 @@ class webController extends Controller
                 'Desc2' => 'Pemberian catatan per sub-bab dari guru',
                 'Discount' => 'Rp. 7.000.000 ',
                 'Price' => 'Rp. 1.300.000/Tahun',
+                'Link' => '/tanya-coin',
                 'Button' => 'Langganan Sekarang'
             ],
             [
@@ -48,6 +54,7 @@ class webController extends Controller
                 'Desc2' => 'Jawaban PR dan Tugas lengkap dengan penjelasan',
                 'Discount' => '',
                 'Price' => 'Rp. 3.000/Koin',
+                'Link' => '/tanya-coin',
                 'Button' => 'Langganan Sekarang'
             ],
             [
@@ -56,6 +63,7 @@ class webController extends Controller
                 'Desc2' => 'Belajar "conversation" bersama guru ahli',
                 'Discount' => 'Rp. 7.000.000 ',
                 'Price' => 'Rp. 1.300.000/Tahun',
+                'Link' => '/tanya-coin',
                 'Button' => 'Langganan Sekarang'
             ],
         ];
@@ -127,10 +135,10 @@ class webController extends Controller
             }
         }
 
-        // for beranda administrator
-        $getDataSiswa = userAccount::where('status', 'Siswa')->get();
-        $getDataMurid = userAccount::where('status', 'Murid')->get();
-        $countDataMentor = userAccount::where('status', 'Mentor')->get();
+        // FOR BERANDA ADMINISTRATOR
+        $getDataSiswa = UserAccount::where('role', 'Siswa')->get();
+        $getDataMurid = userAccount::where('role', 'Murid')->get();
+        $countDataMentor = userAccount::where('role', 'Mentor')->get();
         $groupedTanya  = Tanya::onlyTrashed()->get()->groupBy('email');
 
         $getTanya = $groupedTanya->map(function ($item) {
@@ -139,18 +147,18 @@ class webController extends Controller
 
         $dataTanya = $groupedTanya;
 
-        $getSiswa = userAccount::where('status', 'Siswa')->orWhere('status', 'Murid')->get();
+        $getSiswa = UserAccount::where('role', 'Siswa')->orWhere('role', 'Murid')->get();
         // Ambil jumlah Tanya untuk semua email dalam satu kali loop
-        $countSiswaTanya = Tanya::onlyTrashed()
-            ->whereIn('email', $getSiswa->pluck('email'))
+        $countSiswaTanya = Tanya::withTrashed()
+            ->whereIn('user_id', $getSiswa->pluck('id'))
             ->get()
-            ->groupBy('email')
+            ->groupBy('user_id')
             ->map(fn($items) => $items->count()); // Hitung jumlah Tanya per email
 
         // Tambahkan jumlah Tanya ke dalam objek siswa tanpa looping manual
         // each() → Memasukkan jumlah Tanya ke dalam setiap objek siswa tanpa membuat objek baru.
         $sortedSiswa = $getSiswa->each(function ($siswa) use ($countSiswaTanya) {
-            $siswa->jumlah_tanya = $countSiswaTanya[$siswa->email] ?? 0; // Default 0 jika tidak ada
+            $siswa->jumlah_tanya = $countSiswaTanya[$siswa->id] ?? 0; // Default 0 jika tidak ada
         })->sortByDesc('jumlah_tanya')->take(10); // Urutkan & ambil 10 terbesar
 
         $countDataTanyaAll = Tanya::withTrashed()->get();
@@ -276,13 +284,13 @@ class webController extends Controller
                 'button' => 'HaloGur'
             ],
             [
-                'image' => 'image/paket2.jpg',
+                'image' => 'image/logo-fitur/logo-englishZone.png',
                 'text' => 'Sesi Boot Camp for Conversation Only.',
                 'url' => '/english-zone',
                 'button' => 'English Zone'
             ],
             [
-                'image' => 'image/paket3.jpg',
+                'image' => 'image/logo-fitur/logo-tanya.png',
                 'text' => 'TANYAkan soal sulit ke Guru Ahli.',
                 'url' => "/tanya",
                 'button' => 'TANYA'
@@ -484,26 +492,6 @@ class webController extends Controller
     }
 
 
-    public function uploadMateri()
-    {
-        $user = session('user');
-        if(!isset($user)) {
-            return redirect('/login');
-        }
-
-        return view('upload-materi', compact('user'));
-    }
-
-    public function uploadSoal()
-    {
-        $user = session('user');
-        if(!isset($user)) {
-            return redirect('/login');
-        }
-
-        return view('upload-soal', compact('user'));
-    }
-
     // controller upload soal bobot a - e
     // public function uploadSoal()
     // {
@@ -548,19 +536,6 @@ class webController extends Controller
     //     return view('upload-soal', compact('user', 'englishZoneBobot'));
     // }
 
-    public function questionForRelease()
-    {
-        $user = session('user');
-
-        if(!isset($user)) {
-            return redirect('/login');
-        }
-
-        $getSoal = englishZoneSoal::paginate(20);
-
-        return view('question-for-release', compact('user','getSoal'));
-    }
-
     public function certificate()
     {
         $user = session('user');
@@ -569,5 +544,54 @@ class webController extends Controller
         }
 
         return view('certif', compact('user'));
+    }
+
+    public function mitraCerdas()
+    {
+        return view('services-pages.mitra-cerdas');
+    }
+
+    public function siswa()
+    {
+        return view('services-pages.siswa');
+    }
+
+    public function historiPembelian()
+    {
+        $today = now();
+        // history pembelian success
+        $transactionUserSuccess = Transactions::where('user_id', Auth::user()->id)->where('transaction_status', 'Berhasil')->orderBy('created_at', 'desc')->get();
+
+        $transactionUserWaiting = Transactions::where('user_id', Auth::user()->id)->where('transaction_status', 'Pending')->orderBy('created_at', 'desc')->get();
+
+        $transactionUserFailed = Transactions::where('user_id', Auth::user()->id)->whereIn('transaction_status', ['Gagal', 'Kadaluarsa', 'Dibatalkan'])->orderBy('created_at', 'desc')->get();
+
+        //         $today = now();
+
+        // // expired status
+        // $pendingStatus = Transactions::where('transaction_status', 'Pending')->get();
+
+        // // $expiredStatus = $pendingStatus->filter(function ($transaction) use ($today) {
+        // //     return $transaction->created_at->addDays(3) < $today;
+        // // });
+
+        // $expiredStatus = $pendingStatus->filter(function ($transaction) use ($today) {
+        //     return $transaction->created_at->diffInMinutes($today) >= 1;
+        // });
+
+
+        // foreach ($expiredStatus as $transaction) {
+        //     $transaction->update([
+        //         'transaction_status' => 'Kadaluarsa'
+        //     ]);
+        // }
+
+        return view('history.histori-pembelian', compact('transactionUserSuccess', 'transactionUserWaiting', 'transactionUserFailed'));
+    }
+
+    public function historiKoin()
+    {
+
+        return view('history.histori-koin');
     }
 }
