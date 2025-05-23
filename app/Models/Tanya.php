@@ -18,6 +18,8 @@ class Tanya extends Model
         'harga_koin',
         'pertanyaan',
         'image_tanya',
+        'is_being_viewed',
+        'viewed_by',
         'status_soal_student',
         'mentor_id',
         'jawaban',
@@ -56,6 +58,21 @@ class Tanya extends Model
     public function Bab()
     {
         return $this->belongsTo(Bab::class, 'bab_id');
+    }
+
+    public function CoinHistory()
+    {
+        return $this->hasOne(CoinHistory::class, 'tanya_id');
+    }
+
+    public function ViewedBy()
+    {
+        return $this->belongsTo(UserAccount::class, 'viewed_by');
+    }
+
+    public function TanyaVerification()
+    {
+        return $this->hasOne(TanyaVerifications::class, 'tanya_id');
     }
 
 }

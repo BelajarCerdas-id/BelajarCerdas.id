@@ -43,7 +43,7 @@
             </div>
             <!----- content pembelian berhasil ------->
             <div id="berhasil">
-                <div id="grid-transaction-success-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                <div id="grid-transaction-success-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
                     {{-- cards akan di-append via AJAX --}}
                 </div>
 
@@ -55,8 +55,8 @@
             </div>
 
             <!----- content pembelian menunggu ------->
-            <div id="menunggu">
-                <div id="grid-transaction-waiting-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+            <div id="menunggu" class="hidden">
+                <div id="grid-transaction-waiting-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
                     {{-- cards akan di-append via AJAX --}}
                 </div>
 
@@ -68,8 +68,8 @@
             </div>
 
             <!----- content pembelian menunggu ------->
-            <div id="gagal">
-                <div id="grid-transaction-failed-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+            <div id="gagal" class="hidden">
+                <div id="grid-transaction-failed-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
                     {{-- cards akan di-append via AJAX --}}
                 </div>
 
@@ -79,88 +79,6 @@
                     <span class="noDataMessageFailed hidden text-gray-500">Tidak ada riwayat</span>
                 </div>
             </div>
-            {{-- <div id="berhasil">
-                @if ($transactionUserSuccess->isNotEmpty())
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                        @foreach ($transactionUserSuccess as $item)
-                            <div class="list-item">
-                                <div class="dropdown-menu">
-                                    <div class="toggle-menu border">
-                                        <div class="w-full h-max bg-white shadow-lg rounded-md p-4">
-                                            <!--- nama fitur & status transaksi --->
-                                            <div class="flex justify-between">
-                                                <span class="text-md font-bold opacity-60">
-                                                    {{ $item->Features->nama_fitur }}
-                                                </span>
-                                                <span
-                                                    class="text-sm p-[4px] px-6 bg-green-200 rounded-xl flex items-center text-green-600 font-bold">
-                                                    {{ $item->transaction_status }}
-                                                </span>
-                                            </div>
-                                            <!--- variant paket --->
-                                            <span class="text-md font-bold opacity-70">
-                                                @if ($item->Features->nama_fitur === 'TANYA')
-                                                    {{ $item->jumlah_koin }} Koin
-                                                @else
-                                                    {{ $item->FeaturePrices->variant_name }}
-                                                @endif
-                                            </span>
-                                            <!--- Harga beli & lihat detail --->
-                                            <div class="flex justify-between mt-2">
-                                                <span
-                                                    class="text-md p-[3px] bg-[#D0EBFF] w-max px-4 rounded-xl font-bold text-[#4189FF]">
-                                                    Rp. {{ number_format($item->price, 0, ',', '.') }}
-                                                </span>
-                                                <button class="button-detail text-[#4189FF] font-bold">
-                                                    Lihat Detail
-                                                </button>
-                                            </div>
-                                            <div class="content-dropdown-histori-pembelian">
-                                                <div class="flex flex-col gap-2 mt-10">
-                                                    <!---- detail pembelian ----->
-                                                    <span class="font-bold opacity-60">Detail Pembelian :</span>
-                                                    <div class="bg-blue-100 flex flex-col gap-2 rounded-md p-2">
-                                                        <span class="font-bold opacity-70">
-                                                            Order ID : {{ $item->order_id }}
-                                                        </span>
-                                                        @if ($item->Features->nama_fitur === 'TANYA')
-                                                            <span class="font-bold opacity-70">
-                                                                Varian : {{ $item->FeaturePrices->variant_name }}
-                                                            </span>
-                                                        @endif
-                                                        <span class="font-bold opacity-70">
-                                                            Tanggal Pembelian :
-                                                            {{ $item->created_at->locale('id')->translatedFormat('l, d-M-Y') }}
-                                                        </span>
-                                                    </div>
-                                                    <!--- informasi pembelian --->
-                                                    <span class="font-bold opacity-60">Informasi Pembelian :</span>
-                                                    <div class="bg-blue-100 flex flex-col gap-2 rounded-md p-2">
-                                                        <span class="font-bold opacity-70">
-                                                            Nama Lengkap :
-                                                            {{ $item->UserAccount->Profile->nama_lengkap }}
-                                                        </span>
-                                                        <span class="font-bold opacity-70">
-                                                            Email : {{ $item->UserAccount->email }}
-                                                        </span>
-                                                        <span class="font-bold opacity-70">
-                                                            No.Hp : {{ $item->UserAccount->no_hp }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="w-full h-96 flex justify-center items-center bg-white shadow-lg rounded-md">
-                        <span>Tidak ada riwayat</span>
-                    </div>
-                @endif
-            </div> --}}
 
             <!----- content pembelian menunggu ------->
             {{-- <div id="menunggu" class="hidden">
@@ -273,90 +191,6 @@
                     </span>
                 </div>
             </div> --}}
-
-            <!----- content pembelian gagal ------->
-            {{-- <div id="gagal" class="hidden">
-                @if ($transactionUserFailed->isNotEmpty())
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                        @foreach ($transactionUserFailed as $item)
-                            <div class="list-item">
-                                <div class="dropdown-menu">
-                                    <div class="toggle-menu border">
-                                        <div class="w-full h-max bg-white shadow-lg rounded-md p-4">
-                                            <!--- nama fitur & status transaksi --->
-                                            <div class="flex justify-between">
-                                                <span class="text-md font-bold opacity-60">
-                                                    {{ $item->Features->nama_fitur }}
-                                                </span>
-                                                <span
-                                                    class="text-sm p-[4px] px-6 bg-red-200 rounded-xl flex items-center text-red-600 font-bold">
-                                                    {{ $item->transaction_status }}
-                                                </span>
-                                            </div>
-                                            <!--- variant paket --->
-                                            <span class="text-md font-bold opacity-70">
-                                                @if ($item->Features->nama_fitur === 'TANYA')
-                                                    {{ $item->jumlah_koin }} Koin
-                                                @else
-                                                    {{ $item->FeaturePrices->variant_name }}
-                                                @endif
-                                            </span>
-                                            <!--- Harga beli & lihat detail --->
-                                            <div class="flex justify-between mt-2">
-                                                <span
-                                                    class="text-md p-[3px] bg-[#D0EBFF] w-max px-4 rounded-xl font-bold text-[#4189FF]">
-                                                    Rp. {{ number_format($item->price, 0, ',', '.') }}
-                                                </span>
-                                                <button class="button-detail text-[#4189FF] font-bold">
-                                                    Lihat Detail
-                                                </button>
-                                            </div>
-                                            <div class="content-dropdown-histori-pembelian">
-                                                <div class="flex flex-col gap-2 mt-10">
-                                                    <!---- detail pembelian ----->
-                                                    <span class="font-bold opacity-60">Detail Pembelian :</span>
-                                                    <div class="bg-blue-100 flex flex-col gap-2 rounded-md p-2">
-                                                        <span class="font-bold opacity-70">
-                                                            Order ID : {{ $item->order_id }}
-                                                        </span>
-                                                        @if ($item->Features->nama_fitur === 'TANYA')
-                                                            <span class="font-bold opacity-70">
-                                                                Varian : {{ $item->FeaturePrices->variant_name }}
-                                                            </span>
-                                                        @endif
-                                                        <span class="font-bold opacity-70">
-                                                            Tanggal Pembelian :
-                                                            {{ $item->created_at->locale('id')->translatedFormat('l, d-M-Y') }}
-                                                        </span>
-                                                    </div>
-                                                    <!--- informasi pembelian --->
-                                                    <span class="font-bold opacity-60">Informasi Pembelian :</span>
-                                                    <div class="bg-blue-100 flex flex-col gap-2 rounded-md p-2">
-                                                        <span class="font-bold opacity-70">
-                                                            Nama Lengkap :
-                                                            {{ $item->UserAccount->Profile->nama_lengkap }}
-                                                        </span>
-                                                        <span class="font-bold opacity-70">
-                                                            Email : {{ $item->UserAccount->email }}
-                                                        </span>
-                                                        <span class="font-bold opacity-70">
-                                                            No.Hp : {{ $item->UserAccount->no_hp }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="w-full h-96 flex justify-center items-center bg-white shadow-lg rounded-md">
-                        <span>Tidak ada riwayat</span>
-                    </div>
-                @endif
-            </div> --}}
         </div>
     </div>
 @elseif(Auth::user()->role === 'Murid')
@@ -366,9 +200,9 @@
     </div>
 @endif
 
-<script src="{{ asset('js/paginate-history-purchase-success.js') }}"></script>
-<script src="{{ asset('js/paginate-history-purchase-waiting.js') }}"></script>
-<script src="{{ asset('js/paginate-history-purchase-failed.js') }}"></script>
+<script src="{{ asset('js/history-purchase/paginate-history-purchase-success.js') }}"></script>
+<script src="{{ asset('js/history-purchase/paginate-history-purchase-waiting.js') }}"></script>
+<script src="{{ asset('js/history-purchase/paginate-history-purchase-failed.js') }}"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -395,84 +229,6 @@
             });
     });
 </script>
-
-
-<script>
-    document.querySelectorAll('.btn-beli').forEach(button => {
-        button.addEventListener('click', function() {
-            const id = this.dataset.id;
-
-            const featureId = document.getElementById(`input-feature-id-${id}`).value;
-            const featureVariantId = document.getElementById(`input-feature-variant-id-${id}`).value;
-            const jumlahKoin = document.getElementById(`input-quantity-${id}`).value;
-            const price = document.getElementById(`input-price-${id}`).value;
-            const paymentMethodId = document.getElementById(`input-payment-method-${id}`).value;
-
-            fetch(`/checkout-pending/${id}`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({
-                        feature_id: featureId,
-                        feature_variant_id: featureVariantId,
-                        jumlah_koin: jumlahKoin,
-                        price: price,
-                        payment_method_id: paymentMethodId
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.snap_token) {
-                        window.snap.pay(data.snap_token, {
-                            onSuccess: function(result) {
-                                // console.log(result);
-                                location.reload();
-                            },
-                            onPending: function(result) {
-                                // console.log(result);
-                            },
-                            onError: function(result) {
-                                // console.log(result);
-                            },
-                        });
-                    } else {
-                        alert("Gagal mendapatkan snap token.");
-                        console.error(data);
-                    }
-                })
-                .catch(error => {
-                    alert("Terjadi kesalahan.");
-                    console.error(error);
-                });
-        });
-    });
-</script>
-
-
-{{-- <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const toggles = document.querySelectorAll('.button-detail');
-
-        toggles.forEach(toggle => {
-            toggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const listItem = toggle.closest('.list-item');
-
-                // Tutup semua dropdown lain
-                document.querySelectorAll('.list-item').forEach(item => {
-                    if (item !== listItem) {
-                        item.classList.remove('show');
-                    }
-                });
-
-                // Toggle dropdown ini
-                listItem.classList.toggle('show');
-            });
-        });
-    });
-</script> --}}
 
 
 

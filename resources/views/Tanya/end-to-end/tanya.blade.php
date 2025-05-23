@@ -59,7 +59,7 @@
                                     {{ session('formError') === 'create' && $errors->has('fase_id') ? 'border-red-500' : '' }}">
                                     <option value="" class="hidden">Pilih Fase</option>
                                     @foreach ($getFase as $item)
-                                        @if ($item->nama_fase === Auth::user()->Profile->fase)
+                                        @if ($item->id === Auth::user()->Profile->fase_id)
                                             <option value="{{ $item->id }}">{{ $item->nama_fase }}</option>
                                         @endif
                                     @endforeach
@@ -193,17 +193,10 @@
 
                         <!--- Button form ----->
                         <div class="flex justify-end mt-8">
-                            @if ($getLimitedTanya->count() == 100)
-                                <div class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all"
-                                    onclick="limitTanyaAlert()">
-                                    limit
-                                </div>
-                            @else
-                                <button
-                                    class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all">
-                                    Kirim
-                                </button>
-                            @endif
+                            <button
+                                class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all">
+                                Kirim
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -229,38 +222,36 @@
                             </div>
                         </select>
                     </div>
-                    @if (isset($siswaHistoryRestore) && is_iterable($siswaHistoryRestore) && $siswaHistoryRestore->isNotEmpty())
-                        <div class="overflow-x-auto mt-4">
-                            <table class="table" id="filterTable">
-                                <thead class="thead-table">
-                                    <tr>
-                                        <th class="th-table">No</th>
-                                        <th class="th-table">Pertanyaan</th>
-                                        <th class="th-table">Mata Pelajaran</th>
-                                        <th class="th-table">Bab</th>
-                                        <th class="th-table">Jam_Tanya</th>
-                                        <th class="th-table">Jam_Jawab</th>
-                                        <th class="th-table">status</th>
-                                        <th class="th-table">Jawaban</th>
-                                        <th class="th-table">Alasan Ditolak</th>
-                                        <th class="th-table">Detail</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="filterList">
-                                    {{-- show data in ajax --}}
-                                </tbody>
-                            </table>
-                            <div class="pagination-container-siswa"></div>
-                            <div class="flex justify-center">
-                                <span class="showMessage hidden absolute top-2/4">Tidak ada
-                                    riwayat</span>
-                            </div>
+                    <div class="overflow-x-auto mt-4">
+                        <table class="table" id="filterTable">
+                            <thead class="thead-table">
+                                <tr>
+                                    <th class="th-table">No</th>
+                                    <th class="th-table">Pertanyaan</th>
+                                    <th class="th-table">Mata Pelajaran</th>
+                                    <th class="th-table">Bab</th>
+                                    <th class="th-table">Jam_Tanya</th>
+                                    <th class="th-table">Jam_Jawab</th>
+                                    <th class="th-table">status</th>
+                                    <th class="th-table">Jawaban</th>
+                                    <th class="th-table">Alasan Ditolak</th>
+                                    <th class="th-table">Detail</th>
+                                </tr>
+                            </thead>
+                            <tbody id="filterList">
+                                {{-- show data in ajax --}}
+                            </tbody>
+                        </table>
+                        <div class="pagination-container-siswa flex justify-center my-4 sm:my-0"></div>
+                        <div class="flex justify-center">
+                            <span class="showMessage hidden absolute top-2/4">Tidak ada riwayat</span>
                         </div>
-                    @else
-                        <div class="h-full flex justify-center items-center">
-                            <span>Tidak ada riwayat</span>
-                        </div>
-                    @endif
+                    </div>
+                    <div id="emptyMessageRiwayatTanyaStudent" class="w-full hidden">
+                        <span class="w-full h-full flex items-center justify-center">
+                            Belum ada riwayat pertanyaan terjawab.
+                        </span>
+                    </div>
                 </div>
             </div>
             <!---- History tanya daily ---->
@@ -284,14 +275,12 @@
                             <input type="radio" name="radio1" id="answer" onclick="contentAnswer()">
                             <div class="historyTanya">
                                 <label for="answer" class="cursor-pointer">
-                                    <span class="text-md flex justify-center relative top-1">
+                                    <span id="answeredText" class="text-md flex justify-center relative top-1">
                                         Terjawab
-                                        @if ($countDataTanyaAnsweredUser->count() > 0)
-                                            <span id="notifBadgeAnswered"
-                                                class="relative left-2 top-[1px] text-[15px] text-green-500">
-                                                {{ $countDataTanyaAnsweredUser->count() }}
-                                            </span>
-                                        @endif
+                                        <span id="notifBadgeAnswered"
+                                            class="relative left-2 top-[1px] text-[15px] text-green-500 {{ $countDataTanyaAnsweredUser ? '' : 'hidden' }}">
+                                            {{ $countDataTanyaAnsweredUser }}
+                                        </span>
                                     </span>
                                     <div class="w-full border-b-[1px] border-gray-200 h-2"></div>
                                 </label>
@@ -301,14 +290,12 @@
                             <input type="radio" name="radio1" id="reject">
                             <div class="historyTanya">
                                 <label for="reject" class="cursor-pointer">
-                                    <span class="text-md flex justify-center relative top-1">
+                                    <span id="rejectedText" class="text-md flex justify-center relative top-1">
                                         Ditolak
-                                        @if ($countDataTanyaRejectedUser->count() > 0)
-                                            <span id="notifBadgeRejected"
-                                                class="relative left-2 top-[1px] text-[15px] text-red-500">
-                                                {{ $countDataTanyaRejectedUser->count() ?? '' }}
-                                            </span>
-                                        @endif
+                                        <span id="notifBadgeRejected"
+                                            class="relative left-2 top-[1px] text-[15px] text-red-500 {{ $countDataTanyaRejectedUser ? '' : 'hidden' }}">
+                                            {{ $countDataTanyaRejectedUser }}
+                                        </span>
                                     </span>
                                     <div class="w-full border-b-[1px] border-gray-200 h-2"></div>
                                 </label>
@@ -355,15 +342,23 @@
                     </div>
                     <div class="w-full h-auto hidden" id="contentAnswer">
                         <div class="p-6 w-full">
-                            @if (isset($historyStudentAnswered) && is_iterable($historyStudentAnswered) && $historyStudentAnswered->isNotEmpty())
-                                <button id="updateStatusSoalAll"
-                                    class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold p-2 rounded-lg shadow-md transition-all text-sm"
-                                    data-url-id="{{ route('tanya.updateAllStatusSoalById', Auth::user()->id) }}">
-                                    Tandai Semua
-                                </button>
-                                @foreach ($historyStudentAnswered as $item)
+
+                            <button id="updateStatusSoalAll"
+                                class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold p-2 rounded-lg shadow-md transition-all text-sm hidden"
+                                data-url-id="{{ route('tanya.updateAllStatusSoalById', Auth::user()->id) }}">
+                                Tandai Semua
+                            </button>
+
+                            <div id="cardAnswer"></div>
+
+                            <div id="emptyMessageTanyaHarianTerjawab" class="w-full hidden">
+                                <span class="w-full h-full flex items-center justify-center">
+                                    Belum ada riwayat pertanyaan terjawab.
+                                </span>
+                            </div>
+                            {{-- @foreach ($historyStudentAnswered as $item)
                                     <div class="updateStatusSoal flex items-center justify-between mt-6 p-4 rounded-lg
-                                        {{ $item->status_soal_student === 'Belum Dibaca' ? 'unRead bg-blue-50 cursor-pointer' : '' }}"
+                                            {{ $item->status_soal_student === 'Belum Dibaca' ? 'unRead bg-blue-50 cursor-pointer' : '' }}"
                                         data-url-id="{{ route('tanya.updateStatusSoalById', $item->id) }}">
 
                                         <div class="flex items-center gap-8 leading-8">
@@ -397,19 +392,26 @@
                                             </a>
                                         </div>
                                     </div>
-
                                     <div class="border-b-2 border-gray-200"></div>
-                                @endforeach
-                            @else
-                                <div class="h-full w-full flex justify-center items-center">
-                                    <span>Belum ada riwayat terjawab</span>
-                                </div>
-                            @endif
+                                @endforeach --}}
                         </div>
                     </div>
                     <div class="w-full h-auto hidden" id="contentReject">
                         <div class="p-6 w-full">
-                            @if (isset($historyStudentReject) && is_iterable($historyStudentReject) && $historyStudentReject->isNotEmpty())
+                            <button id="updateStatusSoalAllRejected"
+                                class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold p-2 rounded-lg shadow-md transition-all text-sm hidden"
+                                data-url-id="{{ route('tanya.updateAllStatusSoalRejectedById', Auth::user()->id) }}">
+                                Tandai Semua
+                            </button>
+
+                            <div id="cardRejected"></div>
+
+                            <div id="emptyMessageTanyaHarianRejected" class="w-full hidden">
+                                <span class="w-full h-full flex items-center justify-center">
+                                    Belum ada riwayat pertanyaan ditolak.
+                                </span>
+                            </div>
+                            {{-- @if (isset($historyStudentReject) && is_iterable($historyStudentReject) && $historyStudentReject->isNotEmpty())
                                 <button id="updateStatusSoalAllRejected"
                                     class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold p-2 rounded-lg shadow-md transition-all text-sm"
                                     data-url-id="{{ route('tanya.updateAllStatusSoalRejectedById', Auth::user()->id) }}">
@@ -459,7 +461,7 @@
                                 <div class="h-full w-full flex justify-center items-center">
                                     <span>Belum ada riwayat ditolak</span>
                                 </div>
-                            @endif
+                            @endif --}}
                         </div>
                     </div>
                 </div>
@@ -507,78 +509,77 @@
             </div>
             <div class="relative w-full h-max overflow-hidden bg-white shadow-lg">
                 <div class="w-full h-auto" id="content">
-                    @if (isset($getTanya) && is_iterable($getTanya) && $getTanya->isNotEmpty())
-                        <div class="overflow-x-auto m-4">
-                            <table class="table" id="tableTanyaTeacher">
-                                <thead class="thead-table">
-                                    <tr>
-                                        <th class="th-table">No</th>
-                                        <th class="th-table">Nama Siswa</th>
-                                        <th class="th-table">Kelas</th>
-                                        <th class="th-table">Pertanyaan</th>
-                                        <th class="th-table">Mata Pelajaran</th>
-                                        <th class="th-table">Bab</th>
-                                        <th class="th-table">Jam_Tanya</th>
-                                        <th class="th-table">Detail</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tableListTeacher">
-                                    {{-- show data in ajax --}}
-                                </tbody>
-                            </table>
-                            <div class="pagination-container-tanya"></div>
+                    <div class="overflow-x-auto m-4">
+                        <table class="table" id="tableTanyaTeacher">
+                            <thead class="thead-table-tanya-teacher hidden">
+                                <tr>
+                                    <th class="th-table">No</th>
+                                    <th class="th-table">Nama Siswa</th>
+                                    <th class="th-table">Kelas</th>
+                                    <th class="th-table">Pertanyaan</th>
+                                    <th class="th-table">Mata Pelajaran</th>
+                                    <th class="th-table">Bab</th>
+                                    <th class="th-table">Jam_Tanya</th>
+                                    <th class="th-table">Detail</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableListTeacher">
+                                {{-- show data in ajax --}}
+                            </tbody>
+                        </table>
+
+                        <div class="pagination-container-tanya flex justify-center my-4 sm:my-0"></div>
+
+                        <div id="emptyMessageTanyaTeacher" class="w-full h-96 hidden">
+                            <span class="w-full h-full flex items-center justify-center">
+                                Tidak ada pertanyaan.
+                            </span>
                         </div>
-                    @else
-                        <div class="h-96 flex justify-center items-center">
-                            <span>Tidak ada pertanyaan</span>
-                        </div>
-                    @endif
+                    </div>
                 </div>
                 <div class="w-full h-auto hidden" id="riwayat">
-                    @if (isset($teacherHistoryRestore) && is_iterable($teacherHistoryRestore) && $teacherHistoryRestore->isNotEmpty())
-                        <div class="absolute right-8 top-2">
-                            <select name="" id="statusFilterRiwayatMentor"
-                                class="w-[150px] h-10 rounded-lg flex justify-center items-center px-2 border-[1px] outline-none text-sm cursor-pointer bg-white">
-                                <div class="border-none">
-                                    <option value="" class="hidden">Filter Data</option>
-                                    <option value="semua">Lihat Semua</option>
-                                    <option value="Diterima">Diterima</option>
-                                    <option value="Ditolak">Ditolak</option>
-                                </div>
-                            </select>
-                        </div>
-                        <div class="overflow-x-auto my-16 mx-4">
-                            <table class="table" id="filterTableTeacher">
-                                <thead class="thead-table">
-                                    <tr>
-                                        <th class="th-table">No</th>
-                                        <th class="th-table">Nama Siswa</th>
-                                        <th class="th-table">Kelas</th>
-                                        <th class="th-table">Pertanyaan</th>
-                                        <th class="th-table">Mata Pelajaran</th>
-                                        <th class="th-table">Bab</th>
-                                        <th class="th-table">Jam_Tanya</th>
-                                        <th class="th-table">Jam_Jawab</th>
-                                        <th class="th-table">status</th>
-                                        <th class="th-table">Jawaban</th>
-                                        <th class="th-table">Alasan Ditolak</th>
-                                        <th class="th-table">Detail</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="filterListTeacher">
-                                    {{-- show data in ajax --}}
-                                </tbody>
-                            </table>
-                            <div class="pagination-container-riwayat"></div>
-                            <div class="flex justify-center">
-                                <span class="emptyMessage hidden absolute top-2/4">Tidak ada riwayat</span>
+                    <div class="absolute right-8 top-2 flex justify-center items-center my-4">
+                        <select name="" id="statusFilterRiwayatMentor"
+                            class="w-[150px] h-10 rounded-lg px-2 border-[1px] outline-none text-sm cursor-pointer bg-white">
+                            <div class="border-none">
+                                <option value="" class="hidden">Filter Data</option>
+                                <option value="semua">Lihat Semua</option>
+                                <option value="Diterima">Diterima</option>
+                                <option value="Ditolak">Ditolak</option>
+                            </div>
+                        </select>
+                    </div>
+                    <div class="overflow-x-auto mt-24 mb-4 mx-4">
+                        <table class="table" id="filterTableTeacher">
+                            <thead class="thead-table-riwayat-teacher hidden">
+                                <tr>
+                                    <th class="th-table">No</th>
+                                    <th class="th-table">Nama Siswa</th>
+                                    <th class="th-table">Kelas</th>
+                                    <th class="th-table">Pertanyaan</th>
+                                    <th class="th-table">Mata Pelajaran</th>
+                                    <th class="th-table">Bab</th>
+                                    <th class="th-table">Jam_Tanya</th>
+                                    <th class="th-table">Jam_Jawab</th>
+                                    <th class="th-table">status</th>
+                                    <th class="th-table">Jawaban</th>
+                                    <th class="th-table">Alasan Ditolak</th>
+                                    <th class="th-table">Detail</th>
+                                </tr>
+                            </thead>
+                            <tbody id="filterListTeacher">
+                                {{-- show data in ajax --}}
+                            </tbody>
+                        </table>
+
+                        <div class="pagination-container-riwayat flex justify-center my-4 sm:my-0"></div>
+
+                        <div id="emptyMessageRiwayatTeacher" class="w-full h-96 hidden">
+                            <div class="w-full h-full flex items-center justify-center">
+                                Tidak ada riwayat.
                             </div>
                         </div>
-                    @else
-                        <div class="flex justify-center items-center">
-                            Tidak ada Riwayat
-                        </div>
-                    @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -597,17 +598,95 @@
 <script src="js/Tanya/tanya-guru-ajax.js"></script>
 <script src="js/Tanya/riwayat-guru-ajax.js"></script>
 <script src="js/Tanya/updateStatusSoal-daily-student-handler.js"></script>
+<script src="js/Tanya/content-tanya-answer-harian-student.js"></script>
 
 <script>
-    let currentStatus = 'semua';
+    // buat kembaklikan header radio nya ketika di back ke tanya menggunakan arrow back chrome
+    window.addEventListener("pageshow", function(event) {
+        document.getElementById('radio1').checked = true;
+        document.getElementById('unanswered').checked = true;
+        bindUpdateStatusAnsweredListeners();
+
+        fetchFilteredDataTanyaMentor(currentStatusTanyaMentor); // ini penting
+    });
+</script>
+
+<script>
+    // Script untuk mendengarkan event broadcast pada saat student bertanya ke mentor
+    let currentStatusTanyaMentor = 'semua';
     document.addEventListener("DOMContentLoaded", () => {
         window.Echo.channel('tanya')
             .listen('.question.created', (e) => {
                 // console.log('✅ Komentar diterima dari broadcast:', e);
                 // Saat ada data baru, ambil ulang semua data dengan AJAX
-                fetchFilteredDataTanyaMentor(currentStatus);
+                console.log('✅ Broadcast diterima:', e); // <- Harusnya muncul
+                fetchFilteredDataTanyaMentor(currentStatusTanyaMentor);
             });
     });
+</script>
+
+<script>
+    // Script untuk mendengarkan event broadcast pada saat mentor menjawab pertanyaan student (status_soal diterima)
+    let currentStatusAnswered = 'semua';
+    document.addEventListener("DOMContentLoaded", () => {
+        window.Echo.channel('tanya')
+            .listen('.question.answered', (e) => {
+                // Saat ada data baru, ambil ulang semua data dengan AJAX
+                // mendengarkan event broadcast untuk menerima riwayat soal (diterima & ditolak)
+                fetchFilteredDataRiwayatStudent(currentStatusAnswered);
+
+                let badge = document.getElementById("notifBadgeAnswered");
+
+                if (badge) {
+                    let currentCount = parseInt(badge.textContent || '0');
+                    badge.textContent = currentCount + 1;
+                    badge.classList.remove("hidden");
+                } else {
+                    const span = document.createElement("span");
+                    span.id = "notifBadgeAnswered";
+                    span.classList.add("absolute", "top-0", "right-0", "bg-red-500", "text-white", "w-4",
+                        "h-4", "rounded-full", "flex", "items-center", "justify-center");
+                    span.textContent = "1";
+
+                    const target = document.querySelector(".historyTanya .answeredText");
+                    if (target) {
+                        target.appendChild(span);
+                    }
+                }
+                fetchDataTanyaAnswered();
+            });
+    });
+
+    // Script untuk mendengarkan event broadcast pada saat mentor menjawab pertanyaan student (status_soal ditolak)
+    let currentStatusRejected = 'semua';
+    document.addEventListener("DOMContentLoaded", () => {
+        window.Echo.channel('tanya')
+            .listen('.question.rejected', (e) => {
+                // Saat ada data baru, ambil ulang semua data dengan AJAX
+                // mendengarkan event broadcast untuk menerima riwayat soal (diterima & ditolak)
+                fetchFilteredDataRiwayatStudent(currentStatusRejected);
+
+                let badge = document.getElementById("notifBadgeRejected");
+
+                if (badge) {
+                    let currentCount = parseInt(badge.textContent || '0');
+                    badge.textContent = currentCount + 1;
+                    badge.classList.remove("hidden");
+                } else {
+                    const span = document.createElement("span");
+                    span.id = "notifBadgeRejected";
+                    span.classList.add("absolute", "top-0", "right-0", "bg-red-500", "text-white", "w-4",
+                        "h-4", "rounded-full", "flex", "items-center", "justify-center");
+                    span.textContent = "1";
+
+                    const target = document.querySelector(".historyTanya .rejectedText");
+                    if (target) {
+                        target.appendChild(span);
+                    }
+                }
+                fetchDataTanyaRejected();
+            });
+    })
 </script>
 
 <script>

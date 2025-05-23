@@ -74,8 +74,8 @@
                         <div class="coin flex items-center gap-[4px]">
                             <img src="{{ asset('image/koin.png') }}" alt=""
                                 class="w-[25px] pointer-events-none">
-                            <span class="text-lg text-gray-600 font-bold opacity-60">
-                                {{ Auth::user()->TanyaUserCoin->jumlah_koin ?? 0 }}
+                            <span id="jumlahKoin" class="text-lg text-gray-600 font-bold opacity-60">
+                                {{-- {{ Auth::user()->TanyaUserCoin->jumlah_koin ?? 0 }} --}}
                             </span>
                         </div>
                     </div>
@@ -156,7 +156,7 @@
                     <div class="profile-account flex flex-col items-center px-2 my-6">
                         <i class="fas fa-circle-user text-5xl text-gray-500"></i>
                         <span>{{ Str::limit(Auth::user()->Profile->nama_lengkap ?? '', 20) }}</span>
-                        <span class="text-xs">{{ Auth::user()->Profile->kelas ?? '' }}</span>
+                        <span class="text-xs">{{ Auth::user()->Profile->Kelas->kelas ?? '' }}</span>
                     </div>
                     <div class="navbar-phone">
                         <ul class="nav-list">
@@ -280,7 +280,7 @@
                         <div class="coin flex items-center gap-[4px]">
                             <img src="{{ asset('image/koin.png') }}" alt=""
                                 class="w-[25px] pointer-events-none">
-                            <span class="text-lg text-gray-600 font-bold opacity-60">
+                            <span id="jumlahKoin" class="text-lg text-gray-600 font-bold opacity-60">
                                 {{ Auth::user()->TanyaUserCoin->jumlah_koin ?? 0 }}
                             </span>
                         </div>
@@ -505,23 +505,12 @@
                 </a>
                 <span class="tooltip">Presensi Harian</span>
             </li>
-            <div>
-                <span class="text_name pr-20">Riwayat</span>
-            </div>
             <li class="menu-murid">
-                <a href="{{ route('historiPembelian.index') }}">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <span class="link_name">Pembelian</span>
+                <a href="{{ route('tanya.rank') }}">
+                    <i class="fa-solid fa-medal"></i>
+                    <span class="link_name">Riwayat Rank</span>
                 </a>
-                <span class="tooltip">Pembelian</span>
-            </li>
-
-            <li class="menu-murid">
-                <a href="/koin">
-                    <i class="fa-solid fa-coins"></i>
-                    <span class="link_name">Koin</span>
-                </a>
-                <span class="tooltip">Koin</span>
+                <span class="tooltip">Riwayat Rank</span>
             </li>
             <div class="hideSidebar cursor-pointer" id="close">
                 <i class="fa-solid fa-chevron-left" id="log_outt"></i>
@@ -726,6 +715,9 @@
                         <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
                     </div>
                     <div class="content-dropdown">
+                        <a href="{{ route('listQuestion.index') }}" class="link-href">List Pertanyaan</a>
+                        <a href="{{ route('tanya.mentor') }}" class="link-href">Soal Mentor</a>
+                        <a href="{{ route('pembayaran.tanya.mentor.view') }}" class="link-href">Pembayaran Mentor</a>
                         <a href="{{ route('tanya.access') }}" class="link-href">Libur TANYA</a>
                     </div>
                 </div>
@@ -885,7 +877,7 @@
             </div>
         </div>
     </div>
-@elseif(Auth::user()->role === 'XR')
+@elseif(Auth::user()->role === 'HR')
     <div class="sidebar-beranda hidden md:block">
         <div class="logo_details">
             <img src="{{ asset('image/logoBC.png') }}" alt="">
@@ -1124,6 +1116,17 @@
     <p>You do not have access to this dashboard.</p>
 @endif
 
+<script src="js/Tanya/update-koin-tanya-student-ajax.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        window.Echo.channel('tanyaUserKoin')
+            .listen('.tanya.coin.refunded', (e) => {
+                updateJumlahKoinStudent();
+            });
+    });
+</script>
+
 <script>
     function togglePopup() {
         const sidebarMobile = document.getElementById('popup-1').classList.toggle('active');
@@ -1190,9 +1193,6 @@
         });
     });
 </script>
-
-
-
 
 <script>
     window.onload = function() {

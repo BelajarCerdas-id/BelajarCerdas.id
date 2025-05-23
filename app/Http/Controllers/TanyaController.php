@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CountMentorQuestionsAwaitVerification;
+use App\Events\PaymentTanyaMentor;
+use App\Events\QuestionRejected;
+use App\Events\RollbackQuestion;
 use Midtrans\Snap;
 use App\Models\Fase;
 use App\Models\Star;
@@ -16,16 +20,25 @@ use App\Events\QuestionAsked;
 use App\Models\FeaturePrices;
 use App\Models\TanyaUserCoin;
 use App\Events\QuestionAnswered;
+use App\Events\TanyaCoinRefunded;
+use App\Events\TanyaMentorVerifications;
+use App\Events\UpdateLihatDetailTanyaMentor;
+use App\Models\CoinHistory;
+use App\Models\TanyaMentorPayments;
+use App\Models\TanyaRankMentor;
+use App\Models\TanyaRankMentorProgress;
+use App\Models\TanyaVerifications;
 use App\Services\MidtransService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Services\PaymentHandlers\CheckoutCoinHandler;
 use App\Services\PaymentHandlers\RenewCheckoutCoinHandler;
+use Illuminate\Support\Facades\DB;
 
 class TanyaController extends Controller
 {
-    // index for tanya siswa & murid
+    // FUNCTION VIEW TANYA
     public function index()
     {
         // mengambil tanggal hari ini
@@ -34,18 +47,23 @@ class TanyaController extends Controller
         // ambil semua data di tanya (belum di soft delete)
         $getTanya = Tanya::with('Student')->get();
 
-        // Retrieve questions related to the user's email
-
-        //session data based on email
-        $historyStudent = Tanya::with('Kelas', 'Mapel', 'Bab')->where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->whereDate('created_at', $today)->get();
+        // HISTORY DAILY TANYA
+        // history belum terjawab
+        $historyStudent = Tanya::with('Kelas', 'Mapel', 'Bab')->where('user_id', Auth::user()->id)
+        ->orderBy('created_at', 'desc')->whereDate('created_at', $today)->get();
 
         // history terjawab
-        $historyStudentAnswered = Tanya::with('Kelas', 'Bab')->onlyTrashed()->where('user_id', Auth::user()->id)->where('status_soal', 'Diterima')->orderBy('created_at', 'desc')->whereDate('created_at', $today)->get();
+        $historyStudentAnswered = Tanya::with('Kelas', 'Bab')->onlyTrashed()->where('user_id', Auth::user()->id)
+        ->where('status_soal', 'Diterima')->orderBy('created_at', 'desc')
+        ->whereDate('created_at', $today)->get();
 
         // history ditolak
-        $historyStudentReject = Tanya::with('Kelas', 'Bab')->onlyTrashed()->where('user_id', Auth::user()->id)->where('status_soal', 'Ditolak')->orderBy('created_at', 'desc')->whereDate('created_at', $today)->get();
+        $historyStudentReject = Tanya::with('Kelas', 'Bab')->onlyTrashed()->where('user_id', Auth::user()->id)
+        ->where('status_soal', 'Ditolak')->orderBy('created_at', 'desc')
+        ->whereDate('created_at', $today)->get();
 
-        // kalau session data tidak mengambil data yang telah di soft delete, onlyTrashed nya hapus aja jadi langsung Tanya::where
+
+        // HISTORY TANYA (student & mentor after soft delete)
         $siswaHistoryRestore = Tanya::onlyTrashed()->where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->paginate(2); // dataSiswa session tanya for page siswa (after soft delete)
         $teacherHistoryRestore = Tanya::onlyTrashed()->where('mentor_id', Auth::user()->id)->orderBy('created_at', 'desc')->get(); // getStore session tanya for page guru (after soft delete)
 
@@ -54,22 +72,57 @@ class TanyaController extends Controller
         $dataAccept = Tanya::onlyTrashed()->whereIn('email_mentor', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email_mentor');
         $validatedMentorAccepted = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email');
 
-        // limit tanya harian
-        $getLimitedTanya = Tanya::whereIn('id', $historyStudentAnswered->pluck('id'))->where('email', Auth::user()->id)->whereDate('created_at', $today)->get();
+        // Mengambil jumlah Tanya berdasarkan user login
+        $countDataTanyaAnsweredUser = Tanya::onlyTrashed()->where('user_id', Auth::user()->id)->where('status_soal_student', 'Belum Dibaca')->where('status_soal', 'Diterima')->whereDate('created_at', $today)->count();
 
-        $countDataTanyaAnsweredUser = Tanya::onlyTrashed()->where('user_id', Auth::user()->id)->where('status_soal_student', 'Belum Dibaca')->where('status_soal', 'Diterima')->whereDate('created_at', $today)->get();
-        $countDataTanyaRejectedUser = Tanya::onlyTrashed()->where('user_id', Auth::user()->id)->where('status_soal_student', 'Belum Dibaca')->where('status_soal', 'Ditolak')->whereDate('created_at', $today)->get();
+        $countDataTanyaRejectedUser = Tanya::onlyTrashed()->where('user_id', Auth::user()->id)->where('status_soal_student', 'Belum Dibaca')->where('status_soal', 'Ditolak')->whereDate('created_at', $today)->count();
 
         // get data fase
         $getFase = Fase::all();
-        // Mengurutkan data berdasarkan urutan asli atau ID
-        // $combinedHistory = $combinedHistory->sortBy('id'); // Ganti 'id' dengan atribut yang relevan jika diperlukan (id di hidden karena tidak butuh, tapi biarin aja)
 
-        // Pass user data and filtered questions to the view
-        return view('Tanya.tanya', compact('getTanya', 'historyStudent', 'historyStudentAnswered', 'historyStudentReject', 'teacherHistoryRestore', 'siswaHistoryRestore', 'dataAccept', 'validatedMentorAccepted', 'getLimitedTanya', 'countDataTanyaAnsweredUser', 'countDataTanyaRejectedUser', 'getFase'));
+        return view('Tanya.end-to-end..tanya', compact('getTanya', 'historyStudent', 'historyStudentAnswered', 'historyStudentReject', 'teacherHistoryRestore', 'siswaHistoryRestore', 'dataAccept', 'validatedMentorAccepted',  'countDataTanyaAnsweredUser', 'countDataTanyaRejectedUser', 'getFase'));
     }
 
-    // store for tanya siswa & murid
+    // history content daily tanya answered & rejected with pusher (siswa dan murid)
+    function getHistoryAnsweredTanya(Request $request)
+    {
+        $today = now();
+
+        // history terjawab
+        $historyStudentAnswered = Tanya::with('Kelas', 'Mapel', 'Bab')->onlyTrashed()->where('user_id', Auth::user()->id)
+        ->where('status_soal', 'Diterima')->orderBy('created_at', 'desc')
+        ->whereDate('created_at', $today)->get();
+
+        $data = $historyStudentAnswered->map(function ($item) {
+            $item->questionAnswerDaily = route('tanya.updateStatusSoalRestore', ['id' => $item->id]);
+            return $item;
+        });
+
+        return response()->json([
+            'data' => $historyStudentAnswered
+        ]);
+    }
+
+    function getHistoryRejectedTanya(Request $request)
+    {
+        $today = now();
+
+        // history ditolak
+        $historyStudentRejected = Tanya::with('Kelas', 'Mapel', 'Bab')->onlyTrashed()->where('user_id', Auth::user()->id)
+        ->where('status_soal', 'Ditolak')->orderBy('created_at', 'desc')
+        ->whereDate('created_at', $today)->get();
+
+        $data = $historyStudentRejected->map(function ($item) {
+            $item->questionRejectedDaily = route('tanya.updateStatusSoalRestore', ['id' => $item->id]);
+            return $item;
+        });
+
+        return response()->json([
+            'data' => $historyStudentRejected
+        ]);
+    }
+
+    // INSERT PERTANYAAN (student)
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -119,11 +172,23 @@ class TanyaController extends Controller
             'image_tanya' => $image,
         ]);
 
+        $coinHistoryUser = CoinHistory::where('user_id', $user->id)->first();
+
         broadcast(new QuestionAsked($questionCreate))->toOthers();
+
+        CoinHistory::create([
+            'user_id' => $user->id,
+            'jumlah_koin' => $request->harga_koin,
+            'tipe_koin' => 'Keluar',
+            'sumber_koin' => 'berTANYA',
+            'tanya_id' => $questionCreate->id // Menyimpan ID pertanyaan sebagai tanya_id
+        ]);
+
 
         return redirect()->back()->with('success-insert-tanya', 'Pertanyaan berhasil dikirim!');
     }
 
+    // FUNCTION EDIT PERTANYAAN (mentor)
     public function edit(string $id)
     {
         $getTanya = Tanya::with('Student.StudentProfiles', 'Kelas', 'Mapel', 'Bab')->find($id); // for answer
@@ -132,9 +197,62 @@ class TanyaController extends Controller
 
         $getRestore = Tanya::withTrashed()->findOrFail($id);
 
-        return view('Tanya.view', compact('getTanya', 'postReject', 'getRestore'));
+        return view('Tanya.end-to-end.view', compact('getTanya', 'postReject', 'getRestore'));
     }
 
+    // FUNCTION MARK VIEWED "lihat soal" menjadi "sedang dilihat" (mentor)
+    public function markViewed($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            // 🔒 Kunci baris soal
+            $tanya = Tanya::where('id', $id)->lockForUpdate()->firstOrFail();
+
+            // 🚫 Jika sudah dilihat orang lain, tolak
+            if ($tanya->is_being_viewed) {
+                DB::rollBack();
+                return response()->json([
+                    'message' => 'Soal sedang dilihat oleh mentor lain.'
+                ], 409); // Conflict
+            }
+
+            // ✅ Tandai sebagai sedang dilihat
+            $tanya->update([
+                'is_being_viewed' => true,
+                'viewed_by' => Auth::user()->id
+            ]);
+
+            DB::commit();
+
+            // Broadcast ke client lain
+            broadcast(new QuestionAsked($tanya))->toOthers();
+
+
+            return response()->json([
+                'message' => 'Berhasil mengambil soal.'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Gagal mengambil soal.'
+            ], 500);
+        }
+    }
+
+    // FUNCTION MARK VIEWED "lihat soal" menjadi "sedang dilihat" back button di view pertanyaan (mentor)
+    public function markViewedBackButton($id)
+    {
+        $updateLihatBackButton = Tanya::where('id',$id)->firstOrFail();
+
+        $updateLihatBackButton->update(['is_being_viewed' => false]);
+
+        broadcast(new QuestionAsked($updateLihatBackButton))->toOthers();
+
+        return redirect('/tanya');
+    }
+
+    // FUNCTION JAWAB PERTANYAAN DITERIMA STUDENT (mentor)
     public function update(Request $request, string $id)
     {
         $user = Auth::user();
@@ -150,23 +268,67 @@ class TanyaController extends Controller
 
         // Cari record yang akan diupdate
         $getTanya = Tanya::find($id);
-        // Update data lain
-        $getTanya->mentor_id = $user->id;
-        $getTanya->jawaban = $request->jawaban;
-        $getTanya->status_soal = 'Diterima';
 
-        if ($request->hasFile('image_jawab')) {
-            $filename = time() . $request->file('image_jawab')->getClientOriginalName();
-            $request->file('image_jawab')->move(public_path('images_tanya'), $filename);
-            $getTanya->image_jawab = $filename; // Simpan nama file baru ke database
+        if($getTanya) {
+            // Update data lain
+            $getTanya->mentor_id = $user->id;
+            $getTanya->jawaban = $request->jawaban;
+            $getTanya->status_soal = 'Diterima';
+            $getTanya->is_being_viewed = false;
+            $getTanya->viewed_by = null;
+
+            if ($request->hasFile('image_jawab')) {
+                $filename = time() . $request->file('image_jawab')->getClientOriginalName();
+                $request->file('image_jawab')->move(public_path('images_tanya'), $filename);
+                $getTanya->image_jawab = $filename; // Simpan nama file baru ke database
+            }
+                $getTanya->save(); // save all update's in database
+                $getTanya->delete(); // delete data after update data (supaya masuk ke softdelete)
+
+            // broadcast untuk menjawab tanya student dari mentor
+            broadcast(new QuestionAnswered($getTanya))->toOthers();
+            broadcast(new QuestionAsked($getTanya))->toOthers();
+
+            // untuk lanjut soal di verifikasi administrator
+            $getFeeQuestionsMentor = TanyaRankMentorProgress::where('mentor_id', $user->id)->first();
+
+            $createTanyaVerifications = TanyaVerifications::create([
+                'mentor_id' => $user->id,
+                'tanya_id' => $getTanya->id,
+                'harga_soal' => $getFeeQuestionsMentor->TanyaRank->harga_per_soal ?? 0
+            ]);
+
+            $mentorId = $user->id;
+
+            $countData = [
+                $mentorId => TanyaVerifications::where('mentor_id', $mentorId)
+                    ->where('status_verifikasi', 'Menunggu')
+                    ->count()
+            ];
+
+            // broadcast untuk menghitung pertanyaan mentor yang belum di verifikasi
+            broadcast(new CountMentorQuestionsAwaitVerification($countData))->toOthers();
+
+            // broadcast untuk menampilkan data pertanyaan mentor yang belum di verifikasi
+            broadcast(new TanyaMentorVerifications($createTanyaVerifications))->toOthers();
+
+            // untuk menghitung jumlah_soal diterima mentor (rank)
+            $jumlahSoalDiterima = Tanya::onlyTrashed()->where('mentor_id', $user->id)->where('status_soal', 'Diterima')->count();
+
+            // update atau create progress
+            $tanyaRankProgress = TanyaRankMentorProgress::updateOrCreate(
+                ['mentor_id' => $user->id],
+                [
+                    'jumlah_soal_diterima' => $jumlahSoalDiterima,
+                ]
+            );
         }
-            $getTanya->save(); // save all update's in database
-            $getTanya->delete(); // delete data after update data (supaya masuk ke softdelete)
 
         return redirect('/tanya')->with('success-answer-tanya', 'Jawaban telah terkirim!');
     }
 
 
+    // FUNCTION JAWAB PERTANYAAN DITOLAK STUDENT (mentor)
     public function updateReject(Request $request, string $id)
     {
         $user = Auth::user();
@@ -179,26 +341,53 @@ class TanyaController extends Controller
 
         $postReject = Tanya::with('Student')->find($id);
 
-        $tanyaKoinUsers = TanyaUserCoin::where('user_id', $postReject->Student->id)->get();
+        // $tanyaKoinUsers = TanyaUserCoin::where('user_id', $postReject->Student->id)->get();
 
-        foreach ($tanyaKoinUsers as $koinUser) {
-            $koinUser->increment('jumlah_koin', $postReject->harga_koin);
+        // foreach ($tanyaKoinUsers as $koinUser) {
+        //     $koinUser->increment('jumlah_koin', $postReject->harga_koin);
 
-            $koinUser->update([
-                'harga_koin' => $koinUser->jumlah_koin
-            ]);
-        }
+        //     $koinUser->update([
+        //         'harga_koin' => $koinUser->jumlah_koin
+        //     ]);
+        // }
 
+        $tanyaKoinUsers = TanyaUserCoin::where('user_id', $postReject->Student->id)->firstOrFail();
+
+        $tanyaKoinUsers->increment('jumlah_koin', $postReject->harga_koin);
+
+        $tanyaKoinUsers->update([
+            'harga_koin' => $tanyaKoinUsers->jumlah_koin
+        ]);
 
         $postReject->update([
             'mentor_id' => $user->id,
             'status_soal' => 'Ditolak',
             'alasan_ditolak' => $request->alasan_ditolak,
+            'is_being_viewed' => false,
+            'viewed_by' => null
         ]);
         $postReject->delete(); // delete data after update data (supaya masuk ke softdelete)
+
+        broadcast(new QuestionRejected($postReject))->toOthers();
+        broadcast(new QuestionAsked($postReject))->toOthers();
+        broadcast(new TanyaCoinRefunded($tanyaKoinUsers))->toOthers();
+
+
         return redirect('/tanya')->with('success-reject-tanya', 'Pertanyaan berhasil ditolak!');
     }
 
+    // FUNCTION UNTUK UPDATE KOIN STUDENT SECARA REALTIME
+    public function getKoinStudent(Request $request)
+    {
+        $user = Auth::user();
+        $tanyaKoinUsers = TanyaUserCoin::where('user_id', $user->id)->firstOrFail();
+
+        broadcast(new TanyaCoinRefunded($tanyaKoinUsers))->toOthers();
+
+        return response()->json([
+            'jumlah_koin' => $tanyaKoinUsers->jumlah_koin
+        ]);
+    }
     public function restore($id)
     {
         $user = Tanya::withTrashed()->with('Student.StudentProfiles', 'Mentor.MentorProfiles')->findOrFail($id);
@@ -209,12 +398,11 @@ class TanyaController extends Controller
     public function viewRestore(string $id)
     {
         // findOrFail berfungsi untuk mencari semua record berdasarkan primary key (biasanya ID)
-        // withTrashed mengambil semua record termasuk yang telah dihapus
         $getRestore = Tanya::with('Student.StudentProfiles', 'Mentor.MentorProfiles', 'Kelas', 'Mapel', 'Bab')->withTrashed()->findOrFail($id);
-        return view('Tanya.restore', compact('getRestore'));
+        return view('Tanya.end-to-end.restore', compact('getRestore'));
     }
 
-    //updateStatusSoal di riwayat harian per satuan klik (siswa & murid)
+    //updateStatusSoal di riwayat harian per satuan klik (student)
     public function markQuestionAsReadById($id)
     {
         $getTanya = Tanya::onlyTrashed()->where('status_soal_student', 'Belum Dibaca')
@@ -232,7 +420,7 @@ class TanyaController extends Controller
         ]);
     }
 
-    //updateStatusSoal semua di riwayat harian dalam satu klik menggunakan button (siswa & murid)
+    //updateStatusSoal semua di riwayat harian dalam satu klik menggunakan button (student)
     public function markAllQuestionsAsReadById($id)
     {
         $getTanyaAnswered = Tanya::onlyTrashed()->where('user_id', $id)->where('status_soal_student', 'Belum Dibaca')->where('status_soal',  'Diterima')->get();
@@ -261,7 +449,7 @@ class TanyaController extends Controller
         ]);
     }
 
-    //updateStatusSoal riwayat harian pada saat melihat jawaban (siswa & murid)
+    //updateStatusSoal riwayat harian pada saat melihat jawaban (student)
     public function updateStatusSoalRestore($id)
     {
         $getRestore = Tanya::onlyTrashed()->find($id);
@@ -270,9 +458,10 @@ class TanyaController extends Controller
             'status_soal_student' => 'Telah Dibaca'
         ]);
 
-        return view('Tanya.restore', compact('getRestore'));
+        return view('Tanya.end-to-end.restore', compact('getRestore'));
     }
 
+    // FUNCTION TANYA ACCESS
     public function tanyaAccess()
     {
         $dataTanyaAccess = tanyaAccess::all();
@@ -300,9 +489,10 @@ class TanyaController extends Controller
         ->whereDate('tanggal_akhir', "<", $today)
         ->update(['status_access' => 'Tidak Aktif']);
 
-        return view('Tanya.tanya-access', compact('dataTanyaAccess'));
+        return view('Tanya.access.tanya-access', compact('dataTanyaAccess'));
     }
 
+    // FUNCTION INSERT TANYA ACCESS
     public function tanyaAccessStore(Request $request)
     {
         $user = Auth::user();
@@ -331,6 +521,7 @@ class TanyaController extends Controller
         }
     }
 
+    // FUNCTION UPDATE TANYA ACCESS
     public function updateTanyaAccess(Request $request, String $id)
     {
         $request->validate([
@@ -351,6 +542,238 @@ class TanyaController extends Controller
         return redirect()->back()->with('success-update-data', 'Data libur berhasil diubah!');
     }
 
+    // FUNCTION QUESTION ROLLBACK (administrator)
+    public function listQuestion()
+    {
+        $questionData = Tanya::all();
+
+        return view('Tanya.end-to-end.rollback-question', compact('questionData'));
+    }
+
+    public function rollbackQuestion($id)
+    {
+        $rollbackQuestionData = Tanya::where('id', $id)->firstOrFail();
+
+        $rollbackQuestionData->update([
+            'is_being_viewed' => false,
+            'viewed_by' => null
+        ]);
+
+        $rollbackQuestionData->save();
+
+        broadcast(new QuestionAsked($rollbackQuestionData))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Soal berhasil dikembalikan ke antrean.',
+            'data' => $rollbackQuestionData
+        ]);
+    }
+
+    // FUNCTION TANYA RANK (MENTOR)
+    public function tanyaRank()
+    {
+        $dataTanyaRankProgressDiterima = TanyaRankMentorProgress::where('mentor_id', Auth::user()->id)->sum('jumlah_soal_diterima');
+        $dataTanyaRankProgressDitolak = TanyaRankMentorProgress::where('mentor_id', Auth::user()->id)->sum('jumlah_soal_ditolak');
+
+        $dataTanyaRankProgressApproved = TanyaRankMentorProgress::where('mentor_id', Auth::user()->id)->sum('jumlah_soal_approved');
+        $dataTanyaRankProgressRejected = TanyaRankMentorProgress::where('mentor_id', Auth::user()->id)->sum('jumlah_soal_rejected');
+
+        return view('Tanya.rank.tanya-rank', compact('dataTanyaRankProgressDiterima', 'dataTanyaRankProgressDitolak', 'dataTanyaRankProgressApproved', 'dataTanyaRankProgressRejected'));
+    }
+
+    // FUNCTION PAYMENT MENTOR (ADMINISTRATOR)
+    // function list mentor tanya view
+    public function mentorTanya()
+    {
+        $mentorIds = UserAccount::whereHas('MentorProfiles')->pluck('id');
+
+
+        $dataMentorTanya = Tanya::onlyTrashed()
+            ->whereIn('mentor_id', $mentorIds)
+            ->with('Mentor.MentorProfiles')
+            ->get()
+            ->groupBy('mentor_id');
+
+            $getMentor = $dataMentorTanya->map(fn($item) => $item->first());
+
+            $dataMentorTanyaVerification = TanyaVerifications::where('mentor_id', '')
+            ->where('status_verifikasi', 'Menunggu')->count();
+
+        $userMentor = UserAccount::with('MentorProfiles')->where('role', 'Mentor')->get();
+
+        $countData = [];
+
+        foreach($userMentor as $item) {
+            $countData[$item->id] = TanyaVerifications::where('mentor_id', $item->id)->count();
+        }
+
+        return view('Tanya.payment-mentor.list-mentor-tanya', compact('dataMentorTanya', 'getMentor', 'dataMentorTanyaVerification', 'userMentor', 'countData'));
+    }
+
+    // function question mentor accepted view
+    public function questionMentorVerifiedView($id)
+    {
+        $getTanyaMentorAccepted = Tanya::onlyTrashed()->where('status_soal', 'Diterima')->where('mentor_id', $id)->count();
+        $getTanyaMentorRejected = Tanya::onlyTrashed()->where('status_soal', 'Ditolak')->where('mentor_id', $id)->count();
+
+        return view('Tanya.payment-mentor.pertanyaan-mentor-verification', compact('id', 'getTanyaMentorAccepted', 'getTanyaMentorRejected'));
+    }
+
+    // function question mentor accepted
+    public function questionMentorVerifiedAccepted($id)
+    {
+        $dataTanyaVerifiedAccepted = TanyaVerifications::where('id', $id)->firstOrFail();
+
+        // untuk mengupdate status verifikasi
+        $dataTanyaVerifiedAccepted->update([
+            'administrator_id' => Auth::user()->id,
+            'status_verifikasi' => 'Diterima'
+        ]);
+
+        $mentorPayments = TanyaMentorPayments::where('mentor_id', $dataTanyaVerifiedAccepted->mentor_id)->orderBy('created_at', 'desc')->first();
+
+        // untuk mengupdate batch atau membuat batch baru setiap mentor (pembayaran mentor)
+        $getFeeQuestionsMentor = TanyaRankMentorProgress::where('mentor_id', $dataTanyaVerifiedAccepted->mentor_id)->first();
+
+        if($getFeeQuestionsMentor && $getFeeQuestionsMentor->rank_id) {
+            if(!$mentorPayments || $mentorPayments->total_ammount > 50000) {
+
+                $payMentorQuestions = TanyaMentorPayments::create([
+                    'mentor_id' => $dataTanyaVerifiedAccepted->mentor_id,
+                    'total_ammount' => $dataTanyaVerifiedAccepted->harga_soal
+                ]);
+            } else {
+                $mentorPayments->update([
+                    'total_ammount' => $mentorPayments->total_ammount + $dataTanyaVerifiedAccepted->harga_soal
+                ]);
+
+                $payMentorQuestions = $mentorPayments;
+            }
+            // broadcast untuk menampilkan data ketika ada verifikasi soal yang sudah memiliki rank_id (untuk dapet harga_per_soal nya)
+            broadcast(new PaymentTanyaMentor($payMentorQuestions))->toOthers();
+        }
+
+        // broadcast untuk mendengarkan event ketika verifikasi soal diterima
+        broadcast(new TanyaMentorVerifications($dataTanyaVerifiedAccepted))->toOthers();
+
+        // untuk menghitung ulang jumlah data tanyaVerifications yang menunggu di verifikasi ketika admin telah memverifikasi soal mentor
+        $userMentor = UserAccount::with('MentorProfiles')->where('role', 'Mentor');
+
+        $data = $userMentor->orderBy('created_at', 'desc')->paginate(6);
+
+        $countData = [];
+
+        foreach($data as $item) {
+            $countData[$item->id] = TanyaVerifications::where('mentor_id', $item->id)->where('status_verifikasi', 'Menunggu')->count();
+        }
+
+        // broadcast untuk mendengarkan event ketika menghitung ulang jumlah data tanyaVerifications
+        broadcast(new CountMentorQuestionsAwaitVerification($countData))->toOthers();
+
+        // untuk menghitung jumlah_soal diterima mentor (rank)
+        $jumlahSoalApproved = TanyaVerifications::where('mentor_id', $dataTanyaVerifiedAccepted->mentor_id)->where('status_verifikasi', 'Diterima')->count();
+
+        // lalu data di update atau di create ke tanyaProgress mentor
+        $rankProgress = TanyaRankMentorProgress::updateOrCreate(
+            ['mentor_id' => $dataTanyaVerifiedAccepted->mentor_id],
+            [
+                'jumlah_soal_approved' => $jumlahSoalApproved
+            ]
+        );
+
+        $jumlahDataTanyaDiterima = TanyaRankMentorProgress::where('mentor_id', $dataTanyaVerifiedAccepted->mentor_id)->sum('jumlah_soal_diterima');
+        $jumlahDataTanyaApproved = TanyaRankMentorProgress::where('mentor_id', $dataTanyaVerifiedAccepted->mentor_id)->sum('jumlah_soal_approved');
+
+        $rankMentor = TanyaRankMentor::where('jumlah_soal_diterima', $jumlahDataTanyaDiterima)->where('jumlah_soal_approved', $jumlahDataTanyaApproved)->first();
+
+        if($rankMentor) {
+            $rankProgress->update([
+                'rank_id' => $rankMentor->id
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Soal berhasil dikembalikan ke antrean.',
+            'data' => $dataTanyaVerifiedAccepted
+        ]);
+    }
+
+    // function question mentor rejected
+    public function questionMentorVerifiedRejected(Request $request, $id)
+    {
+        $dataTanyaVerifiedRejected = TanyaVerifications::with('Administrator')->where('id', $id)->firstOrFail();
+
+        $validator = Validator::make($request->all(), [
+            'alasan_verifikasi_ditolak' => 'required'
+        ], [
+            'alasan_verifikasi_ditolak.required' => 'Harap masukkan alasan untuk menolak!'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422); // Gunakan 422 Unprocessable Entity untuk validasi
+        }
+
+        $dataTanyaVerifiedRejected->update([
+            'administrator_id' => Auth::user()->id ?? '',
+            'alasan_verifikasi_ditolak' => $request->alasan_verifikasi_ditolak ?? '',
+            'status_verifikasi' => 'Ditolak'
+        ]);
+
+        broadcast(new TanyaMentorVerifications($dataTanyaVerifiedRejected))->toOthers();
+
+        // untuk menghitung ulang jumlah data tanyaVerifications yang menunggu di verifikasi ketika admin telah memverifikasi soal mentor
+        $userMentor = UserAccount::with('MentorProfiles')->where('role', 'Mentor');
+
+        $data = $userMentor->orderBy('created_at', 'desc')->paginate(6);
+
+        $countData = [];
+
+        foreach($data as $item) {
+            $countData[$item->id] = TanyaVerifications::where('mentor_id', $item->id)->where('status_verifikasi', 'Menunggu')->count();
+        }
+
+        // broadcast nya
+        broadcast(new CountMentorQuestionsAwaitVerification($countData))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Soal berhasil dikembalikan ke antrean.',
+            'data' => $dataTanyaVerifiedRejected
+        ]);
+    }
+
+    // function pembayaran mentor view
+    public function paymentMentorView()
+    {
+        $getTanyaMentorVerifiedSuccess = TanyaMentorPayments::with('Mentor.MentorProfiles')->orderBy('created_at', 'desc')->get();
+        return view('Tanya.payment-mentor.pembayaran-tanya-mentor', compact('getTanyaMentorVerifiedSuccess'));
+    }
+
+    // function pembayaran mentor update status
+    public function paymentMentorUpdate(Request $request, $id)
+    {
+        $getTanyaMentorVerifiedSuccess = TanyaMentorPayments::with('Mentor.MentorProfiles')->where('id', $id)->firstOrFail();
+
+        $getTanyaMentorVerifiedSuccess->update([
+            'status_payment' => 'Paid'
+        ]);
+
+        broadcast(new PaymentTanyaMentor($getTanyaMentorVerifiedSuccess))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Pembayaran berhasil diupdate.',
+            'data' => $getTanyaMentorVerifiedSuccess
+        ]);
+    }
+
+
+    // FUNCTION VIEW COIN PACKAGE TANYA
     public function coinPackage()
     {
         $paymentMethods = [
@@ -407,9 +830,10 @@ class TanyaController extends Controller
 
         $dataCoinOptions = FeaturePrices::where('type', 'coin')->get();
 
-        return view('Tanya.coin-package', compact('dataCoinOptions', 'paymentMethods', 'groupedPaymentMethods'));
+        return view('Tanya.package-purchase.coin-package', compact('dataCoinOptions', 'paymentMethods', 'groupedPaymentMethods'));
     }
 
+    // FUNCTION CHECKOUT COIN TANYA (purchase)
     public function checkout(Request $request)
     {
         $user = Auth::user();
@@ -469,11 +893,12 @@ class TanyaController extends Controller
         }
     }
 
-    public function checkoutPending(Request $request, String $id)
+    // FUNCTION RENEW CHECKOUT PENDING COIN TANYA
+    public function renewCheckout(Request $request, String $id)
     {
         $getDataTransactions = Transactions::find($id);
         $orderId = 'BC-rnw-tanya-' . Str::uuid(); // Generate new order_id
-        $paymentMethod = strtolower($request->payment_method_id);
+        $paymentMethod = $getDataTransactions->payment_method;
 
         // Payment method mapping
         $paymentMap = [
@@ -526,6 +951,7 @@ class TanyaController extends Controller
         }
     }
 
+    // FUNCTION CALLBACK MIDTRANS AFTER CHECKOUT (callback midtrans hanya ada 1 untuk semua fitur)
     public function callback(Request $request)
     {
         Log::info('Midtrans Callback Received:', $request->all());

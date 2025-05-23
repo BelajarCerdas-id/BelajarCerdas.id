@@ -97,7 +97,7 @@
                                                         </li>
                                                         </li>
                                                         <li class="text-xs" onclick="historyCuriculum(this)"
-                                                            data-nama_lengkap="{{ $item->UserAccount->profile->nama_lengkap }}
+                                                            data-nama_lengkap="{{ $item->UserAccount->Profile->nama_lengkap }}
 "
                                                             data-status="{{ $item->UserAccount->role }}"
                                                             data-updated_at="[{{ $item->updated_at->locale('id')->translatedFormat('d-M-Y, H:i:s') }}]">

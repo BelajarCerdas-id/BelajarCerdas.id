@@ -58,6 +58,7 @@ function fetchFilteredDataRiwayatStudent(status_soal, page = 1) {
 
     // Append pagination links
         $('.pagination-container-siswa').html(data.links);
+        fetchFilteredDataRiwayatStudent('semua');
         $('.pagination-container-siswa').show(); // pake yang atas uda cukup, ini ditambahin karna dibawah di hide ketika tidak ada data pada saat filtering. kalo ga ditambahin pas filtering dari ga ada data ke yang ada, pagination ikutan hilang
         $('#filterTable thead').show();
         $('.showMessage').hide(); // ini juga sama kaya pagination-container-siswa\

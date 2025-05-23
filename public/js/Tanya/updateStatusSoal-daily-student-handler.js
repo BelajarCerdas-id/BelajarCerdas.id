@@ -1,9 +1,7 @@
 const getUrl = document.getElementById('updateStatusSoalAll').getAttribute('data-url-id');
 
-// UPDATE STATUS_SOAL_STUDENT (DITERIMA)
-
-// UPDATE SATUAN STATUS_SOAL_STUDENT (TELAH DIBACA)
-document.addEventListener("DOMContentLoaded", function () {
+// FUNCTION UNTUK UPDATE STATUS_SOAL_STUDENT (DITERIMA)
+function bindUpdateStatusAnsweredListeners() {
     let updateStatusButtons = document.querySelectorAll(".updateStatusSoal");
     let updateStatusSoalAll = document.getElementById("updateStatusSoalAll");
 
@@ -45,7 +43,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             badge.remove(); // Hapus badge jika count sudah 0
                         }
                     }
-
                     checkAnsweredQuestions();
                 } else {
                     alert("Gagal memperbarui status.");
@@ -95,13 +92,10 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error("Error:", error));
         });
     }
-});
+};
 
-
-// UPDATE STATUS_SOAL_STUDENT (DITOLAK)
-
-// UPDATE SATUAN STATUS_SOAL_STUDENT (TELAH DIBACA)
-document.addEventListener("DOMContentLoaded", function () {
+// FUNCTION UNTUK UPDATE STATUS_SOAL_STUDENT (DITOLAK)
+function bindUpdateStatusRejectedListeners() {
     let updateStatusButtonsRejected = document.querySelectorAll(".updateStatusSoalRejected");
     let updateStatusSoalAllRejected = document.getElementById("updateStatusSoalAllRejected");
 
@@ -194,5 +188,5 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error("Error:", error));
         });
     }
-});
+};
 

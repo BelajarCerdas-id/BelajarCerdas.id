@@ -75,6 +75,28 @@ class UserAccount extends Authenticatable
     public function TanyaAccess() {
         return $this->hasOne(tanyaAccess::class, 'user_id');
     }
+
+    // TANYA
+    public function Tanya() {
+        return $this->hasOne(Tanya::class, 'viewed_by');
+    }
+
+    // TANYA VERIFICATION
+    public function TanyaVerificationMentor()
+    {
+        return $this->hasOne(TanyaVerifications::class, 'mentor_id');
+    }
+
+    public function TanyaVerificationAdministrator()
+    {
+        return $this->hasOne(TanyaVerifications::class, 'administrator_id');
+    }
+
+    // TANYA RANK PROGRESS
+    public function TanyaRankProgress() {
+        return $this->hasOne(TanyaRankMentorProgress::class, 'mentor_id');
+    }
+
     public function getProfileAttribute() {
         return match ($this->role) {
             'Siswa' => $this->StudentProfiles,

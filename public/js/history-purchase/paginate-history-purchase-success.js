@@ -1,14 +1,14 @@
-function fetchPaginateHistoryTransactionFailed(page = 1) {
+function fetchPaginateHistoryTransactionSuccess(page = 1) {
     $.ajax({
-        url: '/paginate-histori-pembelian-failed',
+        url: '/paginate-histori-pembelian-success',
         method: 'GET',
         data: {
             page: page
         },
         success: function (response) {
-            const container = $('#grid-transaction-failed-list');
+            const container = $('#grid-transaction-success-list');
             container.empty();
-            $('.pagination-container-transaction-failed').empty();
+            $('.pagination-container-transaction-success').empty();
 
             if (response.data.length > 0) {
                 response.data.forEach((item) => {
@@ -41,7 +41,7 @@ function fetchPaginateHistoryTransactionFailed(page = 1) {
                         <div class="bg-white shadow-lg rounded-md p-4">
                             <div class="flex justify-between">
                                 <span class="text-md font-bold opacity-60">${item.features.nama_fitur}</span>
-                                <span class="text-sm px-4 py-1 bg-red-200 text-red-600 font-bold rounded-xl">
+                                <span class="text-sm px-4 py-1 bg-green-200 text-green-600 font-bold rounded-xl">
                                     ${item.transaction_status}
                                 </span>
                             </div>
@@ -52,7 +52,7 @@ function fetchPaginateHistoryTransactionFailed(page = 1) {
                                 <span class="text-md bg-[#D0EBFF] px-4 py-1 rounded-xl font-bold text-[#4189FF]">
                                     ${formatCurrency(item.price)}
                                 </span>
-                                <button class="button-detail-failed text-[#4189FF] font-bold">Lihat Detail</button>
+                                <button class="button-detail-success text-[#4189FF] font-bold">Lihat Detail</button>
                             </div>
                             <div class="content-dropdown-histori-pembelian">
                                 <div class="flex flex-col gap-2 mt-10">
@@ -90,34 +90,34 @@ function fetchPaginateHistoryTransactionFailed(page = 1) {
                     container.append(card);
                 });
 
-                $('.pagination-container-transaction-failed').html(response.links);
-                $('.pagination-container-transaction-failed').show();
-                $('.noDataMessageFailed').hide();
-                bindTransactionPagination();
-                bindDetailToggleFailed(); // agar tombol "Lihat Detail" aktif
+                $('.pagination-container-transaction-success').html(response.links);
+                $('.pagination-container-transaction-success').show();
+                $('.noDataMessageSuccess').hide();
+                bindTransactionPaginationSuccess();
+                bindDetailToggleSuccess(); // agar tombol "Lihat Detail" aktif
             } else {
-                $('.pagination-container-transaction-failed').hide();
-                $('.noDataMessageFailed').show();
+                $('.pagination-container-transaction-success').hide();
+                $('.noDataMessageSuccess').show();
             }
         }
     });
 }
 
-function bindTransactionPagination() {
-    $('.pagination-container-transaction-failed').off('click', 'a').on('click', 'a', function (e) {
+function bindTransactionPaginationSuccess() {
+    $('.pagination-container-transaction-success').off('click', 'a').on('click', 'a', function (e) {
         e.preventDefault();
         const page = new URL(this.href).searchParams.get('page');
-        fetchPaginateHistoryTransactionFailed(page);
+        fetchPaginateHistoryTransactionSuccess(page);
     });
 }
 
 // Initial fetch
 $(document).ready(function () {
-    fetchPaginateHistoryTransactionFailed();
+    fetchPaginateHistoryTransactionSuccess();
 });
 
-function bindDetailToggleFailed() {
-    const toggles = document.querySelectorAll('.button-detail-failed');
+function bindDetailToggleSuccess() {
+    const toggles = document.querySelectorAll('.button-detail-success');
 
     toggles.forEach(toggle => {
         toggle.addEventListener('click', function(e) {

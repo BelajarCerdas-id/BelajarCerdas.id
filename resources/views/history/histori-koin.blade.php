@@ -35,10 +35,28 @@
             </div>
 
             <div id="contentCoinsIn" class="">
-                a
+                <div id="grid-history-coin-in-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
+                    {{-- cards akan di-append via AJAX --}}
+                </div>
+
+                <div class="pagination-container-coin-in flex justify-center mt-4"></div>
+
+                <div class="flex items-center justify-center min-h-96">
+                    <span class="noDataMessageHistoryCoinIn hidden text-gray-500">Tidak
+                        ada riwayat
+                        koin masuk.</span>
+                </div>
             </div>
             <div id="contentCoinsOut" class="hidden">
-                b
+                <div id="grid-history-coin-out-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
+                    {{-- cards akan di-append via AJAX --}}
+                </div>
+
+                <div class="pagination-container-coin-out flex justify-center mt-4"></div>
+
+                <div class="flex items-center justify-center min-h-96">
+                    <span class="noDataMessageHistoryCoinOut hidden text-gray-500">Tidak ada riwayat koin keluar.</span>
+                </div>
             </div>
         </div>
     </div>
@@ -48,6 +66,9 @@
         <p>You do not have access to this pages.</p>
     </div>
 @endif
+
+<script src="{{ asset('js/history-purchase/paginate-history-coin-in.js') }}"></script>
+<script src="{{ asset('js/history-purchase/paginate-history-coin-out.js') }}"></script>
 
 <script>
     var koinMasuk = document.getElementById('contentCoinsIn');

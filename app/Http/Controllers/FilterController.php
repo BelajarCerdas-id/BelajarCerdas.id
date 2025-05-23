@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CountMentorQuestionsAwaitVerification;
+use App\Events\TanyaMentorVerifications;
+use App\Events\UpdateLihatDetailTanyaMentor;
+use App\Models\CoinHistory;
 use App\Models\Star;
 use App\Models\Tanya;
 use App\Models\Keynote;
 use Illuminate\Http\Request;
 use App\Models\englishZoneSoal;
+use App\Models\TanyaMentorPayments;
+use App\Models\TanyaVerifications;
 use App\Models\Transactions;
 use App\Models\userAccount;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +21,7 @@ use Midtrans\Transaction;
 
 class FilterController extends Controller
 {
+    // FILTERING & PAGINATION TANYA STUDENT, MENTOR, ADMINISTRATOR
     public function filterHistoryStudent(Request $request)
     {
 
@@ -26,7 +33,7 @@ class FilterController extends Controller
         }
 
         // Paginate the filtered results
-        $data = $query->with('Mapel', 'Bab')->orderBy('created_at', 'desc')->paginate(5);
+        $data = $query->with('Mapel', 'Bab')->orderBy('updated_at', 'desc')->paginate(5);
 
         return response()->json([
             'data' => $data->items(),
@@ -45,13 +52,13 @@ class FilterController extends Controller
 
         $data = $query->with('Student.StudentProfiles', 'Kelas', 'Mapel', 'Bab')->orderBy('updated_at', 'desc')->paginate(10);
 
+
         return response()->json([
             'data' => $data->items(),
             'links' => (string) $data->links(),
             'restoreUrl' => route('getRestore.edit', ':id')
         ]);
     }
-
 
     public function filterTanyaTeacher(Request $request)
     {
@@ -61,12 +68,25 @@ class FilterController extends Controller
             $query->where('status_soal', $request->status);
         }
 
-        $data = $query->with('Student.StudentProfiles', 'Kelas', 'Mapel', 'Bab')->orderBy('created_at', 'desc')->paginate(10);
+        $data = $query->with(['Student.StudentProfiles', 'Kelas', 'Mapel', 'Bab'])->orderBy('created_at', 'desc')->paginate(10);
 
         return response()->json([
             'data' => $data->items(),
             'links' => (string) $data->links(),
             'restoreUrl' => route('tanya.edit', ':id')
+        ]);
+    }
+
+    public function paginateTanyaRollback(Request $request)
+    {
+        $query = Tanya::query();
+
+        $data = $query->with(['Student.StudentProfiles', 'ViewedBy.MentorProfiles', 'Kelas', 'Mapel', 'Bab'])->orderBy('created_at', 'desc')->paginate(10);
+
+        return response()->json([
+            'data' => $data->items(),
+            'links' => (string) $data->links(),
+            'updateIsBeingViewed' => route('rollbackQuestion.update', ':id'),
         ]);
     }
 
@@ -93,7 +113,133 @@ class FilterController extends Controller
         ]);
     }
 
+    // PAGINATION HISTORY PURCHASE
+    public function paginateHistoryPurchaseSuccess(Request $request)
+    {
+        $user = Auth::user();
 
+        $transactions = Transactions::with(['UserAccount.StudentProfiles','Features', 'FeaturePrices'])->where('user_id', $user->id)
+        ->where('transaction_status', 'Berhasil')->orderBy('created_at', 'desc')->paginate(6);
+
+        return response()->json([
+            'data' => $transactions->items(),
+            'links' => (string) $transactions->links()->render(),
+        ]);
+    }
+
+    public function paginateHistoryPurchaseWaiting(Request $request)
+    {
+        $user = Auth::user();
+
+        $transactions = Transactions::with(['UserAccount.StudentProfiles','Features', 'FeaturePrices'])->where('user_id', $user->id)
+        ->where('transaction_status', 'Pending')->orderBy('created_at', 'desc')->paginate(6);
+
+        $data = $transactions->getCollection()->map(function ($item) {
+            $item->renewCheckout = route('checkout.pending', ['id' => $item->id]);
+            return $item;
+        });
+
+        return response()->json([
+            'data' => $transactions->items(),
+            'links' => (string) $transactions->links()->render(),
+        ]);
+    }
+
+    public function paginateHistoryPurchaseFailed(Request $request)
+    {
+        $user = Auth::user();
+
+        $transactions = Transactions::with(['UserAccount.StudentProfiles','Features', 'FeaturePrices'])->where('user_id', $user->id)
+        ->whereIn('transaction_status', ['Gagal', 'Kadaluarsa'])->orderBy('created_at', 'desc')->paginate(6);
+
+        return response()->json([
+            'data' => $transactions->items(),
+            'links' => (string) $transactions->links()->render(),
+        ]);
+    }
+
+    // PAGINATE HISTORY COIN
+    public function paginateHistoryCoinIn(Request $request)
+    {
+        $user = Auth::user();
+
+        $historyCoinIn = CoinHistory::with('UserAccount.StudentProfiles')->where('user_id', $user->id)->where('tipe_koin', 'Masuk')
+        ->orderBy('created_at', 'desc')->paginate(6);
+
+        return response()->json([
+            'data' => $historyCoinIn->items(),
+            'links' => (string) $historyCoinIn->links()->render(),
+        ]);
+    }
+
+    public function paginateHistoryCoinOut(Request $request)
+    {
+        $user = Auth::user();
+
+        $historyCoinIn = CoinHistory::with(['UserAccount.StudentProfiles',
+            'Tanya' => function ($query) {
+                $query->withTrashed()->with('Fase', 'Kelas', 'Mapel', 'Bab');
+            }])->where('user_id', $user->id)->where('tipe_koin', 'Keluar')
+            ->orderBy('created_at', 'desc')->paginate(6);
+
+        return response()->json([
+            'data' => $historyCoinIn->items(),
+            'links' => (string) $historyCoinIn->links()->render(),
+        ]);
+    }
+
+    // PAGINATE PAYMENT MENTOR (ADMINISTRATOR)
+    public function paginateListMentorTanya(Request $request)
+    {
+        $userMentor = UserAccount::with('MentorProfiles')->where('role', 'Mentor');
+
+        $data = $userMentor->orderBy('created_at', 'desc')->paginate(6);
+
+        $countData = [];
+
+        foreach($data as $item) {
+            $countData[$item->id] = TanyaVerifications::where('mentor_id', $item->id)->where('status_verifikasi', 'Menunggu')->count();
+        }
+
+        broadcast(new CountMentorQuestionsAwaitVerification($countData))->toOthers();
+
+        return response()->json([
+            'data' => $data->items(),
+            'countData' => $countData,
+            'links' => (string) $data->links(),
+            'detailDataTanyaMentor' => route('tanya.mentor.accepted.view', ':id'),
+        ]);
+    }
+
+    public function paginateVerificationTanyaMentor(Request $request, $mentor_id)
+    {
+        $dataTanyaVerifications = TanyaVerifications::with(['Tanya.Fase', 'Tanya.Kelas', 'Tanya.Mapel', 'Tanya.Bab', 'Tanya' => function ($query){
+            $query->onlyTrashed();
+        }])
+            ->where('mentor_id', $mentor_id)
+            ->where('status_verifikasi', 'Menunggu');
+
+        $data = $dataTanyaVerifications->orderBy('created_at', 'desc')->paginate(10);
+
+        // return dalam bentuk JSON
+        return response()->json([
+            'data' => $data->items(),
+            'links' => (string) $data->links(),
+            'updateDataTanyaVerificationAccepted' => route('verificationTanyaMentor.accepted', ':id'),
+            'restoreUrl' => route('tanya.updateStatusSoalRestore', ':id'),
+        ]);
+    }
+
+    public function paginateListPaymentTanyaMentor(Request $request)
+    {
+        $getTanyaMentorVerifiedSuccess = TanyaMentorPayments::with('Mentor.MentorProfiles')->orderBy('created_at', 'desc')->paginate(10);
+
+        return response()->json([
+            'data' => $getTanyaMentorVerifiedSuccess->items(),
+            'links' => (string) $getTanyaMentorVerifiedSuccess->links(),
+            'paymentTanyaMentorUpdate' => route('pembayaran.tanya.mentor.update', ':id'),
+        ]);
+    }
 
     public function filterClassNote(Request $request)
     {
@@ -157,45 +303,6 @@ class FilterController extends Controller
             'data' => $data->items(),
             'links' => (string) $data->links(),
             'url' => route('laporan.edit', ':id')
-        ]);
-    }
-
-    public function paginateHistoryPurchaseSuccess(Request $request)
-    {
-        $user = Auth::user();
-
-        $transactions = Transactions::with(['UserAccount.StudentProfiles','Features', 'FeaturePrices'])->where('user_id', $user->id)
-        ->where('transaction_status', 'Berhasil')->orderBy('created_at', 'desc')->paginate(6);
-
-        return response()->json([
-            'data' => $transactions->items(),
-            'links' => (string) $transactions->links()->render(),
-        ]);
-    }
-
-    public function paginateHistoryPurchaseWaiting(Request $request)
-    {
-        $user = Auth::user();
-
-        $transactions = Transactions::with(['UserAccount.StudentProfiles','Features', 'FeaturePrices'])->where('user_id', $user->id)
-        ->where('transaction_status', 'Pending')->orderBy('created_at', 'desc')->paginate(6);
-
-        return response()->json([
-            'data' => $transactions->items(),
-            'links' => (string) $transactions->links()->render(),
-        ]);
-    }
-
-    public function paginateHistoryPurchaseFailed(Request $request)
-    {
-        $user = Auth::user();
-
-        $transactions = Transactions::with(['UserAccount.StudentProfiles','Features', 'FeaturePrices'])->where('user_id', $user->id)
-        ->whereIn('transaction_status', ['Gagal', 'Kadaluarsa'])->orderBy('created_at', 'desc')->paginate(6);
-
-        return response()->json([
-            'data' => $transactions->items(),
-            'links' => (string) $transactions->links()->render(),
         ]);
     }
 

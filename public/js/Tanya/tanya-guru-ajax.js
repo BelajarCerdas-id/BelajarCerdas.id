@@ -6,12 +6,15 @@ function fetchFilteredDataTanyaMentor(status, page = 1) {
         status: status,
         page: page // Include the page parameter
     },
-    success: function(data) {
+        success: function (data) {
+                    console.log('📦 Data baru masuk:', data);
         $('#tableListTeacher').empty(); // Clear previous entries
         $('.pagination-container-tanya').empty(); // Clear previous pagination links
 
-    if (data.data.length > 0) {
-        $.each(data.data, function(index, application) {
+        if (data.data.length > 0) {
+
+        $.each(data.data, function (index, application) {
+        console.log('📌 Data baris:', application);
         const formatDate = (dateString) => {
         const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
         const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -33,6 +36,20 @@ function fetchFilteredDataTanyaMentor(status, page = 1) {
 
     const createdAt = application.created_at ? `${formatDate(application.created_at)}, ${timeFormatter.format(new Date(application.created_at))}` : 'Tanggal tidak tersedia';
 
+    const nl2br = (text) => {
+        if (!text) return '';
+        return text.replace(/\n/g, '<br>');
+    };
+
+    const escapeHtml = (text) => {
+        return text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    };
+
     // ini untuk url jika js didalam file yang sama dengan html
     // const restoreUrl = `{{ route('getRestore.edit', ':id') }}`.replace(':id',
     //     application.id);
@@ -45,22 +62,31 @@ function fetchFilteredDataTanyaMentor(status, page = 1) {
         <tr class="text-xs">
             <td class="td-table !text-black !text-center">${index + 1}</td>
             <td class="td-table !text-black !text-center">${(application.student?.student_profiles?.nama_lengkap || '')}</td>
-            <td class="td-table !text-black !text-center">${application.kelas?.kelas || ''}</td>
-            <td class="td-table !text-black">${limitString(application.pertanyaan, 45) || ''}</td>
+            <td class="td-table !text-black !text-center">${application.kelas?.kelas || ''}</td>{!! nl2br(e($tanya->pertanyaan)) !!}
+            <td class="td-table !text-black">${nl2br(escapeHtml(application.pertanyaan))}</td>
             <td class="td-table !text-black !text-center">${application.mapel?.mata_pelajaran}</td>
             <td class="td-table !text-black !text-center">${application.bab?.nama_bab}</td>
             <td class="td-table !text-black !text-center">${createdAt}</td>
-            <td class="td-table !text-black !text-center"><a href="${restoreUrl}">Lihat</a></td>
+            <td class="td-table !text-black !text-center">
+                ${
+                    application.is_being_viewed
+                        ? `<span class="text-gray-500 italic">Sedang Dilihat</span>`
+                        : `<a href="${restoreUrl}" class="btn-lihat-soal" data-id="${application.id}">Lihat</a>`
+                }
+            </td>
         </tr>
     `);
 });
 
     // Append pagination links
         $('.pagination-container-tanya').html(data.links);
-
+        bindPaginationLinks();
+        $('#emptyMessageTanyaTeacher').hide(); // sembunyikan pesan kosong
+        $('.thead-table-tanya-teacher').show(); // Tampilkan tabel thead
     } else {
         $('#tableListTeacher').empty(); // Clear existing rows
-        $('#emptyMessage').show(); // Tampilkan pesan kosong
+        $('#emptyMessageTanyaTeacher').show(); // Tampilkan pesan kosong
+        $('.thead-table-tanya-teacher').hide(); // sembunyikan tabel thead
     }
 }
     });
@@ -71,6 +97,40 @@ function fetchFilteredDataTanyaMentor(status, page = 1) {
     $(document).ready(function() {
         // Ambil data yang berstatus 'semua' saat halaman dimuat (jadi ini menampilkan semua data tanpa filter)
         fetchFilteredDataTanyaMentor('semua');
+
+        // Tangani klik tombol Lihat supaya update is_being_viewed dulu sebelum redirect
+        $(document).on('click', '.btn-lihat-soal', function(e) {
+            e.preventDefault();
+
+            const soalId = $(this).data('id');
+            const urlDetail = $(this).attr('href');
+            const btn = $(this);
+
+            btn.prop('disabled', true).text('Sedang Dilihat');
+
+            $.ajax({
+                url: `/tanya/${soalId}/mark-viewed`,
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function() {
+                    window.location.href = urlDetail;
+                },
+
+                error: function(xhr) {
+                    // if (xhr.status === 409) {
+                    //     alert('❌ Soal sedang dilihat oleh mentor lain.');
+                    // } else {
+                    //     alert('❌ Gagal menandai soal sebagai sedang dilihat.');
+                    // }
+                    btn.prop('disabled', false).text('Lihat');
+                },
+                // error: function() {
+                //     alert('Gagal menandai soal sebagai sedang dilihat.');
+                // }
+            });
+        });
     });
 
 
@@ -87,3 +147,6 @@ function fetchFilteredDataTanyaMentor(status, page = 1) {
             fetchFilteredDataTanyaMentor(status, page); // Ambil data yang difilter untuk halaman yang ditentukan
         });
     }
+
+
+

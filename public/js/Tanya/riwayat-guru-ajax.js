@@ -58,15 +58,15 @@ function fetchFilteredDataRiwayatMentor(status_soal, page = 1) {
     `);
 });
 
-    // Append pagination links
+// Append pagination links
         $('.pagination-container-riwayat').html(data.links);
+        $('.thead-table-riwayat-teacher').show(); // Tampilkan thead table
+        $('#emptyMessageRiwayatTeacher').hide(); // sembunyikan pesan kosong
         $('.pagination-container-riwayat').show();
-        $('#filterTableTeacher thead').show();
-        $('.emptyMessage').hide();
     } else {
-        $('#filterTableTeacher thead').hide(); // hide thead table
+        $('.thead-table-riwayat-teacher').hide(); // hide thead table
+        $('#emptyMessageRiwayatTeacher').show(); // Tampilkan pesan kosong
         $('#filterListTeacher').empty(); // Clear existing rows
-        $('.emptyMessage').show(); // Tampilkan pesan kosong
         $('.pagination-container-riwayat').hide();
     }
 }

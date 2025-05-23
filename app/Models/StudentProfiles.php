@@ -20,7 +20,7 @@ class StudentProfiles extends Model
     ];
 
     public function userAccount() {
-        return $this->belongsTo(userAccount::class);
+        return $this->belongsTo(UserAccount::class);
     }
 
     public function Fase()

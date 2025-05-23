@@ -142,19 +142,19 @@
                         <div class="col-span-6">
                             <div class="">
                                 <span class="text-gray-900 font-medium">Nama Siswa :</span>
-                                <span>{{ $getRestore->Student->StudentProfiles->nama_lengkap }}</span>
+                                <span>{{ $getRestore->Student->StudentProfiles->nama_lengkap ?? '' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Sekolah :</span>
-                                <span>{{ $getRestore->Student->StudentProfiles->sekolah }}</span>
+                                <span>{{ $getRestore->Student->StudentProfiles->sekolah ?? '' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Kelas :</span>
-                                <span>{{ $getRestore->Kelas->kelas }}</span>
+                                <span>{{ $getRestore->Kelas->kelas ?? '' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Jam berTANYA :</span>
-                                <span>{{ $getRestore->created_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') }}</span>
+                                <span>{{ $getRestore->created_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') ?? '' }}</span>
                             </div>
                         </div>
                     </div>
@@ -165,11 +165,11 @@
                     <div class="mx-4 my-8 leading-8">
                         <div class="">
                             <span>Mata Pelajaran :</span>
-                            {{ $getTanya->Mapel->mata_pelajaran }}
+                            {{ $getTanya->Mapel->mata_pelajaran ?? '' }}
                         </div>
                         <div class="">
                             <span>Bab :</span>
-                            {{ $getTanya->Bab->nama_bab }}
+                            {{ $getTanya->Bab->nama_bab ?? '' }}
                         </div>
                     </div>
 
@@ -179,7 +179,7 @@
                         <span>Pertanyaan</span>
                         <div class="max-h-40 h-40 my-2 p-2 bg-white shadow-xl border-[1px] border-gray-200 rounded-md overflow-y-auto text-sm resize-none"
                             disabled>
-                            {{ $getRestore->pertanyaan }}
+                            {!! nl2br(e($getRestore->pertanyaan)) !!}
                         </div>
                     </div>
 
@@ -202,11 +202,15 @@
                     </div>
                     <div class="flex justify-between mb-6">
                         <div class="mx-6">
-                            <a href="{{ route('tanya.index') }}"
-                                class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all flex items-center gap-2">
-                                <i class="fas fa-chevron-left"></i>
-                                <span>Kembali</span>
-                            </a>
+                            <form action="{{ route('tanya.markViewedBackButton', $getRestore->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <button
+                                    class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all flex items-center gap-2">
+                                    <i class="fas fa-chevron-left"></i>
+                                    Kembali
+                                </button>
+                            </form>
                         </div>
                         <div class="mx-6">
                             <button

@@ -13,6 +13,6 @@ class TanyaSeeder extends Seeder
      */
     public function run(): void
     {
-        Tanya::factory()->count(5)->create();
+        Tanya::factory()->count(10)->create();
     }
 }

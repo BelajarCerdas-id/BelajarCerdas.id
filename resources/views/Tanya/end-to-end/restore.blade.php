@@ -167,7 +167,7 @@
             </div>
         </section>
     </main>
-@elseif (Auth::user()->role === 'Mentor')
+@elseif (Auth::user()->role === 'Mentor' or Auth::user()->role === 'Administrator')
     <main>
         <section>
             <div class="grid grid-cols-8 gap-2 mx-2 lg:w-[90%] lg:mx-auto mt-20">
@@ -327,11 +327,20 @@
                     </dialog>
                 </div>
                 <div class="flex justify-start mt-8">
-                    <a href="{{ route('tanya.index') }}"
-                        class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all flex items-center gap-2">
-                        <i class="fas fa-chevron-left"></i>
-                        <span>Kembali</span>
-                    </a>
+                    @if (Auth::user()->role === 'Mentor')
+                        <a href="{{ route('tanya.index') }}"
+                            class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all flex items-center gap-2">
+                            <i class="fas fa-chevron-left"></i>
+                            <span>Kembali</span>
+                        </a>
+                    @else
+                        <!--- untuk back button administrator after verified question --->
+                        <a href="{{ route('tanya.mentor.accepted.view', $getRestore->mentor_id) }}"
+                            class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all flex items-center gap-2">
+                            <i class="fas fa-chevron-left"></i>
+                            <span>Kembali</span>
+                        </a>
+                    @endif
                 </div>
             </div>
         </section>

@@ -13,7 +13,7 @@ class MitraCerdasController extends Controller
 {
     public function mentorView()
     {
-        $dataMentor = MentorProfiles::with('UserAccount')->get();
+        $dataMentor = MentorProfiles::with('UserAccount')->orderBy('created_at', 'desc')->get();
 
         return view('Mentor.list-mentor', compact('dataMentor'));
     }
@@ -60,7 +60,7 @@ class MitraCerdasController extends Controller
 
     public function mentorAktifView()
     {
-        $dataMentorAktif = MentorProfiles::with('UserAccount')->with('MentorFeatureStatus')->where('status_mentor', 'Diterima')->get();
+        $dataMentorAktif = MentorProfiles::with('UserAccount')->with('MentorFeatureStatus')->where('status_mentor', 'Diterima')->orderBy('created_at', 'desc')->get();
 
         $dataFeaturesRoles = FeaturesRoles::with('Features')->where('feature_role', 'mentor')->get();
 

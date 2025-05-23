@@ -74,7 +74,6 @@ class webController extends Controller
 
     public function beranda()
     {
-        $user = session('user');
         $getTanyaTL = Tanya::onlyTrashed()->get();
 
         $getData = userAccount::where('status', 'Mentor')->get();
@@ -153,12 +152,14 @@ class webController extends Controller
             ->whereIn('user_id', $getSiswa->pluck('id'))
             ->get()
             ->groupBy('user_id')
-            ->map(fn($items) => $items->count()); // Hitung jumlah Tanya per email
+            ->map(fn($items) => $items->count()); // Hitung jumlah Tanya per user
 
         // Tambahkan jumlah Tanya ke dalam objek siswa tanpa looping manual
         // each() → Memasukkan jumlah Tanya ke dalam setiap objek siswa tanpa membuat objek baru.
         $sortedSiswa = $getSiswa->each(function ($siswa) use ($countSiswaTanya) {
-            $siswa->jumlah_tanya = $countSiswaTanya[$siswa->id] ?? 0; // Default 0 jika tidak ada
+            $siswa->jumlah_tanya = $countSiswaTanya[$siswa->id]?? 0; // Default 0 jika tidak ada
+        })->filter(function ($siswa) {
+            return $siswa->jumlah_tanya > 0; // Filter siswa dengan jumlah Tanya lebih besar dari 0
         })->sortByDesc('jumlah_tanya')->take(10); // Urutkan & ambil 10 terbesar
 
         $countDataTanyaAll = Tanya::withTrashed()->get();
@@ -308,17 +309,11 @@ class webController extends Controller
                 'button' => 'CATATAN'
             ],
         ];
-        return view('beranda', compact('user', 'mapelK13', 'mapelMerdeka', 'packetSiswa', 'getTanyaTL', 'getData', 'countData', 'dataAccept',  'validatedMentorAccepted', 'paidBatchCount', 'unpaidBatchCount', 'waitingBatchCount', 'totalPaidCount', 'totalUnpaidCount', 'totalWaitingUnpaidCount', 'getDataSiswa', 'getDataMurid', 'getTanya', 'countSiswaTanya', 'getSiswa', 'sortedSiswa', 'countDataTanyaAll', 'countDataMentor'));
+        return view('beranda', compact('mapelK13', 'mapelMerdeka', 'packetSiswa', 'getTanyaTL', 'getData', 'countData', 'dataAccept',  'validatedMentorAccepted', 'paidBatchCount', 'unpaidBatchCount', 'waitingBatchCount', 'totalPaidCount', 'totalUnpaidCount', 'totalWaitingUnpaidCount', 'getDataSiswa', 'getDataMurid', 'getTanya', 'countSiswaTanya', 'getSiswa', 'sortedSiswa', 'countDataTanyaAll', 'countDataMentor'));
     }
 
     public function laporan()
     {
-         // Mengambil user_id dari session
-        $user = session('user');  // Misalnya session hanya menyimpan ID user
-        if(!$user) {
-            return redirect('/login');
-        }
-
         // Controller laporan Team Leader
         // Mengambil data mentor yang berstatus 'Mentor'
         $getData = userAccount::where('status', 'Mentor')->get();
@@ -341,15 +336,13 @@ class webController extends Controller
         $validatedMentorRejected = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Ditolak')->get()->groupBy('email');
 
 
-        return view('laporan', compact('user', 'getData', 'countData', 'dataAccept', 'dataReject', 'validatedMentorAccepted', 'validatedMentorRejected'));
+        return view('laporan', compact( 'getData', 'countData', 'dataAccept', 'dataReject', 'validatedMentorAccepted', 'validatedMentorRejected'));
     }
 
 
 
     public function viewLaporan(string $id)
     {
-        $user = session('user');
-
         // Ambil data mentor berdasarkan ID
         $mentor = userAccount::find($id);  // Mengambil data mentor berdasarkan ID yang dikirimkan
 
@@ -473,7 +466,7 @@ class webController extends Controller
         }
 
         // Kirimkan data mentor dan laporan ke view
-        return view('viewLaporan', compact('user', 'getLaporan', 'mentor', 'statusStar', 'dataReject', 'dataAccept', 'validatedMentorAccepted', 'validatedMentorRejected', 'tableData', 'data', 'paidBatchCount', 'unpaidBatchCount', 'waitingBatchCount'));
+        return view('viewLaporan', compact( 'getLaporan', 'mentor', 'statusStar', 'dataReject', 'dataAccept', 'validatedMentorAccepted', 'validatedMentorRejected', 'tableData', 'data', 'paidBatchCount', 'unpaidBatchCount', 'waitingBatchCount'));
     }
 
     public function sidebarBeranda()

@@ -401,7 +401,7 @@
             </div>
         </div>
     </div>
-@elseif(Auth::user()->role === 'XR')
+@elseif(Auth::user()->role === 'HR')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
         <div class="content-beranda mt-[120px]">
             <header class="text-2xl mb-8 font-bold">List Mentor</header>
@@ -498,59 +498,91 @@
                     </div>
                 </section>
                 <!---- chart TANYA harian  ----->
-                <div class="grid grid-cols-12 gap-6">
-                    <div class="col-span-12 shadow-lg p-4">
-                        <div class="!h-[520px]">
-                            <canvas id="myChart-days"
-                                data-chart-tanya-harian="{{ route('getChartDataTanyaHarian') }}">
-                            </canvas>
+                <div class="relative w-full bg-white shadow-lg p-4">
+                    <div class="relative !h-[520px] w-full">
+                        <canvas id="myChart-days"
+                            data-chart-tanya-harian="{{ route('getChartDataTanyaHarian') }}"></canvas>
+
+                        <div id="noDataTanyaHarianMessage" class="text-center text-gray-500 my-4 hidden">
+                            <span class="flex items-center justify-center">Tidak ada data harian pada bulan ini.</span>
                         </div>
-                        <div class="flex justify-center gap-10 mt-4">
-                            <button id="prevMonth"
-                                class="w-10 h-10 flex items-center justify-center bg-[--color-three] rounded-full text-white">
+                    </div>
+                    <div class="flex justify-center gap-10 mt-14">
+                        <button id="prevMonth" class="w-10 h-10 bg-[--color-three] rounded-full text-white hidden">
+                            <div class="flex items-center justify-center">
                                 <i class="fa-solid fa-arrow-left"></i>
-                            </button>
+                            </div>
+                        </button>
 
-                            <span id="monthDisplay" class="mt-2"></span>
+                        <span id="monthDisplay" class="mt-2"></span>
 
-                            <button id="nextMonth"
-                                class="w-10 h-10 flex items-center justify-center bg-[--color-three] rounded-full text-white">
+                        <button id="nextMonth" class="w-10 h-10 bg-[--color-three] rounded-full text-white hidden">
+                            <div class="flex items-center justify-center">
                                 <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
+                            </div>
+                        </button>
                     </div>
                 </div>
 
                 <!---- chart TANYA bulanan  ----->
-                <div class="grid grid-cols-12 gap-6 mt-20">
-                    <div class="col-span-12 xl:col-span-6 bg-white shadow-lg p-4">
-
+                <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[300px] gap-6 mt-20">
+                    <div class="bg-white shadow-lg p-4 relative">
                         <canvas id="myChart-months"
                             data-chart-tanya-bulanan="{{ route('getChartDataTanyaBulanan') }}">
                         </canvas>
+                        <div id="noDataTanyaBulananMessage" class="text-center text-gray-500 hidden">
+                            <span class="flex items-center justify-center">Tidak ada data bulanan pada
+                                tahun ini.</span>
+                        </div>
 
                         <div class="flex justify-center gap-10 mt-4">
                             <button id="prevYear"
-                                class="w-10 h-10 flex items-center justify-center bg-[--color-three] rounded-full text-white">
-                                <i class="fa-solid fa-arrow-left"></i>
+                                class="w-10 h-10 bg-[--color-three] rounded-full text-white hidden">
+                                <div class="flex items-center justify-center">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                </div>
                             </button>
 
                             <span id="yearDisplay" class="mt-2"></span>
 
                             <button id="nextYear"
-                                class="w-10 h-10 flex items-center justify-center bg-[--color-three] rounded-full text-white">
-                                <i class="fa-solid fa-arrow-right"></i>
+                                class="w-10 h-10 bg-[--color-three] rounded-full text-white hidden">
+                                <div class="flex items-center justify-center">
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </div>
                             </button>
                         </div>
                     </div>
 
                     <!---- chart TANYA tahunan  ----->
-                    <div class="col-span-12 xl:col-span-6 bg-white shadow-lg p-4">
-                        <canvas id="myChart-years"
-                            data-chart-tanya-tahunan="{{ route('getChartDataTanyaTahunan') }}">
-                        </canvas>
+                    <div class="bg-white shadow-lg p-4 w-full relative">
+                        <canvas id="myChart-years" class=""
+                            data-chart-tanya-tahunan="{{ route('getChartDataTanyaTahunan') }}"></canvas>
+                        <div id="noDataTanyaTahunanMessage" class="text-gray-500 hidden">
+                            <span class="flex items-center justify-center">Tidak ada data pada tahun ini.</span>
+                        </div>
+
+                        <div class="flex justify-center gap-10 mt-4">
+                            <button id="prevYearButton"
+                                class="w-10 h-10 bg-[--color-three] rounded-full text-white hidden">
+                                <div class="flex items-center justify-center">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                </div>
+                            </button>
+
+                            <span id="displayYear" class="mt-2"></span>
+
+                            <button id="nextYearButton"
+                                class="w-10 h-10 bg-[--color-three] rounded-full text-white hidden">
+                                <div class="flex items-center justify-center">
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </div>
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+
                 <!---- list mentor active & table laporan pengguna TANYA terbanyak  ----->
                 <section>
                     <div class="grid grid-cols-12 gap-6 rounded-lg mt-20">
@@ -560,52 +592,60 @@
                             <span
                                 class="text-[--color-default] font-bold text-2xl">{{ $countDataMentor->count() }}</span>
                         </div>
-                        <div class="overflow-x-auto col-span-12 xl:col-span-8 bg-white shadow-lg p-6">
+                        <div class="col-span-12 xl:col-span-8 bg-white shadow-lg p-6">
                             <div class="flex justify-between border-b-[1px] border-gray-400">
                                 <span class="">Laporan Pengguna Tanya Terbanyak</span>
                                 <span>{{ $countDataTanyaAll->count() }}</span>
                             </div>
-                            <table class="table mt-4">
-                                <!-- head -->
-                                <thead>
-                                    <tr>
-                                        <th class="th-question">No</th>
-                                        <th class="th-question">Nama Lengkap</th>
-                                        <th class="th-question">Email</th>
-                                        <th class="th-question">No.Hp</th>
-                                        <th class="th-question">Kelas</th>
-                                        <th class="th-question">Asal Sekolah</th>
-                                        <th class="th-question">Total BerTANYA</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($sortedSiswa as $value)
-                                        <tr>
-                                            <td class="td-question !text-center">
-                                                {{ $loop->iteration === 1 ? '1st' : ($loop->iteration === 2 ? '2nd' : ($loop->iteration === 3 ? '3rd' : $loop->iteration)) }}
-                                            </td>
-                                            <td class="td-question">
-                                                {{ $value->Profile->nama_lengkap }}
-                                            </td>
-                                            <td class="td-question">
-                                                {{ $value->email }}
-                                            </td>
-                                            <td class="td-question !text-center">
-                                                {{ $value->no_hp }}
-                                            </td>
-                                            <td class="td-question !text-center">
-                                                {{ $value->Profile->kelas }}
-                                            </td>
-                                            <td class="td-question">
-                                                {{ $value->Profile->sekolah }}
-                                            </td>
-                                            <td class="td-question !text-center">
-                                                {{ $value->jumlah_tanya }}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            @if ($sortedSiswa->isNotEmpty())
+                                <div class="overflow-x-auto">
+                                    <table class="table mt-4 ">
+                                        <!-- head -->
+                                        <thead>
+                                            <tr>
+                                                <th class="th-question">No</th>
+                                                <th class="th-question">Nama Lengkap</th>
+                                                <th class="th-question">Email</th>
+                                                <th class="th-question">No.Hp</th>
+                                                <th class="th-question">Kelas</th>
+                                                <th class="th-question">Asal Sekolah</th>
+                                                <th class="th-question">Total BerTANYA</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($sortedSiswa as $value)
+                                                <tr>
+                                                    <td class="td-question !text-center">
+                                                        {{ $loop->iteration === 1 ? '1st' : ($loop->iteration === 2 ? '2nd' : ($loop->iteration === 3 ? '3rd' : $loop->iteration)) }}
+                                                    </td>
+                                                    <td class="td-question">
+                                                        {{ $value->Profile->nama_lengkap ?? '' }}
+                                                    </td>
+                                                    <td class="td-question">
+                                                        {{ $value->email ?? '' }}
+                                                    </td>
+                                                    <td class="td-question !text-center">
+                                                        {{ $value->no_hp ?? '' }}
+                                                    </td>
+                                                    <td class="td-question !text-center">
+                                                        {{ $value->Profile->Kelas->kelas ?? '' }}
+                                                    </td>
+                                                    <td class="td-question">
+                                                        {{ $value->Profile->sekolah ?? '' }}
+                                                    </td>
+                                                    <td class="td-question !text-center">
+                                                        {{ $value->jumlah_tanya ?? '' }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @else
+                                <div class="h-full flex justify-center items-center">
+                                    <span>Tidak ada riwayat</span>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </section>

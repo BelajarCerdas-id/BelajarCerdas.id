@@ -34,6 +34,8 @@ function fetchPaginateHistoryTransactionWaiting(page = 1) {
                         second: '2-digit',
                     });
 
+                    const renewCheckout = item.renewCheckout;
+                    const csrfToken = $('meta[name="csrf-token"]').attr('content');
                     const createdAt = item.created_at ? `${formatDate(item.created_at)}, ${timeFormatter.format(new Date(item.created_at))}` : 'Tanggal tidak tersedia';
 
                     const card = `
@@ -82,6 +84,14 @@ function fetchPaginateHistoryTransactionWaiting(page = 1) {
                                         </span>
                                     </div>
                                 </div>
+                                <form id="form-pembelian-${item.id}" action="${renewCheckout}" method="POST">
+                                    <input type="hidden" name="_token" value="${csrfToken}">
+                                    <button type="button"
+                                        class="btn-beli-waiting bg-[#4189e0] hover:bg-blue-500 text-white font-bold p-2 rounded-lg shadow-md transition-all text-sm my-4"
+                                        data-id="${item.id}">
+                                        Beli Sekarang
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -93,8 +103,9 @@ function fetchPaginateHistoryTransactionWaiting(page = 1) {
                 $('.pagination-container-transaction-waiting').html(response.links);
                 $('.pagination-container-transaction-waiting').show();
                 $('.noDataMessageWaiting').hide();
-                bindTransactionPagination();
+                bindTransactionPaginationWaiting();
                 bindDetailToggleWaiting(); // agar tombol "Lihat Detail" aktif
+                binFetchingCheckout();
             } else {
                 $('.pagination-container-transaction-waiting').hide();
                 $('.noDataMessageWaiting').show();
@@ -103,7 +114,7 @@ function fetchPaginateHistoryTransactionWaiting(page = 1) {
     });
 }
 
-function bindTransactionPagination() {
+function bindTransactionPaginationWaiting() {
     $('.pagination-container-transaction-waiting').off('click', 'a').on('click', 'a', function (e) {
         e.preventDefault();
         const page = new URL(this.href).searchParams.get('page');
@@ -136,3 +147,44 @@ function bindDetailToggleWaiting() {
         });
     });
 }
+
+function binFetchingCheckout() {
+    document.querySelectorAll('.btn-beli-waiting').forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.dataset.id;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            fetch(`/checkout-pending/${id}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken
+                    },
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.snap_token) {
+                        window.snap.pay(data.snap_token, {
+                            onSuccess: function(result) {
+                                // console.log(result);
+                                location.reload();
+                            },
+                            onPending: function(result) {
+                                // console.log(result);
+                            },
+                            onError: function(result) {
+                                // console.log(result);
+                            },
+                        });
+                    } else {
+                        alert("Gagal mendapatkan snap token.");
+                        console.error(data);
+                    }
+                })
+                .catch(error => {
+                    alert("Terjadi kesalahan.");
+                    console.error(error);
+                });
+        });
+    });
+    }
