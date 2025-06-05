@@ -1,7 +1,7 @@
 @include('components/sidebar_beranda')
 @extends('components/sidebar_beranda_mobile')
 
-@if (session('user')->status === 'Admin Sales')
+@if (Auth::user()->role === 'Admin Sales')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
         <div class="content-beranda">
             <main>
@@ -9,12 +9,12 @@
                     <form action="{{ route('bulk-upload-civitas-sekolah.store') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
-                        <div class="hidden">
+                        {{-- <div class="hidden">
                             <input type="text" name="nama_lengkap" value="{{ session('user')->nama_lengkap }}">
-                            <input type="text" name="status" value="{{ session('user')->status }}">
+                            <input type="text" name="status" value="{{ Auth::user()->role }}">
                             <input type="text" name="jenis_file" value="Excel">
                             <input type="text" name="status_template" value="BulkUpload_civitas_sekolah">
-                        </div>
+                        </div> --}}
                         <div class="w-full">
                             <div class="w-full h-auto">
                                 <span class="text-sm">Template Civitas Sekolah<sup

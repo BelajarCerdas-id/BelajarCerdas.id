@@ -9,10 +9,12 @@ function paginatePaymentTanyaMentor(page = 1) {
 
                 if (data.data.length > 0) {
                     $.each(data.data, function (index, item) {
+                        const formatCurrency = (number) =>
+                        'Rp.' + new Intl.NumberFormat('id-ID').format(number);
 
                         let statusPayment = '';
 
-                        if (item.total_ammount < 50000) {
+                        if (item.total_amount < 50000) {
                             statusPayment = `-`;
 
                         } else if(item.status_payment === 'Unpaid') {
@@ -33,7 +35,7 @@ function paginatePaymentTanyaMentor(page = 1) {
 
                         let buttonPayment = '';
 
-                        if(item.status_payment === 'Paid' || item.total_ammount < 50000) {
+                        if(item.status_payment === 'Paid' || item.total_amount < 50000) {
                             buttonPayment = `-`;
 
                         } else {
@@ -50,17 +52,11 @@ function paginatePaymentTanyaMentor(page = 1) {
                         $('#tbodyPaymentTanyaMentor').append(`
                             <tr>
                                 <td class="border text-center">${index + 1}</td>
-                                <td class="border text-center">${item.mentor?.mentor_profiles?.nama_lengkap}</td>
-                                <td class="border text-center">-</td>
-                                <td class="border text-center">${item.total_ammount}</td>
+                                <td class="border text-center text-xs">${item.mentor?.mentor_profiles?.nama_lengkap}</td>
+                                <td class="border text-center">${formatCurrency(item.total_amount)}</td>
                                 <td class="border text-center">${statusPayment}</td>
                                 <td class="border text-center">
                                     <a href="${paymentTanyaMentorUpdate}" class="btn-payment-tanya-mentor" data-id="${item.id}">${buttonPayment}</a>
-                                </td>
-                                <td class="border text-center">
-                                    <a href="${paymentTanyaMentorUpdate}" class="text-[#4189E0] font-bold text-xs">
-                                        Lihat Detail
-                                    </a>
                                 </td>
                             </tr>
                         `);

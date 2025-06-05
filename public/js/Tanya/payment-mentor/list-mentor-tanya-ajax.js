@@ -49,7 +49,7 @@ $(document).ready(function () {
     paginateListMentorTanya();
 
     // Tangani klik tombol "Lihat Detail"
-    $(document).on('click', '.btn-detail-mentor', function (e) {;
+    $(document).on('click', '.btn-detail-mentor', function (e) {
         const mentorId = $(this).data('id');
         currentMentorId = mentorId; // <-- Tambahkan ini!
         paginateQuestionVerificationMentor(1, mentorId); // Panggil AJAX untuk daftar soal

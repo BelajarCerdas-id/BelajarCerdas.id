@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
 use App\Models\englishZoneSoal;
 use App\Models\englishZoneMateri;
 use App\Models\englishZoneJawaban;
+use App\Models\StudentProfiles;
+use App\Models\MentorPayments;
+use App\Models\MentorProfiles;
 use App\Models\Transactions;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Container\Attributes\DB;
@@ -79,7 +82,6 @@ class webController extends Controller
         $getData = userAccount::where('status', 'Mentor')->get();
 
         $dataAccept = Tanya::onlyTrashed()->whereIn('email_mentor', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email_mentor');
-        $validatedMentorAccepted = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email');
 
         $countData = [];
 
@@ -87,57 +89,15 @@ class webController extends Controller
             return [$item->email => Tanya::onlyTrashed()->where('email_mentor', $item->email)->count()];
         });
 
-        $data = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email'); // Ambil semua data yang statusnya diterima
-
-        $totalPaidCount = 0;
-        $totalUnpaidCount = 0;
-        $totalWaitingUnpaidCount = 0;
-        $paidBatchCount = [];
-        $unpaidBatchCount = [];
-        $waitingBatchCount = [];
-
-        foreach ($data as $email => $batchUsers) {
-            // Hitung berapa banyak batch yang perlu dibuat
-            $batchCount = ceil($batchUsers->count() / 3);  // Setiap batch berisi maksimal 3 data
-
-            // Loop untuk setiap batch
-            for ($i = 0; $i < $batchCount; $i++) {
-                // Ambil batch 3 data per iterasi
-                $currentBatch = $batchUsers->slice($i * 3, 3);  // Ambil 3 data untuk batch saat ini
-
-                // Cek apakah semua data dalam batch ini sudah berstatus 'paid' dan 'YA'
-                $allPaid = $currentBatch->every(function ($item) {
-                    return $item->payment_status === 'paid' && $item->kode_payment === 'YA';
-                });
-
-                // Tentukan status batch ('paid' atau 'pay')
-                $batchStatus = $allPaid ? 'paid' : 'pay';
-
-                // keseluruhan data payment (beranda XR)
-                if ($batchStatus === 'paid') {
-                    $totalPaidCount++;
-                }elseif($batchStatus === 'pay' && $currentBatch->count() == 3) {
-                    $totalUnpaidCount++;
-                }elseif($currentBatch->count() < 3) {
-                    $totalWaitingUnpaidCount++;
-                }
-
-                // Data payment masing - masing user berdasarkan email user (beranda XR)
-                // Increment sesuai status batch
-                if ($batchStatus === 'paid') {
-                    $paidBatchCount[$email] = isset($paidBatchCount[$email]) ? $paidBatchCount[$email] + 1 : 1;
-                } elseif ($batchStatus === 'pay' && $currentBatch->count() == 3) {
-                    $unpaidBatchCount[$email] = isset($unpaidBatchCount[$email]) ? $unpaidBatchCount[$email] + 1 : 1;
-                }elseif($currentBatch->count() < 3) {
-                    $waitingBatchCount[$email] = isset($waitingBatchCount[$email]) ? $waitingBatchCount[$email] + 1 : 1;
-                }
-            }
-        }
-
         // FOR BERANDA ADMINISTRATOR
+        $getMentor = UserAccount::where('role', 'Mentor')->get();
+
         $getDataSiswa = UserAccount::where('role', 'Siswa')->get();
+
         $getDataMurid = userAccount::where('role', 'Murid')->get();
-        $countDataMentor = userAccount::where('role', 'Mentor')->get();
+
+        $countDataMentor = MentorProfiles::where('status_mentor', 'Diterima')->get();
+
         $groupedTanya  = Tanya::onlyTrashed()->get()->groupBy('email');
 
         $getTanya = $groupedTanya->map(function ($item) {
@@ -309,181 +269,18 @@ class webController extends Controller
                 'button' => 'CATATAN'
             ],
         ];
-        return view('beranda', compact('mapelK13', 'mapelMerdeka', 'packetSiswa', 'getTanyaTL', 'getData', 'countData', 'dataAccept',  'validatedMentorAccepted', 'paidBatchCount', 'unpaidBatchCount', 'waitingBatchCount', 'totalPaidCount', 'totalUnpaidCount', 'totalWaitingUnpaidCount', 'getDataSiswa', 'getDataMurid', 'getTanya', 'countSiswaTanya', 'getSiswa', 'sortedSiswa', 'countDataTanyaAll', 'countDataMentor'));
-    }
-
-    public function laporan()
-    {
-        // Controller laporan Team Leader
-        // Mengambil data mentor yang berstatus 'Mentor'
-        $getData = userAccount::where('status', 'Mentor')->get();
-
-
-        // // Mengambil jumlah Tanya berdasarkan email_mentor yang sesuai dengan email mentor
-        $countData = [];
-        foreach ($getData as $item) {
-            // Mengambil jumlah Tanya untuk setiap mentor berdasarkan email_mentor
-            $countData[$item->email] = Tanya::onlyTrashed()->where('email_mentor', $item->email)->count();
-        }
-
-        // Controller laporan Mentor
-        // pluck() akan mengambil semua email dari koleksi getData
-        // groupBy() akan mengambil dan mengelompokkan semua data berdasarkan email_mentor
-        $dataAccept = Tanya::onlyTrashed()->whereIn('email_mentor', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email_mentor'); // Mengambil semua pertanyaan yang email_mentornya ada di antara daftar email mentor
-        $dataReject = Tanya::onlyTrashed()->whereIn('email_mentor', $getData->pluck('email'))->where('status', 'Ditolak')->get()->groupBy('email_mentor');
-
-        $validatedMentorAccepted = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email');
-        $validatedMentorRejected = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Ditolak')->get()->groupBy('email');
-
-
-        return view('laporan', compact( 'getData', 'countData', 'dataAccept', 'dataReject', 'validatedMentorAccepted', 'validatedMentorRejected'));
-    }
-
-
-
-    public function viewLaporan(string $id)
-    {
-        // Ambil data mentor berdasarkan ID
-        $mentor = userAccount::find($id);  // Mengambil data mentor berdasarkan ID yang dikirimkan
-
-        // Ambil semua pertanyaan yang di-trashed berdasarkan email_mentor dari mentor yang dipilih
-        $getLaporan = Tanya::onlyTrashed()->where('email_mentor', $mentor->email)->where('status', 'Diterima')->orderBy('created_at', 'desc')->paginate(10);
-        $dataAccept = Tanya::onlyTrashed()->where('email_mentor', $mentor->email)->where('status', 'Diterima')->get();
-        $dataReject = Tanya::onlyTrashed()->where('email_mentor', $mentor->email)->where('status', 'Ditolak')->get();
-
-        $validatedMentorAccepted = Star::where('email', $mentor->email)->where('status', 'Diterima')->get();
-        $validatedMentorRejected = Star::where('email', $mentor->email)->where('status', 'Ditolak')->get();
-
-        // kalau object nya menggunakan paginate, tidak bisa menggunakan method pluck langsung, harus seperti ini
-        $laporanItems = $getLaporan->items();
-        $statusStar = Star::whereIn('id_tanya', collect($laporanItems)->pluck('id'))->get()->keyBy('id_tanya');; // pluck('id') akan menghasilkan sebuah array yang hanya berisi nilai dari kolom id tersebut.
-
-        // $data = Star::where('status', 'Diterima')->where('email', $mentor->email)->get(); // Ambil semua data yang statusnya diterima
-
-
-        // $tableData = [];
-        // $batchCount = ceil($data->count() / 3); // Menghitung berapa banyak batch yang perlu dibuat
-
-        // $paidBatchCount = 0;
-        // $unpaidBatchCount = 0;
-        // $waitingBatchCount = 0;
-
-        // // Loop untuk mengelompokkan data berdasarkan batch
-        // for ($i = 0; $i < $batchCount; $i++) {
-        //     $batchUsers = $data->slice($i * 3, 3); // Mengambil 3 data untuk setiap batch
-
-        //       // Cek apakah semua data dalam batch ini sudah berstatus 'paid'
-        //         $allPaid = $batchUsers->every(function ($item) {
-        //             return $item->payment_status === 'paid' && $item->kode_payment === 'YA';
-        //         });
-
-        //         // Tentukan apakah batch ini 'paid' atau 'pay'
-        //         $batchStatus = $allPaid ? 'paid' : 'pay';
-
-        //         // Jika batch ini sudah 'paid', increment counter
-        //         if ($batchStatus === 'paid') {
-        //             $paidBatchCount++;
-        //         }
-
-        //         if ($batchStatus === 'pay' && $batchUsers->count() == 3) {
-        //             $unpaidBatchCount++;
-        //         }
-
-        //         if ($batchStatus === 'pay' && $batchUsers->count() <  3) {
-        //             $waitingBatchCount++;
-        //         }
-
-        //     // Ambil informasi umum yang sama untuk semua entri dalam satu batch
-        //     $nama_mentor = $batchUsers->first()->nama_mentor;
-        //     $email = $batchUsers->first()->email;
-        //     $sekolah = $batchUsers->first()->sekolah;
-        //     $payment_status = $batchUsers->first()->payment_status;
-        //     $kode_payment = $batchUsers->first()->kode_payment;
-
-        //     // Masukkan informasi per batch ke dalam array
-        //     $tableData[] = [
-        //         'batch' => $i + 1, // Menandai batch ke-1, ke-2, dst.
-        //         'count' => $batchUsers->count(), // Ambil data per batch
-        //         'nama_mentor' => $nama_mentor,
-        //         'email' => $email,
-        //         'sekolah' => $sekolah,
-        //         'payment_status' => $payment_status,
-        //         'kode_payment' => $kode_payment,
-        //     ];
-        // }
-
-        $data = Star::where('status', 'Diterima')->where('email', $mentor->email)->paginate(10); // Data dengan pagination
-
-        $tableData = [];
-
-        // Kelompokkan data ke dalam batch dengan ukuran 3
-        $batches = collect($data->items())->chunk(3); // Mengelompokkan data menjadi batch berisi 3 entri
-
-        $paidBatchCount = 0;
-        $unpaidBatchCount = 0;
-        $waitingBatchCount = 0;
-
-        // Loop melalui setiap batch
-        foreach ($batches as $batchIndex => $batchUsers) {
-            // Cek apakah semua data dalam batch ini berstatus 'paid'
-            $allPaid = $batchUsers->every(function ($item) {
-                return $item['payment_status'] === 'paid' && $item['kode_payment'] === 'YA';
-            });
-
-            // Tentukan status batch (paid atau pay)
-            $batchStatus = $allPaid ? 'paid' : 'pay';
-
-            // Hitung batch yang sudah dibayar, belum dibayar, atau menunggu
-            if ($batchStatus === 'paid') {
-                $paidBatchCount++;
-            }
-
-            if ($batchStatus === 'pay' && $batchUsers->count() == 3) {
-                $unpaidBatchCount++;
-            }
-
-            if ($batchStatus === 'pay' && $batchUsers->count() < 3) {
-                $waitingBatchCount++;
-            }
-
-            $nama_mentor = $batchUsers->first()->nama_mentor;
-            $email = $batchUsers->first()->email;
-            $sekolah = $batchUsers->first()->sekolah;
-            $payment_status = $batchUsers->first()->payment_status;
-            $kode_payment = $batchUsers->first()->kode_payment;
-
-            // Ambil informasi umum dari batch
-            // $firstUser = $batchUsers->first();
-            $tableData[] = [
-                'batch' => $batchIndex + 1, // Batch ke-1, ke-2, dst.
-                'count' => $batchUsers->count(),
-                'nama_mentor' => $nama_mentor,
-                'email' => $email,
-                'sekolah' => $sekolah,
-                'payment_status' => $payment_status,
-                'kode_payment' => $kode_payment,
-            ];
-        }
-
-        // Kirimkan data mentor dan laporan ke view
-        return view('viewLaporan', compact( 'getLaporan', 'mentor', 'statusStar', 'dataReject', 'dataAccept', 'validatedMentorAccepted', 'validatedMentorRejected', 'tableData', 'data', 'paidBatchCount', 'unpaidBatchCount', 'waitingBatchCount'));
+        return view('beranda', compact('mapelK13', 'mapelMerdeka', 'packetSiswa', 'getTanyaTL', 'getData', 'countData', 'dataAccept', 'getDataSiswa', 'getDataMurid', 'getTanya', 'countSiswaTanya', 'getSiswa', 'sortedSiswa', 'countDataTanyaAll', 'countDataMentor'));
     }
 
     public function sidebarBeranda()
     {
-        $getData = userAccount::where('status', 'Mentor')->get();
-
-        $dataAccept = Tanya::onlyTrashed()->whereIn('email_mentor', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email_mentor');
-        $validatedMentorAccepted = Star::whereIn('email', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email');
-
-        return view('components/sidebar_beranda', compact( 'getData', 'dataAccept', 'validatedMentorAccepted'));
+        return view('components/sidebar_beranda');
     }
 
     public function sidebarBerandaMobile()
     {
         return view('components/sidebar_beranda');
     }
-
 
     // controller upload soal bobot a - e
     // public function uploadSoal()
@@ -584,7 +381,31 @@ class webController extends Controller
 
     public function historiKoin()
     {
-
         return view('history.histori-koin');
+    }
+
+    public function reportMentor()
+    {
+        // report for mentor
+        $mentors = UserAccount::with('MentorProfiles')->where('role', 'Mentor')->get();
+
+        $mentorIds = $mentors->pluck('id');
+
+        $countDataTanyaMentor = Tanya::onlyTrashed()->whereIn('mentor_id', $mentorIds)->count();
+
+        $countPendapatanTanyaMentor = MentorPayments::whereIn('mentor_id', $mentorIds)->where('status_payment',  'Paid')->sum('total_ammount');
+
+        // Ambil semua kode referral mentor
+        $referralCodes = $mentors->pluck('MentorProfiles.kode_referral');
+
+        // Hitung semua siswa yang memakai referral code mentor
+        $countReferralCodeUserMentor = StudentProfiles::whereIn('mentor_referral_code', $referralCodes)->count();
+
+        return view('report-user.laporan-mentor', compact('countDataTanyaMentor', 'countPendapatanTanyaMentor', 'countReferralCodeUserMentor'));
+    }
+
+    public function batchDetailPaymentMentor($id)
+    {
+        return view('report-user.batch-detail-laporan-mentor', compact('id'));
     }
 }

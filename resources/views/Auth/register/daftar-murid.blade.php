@@ -4,7 +4,7 @@
     <div class="bg-white rounded-xl shadow-md w-full max-w-xl p-6 mx-8">
 
         <!-- Step Indicator -->
-        <div class="flex items-center justify-between mx-8 gap-2">
+        <div class="flex items-center justify-between mx-2 md:mx-8 gap-2">
             <!-- Step 1: Data User -->
             <div class="flex items-center gap-2">
                 <div id="step-indicator-1" class="flex flex-col items-center text-gray-400 font-bold relative">
@@ -63,7 +63,7 @@
                         class="w-8 h-8 border-2 border-gray-300 flex items-center justify-center rounded-full">
                         4
                     </div>
-                    <div id="check-indicator-1" class="hidden">
+                    <div id="check-indicator-4" class="hidden">
                         <span id="check-indicator-4"
                             class="w-8 h-8 bg-green-500 text-white border-2 border-green-500 flex items-center justify-center font-semibold rounded-full">
                             <i class="fa-solid fa-check"></i>
@@ -99,9 +99,11 @@
                 </div>
 
                 <div class="flex flex-col">
-                    <label for="kode_referral" class="mb-2 text-sm mt-8">Kode Referral<sup
-                            class="text-red-500 pl-1">&#42;</sup></label>
-                    <input type="text" name="kode_referral" value="{{ old('kode_referral') }}"
+                    <label for="mentor_referral_code" class="mb-2 text-sm mt-8">
+                        Kode Referral
+                        (Optional)
+                    </label>
+                    <input type="text" name="mentor_referral_code" value="{{ old('mentor_referral_code') }}"
                         class="w-full bg-white shadow-lg h-12 text-sm border-gray-200 border-[2px] outline-none rounded-md px-2
                             focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]"
                         placeholder="Masukkan Kode Referral">
@@ -136,7 +138,7 @@
                         focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]">
                         <option value="" class="hidden">Pilih Fase</option>
                         @foreach ($fase as $item)
-                            <option value="{{ $item->id }}" {{ old('fase') == $item->id ? 'selected' : '' }}>
+                            <option value="{{ $item->id }}" {{ old('fase_id') == $item->id ? 'selected' : '' }}>
                                 {{ $item->nama_fase }}</option>
                         @endforeach
                     </select>
@@ -146,8 +148,7 @@
                     <label for="kelas_id" class="mb-2 text-sm mt-4">Kelas<sup
                             class="text-red-500 pl-1">&#42;</sup></label>
                     <select name="kelas_id" id="id_kelas"
-                        class="form-select w-full bg-white shadow-lg h-12 text-sm border-gray-200 border-[2px] outline-none rounded-md px-2
-                        focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]"
+                        class="bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 opacity-50 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-default"
                         disabled>
                         <option value="" class="hidden">Harap pilih fase</option>
                     </select>
@@ -359,7 +360,7 @@
             const referralCode = urlParams.get('ref');
 
             if (referralCode) {
-                const referralInput = document.querySelector('input[name="kode_referral"]');
+                const referralInput = document.querySelector('input[name="mentor_referral_code"]');
                 if (referralInput) {
                     referralInput.value = referralCode;
                 }
@@ -729,13 +730,9 @@
         });
     </script>
 
-
-
-
     <script>
         $(document).ready(function() {
-            var oldKelas = "{{ old('kelas') }}" // Ambil kelas yang dipilih jika ada
-
+            var oldKelas = "{{ old('kelas_id') }}"; // benar sesuai field
             var selectKelas = document.getElementById('id_kelas');
 
             $('#id_fase').on('change', function() {
@@ -746,20 +743,17 @@
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            selectKelas.disabled =
-                                false; // untuk menonaktifkan disabled pada select kelas ketika fase sudah dipilih
+                            selectKelas.disabled = false;
                             selectKelas.classList.replace('cursor-default', 'cursor-pointer');
                             selectKelas.classList.replace('opacity-50', 'opacity-100');
                             $('#id_kelas').empty();
                             $('#id_kelas').append(
-                                '<option value="" class="hidden">Pilih Kelas</option>'
-                            );
+                                '<option value="" class="hidden">Pilih Kelas</option>');
                             $.each(data, function(key, kelas) {
                                 $('#id_kelas').append(
                                     '<option value="' + kelas.id + '"' +
                                     (oldKelas == kelas.id ? ' selected' : '') +
-                                    '>' +
-                                    kelas.kelas + '</option>'
+                                    '>' + kelas.kelas + '</option>'
                                 );
                             });
 
@@ -773,8 +767,8 @@
                 }
             });
 
-            if ("{{ old('fase') }}") {
-                $('#id_fase').val("{{ old('fase') }}").trigger('change');
+            if ("{{ old('fase_id') }}") {
+                $('#id_fase').val("{{ old('fase_id') }}").trigger('change');
             }
         });
     </script>

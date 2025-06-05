@@ -13,6 +13,7 @@ class Bab extends Model
         'user_id',
         'nama_bab',
         'kode',
+        'kelas_id',
         'mapel_id',
         'fase_id',
         'kurikulum_id',
@@ -22,6 +23,16 @@ class Bab extends Model
     public function BabFeatureStatuses()
     {
         return $this->hasMany(BabFeatureStatus::class, 'bab_id');
+    }
+
+    public function SubBab()
+    {
+        return $this->hasOne(SubBab::class, 'bab_id');
+    }
+
+    public function Kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
     public function Mapel()

@@ -15,7 +15,7 @@ function previewExcel(event, target) {
         excelPreviewContainer.classList.remove('hidden');
 
         // Path logo Excel
-        excelLogo.src = "image/logo-excel.png";
+        excelLogo.src = "/image/logo-excel.png";
         textPages.innerHTML = "XLSX";
     } else {
         alert('Please upload a valid Excel file.');

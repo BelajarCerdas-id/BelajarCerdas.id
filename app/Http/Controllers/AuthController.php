@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Crud;
 use App\Models\Fase;
-use App\Models\registerOtp;
+use App\Models\RegisterOtp;
 use App\Models\userAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,20 +33,10 @@ class AuthController extends Controller
         // Use a raw SQL query to fetch the user
         $user = userAccount::where('email', $request->email)->first();
 
-        // Check if user exists and verify password
-        // if ($user && $user->password === $request->password) {
-        //     // Store user data in session
-        //     Session::put('user', $user);
-
-        //     // Redirect to the intended page
-        //     return redirect('/beranda');
-        // } else {
-        //     return redirect()->back()->with('alert-error-login', 'Akun tidak terdaftar, silahkan masukkan data yang valid!.');
-        // }
         if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
+            $request->session()->regenerate();
 
-        return redirect()->intended('/beranda');
+            return redirect()->intended('/beranda');
         }
 
         return redirect()->back()->with('alert-error-login', 'Akun tidak terdaftar, silahkan masukkan data yang valid!.');
@@ -78,7 +68,7 @@ class AuthController extends Controller
         $inputEmail = $request->email;
 
         if ($step == 4) {
-            $otpData = registerOtp::where('email', $inputEmail)->orderByDesc('created_at')->first();
+            $otpData = RegisterOtp::where('email', $inputEmail)->orderByDesc('created_at')->first();
 
             if(!$inputOTP) {
                 return back()->withInput()->with([
@@ -102,14 +92,14 @@ class AuthController extends Controller
             }
 
              // Cek apakah OTP sudah kadaluwarsa
-            if($inputOTP == $otpData->otp){
-                if ($otpData->expires_at < now()) {
-                    return back()->withInput()->with([
-                        'otp-error' => 'Kode OTP telah kadaluarsa.',
-                        'step' => 4,
-                    ]);
-                }
-            }
+            // if($inputOTP == $otpData->otp){
+            //     if ($otpData->expires_at < now()) {
+            //         return back()->withInput()->with([
+            //             'otp-error' => 'Kode OTP telah kadaluarsa.',
+            //             'step' => 4,
+            //         ]);
+            //     }
+            // }
 
             $user = userAccount::create([
                 'email' => $request->email,
@@ -126,11 +116,15 @@ class AuthController extends Controller
                 'sekolah' => $request->sekolah,
                 'fase_id' => $request->fase_id,
                 'kelas_id' => $request->kelas_id,
+                'mentor_referral_code' => $request->mentor_referral_code,
             ]);
 
-            $otpData->delete();
+            $otpData->update([
+                'status_otp' => 'Verified',
+            ]);
 
-            return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login.');
+            Auth::login($user);
+            return redirect()->route('beranda')->with('success', 'Registrasi berhasil! Silakan login.');
         }
         // Jika bukan step 4, bisa redirect atau beri pesan error
         return redirect()->back()->with('error', 'Langkah registrasi tidak valid.');
@@ -145,7 +139,7 @@ class AuthController extends Controller
         $kodeReferral = rand('100000', '999999');
 
         if ($step == 4) {
-            $otpData = registerOtp::where('email', $inputEmail)->orderByDesc('created_at')->first();
+            $otpData = RegisterOtp::where('email', $inputEmail)->orderByDesc('created_at')->first();
 
             if(!$inputOTP) {
                 return back()->withInput()->with([
@@ -169,14 +163,14 @@ class AuthController extends Controller
             }
 
              // Cek apakah OTP sudah kadaluwarsa
-            if($inputOTP == $otpData->otp){
-                if ($otpData->expires_at < now()) {
-                    return back()->withInput()->with([
-                        'otp-error' => 'Kode OTP telah kadaluarsa.',
-                        'step' => 4,
-                    ]);
-                }
-            }
+            // if($inputOTP == $otpData->otp){
+            //     if ($otpData->expires_at < now()) {
+            //         return back()->withInput()->with([
+            //             'otp-error' => 'Kode OTP telah kadaluarsa.',
+            //             'step' => 4,
+            //         ]);
+            //     }
+            // }
             $user = userAccount::create([
                 'no_hp' => $request->no_hp,
                 'role' => 'Mentor',
@@ -194,9 +188,12 @@ class AuthController extends Controller
                 'kode_referral' => $kodeReferral,
             ]);
 
-            $otpData->delete();
+            $otpData->update([
+                'status_otp' => 'Verified',
+            ]);
 
-            return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login.');
+            // return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login.');
+            return redirect()->back()->with('success-register-mentor', 'Terimakasih telah mendaftar sebagai Mitra Cerdas, Tim kami akan segera menghubungi untuk tahap selanjutnya.');
         }
 
          // Jika bukan step 4, bisa redirect atau beri pesan error
@@ -214,12 +211,13 @@ class AuthController extends Controller
 
         if($step == 3) {
             $rules = [
-                'email' => 'required|email|unique:student_profiles,personal_email',
+                'email' => 'required|email|unique:student_profiles,personal_email|regex:/^[a-zA-z0-9._%+-]+@gmail\.com$/',
                 'password' => 'required|min:8',
             ];
             $messages = [
                 'email.required' => 'Email harus diisi.',
                 'email.email' => 'Format email tidak valid.',
+                'email.regex' => 'Format email tidak valid.',
                 'email.unique' => 'Email sudah terdaftar.',
                 'password' => 'Password harus diisi.',
                 'password.min' => 'Password minimal 8 karakter.',
@@ -236,7 +234,7 @@ class AuthController extends Controller
         }
 
         // Cek apakah user minta OTP terlalu cepat
-        $lastOtp = registerOtp::where('email', $email)->latest()->first();
+        $lastOtp = RegisterOtp::where('email', $email)->latest()->first();
 
         // if ($lastOtp && $lastOtp->created_at->diffInSeconds(now()) < 60) {
         //     return response()->json(['message' => 'Tunggu 1 menit sebelum minta OTP lagi.'], 429);
@@ -245,10 +243,9 @@ class AuthController extends Controller
         $otp = rand(100000, 999999);
 
         // Simpan OTP ke database
-        registerOtp::create([
+        RegisterOtp::create([
             'email' => $email,
             'otp' => $otp,
-            'expires_at' => now()->addMinutes(1),
         ]);
 
         // Kirim email
@@ -263,7 +260,7 @@ class AuthController extends Controller
         $email = $request->input('personal_email');
 
         // Cek apakah user minta OTP terlalu cepat
-        $lastOtp = registerOtp::where('email', $email)->latest()->first();
+        $lastOtp = RegisterOtp::where('email', $email)->latest()->first();
 
         // if ($lastOtp && $lastOtp->created_at->diffInSeconds(now()) < 60) {
         //     return response()->json(['message' => 'Tunggu 1 menit sebelum minta OTP lagi.'], 429);
@@ -272,10 +269,9 @@ class AuthController extends Controller
         $otp = rand(100000, 999999);
 
         // Simpan OTP ke database
-        registerOtp::create([
+        RegisterOtp::create([
             'email' => $email,
             'otp' => $otp,
-            'expires_at' => now()->addMinutes(1),
         ]);
 
         // Kirim email
@@ -343,7 +339,7 @@ class AuthController extends Controller
             $rules = [
                 'nama_lengkap' => 'required|string|max:255',
                 'no_hp' => 'required|numeric|unique:user_accounts,no_hp|regex:/^08\d{9,11}$/',
-                'personal_email' => 'required|email|unique:student_profiles,personal_email',
+                'personal_email' => 'required|email|unique:student_profiles,personal_email|regex:/^[a-zA-z0-9._%+-]+@gmail\.com$/',
             ];
             $messages = [
                 'nama_lengkap.required' => 'Nama tidak boleh kosong!',
@@ -354,6 +350,7 @@ class AuthController extends Controller
                 'personal_email.required' => 'Email harus diisi!',
                 'personal_email.email' => 'Format email tidak valid!',
                 'personal_email.unique' => 'Email sudah terdaftar!',
+                'personal_email.regex' => 'Format email tidak valid!',
             ];
         } elseif($step == 2) {
             $rules = [
@@ -384,7 +381,11 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        Session::flush();
+        Auth::logout(); // Ini akan meng-logout user secara resmi dari sistem auth
+
+        $request->session()->invalidate(); // menghapus semua sesi lama
+        $request->session()->regenerateToken(); // mencegah CSRF reuse dari sesi lama
+
         return redirect('/');
     }
 }

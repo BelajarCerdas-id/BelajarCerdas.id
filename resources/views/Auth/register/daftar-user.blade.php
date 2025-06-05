@@ -5,16 +5,16 @@
     <div class="min-h-screen flex items-center justify-center mx-8">
         <div class="text-center">
             <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-10">Daftar Sebagai... .</h1>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[400px] md:max-w-3xl h-[900px] md:h-[470px] mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[300px] md:max-w-3xl h-[730px] md:h-[470px] mx-auto">
                 <!-- Kartu Murid -->
                 <a href="{{ route('daftar.siswa') }}"
                     class="bg-white rounded-xl border-[8px] border-[#ffE588] p-6 hover:scale-[1.02] transition-transform shadow-md relative">
-                    <h2 class="text-[#ffE588] text-5xl font-bold mb-2 text-center">Murid</h2>
+                    <h2 class="text-[#ffE588] text-5xl font-bold mb-2 text-center">Siswa</h2>
                     <p class="text-[#ffE588] text-center text-lg mb-4 font-bold mt-8">
                         Nikmati pengalaman belajar yang seru, praktis, dan penuh tantangan baru!
                     </p>
                     <img src="{{ asset('image/register/anak.png') }}" alt="Murid"
-                        class="w-80 mx-auto absolute bottom-0 md:right-2 right-8" />
+                        class="w-60 md:w-80 mx-auto absolute bottom-0 md:right-2 right-6" />
                 </a>
 
                 <!-- Kartu Guru -->
@@ -25,7 +25,7 @@
                         Berbagi ilmu, membangun masa depan, sambil menambah pemasukan.
                     </p>
                     <img src="{{ asset('image/register/mentor.png') }}" alt="Guru"
-                        class="w-80 mx-auto absolute bottom-0 md:right-2" />
+                        class="w-52 md:w-80 mx-auto absolute bottom-0 md:right-2 right-10" />
                 </a>
             </div>
         </div>

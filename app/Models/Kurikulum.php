@@ -25,6 +25,11 @@ class Kurikulum extends Model
         return $this->hasOne(Fase::class, 'kurikulum_id');
     }
 
+    public function Kelas()
+    {
+        return $this->hasOne(Kelas::class, 'kurikulum_id');
+    }
+
     public function Mapel()
     {
         return $this->hasOne(Mapel::class, 'kurikulum_id');
@@ -32,6 +37,11 @@ class Kurikulum extends Model
 
     public function Bab()
     {
-        return $this->hasOne(Bab::class, 'mapel_id');
+        return $this->hasOne(Bab::class, 'kurikulum_id');
+    }
+
+    public function SubBab()
+    {
+        return $this->hasOne(SubBab::class, 'kurikulum_id');
     }
 }

@@ -1,3 +1,86 @@
+// FUNCTION ADD CONTENT STUDENT (BELUM DIJAWAB)
+function fetchDataTanyaUnAnswered() {
+    $.ajax({
+        url: '/student/history-unanswered',
+        method: 'GET',
+        success: function (response) {
+            const container = $('#cardUnAnswer');
+            container.empty();
+
+            if (response.data && response.data.length > 0) {
+                response.data.forEach(item => {
+                    const formatDate = (dateString) => {
+                        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+                        const date = new Date(dateString);
+                        const dayName = days[date.getDay()];
+                        const day = date.getDate();
+                        const monthName = months[date.getMonth()];
+                        const year = date.getFullYear();
+
+                        return `${dayName}, ${day}-${monthName}-${year}`;
+                    };
+
+                    const timeFormatter = new Intl.DateTimeFormat('id-ID', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                    });
+
+                    const createdAt = item.created_at ? `${formatDate(item.created_at)}, ${timeFormatter.format(new Date(item.created_at))}` : 'Tanggal tidak tersedia';
+
+                    let imageSection = '';
+
+                    if (item.image_tanya) {
+                        imageSection = `
+                            <div class="w-[60px] h-[75px]">
+                                <img src="/images_tanya/${item.image_tanya}"
+                                alt="" class="h-full w-full">
+                            </div>
+                        `;
+                    } else {
+                        imageSection = `
+                            <div class="w-[60px] h-[85px] flex items-center text-xs bg-white shadow-md rounded-md">
+                                <span class="text-center w-full">No <br>Image</span>
+                            </div>
+                        `;
+                    }
+
+                    const cardUnAnswer = `
+                        <div class="flex items-center justify-between mt-6 p-4 rounded-lg">
+                            <div class="flex items-center gap-8 leading-8">
+                                ${imageSection}
+                                <div class="flex flex-col justify-center">
+                                    <span class="text-xs">${item.kelas.kelas}</span>
+                                    <span class="text-sm">${item.mapel.mata_pelajaran}</span>
+                                    <span class="text-sm font-bold">${item.bab.nama_bab}</span>
+                                <div class="">
+                                    <i class="fa-solid fa-clock text-gray-400"></i>
+                                    <span
+                                        class="text-xs">${createdAt}</span>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.append(cardUnAnswer);
+                    $('#emptyMessageTanyaHarianBelumTerjawab').hide();
+                });
+            } else {
+                $('#emptyMessageTanyaHarianBelumTerjawab').show();
+            }
+        },
+        error: function(err) {
+            console.error(err);
+        }
+    });
+}
+
+$(document).ready(() => {
+    fetchDataTanyaUnAnswered();
+});
+
 // FUNCTION ADD CONTENT STUDENT (DITERIMA)
 function fetchDataTanyaAnswered() {
     $.ajax({
@@ -6,7 +89,6 @@ function fetchDataTanyaAnswered() {
         success: function (response) {
             const container = $('#cardAnswer');
             container.empty();
-
 
             if (response.data && response.data.length > 0) {
                 response.data.forEach(item => {

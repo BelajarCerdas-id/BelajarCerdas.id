@@ -16,6 +16,11 @@ class Fase extends Model
         'kurikulum_id',
     ];
 
+    public function SubBab()
+    {
+        return $this->hasOne(SubBab::class, 'fase_id');
+    }
+
     public function Bab()
     {
         return $this->hasOne(Bab::class, 'fase_id');

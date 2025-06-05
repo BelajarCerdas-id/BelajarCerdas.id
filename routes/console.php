@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\CoinExpireDaily;
 use App\Console\Commands\UpdateExpiredTransactions;
 use App\Models\Transactions;
 use Illuminate\Foundation\Inspiring;
@@ -12,3 +13,4 @@ Artisan::command('inspire', function () {
 
 // schedule command update expired transactions
 Schedule::command(UpdateExpiredTransactions::class)->everyMinute();
+Schedule::command(CoinExpireDaily::class)->everyMinute();

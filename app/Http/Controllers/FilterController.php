@@ -5,13 +5,21 @@ namespace App\Http\Controllers;
 use App\Events\CountMentorQuestionsAwaitVerification;
 use App\Events\TanyaMentorVerifications;
 use App\Events\UpdateLihatDetailTanyaMentor;
+use App\Models\Bab;
 use App\Models\CoinHistory;
 use App\Models\Star;
 use App\Models\Tanya;
 use App\Models\Keynote;
 use Illuminate\Http\Request;
 use App\Models\englishZoneSoal;
-use App\Models\TanyaMentorPayments;
+use App\Models\Fase;
+use App\Models\FeaturesRoles;
+use App\Models\Kelas;
+use App\Models\Kurikulum;
+use App\Models\Mapel;
+use App\Models\MentorPaymentDetail;
+use App\Models\SubBab;
+use App\Models\MentorPayments;
 use App\Models\TanyaVerifications;
 use App\Models\Transactions;
 use App\Models\userAccount;
@@ -33,11 +41,11 @@ class FilterController extends Controller
         }
 
         // Paginate the filtered results
-        $data = $query->with('Mapel', 'Bab')->orderBy('updated_at', 'desc')->paginate(5);
+        $data = $query->with('Mapel', 'Bab')->orderBy('updated_at', 'desc')->paginate(10);
 
         return response()->json([
             'data' => $data->items(),
-            'links' => (string) $data->links(), // Convert pagination links to string
+            'links' => (string) $data->links()->render(), // Convert pagination links to string
             'restoreUrl' => route('tanya.updateStatusSoalRestore', ':id')
         ]);
     }
@@ -230,9 +238,10 @@ class FilterController extends Controller
         ]);
     }
 
+
     public function paginateListPaymentTanyaMentor(Request $request)
     {
-        $getTanyaMentorVerifiedSuccess = TanyaMentorPayments::with('Mentor.MentorProfiles')->orderBy('created_at', 'desc')->paginate(10);
+        $getTanyaMentorVerifiedSuccess = MentorPayments::with('Mentor.MentorProfiles')->orderBy('created_at', 'desc')->paginate(10);
 
         return response()->json([
             'data' => $getTanyaMentorVerifiedSuccess->items(),
@@ -241,47 +250,142 @@ class FilterController extends Controller
         ]);
     }
 
-    public function filterClassNote(Request $request)
+    // PAGINATE SYLLABUS SERVICES
+    public function paginateSyllabusCuriculum(Request $request)
     {
-        $user = session('user');
-
-        if(!isset($user->email)) {
-                return redirect('/login');
-        }
-
-        $query = Keynote::query();
-
-        if ($request->filled('kelas_catatan') && $request->kelas_catatan !== 'semua') {
-            $query->where('kelas_catatan', $request->kelas_catatan)->orWhere('mapel', $request->mapel);
-        }
-
-        $data = $query->orderBy('created_at', 'desc')->paginate(12);
+        $getSyllabusCuriculum = Kurikulum::with(['UserAccount.OfficeProfiles'])->orderBy('created_at', 'desc')->paginate(20);
 
         return response()->json([
-            'data' => $data->items(),
-            'links' => (string) $data->links(),
+            'data' => $getSyllabusCuriculum->items(),
+            'links' => (string) $getSyllabusCuriculum->links(),
+            'faseDetail' => '/syllabus/curiculum/:nama_kurikulum/:id/fase',
+            'kurikulumUpdate' => route('kurikulum.update', ':id'),
         ]);
     }
 
-    public function filterMapelNote(Request $request)
+    public function paginateSyllabusFase(Request $request, $nama_kurikulum, $id)
     {
-        $user = session('user');
-
-        if(!isset($user->email)) {
-                return redirect('/login');
-        }
-
-        $query = Keynote::query();
-
-        if($request->filled('mapel') && $request->mapel != 'semua') {
-                $query->where('mapel', $request->mapel);
-        };
-
-        $data = $query->orderBy('created_at', 'desc')->paginate(12);
+        $getSyllabusFase = Fase::with(['UserAccount.OfficeProfiles', 'Kurikulum'])->where('kurikulum_id', $id)->orderBy('created_at', 'asc')->paginate(20);
 
         return response()->json([
-            'data' => $data->items(),
-            'links' => (string) $data->links(),
+            'data' => $getSyllabusFase->items(),
+            'links' => (string) $getSyllabusFase->links(),
+            'kelasDetail' => '/syllabus/curiculum/:nama_kurikulum/:kurikulum_id/:fase_id/kelas',
+            'faseUpdate' => '/syllabus/curiculum/fase/update/:id',
+        ]);
+    }
+
+    public function paginateSyllabusKelas(Request $request, $nama_kurikulum, $kurikulum_id, $fase_id)
+    {
+        $getSyllabusKelas = Kelas::with(['UserAccount.OfficeProfiles', 'Kurikulum'])->where('fase_id', $fase_id)->where('kurikulum_id', $kurikulum_id)
+        ->orderBy('created_at', 'asc')->paginate(20);
+
+        return response()->json([
+            'data' => $getSyllabusKelas->items(),
+            'links' => (string) $getSyllabusKelas->links(),
+            'mapelDetail' => '/syllabus/curiculum/:nama_kurikulum/:kurikulum_id/:fase_id/:kelas_id/mapel',
+            'kelasUpdate' => '/syllabus/curiculum/kelas/update/:id',
+        ]);
+    }
+
+    public function paginateSyllabusMapel(Request $request, $nama_kurikulum, $kurikulum_id, $fase_id, $kelas_id)
+    {
+
+        // Query dengan filter lengkap
+        $getSyllabusMapel = Mapel::with(['UserAccount.OfficeProfiles', 'Kurikulum'])->where('fase_id', $fase_id)->where('kurikulum_id', $kurikulum_id)
+            ->where('kelas_id', $kelas_id)
+            ->orderBy('created_at', 'asc')
+            ->paginate(20);
+
+        return response()->json([
+            'data' => $getSyllabusMapel->items(),
+            'links' => (string) $getSyllabusMapel->links(),
+            'babDetail' => '/syllabus/curiculum/:nama_kurikulum/:kurikulum_id/:fase_id/:kelas_id/:mapel_id/bab',
+            'mapelUpdate' => '/syllabus/curiculum/mapel/update/:id/:kelas_id',
+        ]);
+    }
+
+    public function paginateSyllabusBab(Request $request, $nama_kurikulum, $kurikulum_id, $fase_id, $kelas_id, $mapel_id)
+    {
+        // Query dengan filter lengkap
+        $getSyllabusBab = Bab::with(['BabFeatureStatuses', 'UserAccount.OfficeProfiles', 'Kurikulum'])->where('fase_id', $fase_id)->where('kurikulum_id', $kurikulum_id)
+            ->where('kelas_id', $kelas_id)->where('mapel_id', $mapel_id)
+            ->orderBy('created_at', 'asc')
+            ->paginate(20);
+
+        $dataFeaturesRoles = FeaturesRoles::with('Features')->where('feature_role', 'syllabus')->get();
+
+        // Siapkan mapping id bab + feature_id => status
+        $statusBabFeature = [];
+
+        foreach ($getSyllabusBab as $bab) {
+            foreach ($bab->BabFeatureStatuses as $featureStatus) {
+                $statusBabFeature[$bab->id][$featureStatus->feature_id] = $featureStatus->status_bab;
+            }
+        }
+
+        return response()->json([
+            'data' => $getSyllabusBab->items(),
+            'links' => (string) $getSyllabusBab->links(),
+            'subBabDetail' => '/syllabus/curiculum/:nama_kurikulum/:kurikulum_id/:fase_id/:kelas_id/:mapel_id/:bab_id/sub-bab',
+            'babUpdate' => '/syllabus/curiculum/bab/update/:kurikulum_id/:kelas_id/:mapel_id/:id',
+            'dataFeaturesRoles' => $dataFeaturesRoles,
+            'statusBabFeature' => $statusBabFeature,
+        ]);
+    }
+
+    public function paginateSyllabusSubBab(Request $request, $nama_kurikulum, $kurikulum_id, $fase_id, $kelas_id, $mapel_id, $bab_id)
+    {
+        // Query dengan filter lengkap
+        $getSyllabusSubBab = SubBab::with(['SubBabFeatureStatuses', 'UserAccount.OfficeProfiles', 'Kurikulum'])->where('fase_id', $fase_id)->where('kurikulum_id', $kurikulum_id)
+            ->where('kelas_id', $kelas_id)->where('mapel_id', $mapel_id)->where('bab_id', $bab_id)
+            ->orderBy('created_at', 'asc')
+            ->paginate(20);
+
+        $dataFeaturesRoles = FeaturesRoles::with('Features')->where('feature_role', 'syllabus')->get();
+
+        $statusSubBabFeature = [];
+
+        foreach ($getSyllabusSubBab as $subBab) {
+            foreach ($subBab->SubBabFeatureStatuses as $featureStatus) {
+                $statusSubBabFeature[$subBab->id][$featureStatus->feature_id] = $featureStatus->status_sub_bab;
+            }
+        }
+
+        return response()->json([
+            'data' => $getSyllabusSubBab->items(),
+            'links' => (string) $getSyllabusSubBab->links(),
+            'subBabUpdate' => '/syllabus/curiculum/sub-bab/update/:kurikulum_id/:kelas_id/:mapel_id/:bab_id/:id',
+            'dataFeaturesRoles' => $dataFeaturesRoles,
+            'statusSubBabFeature' => $statusSubBabFeature,
+        ]);
+    }
+
+    // PAGINATE LAPORAN MENTOR
+    public function paginateReportPaymentMentor(Request $request)
+    {
+        $user = Auth::user();
+
+        $dataPaymentTanyaMentor = MentorPayments::where('mentor_id', $user->id)->orderBy('created_at', 'desc')->paginate(10);
+
+        return response()->json([
+            'data' => $dataPaymentTanyaMentor->items(),
+            'links' => (string) $dataPaymentTanyaMentor->links()->render(),
+            'batchDetailPaymentMentor' => route('batch.detail.payment.mentor', ':id'),
+        ]);
+    }
+
+    public function paginateBatchDetailPaymentMentor(Request $request, $id)
+    {
+        $user = Auth::user();
+
+        $dataBatchDetailPaymentMentor = MentorPaymentDetail::with('TanyaVerifications')->where('payment_mentor_id', $id)->where('mentor_id', $user->id)
+        ->orderBy('created_at', 'desc')->paginate(10);
+
+        return response()->json([
+            'data' => $dataBatchDetailPaymentMentor->items(),
+            'links' => (string) $dataBatchDetailPaymentMentor->links()->render(),
+            'batchDetailPaymentMentor' => '/batch-detail-pembayaran-mentor/:id',
         ]);
     }
 
@@ -335,27 +439,4 @@ class FilterController extends Controller
             'links' => (string) $data->links()
         ]);
     }
-
-// public function filterViewLaporanTL()
-// {
-//     $mentor = Crud::where('status', 'Mentor');
-
-//         // Ambil semua pertanyaan yang di-trashed berdasarkan email_mentor
-//         $query = Tanya::onlyTrashed()->where('email_mentor', $mentor->email);
-
-//         $data = $query->orderBy('created_at', 'desc')->paginate(5);
-//         // Mengambil status "Diterima" dan "Ditolak" dari tabel Star
-//         $statusStar = Star::whereIn('id_tanya', $data->pluck('id'))->get()->keyBy('id_tanya');
-
-//         return response()->json([
-//             'data' => $data->items(),
-//             'links' => (string) $data->links(),
-//             'statusStar' => $statusStar
-//         ]);
-// }
-
-
-
-
-
 }

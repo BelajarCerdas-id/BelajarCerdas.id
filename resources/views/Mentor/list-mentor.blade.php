@@ -1,5 +1,4 @@
 @include('components/sidebar_beranda', ['headerSideNav' => 'Mentor'])
-@extends('components/sidebar_beranda_mobile')
 
 @if (Auth::user()->role === 'Administrator')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
@@ -10,10 +9,10 @@
                 ])
             @endif
             <main>
-                <section class="bg-white shadow-lg rounded-lg p-4 border border-gray-200 h-60">
+                <section class="bg-white shadow-lg rounded-lg p-4 border border-gray-200 h-max">
                     <span class="text-xl font-bold mb-4 opacity-60">List Mentor</span>
                     @if ($dataMentor->isNotEmpty())
-                        <div class="overflow-x-auto mt-4 pb-20">
+                        <div class="overflow-x-auto mt-4 pb-10">
                             <table class="table" id="filterTable">
                                 <thead class="thead-table">
                                     <tr>
@@ -73,8 +72,7 @@
                             </table>
                             <div class="pagination-container-siswa"></div>
                             <div class="flex justify-center">
-                                <span class="showMessage hidden absolute top-2/4">Tidak ada
-                                    riwayat</span>
+                                <span class="showMessage hidden absolute top-2/4">Tidak ada riwayat</span>
                             </div>
                         </div>
 

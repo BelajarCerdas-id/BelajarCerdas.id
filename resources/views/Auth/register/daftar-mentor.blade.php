@@ -2,9 +2,8 @@
 
 <div class="min-h-screen flex items-center justify-center bg-[url('/image/register/background-register.png')] bg-cover">
     <div class="bg-white rounded-xl shadow-md w-full max-w-xl p-6 mx-8">
-
         <!-- Step Indicator -->
-        <div class="flex items-center justify-between mx-8 gap-2">
+        <div class="flex items-center justify-between mx-2 md:mx-8 gap-2">
             <!-- Step 1: Data User -->
             <div class="flex items-center gap-2">
                 <div id="step-indicator-1" class="flex flex-col items-center text-gray-400 font-bold relative">
@@ -54,8 +53,8 @@
                     </div>
                     <span class="text-sm mt-1 absolute top-10 text-center w-max">Mengajar</span>
                 </div>
-                <div id="line-indicator-3" class="w-20 h-0.5 border-t-4 border-dashed border-gray-300 mx-2"></div>
             </div>
+            <div id="line-indicator-3" class="flex-1 h-0.5 border-t-4 border-dashed border-gray-300 mx-2"></div>
 
             <div class="flex items-center gap-2">
                 <div id="step-indicator-4" class="flex flex-col items-center text-gray-400 font-bold relative">
@@ -73,6 +72,7 @@
                 </div>
             </div>
         </div>
+
         <form id="register-form" action="{{ route('registerMentor.store') }}" method="POST" class="mt-6">
             @csrf
             <!-- STEP 1: DATA USER -->
@@ -359,6 +359,17 @@
 
     showStep(currentStep);
 </script> --}}
+
+    @if (session('success-register-mentor'))
+        <script>
+            Swal.fire({
+                title: 'Registrasi Berhasil!',
+                text: "{{ session('success-register-mentor') }}",
+                icon: 'success',
+            });
+        </script>
+    @endif
+
     <script>
         document.getElementById('register-form').addEventListener('keydown', function(e) {
             // Deteksi jika tombol yang ditekan adalah Enter

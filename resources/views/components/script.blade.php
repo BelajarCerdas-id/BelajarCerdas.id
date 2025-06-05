@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="!bg-white">
+<html lang="en" class="!bg-white !text-black">
 
 <head>
     <meta charset="UTF-8">
@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <!--- fotnt awesome CDN ---->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css">
+    <!--- daisy cdn ---->
     <link rel="stylesheet" href="{{ asset('css/BelajarCerdas.css') }}"> <!--- link CSS ---->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!--- source script filter data(ajax) ---->
     <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script> <!--- CKEDITOR 5 ---->

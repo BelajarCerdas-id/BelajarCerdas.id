@@ -67,6 +67,10 @@ class UserAccount extends Authenticatable
         return $this->hasOne(Fase::class, 'user_id');
     }
 
+    public function Kelas() {
+        return $this->hasOne(Kelas::class, 'user_id');
+    }
+
     public function Mapel() {
         return $this->hasOne(Mapel::class, 'user_id');
     }
@@ -95,6 +99,12 @@ class UserAccount extends Authenticatable
     // TANYA RANK PROGRESS
     public function TanyaRankProgress() {
         return $this->hasOne(TanyaRankMentorProgress::class, 'mentor_id');
+    }
+
+    // MENTOR PAYMENT DETAIL
+    public function MentorPaymentDetail()
+    {
+        return $this->hasOne(MentorPaymentDetail::class, 'mentor_payment_id');
     }
 
     public function getProfileAttribute() {

@@ -33,4 +33,9 @@ class TanyaVerifications extends Model
         return $this->belongsTo(UserAccount::class, 'administrator_id');
     }
 
+    public function MentorPaymentDetail()
+    {
+        return $this->hasOne(MentorPaymentDetail::class, 'tanya_verification_id');
+    }
+
 }

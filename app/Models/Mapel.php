@@ -14,10 +14,17 @@ class Mapel extends Model
         'mata_pelajaran',
         'kode',
         'harga_koin',
+        'kelas_id',
         'fase_id',
         'kurikulum_id',
         'status_mata_pelajaran',
     ];
+
+    public function SubBab()
+    {
+        return $this->hasOne(SubBab::class, 'mapel_id');
+    }
+
     public function Bab()
     {
         return $this->hasOne(Bab::class, 'mapel_id');
@@ -26,6 +33,11 @@ class Mapel extends Model
     public function UserAccount()
     {
         return $this->belongsTo(UserAccount::class, 'user_id');
+    }
+
+    public function Kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
     public function Fase()

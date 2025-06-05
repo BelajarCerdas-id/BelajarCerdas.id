@@ -1,7 +1,7 @@
 @include('components/sidebar_beranda')
 @extends('components/sidebar_beranda_mobile')
 
-@if (session('user')->status === 'Admin Sales')
+@if (Auth::user()->role === 'Admin Sales')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
         <div class="content-beranda">
             <div class="flex justify-start my-4">

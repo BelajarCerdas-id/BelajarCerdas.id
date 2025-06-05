@@ -9,19 +9,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\PksController;
 use App\Http\Middleware\AuthMiddleware;
-use App\Http\Controllers\DataController;
-use App\Http\Controllers\StarController;
-use App\Http\Controllers\testController;
 use App\Http\Controllers\ChartController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\TanyaController;
 use App\Http\Middleware\CheckEnglishZone;
-use App\Http\Controllers\BarangController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\ModuleController;
-use App\Http\Controllers\SchoolController;
-use App\Http\Controllers\CatatanController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScrapperController;
@@ -32,9 +26,6 @@ use App\Http\Controllers\EnglishZoneController;
 use App\Http\Controllers\MitraCerdasController;
 use App\Http\Controllers\VisitasiDataController;
 use App\Http\Controllers\AuthController; // login daftar
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\CrudController; // database client
-use App\Http\Controllers\UsersController; //database client (percobaan)
 use App\Http\Controllers\webController; // data biasa seperti foreach (tidak dari database) dan lain lain (jika ada selain foreach)
 
 Route::get('/', [webController::class, 'index'])->name('homePage');
@@ -48,15 +39,6 @@ Route::get('/sekolah', function() {
 Route::get('/murid', function () {
     return view('murid', ['title' => 'Murid']);
 });
-
-Route::get('/post', function () {
-    return view('post', ['posts' => Post::all()]); //mengambil data dengan satu kali panggil "Post (class) all(method static)"
-});
-
-Route::get('/posts/{post:slug}', function (Post $post) { //mengembalikan kolom selain id, bisa tuliskan parameter seperti di samping, post:slug
-    return view('viewPost', ['title' => 'single post', 'post' => $post]);
-});
-
 
 Route::get('/certif', function () {
     return view('certif');
@@ -97,11 +79,16 @@ Route::fallback(function () {
         // ROUTE LOGOUT
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
         // COIN CHECKOUT (TANYA)
         Route::get('/tanya-coin', [TanyaController::class, 'coinPackage'])->name('coinPackage');
         Route::post('/checkout', [TanyaController::class, 'checkout'])->name('checkout');
         Route::post('/renew-checkout/{id}', [TanyaController::class, 'renewPending'])->name('checkout.pending');
+
+        // ROUTES DROPDOWN FASE, KELAS, MAPEL, BAB (AJAX)
+        Route::get('/kelas/{id}', [KelasController::class, 'getKelas']);
+        Route::get('/mapel/{id}', [KelasController::class, 'getMapel']);
+
+        Route::get('/bab/{kode_mapel}/{kode_fase}', [KelasController::class, 'getBab']);
 
     // MIDDLEWARE LOGIN
     Route::middleware([AuthMiddleware::class])->group(function () {
@@ -136,8 +123,17 @@ Route::fallback(function () {
         Route::put('/update-personal-information-mentor/{id}', [ProfileController::class, 'updatePersonalInformationMentor'])->name('updatePersonalInformationMentor.update');
         Route::put('/update-pendidikan-mentor/{id}', [ProfileController::class, 'updatePendidikanMentor'])->name('updatePendidikanMentor.update');
 
+        // Administrator
+        Route::put('/update-personal-information-administrator/{id}', [ProfileController::class, 'updatePersonalInformationAdministrator'])->name('updatePersonalInformationAdministrator.update');
+
         // CRUD atur ulang sandi
         Route::put('/atur-ulang-sandi-update/{id}', [ProfileController::class, 'AturUlangSandiUpdate'])->name('aturUlangSandi.update');
+
+        // CRUD REFERRAL CODE MENTOR (student)
+        Route::put('/referral-code-student/{id}', [ProfileController::class, 'referralCodeStudent'])->name('referralCodeStudent.update');
+
+        // UPDATE COIN USER WHEN QUESTION REJECTED (with pusher)
+        Route::get('/update-koin-student', [TanyaController::class, 'getKoinStudent'])->name('tanya.getKoinStudent');
 
     // TANYA ACCESS MIDDLEWARE
     Route::middleware([TanyaAccess::class])->group(function () {
@@ -149,7 +145,7 @@ Route::fallback(function () {
 
         // CRUD TANYA
         // Siswa
-        Route::post('/tanya', [TanyaController::class, 'store'])->name('tanya.store');
+        Route::post('/tanya/store', [TanyaController::class, 'store'])->name('tanya.store');
         // Mentor
         Route::put('/updateAnswer/{id}', [TanyaController::class, 'update'])->name('tanya.update'); // page update jawab soal siswa (mentor)
         Route::put('/updateReject/{id}', [TanyaController::class, 'updateReject'])->name('tanya.reject'); // page update tolak soal siswa (mentor)
@@ -167,15 +163,17 @@ Route::fallback(function () {
         Route::get('/paginateTanyaTL', [FilterController::class, 'filterTanyaTL'])->name('tanya.TL');
 
         // HISTORY CONTENT DAILY TANYA ANSWERED & REJECTED (student)
+        Route::get('/student/history-unanswered', [TanyaController::class, 'getHistoryUnansweredTanya'])->name('tanya.historyUnAnswered');
         Route::get('/student/history-answered', [TanyaController::class, 'getHistoryAnsweredTanya'])->name('tanya.historyAnswered');
         Route::get('/student/history-rejected', [TanyaController::class, 'getHistoryRejectedTanya'])->name('tanya.historyRejected');
 
         Route::post('/tanya/{id}/mark-viewed', [TanyaController::class, 'markViewed'])->name('tanya.markViewed');
         Route::put('/tanya/{id}/mark-viewed-back-button', [TanyaController::class, 'markViewedBackButton'])->name('tanya.markViewedBackButton');
 
-        // UPDATE COIN USER WHEN QUESTION REJECTED (with pusher)
-        Route::get('/update-koin-student', [TanyaController::class, 'getKoinStudent'])->name('tanya.getKoinStudent');
+        // CLAIM COIN DAILY (student)
+        Route::post('/tanya/claim-coin', [TanyaController::class, 'claimCoinDaily'])->name('tanya.claimCoinDaily');
     });
+
 
     // TANYA ACCESS CRUD (ADMINISTRATOR)
     Route::get('/tanya/access', [TanyaController::class, 'tanyaAccess'])->name('tanya.access'); // page tanya access
@@ -196,7 +194,7 @@ Route::fallback(function () {
     Route::get('/rank', [TanyaController::class, 'tanyaRank'])->name('tanya.rank');
 
     // PAYMENT MENTOR (ADMINISTRATOR)
-    // LIST MENTOR TANYA & QUESTION MENTOR TANYA ACCEPTED & PAYMENT MENTOR VIEWS
+    // LIST MENTOR TANYA, QUESTION MENTOR TANYA ACCEPTED, PAYMENT MENTOR PAYMENT VIEWS
     Route::get('/mentor-tanya', [TanyaController::class, 'mentorTanya'])->name('tanya.mentor');
     Route::get('/mentor-tanya/verification/{id}', [TanyaController::class, 'questionMentorVerifiedView'])->name('tanya.mentor.accepted.view');
     Route::get('/pembayaran-mentor', [TanyaController::class, 'paymentMentorView'])->name('pembayaran.tanya.mentor.view');
@@ -206,7 +204,6 @@ Route::fallback(function () {
     Route::get('/paginate/verifikasi-pertanyaan-mentor/{mentor_id}', [FilterController::class, 'paginateVerificationTanyaMentor'])->name('paginate.verificationTanyaMentor');
     Route::get('/paginate/list-pembayaran-mentor', [FilterController::class, 'paginateListPaymentTanyaMentor'])->name('paginate.listPaymentTanyaMentor');
 
-
     // CRUD VERIFICATION QUESTION MENTOR
     Route::post('/question-mentor-tanya/accepted/{id}', [TanyaController::class, 'questionMentorVerifiedAccepted'])->name('verificationTanyaMentor.accepted');
     Route::post('/question-mentor-tanya/rejected/{id}', [TanyaController::class, 'questionMentorVerifiedRejected'])->name('verificationTanyaMentor.rejected');
@@ -214,38 +211,69 @@ Route::fallback(function () {
     // CRUD PEMBAYARAN TANYA MENTOR
     Route::post('/pembayaran-mentor/update/{id}', [TanyaController::class, 'paymentMentorUpdate'])->name('pembayaran.tanya.mentor.update');
 
+    // ROUTES REPORT USER (laporan student, mentor, dll)
+    Route::get('/laporan-mentor', [webController::class, 'reportMentor'])->name('report-mentor');
+    Route::get('/batch-detail-pembayaran-mentor/{id}', [webController::class, 'batchDetailPaymentMentor'])->name('batch.detail.payment.mentor');
+
+    // PAGINATE LAPORAN MENTOR
+    Route::get('/paginate/report-mentor', [FilterController::class, 'paginateReportPaymentMentor'])->name('paginate.reportPaymentMentor');
+    Route::get('/paginate/batch-detail-payment-mentor/{id}', [FilterController::class, 'paginateBatchDetailPaymentMentor'])->name('paginate.batchDetailPaymentMentor');
+
 
     //ROUTES SYLLABUS-SERVICES
     // VIEWS
     Route::get('/syllabus/curiculum', [SyllabusController::class, 'curiculum'])->name('kurikulum.index');
     Route::get('/syllabus/curiculum/{nama_kurikulum}/{id}/fase', [SyllabusController::class, 'fase'])->name('fase.index');
-    Route::get('/syllabus/curiculum/{nama_kurikulum}/{kurikulum_id}/{nama_fase}/{id}/mapel', [SyllabusController::class, 'mapel'])->name('mapel.index');
-    Route::get('/syllabus/curiculum/{nama_kurikulum}/{kurikulum_id}/{nama_fase}/{fase_id}/{mata_pelajaran}/{id}/bab', [SyllabusController::class, 'bab'])->name('bab.index');
+    Route::get('/syllabus/curiculum/{nama_kurikulum}/{kurikulum_id}/{fase_id}/kelas', [SyllabusController::class, 'kelas'])->name('kelas.index');
+    Route::get('/syllabus/curiculum/{nama_kurikulum}/{kurikulum_id}/{fase_id}/{kelas_id}/mapel', [SyllabusController::class, 'mapel'])->name('mapel.index');
+    Route::get('/syllabus/curiculum/{nama_kurikulum}/{kurikulum_id}/{fase_id}/{kelas_id}/{mapel_id}/bab', [SyllabusController::class, 'bab'])->name('bab.index');
+    Route::get('/syllabus/curiculum/{nama_kurikulum}/{kurikulum_id}/{fase_id}/{kelas_id}/{mapel_id}/{bab_id}/sub-bab', [SyllabusController::class, 'subBab'])->name('subBab.index');
+
     // CRUD Kurikulum
     Route::post('/syllabus/curiculum/store', [SyllabusController::class, 'curiculumStore'])->name('kurikulum.store');
-    Route::put('/syllabus/curiculum/update/{id}', [SyllabusController::class, 'curiculumUpdate'])->name('kurikulum.update');
+    Route::post('/syllabus/curiculum/update/{id}', [SyllabusController::class, 'curiculumUpdate'])->name('kurikulum.update');
     Route::delete('/syllabus/curiculum/delete/{id}', [SyllabusController::class, 'curiculumDelete'])->name('kurikulum.delete');
+
     // CRUD Fase
     Route::post('/syllabus/{id}/fase/store', [SyllabusController::class, 'faseStore'])->name('fase.store');
-    Route::put('/syllabus/{nama_kurikulum}/fase/update/{id}', [SyllabusController::class, 'faseUpdate'])->name('fase.update');
+    Route::post('/syllabus/curiculum/fase/update/{kurikulum_id}/{id}', [SyllabusController::class, 'faseUpdate'])->name('fase.update');
     Route::delete('/syllabus/curiculum/fase/delete/{id}', [SyllabusController::class, 'faseDelete'])->name('fase.delete');
+
+    // CRUD Kelas
+    Route::post('/syllabus/curiculum/{nama_kurikulum}/{kurikulum_id}/{fase_id}/kelas/store', [SyllabusController::class, 'kelasStore'])->name('kelas.store');
+    Route::post('/syllabus/curiculum/kelas/update/{kurikulum_id}/{fase_id}/{id}', [SyllabusController::class, 'kelasUpdate'])->name('kelas.update');
+    Route::delete('/syllabus/curiculum/kelas/delete/{id}', [SyllabusController::class, 'kelasDelete'])->name('kelas.delete');
+
     // CRUD Mapel
-    Route::post('/syllabus/curiculum/{id}/{kurikulum_id}//store', [SyllabusController::class, 'mapelStore'])->name('mapel.store');
-    Route::put('/syllabus/curiculum/mapel/update/{id}', [SyllabusController::class, 'mapelUpdate'])->name('mapel.update');
+    Route::post('/syllabus/curiculum/{nama_kurikulum}/{kurikulum_id}/{fase_id}/{kelas_id}/mapel/store', [SyllabusController::class, 'mapelStore'])->name('mapel.store');
+    Route::post('/syllabus/curiculum/mapel/update/{id}/{kelas_id}', [SyllabusController::class, 'mapelUpdate'])->name('mapel.update');
     Route::put('/syllabus/curiculum/mapel/activate/{id}', [SyllabusController::class, 'mapelActivate'])->name('mapel.activate');
     Route::delete('/syllabus/curiculum/mapel/delete/{id}', [SyllabusController::class, 'mapelDelete'])->name('mapel.delete');
+
     // CRUD Bab
-    Route::post('/syllabus/curiculum/{id}/{kurikulum_id}/{fase_id}/bab', [SyllabusController::class, 'babStore'])->name('bab.store');
-    Route::put('/syllabus/curiculum/bab/update/{mata_pelajaran}/{nama_fase}/{kode_kurikulum}/{id}', [SyllabusController::class, 'babUpdate'])->name('bab.update');
+    Route::post('/syllabus/curiculum/{nama_kurikulum}/{kurikulum_id}/{fase_id}/{kelas_id}/{mapel_id}/bab/store', [SyllabusController::class, 'babStore'])->name('bab.store');
+    Route::post('/syllabus/curiculum/bab/update/{kurikulum_id}/{kelas_id}/{mapel_id}/{id}', [SyllabusController::class, 'babUpdate'])->name('bab.update');
     Route::put('/syllabus/curiculum/bab/activate/{id}', [SyllabusController::class, 'babActivate'])->name('bab.activate');
     Route::delete('/syllabus/curiculum/bab/delete/{id}', [SyllabusController::class, 'babDelete'])->name('bab.delete');
 
-    // ROUTES DROPDOWN FASE, KELAS, MAPEL, BAB (AJAX)
-    Route::get('/kelas/{id}', [KelasController::class, 'getKelas']);
-    Route::get('/mapel/{id}', [KelasController::class, 'getMapel']);
+    // CRUD SUB BAB
+    Route::post('/syllabus/curiculum/{nama_kurikulum}/{kurikulum_id}/{fase_id}/{kelas_id}/{mapel_id}/{bab_id}/sub-bab/store', [SyllabusController::class, 'subBabStore'])->name('subBab.store');
+    Route::post('/syllabus/curiculum/sub-bab/update/{kurikulum_id}/{kelas_id}/{mapel_id}/{bab_id}/{id}', [SyllabusController::class, 'subBabUpdate'])->name('subBab.update');
+    Route::put('/syllabus/curiculum/sub-bab/activate/{id}', [SyllabusController::class, 'subBabActivate'])->name('subBab.activate');
+    Route::delete('/syllabus/curiculum/sub-bab/delete/{id}', [SyllabusController::class, 'subBabDelete'])->name('subBab.delete');
+
+    // PAGINATE SYLLABUS-SERVICES
+    Route::get('/paginate-syllabus-service-kurikulum', [FilterController::class, 'paginateSyllabusCuriculum'])->name('syllabus.kurikulum');
+    Route::get('/paginate-syllabus-service-fase/{nama_kurikulum}/{id}', [FilterController::class, 'paginateSyllabusFase'])->name('syllabus.fase');
+    Route::get('/paginate-syllabus-service-kelas/{nama_kurikulum}/{kurikulum_id}/{fase_id}', [FilterController::class, 'paginateSyllabusKelas'])->name('syllabus.kelas');
+    Route::get('/paginate-syllabus-service-mapel/{nama_kurikulum}/{kurikulum_id}/{fase_id}/{kelas_id}', [FilterController::class, 'paginateSyllabusMapel'])->name('syllabus.mapel');
+    Route::get('/paginate-syllabus-service-bab/{nama_kurikulum}/{kurikulum_id}/{fase_id}/{kelas_id}/{mapel_id}', [FilterController::class, 'paginateSyllabusBab'])->name('syllabus.bab');
+    Route::get('/paginate-syllabus-service-sub-bab/{nama_kurikulum}/{kurikulum_id}/{fase_id}/{kelas_id}/{mapel_id}/{bab_id}', [FilterController::class, 'paginateSyllabusSubBab'])->name('syllabus.subBab');
+
+    // BULKUPLOAD SYLLABUS
+    Route::post('/syllabus/bulkupload/sub-bab', [SyllabusController::class, 'bulkUploadSubBab'])->name('syllabus.bulkupload.sub-bab');
 
 
-    Route::get('/bab/{kode_mapel}/{kode_fase}', [KelasController::class, 'getBab']);
 
     Route::get('/paginateListMentor', [filterController::class, 'filterListMentor']);
     Route::get('/paginateViewLaporan', [FilterController::class, 'filterViewLaporanTL']);
@@ -287,7 +315,7 @@ Route::fallback(function () {
     // ROUTES LIST MENTOR
     // VIEWS
     Route::get('/mentor', [MitraCerdasController::class, 'mentorView'])->name('list.mentor');
-    Route::get('/mentor/aktif', [MitraCerdasController::class, 'mentorAktifView'])->name('list.mentor.aktif');
+    Route::get('/mentor-aktif', [MitraCerdasController::class, 'mentorAktifView'])->name('list.mentor.aktif');
 
     // CRUD list mentor
     Route::put('/active/mentor/{id}', [MitraCerdasController::class, 'listMentorUpdate'])->name('activeMentor.update');
@@ -299,41 +327,6 @@ Route::fallback(function () {
     Route::get('/sidebar-beranda-mobile', [WebController::class, 'sidebarBerandaMobile']);
 
 });
-
-
-Route::get('/getCertificate', [CertificateController::class, 'generateCertificate'])->name('generateCertificate');
-Route::post('/certificate', [EnglishZoneController::class, 'certificateStore'])->name('certificate.store');
-// ROUTES CRUD
-Route::get('/crud', [CrudController::class, 'index'])->name('crud');
-Route::get('/crud/create', [CrudController::class, 'create'])->name('crud.create');
-Route::post('/crud', [CrudController::class, 'store'])->name('crud.store');
-Route::delete('/crud/destroy/{id}', [CrudController::class, 'destroy'])->name('crud.destroy');
-Route::get('/crud/{id}/edit', [CrudController::class, 'edit'])->name('crud.edit');
-Route::put('/crud/update/{id}', [CrudController::class, 'update'])->name('crud.update');
-
-
-
-
-
-
-
-// ROUTES CATATAN
-Route::get('/catatan', [CatatanController::class, 'index']);
-Route::post('/catatan', [CatatanController::class, 'store'])->name('catatan.store');
-Route::get('/paginateCatatan', [FilterController::class, 'filterClassNote'])->name('catatan.filter');
-Route::get('/paginateMapelCatatan', [FilterController::class, 'filterMapelNote'])->name('mapel.filter');
-
-
-// ROUTES LAPORAN
-Route::post('/star', [StarController::class, 'store'])->name('star.store');
-Route::get('/laporan/{id}', [webController::class, 'viewLaporan'])->name('laporan.edit');
-Route::get('/laporan', [WebController::class, 'laporan']);
-
-
-
-
-Route::post('/update-payment-status/{email}/{batch}', [StarController::class, 'updatePaymentStatus'])->name('starPayment.update');
-
 
 // ROUTES ENGLISH ZONE
 // Routes View
@@ -359,10 +352,14 @@ Route::get('/filter-questions', [filterController::class, 'questionStatus'])->na
 
 Route::get('video/{modul}', [EnglishZoneController::class, 'video'])->name('englishZone.video');
 
-// CHART CONTROLLER
+// CHART CONTROLLER (BERANDA ADMINISTRATOR)
 Route::get('/chart-data-tanya-bulanan', [ChartController::class, 'chartTanyaBulanan'])->name('getChartDataTanyaBulanan');
 Route::get('/chart-data-tanya-tahunan', [ChartController::class, 'chartTanyaTahunan'])->name('getChartDataTanyaTahunan');
 Route::get('/chart-data-tanya-harian', [ChartController::class, 'chartTanyaHarian'])->name('getChartDataTanyaHarian');
+
+
+Route::get('/getCertificate', [CertificateController::class, 'generateCertificate'])->name('generateCertificate');
+Route::post('/certificate', [EnglishZoneController::class, 'certificateStore'])->name('certificate.store');
 
 
 // ROUTES MASTERDATA(KERJASAMA SEKOLAH B2B & B2G)
@@ -385,20 +382,7 @@ Route::post('/visitasiData', [VisitasiDataController::class, 'visitasiDataStore'
 Route::put('/visitasiData/{id}', [VisitasiDataController::class, 'updateStatusKunjungan'])->name('visitasiData.update');
 
 // ROUTES TESTING
-Route::get('/select', [BarangController::class, 'index']);
-Route::get('/barang/{id}', [BarangController::class, 'getBarang']);
-
-Route::get('/test', [testController::class, 'index'])->name('test');
-Route::get('/test/create', [testController::class, 'create'])->name('test.create');
-Route::post('/test', [testController::class, 'store'])->name('test.store');
-Route::post('/test/delete', [testController::class, 'destroy'])->name('test.destroy');
-Route::resource('test', testController::class);
-Route::post('/test/{id}/restore', [testController::class, 'restore'])->name('test.restore');
 
 Route::get('/modules', [ModuleController::class, 'index'])->name('modules.index');
 Route::get('/modules/{id}', [ModuleController::class, 'show'])->name('modules.show');
 Route::post('/modules/{id}/complete', [ModuleController::class, 'complete'])->name('modules.complete');
-
-Route::get('/insert', [CommentController::class, 'insertPage']);
-Route::get('/comments', [CommentController::class, 'viewPage']);
-Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');

@@ -49,7 +49,7 @@
 
                 <div class="pagination-container-transaction-success flex justify-center mt-4"></div>
 
-                <div class="flex justify-center">
+                <div class="flex items-center justify-center min-h-96">
                     <span class="noDataMessageSuccess hidden text-gray-500">Tidak ada riwayat</span>
                 </div>
             </div>
@@ -62,7 +62,7 @@
 
                 <div class="pagination-container-transaction-waiting flex justify-center mt-4"></div>
 
-                <div class="flex justify-center">
+                <div class="flex items-center justify-center min-h-96">
                     <span class="noDataMessageWaiting hidden text-gray-500">Tidak ada riwayat</span>
                 </div>
             </div>
@@ -75,7 +75,7 @@
 
                 <div class="pagination-container-transaction-failed flex justify-center mt-4"></div>
 
-                <div class="flex justify-center">
+                <div class="flex items-center justify-center min-h-96">
                     <span class="noDataMessageFailed hidden text-gray-500">Tidak ada riwayat</span>
                 </div>
             </div>
@@ -89,7 +89,7 @@
                             <div id="transaction-pending-{{ $item->id }}" class="list-item">
                                 <div class="dropdown-menu">
                                     <div class="toggle-menu border">
-                                        <div class="w-full h-max bg-white shadow-lg rounded-md p-4">
+                                        <div class="w-full h-max bg-white p-4">
                                             <!--- nama fitur & status transaksi --->
                                             <div class="flex justify-between">
                                                 <span class="text-md font-bold opacity-60">
@@ -185,7 +185,7 @@
                     </div>
                 @endif
                 <div id="emptyMessageWaiting"
-                    class="w-full h-96 flex justify-center items-center bg-white shadow-lg rounded-md {{ $transactionUserWaiting->isNotEmpty() ? 'hidden' : '' }}">
+                    class="w-full h-96 flex justify-center items-center bg-white {{ $transactionUserWaiting->isNotEmpty() ? 'hidden' : '' }}">
                     <span>
                         Tidak ada riwayat
                     </span>

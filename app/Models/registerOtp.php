@@ -12,7 +12,6 @@ class registerOtp extends Model
     protected $fillable = [
         'email',
         'otp',
-        'expires_at',
         'status_otp',
     ];
 }

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
@@ -41,7 +42,7 @@ class ProfileController extends Controller
 
     public function AturUlangSandiUpdate(Request $request)
     {
-        $dataUser = UserAccount::all();
+        $dataUser = UserAccount::findOrFail(Auth::user()->id);
 
         $validator = Validator::make($request->all(), [
             'current_password' => 'required',
@@ -188,10 +189,17 @@ class ProfileController extends Controller
         $dataStudentProfiles = UserAccount::with('StudentProfiles')->findOrFail($id);
         $validator = Validator::make($request->all(), [
             'sekolah' => 'required',
-            'fase_id' => 'required',
+            'fase_id' => 'required|unique:student_profiles,fase_id',
+            'kelas_id' => [
+                'required',
+                Rule::unique('student_profiles', 'kelas_id')->where('kelas_id', Auth::user()->Profile->kelas_id)
+            ],
         ], [
             'sekolah.required' => 'Sekolah tidak boleh kosong!',
             'fase_id.required' => 'Fase tidak boleh kosong!',
+            'fase_id.unique' => 'Fase tidak boleh sama!',
+            'kelas_id.required' => 'Kelas tidak boleh kosong!',
+            'kelas_id.unique' => 'Kelas tidak boleh sama!',
         ]);
 
         if($validator->fails()) {
@@ -207,5 +215,57 @@ class ProfileController extends Controller
         ]);
 
         return redirect()->back()->with('success-update-data-pendidikan-student', 'Data berhasil diubah!');
+    }
+
+    public function referralCodeStudent(Request $request, $id)
+    {
+        $dataStudentProfiles = UserAccount::with('StudentProfiles')->findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'mentor_referral_code' => 'required',
+        ], [
+            'mentor_referral_code.required' => 'Referral code tidak boleh kosong!',
+        ]);
+
+        if($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->with('formErrorReferralCodeStudent_' . $id, 'update')->with('formErrorReferralCodeStudentId', $id)->withInput();
+        }
+
+        $userStudentProfiles = $dataStudentProfiles->StudentProfiles;
+
+        $userStudentProfiles->update([
+            'mentor_referral_code' => $request->mentor_referral_code,
+        ]);
+
+        return redirect()->back()->with('success-update-referral-code-student', 'Referral Code berhasil ditambahkan!');
+    }
+
+        // FUNCTION UPDATE DATA MENTOR
+    public function updatePersonalInformationAdministrator(Request $request, $id)
+    {
+        $dataOfficeProfiles = UserAccount::with('OfficeProfiles')->findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'nama_lengkap' => 'required',
+            'no_hp' => 'required|unique:user_accounts,no_hp',
+        ], [
+            'nama_lengkap.required' => 'Nama tidak boleh kosong!',
+            'no_hp.required' => 'Nomor HP tidak boleh kosong!',
+            'no_hp.unique' => 'Nomor HP telah terdaftar!',
+        ]);
+
+        if($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->with('formErrorInformation_' . $id, 'update')->with('formErrorInformationId', $id)->withInput();
+        }
+
+        $user = $dataOfficeProfiles->OfficeProfiles;
+
+        $user->update([
+            'nama_lengkap' => $request->nama_lengkap,
+        ]);
+
+        $dataOfficeProfiles->update([
+            'no_hp' => $request->no_hp,
+        ]);
+
+        return redirect()->back()->with('success-update-data-personal-administrator', 'Data berhasil diubah!');
     }
 }

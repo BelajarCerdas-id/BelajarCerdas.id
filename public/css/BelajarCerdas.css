@@ -260,12 +260,12 @@ input[type="radio"]:checked a {
     padding: 6px 14px;
 }
 
-.sidebar-beranda .menu-murid {
+.sidebar-beranda .list-menu {
     position: relative;
     margin: 20px 0;
 }
 
-.sidebar-beranda .menu-murid .tooltip {
+.sidebar-beranda .list-menu .tooltip {
     position: absolute;
     top: -20px;
     left: calc(100% + 15px);
@@ -281,7 +281,7 @@ input[type="radio"]:checked a {
     pointer-events: none;
 }
 
-.sidebar-beranda.open .menu-murid:hover .tooltip {
+.sidebar-beranda.open .list-menu:hover .tooltip {
     opacity: 1;
     pointer-events: auto;
     transition: all 0.4s ease;
@@ -289,7 +289,7 @@ input[type="radio"]:checked a {
     transform: translateY(-50%);
 }
 
-.sidebar-beranda .menu-murid a {
+.sidebar-beranda .list-menu a {
     display: flex;
     height: 100%;
     width: 100%;
@@ -300,7 +300,7 @@ input[type="radio"]:checked a {
     z-index: 12;
 }
 
-.sidebar-beranda .menu-murid a::after {
+.sidebar-beranda .list-menu a::after {
     content: "";
     position: absolute;
     width: 100%;
@@ -314,13 +314,12 @@ input[type="radio"]:checked a {
     z-index: -2;
 }
 
-.sidebar-beranda .menu-murid a:hover::after {
+.sidebar-beranda .list-menu a:hover::after {
     transform: scaleX(1);
     color: var(--color-second);
 }
 
-.sidebar-beranda .menu-murid a .link_name,
-.sidebar-beranda .menu-murid .text_name {
+.sidebar-beranda .list-menu a .link_name {
     color: var(--color-white);
     font-size: 15px;
     font-weight: 400;
@@ -332,30 +331,18 @@ input[type="radio"]:checked a {
     font-weight: bold;
 }
 
-.sidebar-beranda .text_name {
-    color: whitesmoke;
-    font-weight: bolder;
-    transition: all 0.5s ease;
-}
-
-.sidebar-beranda.open .text_name {
-    margin-left: 10px;
-    color: whitesmoke;
-    font-weight: bolder;
-}
-
-.sidebar-beranda .menu-murid a:hover .link_name,
-.sidebar-beranda .menu-murid a:hover i {
+.sidebar-beranda .list-menu a:hover .link_name,
+.sidebar-beranda .list-menu a:hover i {
     transition: all 0.5s ease;
     color: var(--color-second);
 }
 
-.sidebar-beranda.open .menu-murid a .link_name {
+.sidebar-beranda.open .list-menu a .link_name {
     opacity: 0;
     pointer-events: auto;
 }
 
-.sidebar-beranda .menu-murid i {
+.sidebar-beranda .list-menu i {
     height: 35px;
     line-height: 35px;
     font-size: 18px;
@@ -396,13 +383,13 @@ input[type="radio"]:checked a {
     justify-content: center;
 }
 
-.sidebar-beranda .menu-murid.active a {
+.list-menu a.active {
     background-color: white;
     border-radius: 5px;
 }
 
-.sidebar-beranda .menu-murid.active i,
-.sidebar-beranda .menu-murid.active span {
+.list-menu a.active i,
+.list-menu a.active .link_name {
     color: var(--color-second);
 }
 
@@ -632,10 +619,8 @@ input[type="radio"]:checked + .checked-timeline {
 
 #controls {
     width: 100%;
-    height: 50px;
+    height: 100%;
     z-index: 3;
-    position: absolute;
-    top: 30%;
 }
 #controls label {
     transition: opacity 0.2s ease-out;
@@ -647,10 +632,10 @@ input[type="radio"]:checked + .checked-timeline {
 #controls label:hover {
     opacity: 1;
 }
+
+/* NEXT BUTTON */
 #slide1:checked ~ #controls label:nth-child(2),
-#slide2:checked ~ #controls label:nth-child(3),
-#slide3:checked ~ #controls label:nth-child(4) {
-    /* #slide4:checked ~ #controls label:nth-child(1)  */
+#slide2:checked ~ #controls label:nth-child(3) {
     position: absolute;
     right: 0;
     top: 50%;
@@ -663,7 +648,6 @@ input[type="radio"]:checked + .checked-timeline {
 #slide1:checked ~ #controls label:nth-child(2)::before,
 #slide2:checked ~ #controls label:nth-child(3)::before,
 #slide3:checked ~ #controls label:nth-child(4)::before {
-    /* #slide4:checked ~ #controls label:nth-child(1)::before  */
     content: "\f054"; /* Font Awesome Chevron Right */
     font-family: "Font Awesome 5 Free"; /* Pastikan font family Font Awesome digunakan */
     font-weight: 900; /* Gunakan gaya bold untuk memastikan ikon tampil */
@@ -676,10 +660,9 @@ input[type="radio"]:checked + .checked-timeline {
     font-size: 24px; /* Ukuran ikon */
 }
 
-/* #slide1:checked ~ #controls label:nth-last-child(2), */
-#slide2:checked ~ #controls label:nth-last-child(4),
-#slide3:checked ~ #controls label:nth-last-child(3),
-#slide4:checked ~ #controls label:nth-last-child(2) {
+/* BACK BUTTON */
+#slide2:checked ~ #controls label:nth-last-child(3),
+#slide3:checked ~ #controls label:nth-last-child(2) {
     position: absolute;
     left: 0;
     top: 50%;
@@ -688,10 +671,8 @@ input[type="radio"]:checked + .checked-timeline {
     margin: 0;
 }
 
-/* #slide1:checked ~ #controls label:nth-last-child(2)::before, */
-#slide2:checked ~ #controls label:nth-last-child(4)::before,
-#slide3:checked ~ #controls label:nth-last-child(3)::before,
-#slide4:checked ~ #controls label:nth-last-child(2)::before {
+#slide2:checked ~ #controls label:nth-last-child(3)::before,
+#slide3:checked ~ #controls label:nth-last-child(2)::before {
     content: "\f053"; /* Font Awesome Chevron Left */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
@@ -1007,7 +988,9 @@ input[type="radio"]:checked + .pilihanSoal .option {
     margin: 14px 8px;
 }
 
-.toggle-menu {
+.toggle-menu,
+.toggle-menu-profile,
+.toggle-menu-sidebar {
     display: flex;
     align-items: center;
     gap: 14px;
@@ -1015,7 +998,7 @@ input[type="radio"]:checked + .pilihanSoal .option {
     cursor: pointer;
 }
 
-.toggle-menu2 {
+.toggle-menu-sidebar2 {
     display: flex;
     align-items: center;
     gap: 14px;
@@ -1024,13 +1007,15 @@ input[type="radio"]:checked + .pilihanSoal .option {
     margin: 0 15px;
 }
 
-.toggle-menu i {
+.toggle-menu-sidebar i {
     font-size: 12px;
     transition: all 0.4s ease;
 }
 
 .toggle-menu span,
-.toggle-menu a {
+.toggle-menu a,
+.toggle-menu-sidebar span,
+.toggle-menu-sidebar a {
     font-size: 14px;
 }
 
@@ -1075,8 +1060,16 @@ input[type="radio"]:checked + .pilihanSoal .option {
     font-size: 13px;
 }
 
+.list-item .content-menu:hover,
+.toggle-menu-sidebar:hover,
 .content-dropdown .link-href:hover {
-    color: yellow;
+    color: orange;
+}
+
+.list-item.active .toggle-menu-sidebar,
+.link-href.active,
+.list-item.active i {
+    color: orange;
 }
 
 /* open untuk dropdown utama */
@@ -2009,21 +2002,22 @@ input[type="radio"]:checked + label.checked-dropdown-mapel {
         padding: 0px 20px;
     }
 
-    .navbar-phone .menu-murid a {
+    .navbar-phone .list-menu a {
         padding: 15px;
         cursor: pointer;
         display: flex;
         align-items: center;
         gap: 8px;
     }
-    .navbar-phone .menu-murid:hover {
+    .navbar-phone .list-menu:hover {
         background-color: var(--color-second);
         color: white;
     }
 
-    .menu-murid.active a {
+    .list-menu.active a,
+    .list-menu.active i {
         background-color: var(--color-second);
-        color: whitesmoke;
+        color: whitesmoke !important;
     }
 
     .sidebar-beranda.open ~ .home-beranda {

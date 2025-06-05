@@ -16,11 +16,20 @@ class AuthMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Periksa apakah user sudah login menggunakan Auth::check()
         if (!Auth::check()) {
-            return redirect('/login'); // Redirect ke halaman login jika belum login
+            return redirect('/homePage');
         }
 
-        return $next($request);
+        $response = $next($request);
+
+        // Rekonstruksi response agar bisa ditambahkan header
+        $response = response($response->getContent(), $response->getStatusCode(), $response->headers->all());
+
+        $response->header('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate');
+        $response->header('Pragma', 'no-cache');
+        $response->header('Expires', 'Sat, 01 Jan 1990 00:00:00 GMT');
+
+        return $response;
     }
+
 }

@@ -16,6 +16,7 @@ class StudentProfiles extends Model
         'sekolah',
         'fase_id',
         'kelas_id',
+        'mentor_referral_code',
         'kode_jenjang_murid',
     ];
 

@@ -33,6 +33,11 @@ class Features extends Model
         return $this->hasOne(BabFeatureStatus::class, 'feature_id');
     }
 
+    public function SubBabFeatureStatus()
+    {
+        return $this->hasOne(SubBabFeatureStatus::class, 'feature_id');
+    }
+
     public function MentorFeatureStatus()
     {
         return $this->hasOne(MentorFeatureStatus::class, 'feature_id');

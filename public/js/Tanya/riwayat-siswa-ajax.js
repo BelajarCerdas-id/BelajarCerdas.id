@@ -58,10 +58,10 @@ function fetchFilteredDataRiwayatStudent(status_soal, page = 1) {
 
     // Append pagination links
         $('.pagination-container-siswa').html(data.links);
-        fetchFilteredDataRiwayatStudent('semua');
         $('.pagination-container-siswa').show(); // pake yang atas uda cukup, ini ditambahin karna dibawah di hide ketika tidak ada data pada saat filtering. kalo ga ditambahin pas filtering dari ga ada data ke yang ada, pagination ikutan hilang
         $('#filterTable thead').show();
         $('.showMessage').hide(); // ini juga sama kaya pagination-container-siswa\
+        bindPaginationHistoryStudent();
     } else {
         $('#filterTable thead').hide();
         $('#filterList').empty();
@@ -72,7 +72,6 @@ function fetchFilteredDataRiwayatStudent(status_soal, page = 1) {
     });
 }
 
-    bindPaginationLinks();
 
     $(document).ready(function() {
         // Ambil data yang berstatus_soal 'semua' saat halaman dimuat (jadi ini menampilkan semua data tanpa filter)
@@ -85,7 +84,7 @@ function fetchFilteredDataRiwayatStudent(status_soal, page = 1) {
         fetchFilteredDataRiwayatStudent(status_soal); // Call the function to fetch data based on status_soal
     });
 
-    function bindPaginationLinks() {
+    function bindPaginationHistoryStudent() {
         $('.pagination-container-siswa').off('click', 'a').on('click', 'a', function(event) {
         event.preventDefault(); // Cegah perilaku default link
         const page = new URL(this.href).searchParams.get('page'); // Dapatkan nomor halaman dari link

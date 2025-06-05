@@ -85,7 +85,7 @@ function fetchPaginateHistoryCoinOut(page = 1) {
                 $('.pagination-container-coin-out').html(response.links);
                 $('.pagination-container-coin-out').show();
                 $('.noDataMessageHistoryCoinOut').hide();
-                bindHistoryPaginationCoinIn();
+                bindHistoryPaginationCoinOut();
                 bindDetailToggleHistoryCoinOut(); // agar tombol "Lihat Detail" aktif
             } else {
                 $('.pagination-container-coin-out').hide();
@@ -95,7 +95,7 @@ function fetchPaginateHistoryCoinOut(page = 1) {
     });
 }
 
-function bindHistoryPaginationCoinIn() {
+function bindHistoryPaginationCoinOut() {
     $('.pagination-container-coin-out').off('click', 'a').on('click', 'a', function (e) {
         e.preventDefault();
         const page = new URL(this.href).searchParams.get('page');

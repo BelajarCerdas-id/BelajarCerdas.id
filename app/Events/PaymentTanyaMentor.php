@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\TanyaMentorPayments;
+use App\Models\MentorPayments;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -20,7 +20,7 @@ class PaymentTanyaMentor implements ShouldBroadcast
      */
     public $paymentTanyaMentor;
 
-    public function __construct(TanyaMentorPayments $paymentTanyaMentor)
+    public function __construct(MentorPayments $paymentTanyaMentor)
     {
         $this->paymentTanyaMentor = $paymentTanyaMentor;
     }

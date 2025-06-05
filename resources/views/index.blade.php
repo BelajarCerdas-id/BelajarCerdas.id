@@ -127,20 +127,20 @@
                 <img src="image/asset landing page.png" alt="" class="w-full h-full">
             </div> --}}
 
-            <div class="col-span-12 border border-yellow-500 flex items-center justify-center">
-                <div class="w-full md:text-left h-full border border-red-500 flex flex-col justify-center gap-2">
-                    <div class="text-2xl font-bold">
+            <div class="col-span-12 flex items-center justify-center mx-4">
+                <div class="w-full md:text-left h-full flex flex-col justify-center gap-2">
+                    <div class="text-xl font-bold">
                         <span>Lebih Dari Sekedar</span>
                         <span class="text-[--color-default]">Edutech</span>
                     </div>
-                    <div class="text-4xl sm:text-5xl md:text-bg-red-50 font-bold">
+                    <div class="text-4xl md:text-bg-red-50 font-bold">
                         <span>Belajar Cerdas</span>
                     </div>
-                    <div class="text-3xl sm:text-4xl md:text-5xl font-bold mt-[1px] !leading-[60px]">
+                    <div class="text-3xl sm:text-3xl md:text-4xl font-bold mt-[1px] !leading-[60px]">
                         <span>Raih Prestasi</span>
                         <span class="">Lebih Tinggi!</span>
                     </div>
-                    <div class="w-full xl:w-[78%] border-2 flex flex-wrap mt-[1px]">
+                    <div class="w-full xl:w-[78%] flex flex-wrap mt-[1px]">
                         <span class="text-justify leading-6 flex-grow">
                             Belajar Cerdas ID adalah platform edukasi inovatif yang membantumu memahami materi dengan
                             lebih
@@ -151,48 +151,6 @@
                     </div>
                 </div>
             </div>
-
-            {{-- <div class="col-span-12 border border-green-500 h-[400px] sm:h-[500px] relative flex justify-center">
-                <!----- rounded mid  ----->
-                <div
-                    class="absolute left-[-60px] top-[30%] h-28 w-28 bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
-                </div>
-                <!----- rounded right  ----->
-                <div
-                    class="absolute right-[-1px] top-[20%] h-28 w-14 bg-white shadow-[0_10px_24px_rgba(0,0,0,0.23)] rounded-l-full">
-                </div>
-
-                <div
-                    class="absolute bottom-[-130px] w-full h-full max-h-[300px] max-w-[300px] sm:max-h-[400px] sm:max-w-[400px] bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
-                    <!---- image in here ---->
-                </div>
-                <img src="image/asset landing page.png" alt="" class="w-full h-full">
-            </div>
-            <div class="col-span-12 border border-yellow-500 flex items-center justify-center">
-                <div class="w-full md:text-left h-full border border-red-500 flex flex-col justify-center gap-2 px-14">
-                    <div class="text-2xl font-bold">
-                        <span>Lebih Dari Sekedar</span>
-                        <span class="text-[--color-default]">Edutech</span>
-                    </div>
-                    <div class="text-4xl sm:text-5xl md:text-bg-red-50
-                        <span>Belajar Cerdas</span>
-                    </div>
-                    <div class="text-3xl sm:text-4xl md:text-5xl font-bold mt-[1px] !leading-[60px]">
-                        <span>Raih Prestasi</span>
-                        <span class="">Lebih Tinggi!</span>
-                    </div>
-                    <div class="w-full xl:w-[78%] border-2 flex flex-wrap mt-[1px]">
-                        <span class="text-justify leading-6 flex-grow">
-                            Belajar Cerdas ID adalah platform edukasi inovatif yang membantumu memahami materi dengan
-                            lebih
-                            mudah, cepat, dan efektif.
-                            Dengan metode pembelajaran yang interaktif dan berbasis konsep, kami siap menemanimu meraih
-                            prestasi terbaik!.
-                        </span>
-                    </div>
-                </div>
-            </div> --}}
-
         </section>
     </main>
 </header>
