@@ -172,6 +172,9 @@ Route::fallback(function () {
 
         // CLAIM COIN DAILY (student)
         Route::post('/tanya/claim-coin', [TanyaController::class, 'claimCoinDaily'])->name('tanya.claimCoinDaily');
+
+        // FILTER LEADERBOARD RANK TANYA STUDENT
+        Route::get('/leaderboard-rank-tanya-student', [FilterController::class, 'leaderboardRankTanya'])->name('filterLeaderboardRankTanyaStudent');
     });
 
 

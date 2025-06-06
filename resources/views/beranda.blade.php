@@ -27,27 +27,27 @@
                     <div
                         class="relative lg:col-span-3 col-span-5 h-[440px] md:h-[480px] lg:h-[440px] bg-white shadow-lg rounded-lg">
                         <span class="text-lg font-bold opacity-70">Pengguna Tanya Terbanyak</span>
-                        @if ($sortedSiswa->isNotEmpty())
-                            <!-- TABLE -->
-                            <div class="overflow-x-auto max-h-[310px]">
-                                <table class="table mt-4 border border-separate w-full">
-                                    <thead>
-                                        <tr>
-                                            <th class="border border-gray-400 px-3 py-2 text-center text-black">No</th>
-                                            <th class="border border-gray-400 px-3 py-2 text-center text-black">Nama
-                                                Lengkap</th>
-                                            <th class="border border-gray-400 px-3 py-2 text-center text-black">Kelas
-                                            </th>
-                                            <th class="border border-gray-400 px-3 py-2 text-center text-black">Asal
-                                                Sekolah</th>
-                                            <th class="border border-gray-400 px-3 py-2 text-center text-black">Koin
-                                                Terpakai</th>
-                                            <th class="border border-gray-400 px-3 py-2 text-center text-black">Total
-                                                BerTANYA</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($sortedTanyaStudent as $value)
+                        {{-- @if ($sortedSiswa->isNotEmpty()) --}}
+                        <!-- TABLE -->
+                        <div class="overflow-x-auto max-h-[310px]">
+                            <table class="table mt-4 border border-separate w-full">
+                                <thead class="thead-table-leaderboard-rank-tanya-student">
+                                    <tr>
+                                        <th class="border border-gray-400 px-3 py-2 text-center text-black">Rank</th>
+                                        <th class="border border-gray-400 px-3 py-2 text-center text-black">Nama
+                                            Lengkap</th>
+                                        <th class="border border-gray-400 px-3 py-2 text-center text-black">Kelas
+                                        </th>
+                                        <th class="border border-gray-400 px-3 py-2 text-center text-black">Asal
+                                            Sekolah</th>
+                                        <th class="border border-gray-400 px-3 py-2 text-center text-black">Koin
+                                            Terpakai</th>
+                                        <th class="border border-gray-400 px-3 py-2 text-center text-black">Total
+                                            BerTANYA</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-leaderboard-rank-tanya-student">
+                                    {{-- @foreach ($sortedTanyaStudent as $value)
                                             <tr class="{{ $value->rowClass }}">
                                                 <td class="border border-gray-300 px-3 py-2 text-center">
                                                     {!! $value->rankIcon ?? '' !!}</td>
@@ -62,40 +62,26 @@
                                                 <td class="border border-gray-300 px-3 py-2 text-center">
                                                     {{ $value->jumlah_tanya ?? '' }}</td>
                                             </tr>
-                                            <tr class="{{ $value->rowClass }}">
-                                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                                    {!! $value->rankIcon ?? '' !!}</td>
-                                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                                    {{ $value->Profile->nama_lengkap ?? '' }}</td>
-                                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                                    {{ $value->Profile->Kelas->kelas ?? '' }}</td>
-                                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                                    {{ $value->Profile->sekolah ?? '' }}</td>
-                                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                                    {{ $value->jumlah_koin ?? '' }}</td>
-                                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                                    {{ $value->jumlah_tanya ?? '' }}</td>
-                                            </tr>
-                                            <tr class="{{ $value->rowClass }}">
-                                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                                    {!! $value->rankIcon ?? '' !!}</td>
-                                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                                    {{ $value->Profile->nama_lengkap ?? '' }}</td>
-                                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                                    {{ $value->Profile->Kelas->kelas ?? '' }}</td>
-                                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                                    {{ $value->Profile->sekolah ?? '' }}</td>
-                                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                                    {{ $value->jumlah_koin ?? '' }}</td>
-                                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                                    {{ $value->jumlah_tanya ?? '' }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                        @endforeach --}}
+                                </tbody>
+                            </table>
+                            <div
+                                class="pagination-container-leaderboard-rank-tanya-student flex justify-center my-4 sm:my-0">
                             </div>
-                            <!-- PERINGKAT USER (DEKSTOP)-->
-                            <div class="hidden xl:block">
+
+                            <div id="empty-message-leaderboard-rank-tanya-student" class="w-full h-96 hidden">
+                                <span class="w-full h-full flex items-center justify-center">
+                                    Belum ada leaderboard.
+                                </span>
+                            </div>
+                        </div>
+                        <!-- PERINGKAT USER (Size XL)-->
+                        <div class="hidden xl:block">
+                            <div id="container-leaderboard-rank-tanya-user"
+                                class="w-full h-26 bg-white absolute bottom-0 shadow-md border-t flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                            </div>
+                        </div>
+                        {{-- <div class="hidden xl:block">
                                 <div
                                     class="w-full h-26 bg-white absolute bottom-0 shadow-md border-t flex flex-col sm:flex-row sm:items-center sm:justify-between">
                                     <div class="flex items-center gap-4 h-full">
@@ -114,7 +100,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <div class="text-md text-gray-500 ml-2">
+                                        <div class="text-md font-bold opacity-70 ml-2">
                                             {{ Auth::user()->Profile->nama_lengkap ?? '' }}
                                         </div>
                                     </div>
@@ -126,16 +112,16 @@
                                 </div>
                             </div>
 
-                            <!-- PERINGKAT USER (MOBILE)-->
+                            <!-- PERINGKAT USER (Size Mobile, Lg)-->
                             <div class="xl:hidden">
                                 <div
                                     class="w-full h-32 bg-white absolute bottom-0 shadow-md border-t flex flex-col items-center gap-4">
-                                    <div class="text-md text-gray-500 ml-2 px-6">
+                                    <div class="text-md font-bold opacity-70 ml-2 px-6 pt-4 xl:pt-0">
                                         {{ Auth::user()->Profile->nama_lengkap ?? '' }}
                                     </div>
                                     <div class="grid grid-cols-2 gap-4 w-full h-full">
                                         <div
-                                            class="text-sm sm:text-base text-gray-700 border-r-2 h-full flex flex-col items-center justify-center border w-full">
+                                            class="text-sm sm:text-base text-gray-700 h-full flex flex-col items-center justify-center w-full">
                                             <span class="font-bold opacity-70 text-sm">Peringkat :</span>
                                             <span class="font-semibold text-indigo-600">
                                                 @if ($rankingTanyaUser == 1)
@@ -150,19 +136,19 @@
                                             </span>
                                         </div>
                                         <div
-                                            class="text-sm sm:text-base text-gray-700 border-l-2 h-full px-4 flex flex-col items-center justify-center">
+                                            class="text-sm sm:text-base text-gray-700 h-full px-4 flex flex-col items-center justify-center">
                                             <span class="font-bold opacity-70 text-sm">Total berTANYA:</span>
                                             <span
                                                 class="font-bold opacity-70">{{ $countDataTanyaUserLogin ?? 0 }}</span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        @else
+                            </div> --}}
+                        {{-- @else
                             <div class="h-full flex justify-center items-center">
                                 <span>Tidak ada riwayat</span>
                             </div>
-                        @endif
+                        @endif --}}
                     </div>
                     <div class="lg:col-span-2 col-span-5 mt-8">
                         <span class="text-lg"> Jadwal : </span>
@@ -465,7 +451,9 @@
 @endif
 
 
-<script src="js/chart.js"></script>
+<script src="js/chart.js"></script> <!--- chart js ---->
+
+<script src="{{ asset('js/Tanya/leaderboard-rank-tanya/leaderboard-rank-tanya-student.js') }}"></script>
 
 <!--- PUSHER LISTENER TANYA ---->
 <script src="{{ asset('js/pusher-listener/leaderboard-rank-tanya-student.js') }}"></script>

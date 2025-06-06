@@ -136,6 +136,13 @@
                                         Beranda
                                     </div>
                                 </a>
+                                <a href="{{ route('profile') }}">
+                                    <div
+                                        class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
+                                        <i class="fa-regular fa-circle-user text-lg"></i>
+                                        Profile
+                                    </div>
+                                </a>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
                                     <button
@@ -350,6 +357,13 @@
                                         class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
                                         <i class="fa-solid fa-house"></i>
                                         Beranda
+                                    </div>
+                                </a>
+                                <a href="{{ route('profile') }}">
+                                    <div
+                                        class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
+                                        <i class="fa-regular fa-circle-user text-lg"></i>
+                                        Profile
                                     </div>
                                 </a>
                                 <form action="{{ route('logout') }}" method="POST">
@@ -625,6 +639,13 @@
                                     class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
                                     <i class="fa-solid fa-house"></i>
                                     Beranda
+                                </div>
+                            </a>
+                            <a href="{{ route('profile') }}">
+                                <div
+                                    class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
+                                    <i class="fa-regular fa-circle-user text-lg"></i>
+                                    Profile
                                 </div>
                             </a>
                             <form action="{{ route('logout') }}" method="POST">
