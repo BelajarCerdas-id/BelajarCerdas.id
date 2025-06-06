@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Events\TransactionFailed;
 use App\Models\userAccount;
-use App\Models\Star;
 use App\Models\Level;
 use App\Models\Tanya;
 use Illuminate\Http\Request;
@@ -18,6 +17,7 @@ use App\Models\Transactions;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Container\Attributes\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class webController extends Controller
 {
@@ -77,37 +77,22 @@ class webController extends Controller
 
     public function beranda()
     {
-        $getTanyaTL = Tanya::onlyTrashed()->get();
+        $user = Auth::user()->id;
 
         $getData = userAccount::where('status', 'Mentor')->get();
 
-        $dataAccept = Tanya::onlyTrashed()->whereIn('email_mentor', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email_mentor');
-
-        $countData = [];
-
-        $countData = $getData->mapWithKeys(function ($item) {
-            return [$item->email => Tanya::onlyTrashed()->where('email_mentor', $item->email)->count()];
-        });
-
         // FOR BERANDA ADMINISTRATOR
-        $getMentor = UserAccount::where('role', 'Mentor')->get();
+        $getMentor = UserAccount::where('role', 'Mentor')->get(); // mendapatkan user mentor
 
-        $getDataSiswa = UserAccount::where('role', 'Siswa')->get();
+        $getDataSiswa = UserAccount::where('role', 'Siswa')->get(); // mendapatkan user siswa (B2C)
 
-        $getDataMurid = userAccount::where('role', 'Murid')->get();
+        $getDataMurid = userAccount::where('role', 'Murid')->get(); // mendapatkan user murid (B2B)
 
-        $countDataMentor = MentorProfiles::where('status_mentor', 'Diterima')->get();
+        $countDataMentor = MentorProfiles::where('status_mentor', 'Diterima')->get(); // menghitung jumlah mentor yang diterima
 
-        $groupedTanya  = Tanya::onlyTrashed()->get()->groupBy('email');
+        $getSiswa = UserAccount::where('role', 'Siswa')->orWhere('role', 'Murid')->get(); /// mendapatkan user siswa dan murid
 
-        $getTanya = $groupedTanya->map(function ($item) {
-            return $item->first();
-        });
-
-        $dataTanya = $groupedTanya;
-
-        $getSiswa = UserAccount::where('role', 'Siswa')->orWhere('role', 'Murid')->get();
-        // Ambil jumlah Tanya untuk semua email dalam satu kali loop
+        // Ambil jumlah Tanya untuk semua user_id dalam satu kali loop
         $countSiswaTanya = Tanya::withTrashed()
             ->whereIn('user_id', $getSiswa->pluck('id'))
             ->get()
@@ -122,120 +107,57 @@ class webController extends Controller
             return $siswa->jumlah_tanya > 0; // Filter siswa dengan jumlah Tanya lebih besar dari 0
         })->sortByDesc('jumlah_tanya')->take(10); // Urutkan & ambil 10 terbesar
 
-        $countDataTanyaAll = Tanya::withTrashed()->get();
+        $countDataTanyaAll = Tanya::withTrashed()->get(); // menghitung jumlah seluruh data Tanya
 
-        $mapelK13 = [
-            [
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-        ];
+        // FOR BERANDA STUDENT
+        $countTanyaStudent = Tanya::with('CoinHistory')->withTrashed()->whereIn('user_id', $getSiswa->pluck('id'))->whereIn('status_soal', ['Diterima', 'Menunggu'])
+        ->get()->groupBy('user_id')->map(fn($items) => $items->count()); // Hitung jumlah Tanya per user
 
-        $mapelMerdeka = [
-            [
-                'title' => 'Merdeka',
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'title' => 'Merdeka',
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'title' => 'Merdeka',
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'title' => 'Merdeka',
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'title' => 'Merdeka',
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'title' => 'Merdeka',
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'title' => 'Merdeka',
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'title' => 'Merdeka',
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'title' => 'Merdeka',
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'title' => 'Merdeka',
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-            [
-                'title' => 'Merdeka',
-                'image' => 'image/pkn.png',
-                'judul' => 'Text Here'
-            ],
-        ];
+        // menghitung jumlah koin yang keluar untuk seluruh student
+        $countKoinStudent = Tanya::with(['CoinHistory' => function ($query) {
+            $query->where('tipe_koin', 'Keluar');
+        }]) // pastikan CoinHistory adalah relasi valid dari Tanya
+            ->withTrashed()
+            ->whereIn('user_id', $getSiswa->pluck('id'))
+            ->get()
+            ->groupBy('user_id')
+            ->map(function ($items) {
+                return $items->reduce(function ($carry, $item) {
+                    return $carry + ($item->CoinHistory->jumlah_koin ?? 0);
+                }, 0);
+            });
+
+        // Tambahkan jumlah Tanya dan jumlah koin ke dalam objek siswa tanpa looping manual
+        $sortedTanyaStudent = $getSiswa->each(function ($siswa) use ($countTanyaStudent, $countKoinStudent) {
+            $siswa->jumlah_tanya = $countTanyaStudent[$siswa->id] ?? 0;
+            $siswa->jumlah_koin = $countKoinStudent[$siswa->id] ?? 0;
+        })->filter(function ($siswa) {
+            return $siswa->jumlah_tanya > 0;
+        })->sortByDesc('jumlah_tanya')->take(100)->values(); // pastikan pakai values() agar index dimulai dari 0
+
+        $sortedTanyaStudent->each(function ($student, $index) {
+            $rank = $index + 1;
+            $student->rank = $rank;
+
+            $student->rankIcon = match ($rank) {
+                1 => "<i class='fa-solid fa-crown text-yellow-400 font-bold text-lg'></i>",
+                2 => "<i class='fa-solid fa-crown text-gray-400 font-bold text-lg'></i>",
+                3 => "<i class='fa-solid fa-crown text-amber-800 font-bold text-lg'></i>",
+                default => $rank,
+            };
+        });
+
+        // mengambil data tanya student yang sedang login
+        $countDataTanyaUserLogin = Tanya::withTrashed()->where('user_id', Auth::user()->id)->count();
+
+        // membuat ranking pengguna tanya terbanyak
+        $rankingTanyaUser = $sortedTanyaStudent->values()->search(function ($item) use ($user) {
+            return $item->id === $user;
+        });
+
+        $rankingTanyaUser = $rankingTanyaUser !== false ? $rankingTanyaUser + 1 : null; // tambahkan 1 karena index dimulai dari 0
+
+
 
         $packetSiswa = [
             [
@@ -269,7 +191,7 @@ class webController extends Controller
                 'button' => 'CATATAN'
             ],
         ];
-        return view('beranda', compact('mapelK13', 'mapelMerdeka', 'packetSiswa', 'getTanyaTL', 'getData', 'countData', 'dataAccept', 'getDataSiswa', 'getDataMurid', 'getTanya', 'countSiswaTanya', 'getSiswa', 'sortedSiswa', 'countDataTanyaAll', 'countDataMentor'));
+        return view('beranda', compact('packetSiswa', 'getData',  'getDataSiswa', 'getDataMurid', 'countSiswaTanya', 'getSiswa', 'sortedSiswa', 'countDataTanyaAll', 'countDataMentor', 'sortedTanyaStudent', 'countDataTanyaUserLogin', 'rankingTanyaUser'));
     }
 
     public function sidebarBeranda()

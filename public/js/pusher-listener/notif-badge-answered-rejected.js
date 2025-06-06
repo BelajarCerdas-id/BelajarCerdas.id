@@ -7,25 +7,27 @@
                 // mendengarkan event broadcast untuk menerima riwayat soal (diterima & ditolak)
                 fetchFilteredDataRiwayatStudent(currentStatusAnswered);
 
-                let badge = document.getElementById("notifBadgeAnswered");
+                    let badge = document.getElementById("notifBadgeAnswered");
 
-                if (badge) {
-                    let currentCount = parseInt(badge.textContent || '0');
-                    badge.textContent = currentCount + 1;
-                    badge.classList.remove("hidden");
-                } else {
-                    const span = document.createElement("span");
-                    span.id = "notifBadgeAnswered";
-                    span.classList.add("absolute", "top-0", "right-0", "bg-red-500", "text-white", "w-4",
-                        "h-4", "rounded-full", "flex", "items-center", "justify-center");
-                    span.textContent = "1";
+                    if (badge) {
+                        let currentCount = parseInt(badge.textContent || '0');
+                        badge.textContent = currentCount + 1;
+                        badge.classList.remove("hidden");
+                    } else {
+                        const span = document.createElement("span");
+                        span.id = "notifBadgeAnswered";
+                        span.classList.add("absolute", "top-0", "right-0", "bg-red-500", "text-white", "w-4",
+                            "h-4", "rounded-full", "flex", "items-center", "justify-center");
+                        span.textContent = "1";
 
-                    const target = document.querySelector(".historyTanya .answeredText");
-                    if (target) {
-                        target.appendChild(span);
+                        const target = document.querySelector(".historyTanya .answeredText");
+                        if (target) {
+                            target.appendChild(span);
+                        }
                     }
-                }
+
                 fetchDataTanyaUnAnswered();
+
                 fetchDataTanyaAnswered();
             });
     });

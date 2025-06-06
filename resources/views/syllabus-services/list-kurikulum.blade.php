@@ -159,7 +159,7 @@
                     <!---- modal BulkUpload  ---->
                     <dialog id="my_modal_4_" class="modal">
                         <div class="modal-box bg-white w-max">
-                            <span class="text-md flex justify-center font-bold opacity-70">Upload Materi Sub Bab</span>
+                            <span class="text-md flex justify-center font-bold opacity-70">Upload Syllabus</span>
                             <form action="{{ route('syllabus.bulkupload.sub-bab') }}" method="POST"
                                 enctype="multipart/form-data">
                                 @csrf

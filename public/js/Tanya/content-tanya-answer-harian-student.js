@@ -91,6 +91,7 @@ function fetchDataTanyaAnswered() {
             container.empty();
 
             if (response.data && response.data.length > 0) {
+
                 response.data.forEach(item => {
                     const formatDate = (dateString) => {
                         const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];

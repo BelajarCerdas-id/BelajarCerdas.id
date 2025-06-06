@@ -21,73 +21,148 @@
 @endif
 @if (Auth::user()->role === 'Siswa')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0"> {{-- mt ini berguna untuk ketika sidebar lagi terbuka dan di responsif ke layar hp, content didalam sini turun supaya tidak bentrok sama extends sidebar mobile dan bisa dibuka --}}
-        <div class="content-beranda mt-[120px]">
-            <div class="max-w-full mx-6">
+        <div class="content-beranda mt-[120px] md:mx-6">
+            <div class="max-w-full">
                 <div class="grid grid-cols-5 gap-6">
                     <div
-                        class="relative lg:col-span-3 col-span-5 md:h-[480px] lg:h-[440px] h-[440px] overflow-hidden bg-white shadow-lg rounded-lg">
-                        <x-dropdown></x-dropdown>
-                        <div class="k13 w-full h-full absolute pt-20 top-0" id="k13">
-                            <figure class="flex gap-4 px-14 mb-4 lg:mt-4">
-                                <img src="image/k13.png" alt="" class="w-[30px]">
-                                <figcaption class="font-bold">K13</figcaption>
-                            </figure>
-                            <div class="w-full lg:mt-12">
-                                <div
-                                    class="gap-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mx-4">
-                                    @foreach ($mapelK13 as $mapel)
-                                        <figure
-                                            class="w-full hidden md:block hover:bg-slate-200 cursor-pointer rounded-lg">
-                                            <div class="w-full flex justify-center">
-                                                <img src="{{ $mapel['image'] }}" alt="" class="w-[34px] h-10">
-                                            </div>
-                                            <figcaption class="text-center text-sm">{{ $mapel['judul'] }}
-                                            </figcaption>
-                                        </figure>
-                                    @endforeach
-                                </div>
+                        class="relative lg:col-span-3 col-span-5 h-[440px] md:h-[480px] lg:h-[440px] bg-white shadow-lg rounded-lg">
+                        <span class="text-lg font-bold opacity-70">Pengguna Tanya Terbanyak</span>
+                        @if ($sortedSiswa->isNotEmpty())
+                            <!-- TABLE -->
+                            <div class="overflow-x-auto max-h-[310px]">
+                                <table class="table mt-4 border border-separate w-full">
+                                    <thead>
+                                        <tr>
+                                            <th class="border border-gray-400 px-3 py-2 text-center text-black">No</th>
+                                            <th class="border border-gray-400 px-3 py-2 text-center text-black">Nama
+                                                Lengkap</th>
+                                            <th class="border border-gray-400 px-3 py-2 text-center text-black">Kelas
+                                            </th>
+                                            <th class="border border-gray-400 px-3 py-2 text-center text-black">Asal
+                                                Sekolah</th>
+                                            <th class="border border-gray-400 px-3 py-2 text-center text-black">Koin
+                                                Terpakai</th>
+                                            <th class="border border-gray-400 px-3 py-2 text-center text-black">Total
+                                                BerTANYA</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($sortedTanyaStudent as $value)
+                                            <tr class="{{ $value->rowClass }}">
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {!! $value->rankIcon ?? '' !!}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->Profile->nama_lengkap ?? '' }}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->Profile->Kelas->kelas ?? '' }}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->Profile->sekolah ?? '' }}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->jumlah_koin ?? '' }}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->jumlah_tanya ?? '' }}</td>
+                                            </tr>
+                                            <tr class="{{ $value->rowClass }}">
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {!! $value->rankIcon ?? '' !!}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->Profile->nama_lengkap ?? '' }}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->Profile->Kelas->kelas ?? '' }}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->Profile->sekolah ?? '' }}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->jumlah_koin ?? '' }}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->jumlah_tanya ?? '' }}</td>
+                                            </tr>
+                                            <tr class="{{ $value->rowClass }}">
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {!! $value->rankIcon ?? '' !!}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->Profile->nama_lengkap ?? '' }}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->Profile->Kelas->kelas ?? '' }}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->Profile->sekolah ?? '' }}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->jumlah_koin ?? '' }}</td>
+                                                <td class="border border-gray-300 px-3 py-2 text-center">
+                                                    {{ $value->jumlah_tanya ?? '' }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
-
-                            <div class="md:hidden p-2" onclick="my_modal_3.showModal()">
-                                <figure class="w-max ml-2">
-                                    <div class="w-full flex justify-center mb-2">
-                                        <img src="image/pkn.png" alt="" class="w-[30px]">
+                            <!-- PERINGKAT USER (DEKSTOP)-->
+                            <div class="hidden xl:block">
+                                <div
+                                    class="w-full h-26 bg-white absolute bottom-0 shadow-md border-t flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                    <div class="flex items-center gap-4 h-full">
+                                        <div
+                                            class="text-sm sm:text-base text-gray-700 border-r-2 h-full flex flex-col items-center justify-center border w-17">
+                                            <span class="font-bold opacity-70 text-sm">Rank :</span>
+                                            <span class="font-semibold text-indigo-600">
+                                                @if ($rankingTanyaUser == 1)
+                                                    <i class='fa-solid fa-crown text-yellow-400 font-bold text-lg'></i>
+                                                @elseif ($rankingTanyaUser == 2)
+                                                    <i class='fa-solid fa-crown text-gray-400 font-bold text-lg'></i>
+                                                @elseif($rankingTanyaUser == 3)
+                                                    <i class='fa-solid fa-crown text-amber-800 font-bold text-lg'></i>
+                                                @else
+                                                    <span>{{ $rankingTanyaUser ?? '?' }}</span>
+                                                @endif
+                                            </span>
+                                        </div>
+                                        <div class="text-md text-gray-500 ml-2">
+                                            {{ Auth::user()->Profile->nama_lengkap ?? '' }}
+                                        </div>
                                     </div>
-                                    <figcaption class="text-xs text-center md:hidden">Semua Pelajaran</figcaption>
-                                </figure>
+                                    <div
+                                        class="text-sm sm:text-base text-gray-700 border-l-2 w-45 h-full px-4 flex flex-col items-center justify-center">
+                                        <span class="font-bold opacity-70 text-sm">Total berTANYA:</span>
+                                        <span class="font-bold opacity-70">{{ $countDataTanyaUserLogin ?? 0 }}</span>
+                                    </div>
+                                </div>
                             </div>
 
-                            <dialog id="my_modal_3" class="modal">
-                                <div class="modal-box">
-                                    <form method="dialog">
-                                        <button class=" outline-none absolute right-4 top-1">✕</button>
-                                    </form>
-                                    <h3 class="text-lg font-bold">Hello!</h3>
-                                    <p class="py-4">Press ESC key or click on ✕ button to close</p>
-                                </div>
-                            </dialog>
-                        </div>
-                        <div class="merdeka absolute right-[-100%] w-full h-full pt-20 top-0" id="merdeka">
-                            <figure class="flex gap-4 px-14 mb-4 lg:mt-4">
-                                <img src="image/k13.png" alt="" class="w-[30px]">
-                                <figcaption class="font-bold">Merdeka</figcaption>
-                            </figure>
-                            <div class="w-full lg:mt-12">
+                            <!-- PERINGKAT USER (MOBILE)-->
+                            <div class="xl:hidden">
                                 <div
-                                    class="gap-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mx-4">
-                                    @foreach ($mapelMerdeka as $mapel)
-                                        <figure
-                                            class="w-full hidden md:block hover:bg-slate-200 cursor-pointer rounded-lg">
-                                            <div class="w-full flex justify-center">
-                                                <img src="{{ $mapel['image'] }}" alt="" class="w-[34px] h-10">
-                                            </div>
-                                            <figcaption class="text-center text-sm">{{ $mapel['judul'] }}
-                                            </figcaption>
-                                        </figure>
-                                    @endforeach
+                                    class="w-full h-32 bg-white absolute bottom-0 shadow-md border-t flex flex-col items-center gap-4">
+                                    <div class="text-md text-gray-500 ml-2 px-6">
+                                        {{ Auth::user()->Profile->nama_lengkap ?? '' }}
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4 w-full h-full">
+                                        <div
+                                            class="text-sm sm:text-base text-gray-700 border-r-2 h-full flex flex-col items-center justify-center border w-full">
+                                            <span class="font-bold opacity-70 text-sm">Peringkat :</span>
+                                            <span class="font-semibold text-indigo-600">
+                                                @if ($rankingTanyaUser == 1)
+                                                    <i class='fa-solid fa-crown text-yellow-400 font-bold text-lg'></i>
+                                                @elseif ($rankingTanyaUser == 2)
+                                                    <i class='fa-solid fa-crown text-gray-400 font-bold text-lg'></i>
+                                                @elseif($rankingTanyaUser == 3)
+                                                    <i class='fa-solid fa-crown text-amber-800 font-bold text-lg'></i>
+                                                @else
+                                                    <span>{{ $rankingTanyaUser ?? '?' }}</span>
+                                                @endif
+                                            </span>
+                                        </div>
+                                        <div
+                                            class="text-sm sm:text-base text-gray-700 border-l-2 h-full px-4 flex flex-col items-center justify-center">
+                                            <span class="font-bold opacity-70 text-sm">Total berTANYA:</span>
+                                            <span
+                                                class="font-bold opacity-70">{{ $countDataTanyaUserLogin ?? 0 }}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @else
+                            <div class="h-full flex justify-center items-center">
+                                <span>Tidak ada riwayat</span>
+                            </div>
+                        @endif
                     </div>
                     <div class="lg:col-span-2 col-span-5 mt-8">
                         <span class="text-lg"> Jadwal : </span>
@@ -137,69 +212,7 @@
                 <div class="grid grid-cols-5 gap-6">
                     <div
                         class="relative lg:col-span-3 col-span-5 md:h-[480px] lg:h-[440px] h-[440px] overflow-hidden bg-white shadow-lg rounded-lg">
-                        <x-dropdown></x-dropdown>
-                        <div class="k13 w-full h-full absolute pt-20 top-0" id="k13">
-                            <figure class="flex gap-4 px-14 mb-4 lg:mt-4">
-                                <img src="image/k13.png" alt="" class="w-[30px]">
-                                <figcaption class="font-bold">K13</figcaption>
-                            </figure>
-                            <div class="w-full lg:mt-12">
-                                <div
-                                    class="gap-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mx-4">
-                                    @foreach ($mapelK13 as $mapel)
-                                        <figure
-                                            class="w-full hidden md:block hover:bg-slate-200 cursor-pointer rounded-lg">
-                                            <div class="w-full flex justify-center">
-                                                <img src="{{ $mapel['image'] }}" alt="" class="w-[34px] h-10">
-                                            </div>
-                                            <figcaption class="text-center text-sm">{{ $mapel['judul'] }}
-                                            </figcaption>
-                                        </figure>
-                                    @endforeach
-                                </div>
-                            </div>
-
-                            <div class="md:hidden p-2" onclick="my_modal_3.showModal()">
-                                <figure class="w-max ml-2">
-                                    <div class="w-full flex justify-center mb-2">
-                                        <img src="image/pkn.png" alt="" class="w-[30px]">
-                                    </div>
-                                    <figcaption class="text-xs text-center md:hidden">Semua Pelajaran</figcaption>
-                                </figure>
-                            </div>
-
-                            <dialog id="my_modal_3" class="modal">
-                                <div class="modal-box">
-                                    <form method="dialog">
-                                        <button class=" outline-none absolute right-4 top-1">✕</button>
-                                    </form>
-                                    <h3 class="text-lg font-bold">Hello!</h3>
-                                    <p class="py-4">Press ESC key or click on ✕ button to close</p>
-                                </div>
-                            </dialog>
-                        </div>
-                        <div class="merdeka absolute right-[-100%] w-full h-full pt-20 top-0" id="merdeka">
-                            <figure class="flex gap-4 px-14 mb-4 lg:mt-4">
-                                <img src="image/k13.png" alt="" class="w-[30px]">
-                                <figcaption class="font-bold">Merdeka</figcaption>
-                            </figure>
-                            <div class="w-full lg:mt-12">
-                                <div
-                                    class="gap-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mx-4">
-                                    @foreach ($mapelMerdeka as $mapel)
-                                        <figure
-                                            class="w-full hidden md:block hover:bg-slate-200 cursor-pointer rounded-lg">
-                                            <div class="w-full flex justify-center">
-                                                <img src="{{ $mapel['image'] }}" alt=""
-                                                    class="w-[34px] h-10">
-                                            </div>
-                                            <figcaption class="text-center text-sm">{{ $mapel['judul'] }}
-                                            </figcaption>
-                                        </figure>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
+                        a
                     </div>
                     <div class="lg:col-span-2 col-span-5 mt-8">
                         <span class="text-lg"> Jadwal : </span>
@@ -452,8 +465,11 @@
 @endif
 
 
-<script src="js/tanya-TL-ajax.js"></script>
 <script src="js/chart.js"></script>
+
+<!--- PUSHER LISTENER TANYA ---->
+<script src="{{ asset('js/pusher-listener/leaderboard-rank-tanya-student.js') }}"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const menuItems = document.querySelectorAll('.menu-murid a');
