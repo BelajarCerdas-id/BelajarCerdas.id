@@ -45,27 +45,7 @@
     </div>
 @endif
 
-<script src="js/Tanya/list-pertanyaan-rollback-ajax.js"></script>
+<script src="js/Tanya/list-pertanyaan-rollback-ajax.js"></script> <!--- list pertanyaan  ---->
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Dengar event broadcast soal update status viewed
-        window.Echo.channel('tanya')
-            .listen('.question.created', (e) => {
-                console.log('⚡️ Broadcast diterima di admin rollback:', e);
-
-                // Refresh data rollback otomatis
-                fetchFilteredDataTanyaRollback();
-            });
-    });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        window.Echo.channel('tanya')
-            .listen('.question.rollback', (e) => {
-                // Mendengarkan event broadcast untuk menerima riwayat soal (diterima & ditolak)
-                fetchFilteredDataTanyaRollback();
-            })
-    })
-</script>
+<!--- PUSHER LISTENER TANYA ---->
+<script src="{{ asset('js/pusher-listener/tanya/rollback-question-tanya.js') }}"></script> <!--- pusher listener mengembalikkan pertanyaan yang sedang dilihat ---->

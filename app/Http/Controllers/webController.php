@@ -109,56 +109,6 @@ class webController extends Controller
 
         $countDataTanyaAll = Tanya::withTrashed()->get(); // menghitung jumlah seluruh data Tanya
 
-        // FOR BERANDA STUDENT
-        // $countTanyaStudent = Tanya::with('CoinHistory')->withTrashed()->whereIn('user_id', $getSiswa->pluck('id'))->whereIn('status_soal', ['Diterima', 'Menunggu'])
-        // ->get()->groupBy('user_id')->map(fn($items) => $items->count()); // Hitung jumlah Tanya per user
-
-        // // menghitung jumlah koin yang keluar untuk seluruh student
-        // $countKoinStudent = Tanya::with(['CoinHistory' => function ($query) {
-        //     $query->where('tipe_koin', 'Keluar');
-        // }]) // pastikan CoinHistory adalah relasi valid dari Tanya
-        //     ->withTrashed()
-        //     ->whereIn('user_id', $getSiswa->pluck('id'))
-        //     ->get()
-        //     ->groupBy('user_id')
-        //     ->map(function ($items) {
-        //         return $items->reduce(function ($carry, $item) {
-        //             return $carry + ($item->CoinHistory->jumlah_koin ?? 0);
-        //         }, 0);
-        //     });
-
-        // // Tambahkan jumlah Tanya dan jumlah koin ke dalam objek siswa tanpa looping manual
-        // $sortedTanyaStudent = $getSiswa->each(function ($siswa) use ($countTanyaStudent, $countKoinStudent) {
-        //     $siswa->jumlah_tanya = $countTanyaStudent[$siswa->id] ?? 0;
-        //     $siswa->jumlah_koin = $countKoinStudent[$siswa->id] ?? 0;
-        // })->filter(function ($siswa) {
-        //     return $siswa->jumlah_tanya > 0;
-        // })->sortByDesc('jumlah_tanya')->take(100)->values(); // pastikan pakai values() agar index dimulai dari 0
-
-        // $sortedTanyaStudent->each(function ($student, $index) {
-        //     $rank = $index + 1;
-        //     $student->rank = $rank;
-
-        //     $student->rankIcon = match ($rank) {
-        //         1 => "<i class='fa-solid fa-crown text-yellow-400 font-bold text-lg'></i>",
-        //         2 => "<i class='fa-solid fa-crown text-gray-400 font-bold text-lg'></i>",
-        //         3 => "<i class='fa-solid fa-crown text-amber-800 font-bold text-lg'></i>",
-        //         default => $rank,
-        //     };
-        // });
-
-        // // mengambil data tanya student yang sedang login
-        // $countDataTanyaUserLogin = Tanya::withTrashed()->where('user_id', Auth::user()->id)->count();
-
-        // // membuat ranking pengguna tanya terbanyak
-        // $rankingTanyaUser = $sortedTanyaStudent->values()->search(function ($item) use ($user) {
-        //     return $item->id === $user;
-        // });
-
-        // $rankingTanyaUser = $rankingTanyaUser !== false ? $rankingTanyaUser + 1 : null; // tambahkan 1 karena index dimulai dari 0
-
-        // 'sortedTanyaStudent', 'countDataTanyaUserLogin', 'rankingTanyaUser'
-
         $packetSiswa = [
             [
                 'image' => 'image/paket1.jpg',
@@ -313,7 +263,7 @@ class webController extends Controller
 
         $mentorIds = $mentors->pluck('id');
 
-        $countDataTanyaMentor = Tanya::onlyTrashed()->whereIn('mentor_id', $mentorIds)->count();
+        $countDataTanyaMentor = Tanya::onlyTrashed()->whereIn('mentor_id', $mentorIds)->where('status_soal', 'Diterima')->count();
 
         $countPendapatanTanyaMentor = MentorPayments::whereIn('mentor_id', $mentorIds)->where('status_payment',  'Paid')->sum('total_ammount');
 

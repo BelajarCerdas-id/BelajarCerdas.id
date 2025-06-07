@@ -459,6 +459,15 @@ class TanyaController extends Controller
             'tipe_koin' => 'Dikembalikan',
         ]);
 
+        // untuk menghitung jumlah_soal ditolak mentor (rank)
+        $jumlahSoalDitolak = Tanya::onlyTrashed()->where('mentor_id', $user->id)->where('status_soal', 'Ditolak')->count();
+
+        // update atau create progress
+        $tanyaRankProgress = TanyaRankMentorProgress::updateOrCreate(['mentor_id' => $user->id],
+    [
+                'jumlah_soal_ditolak' => $jumlahSoalDitolak,
+            ]
+        );
 
         return redirect('/tanya')->with('success-reject-tanya', 'Pertanyaan berhasil ditolak!');
     }
@@ -797,8 +806,9 @@ class TanyaController extends Controller
         // broadcast untuk mendengarkan event ketika menghitung ulang jumlah data tanyaVerifications
         broadcast(new CountMentorQuestionsAwaitVerification($countData))->toOthers();
 
-        // untuk menghitung jumlah_soal diterima mentor (rank)
-        $jumlahSoalApproved = TanyaVerifications::where('mentor_id', $dataTanyaVerifiedAccepted->mentor_id)->where('status_verifikasi', 'Diterima')->count();
+        // untuk menghitung jumlah_soal diterima administrator (rank)
+        $jumlahSoalApproved = TanyaVerifications::where('mentor_id', $dataTanyaVerifiedAccepted->mentor_id)
+        ->where('status_verifikasi', 'Diterima')->count();
 
         // lalu data di update atau di create ke tanyaProgress mentor
         $rankProgress = TanyaRankMentorProgress::updateOrCreate(
@@ -811,7 +821,8 @@ class TanyaController extends Controller
         $jumlahDataTanyaDiterima = TanyaRankMentorProgress::where('mentor_id', $dataTanyaVerifiedAccepted->mentor_id)->sum('jumlah_soal_diterima');
         $jumlahDataTanyaApproved = TanyaRankMentorProgress::where('mentor_id', $dataTanyaVerifiedAccepted->mentor_id)->sum('jumlah_soal_approved');
 
-        $rankMentor = TanyaRankMentor::where('jumlah_soal_diterima', $jumlahDataTanyaDiterima)->where('jumlah_soal_approved', $jumlahDataTanyaApproved)->first();
+        $rankMentor = TanyaRankMentor::where('jumlah_soal_diterima', $jumlahDataTanyaDiterima)
+        ->where('jumlah_soal_approved', $jumlahDataTanyaApproved)->first();
 
         if($rankMentor) {
             $rankProgress->update([
@@ -865,6 +876,18 @@ class TanyaController extends Controller
 
         // broadcast nya
         broadcast(new CountMentorQuestionsAwaitVerification($countData))->toOthers();
+
+        // untuk menghitung jumlah_soal ditolak administrator (rank)
+        $jumlahSoalRejected = TanyaVerifications::where('mentor_id', $dataTanyaVerifiedRejected->mentor_id)
+        ->where('status_verifikasi', 'Ditolak')->count();
+
+        // lalu data di update atau di create ke tanyaProgress mentor
+        $rankProgress = TanyaRankMentorProgress::updateOrCreate(
+            ['mentor_id' => $dataTanyaVerifiedRejected->mentor_id],
+            [
+                'jumlah_soal_rejected' => $jumlahSoalRejected
+            ]
+        );
 
         return response()->json([
             'status' => 'success',

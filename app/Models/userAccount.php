@@ -88,7 +88,7 @@ class UserAccount extends Authenticatable
     // TANYA VERIFICATION
     public function TanyaVerificationMentor()
     {
-        return $this->hasOne(TanyaVerifications::class, 'mentor_id');
+        return $this->hasMany(TanyaVerifications::class, 'mentor_id', 'id');
     }
 
     public function TanyaVerificationAdministrator()

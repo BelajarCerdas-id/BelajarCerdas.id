@@ -1,33 +1,33 @@
 <x-script></x-script>
-@if (Auth::user()->role === 'Siswa' or Auth::user()->role === 'Murid')
+@if (Auth::user()->role === 'Siswa')
     <div class="grid lg:grid-cols-2 border-[1px] border-gray-400 gap-8 mx-20">
         <div class="lg:col-span-1 bg-white shadow-lg h-max">
             <header class="grid border-b-[1px] border-gray-200 pb-2">
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Nama Siswa :</span>
-                    <span>{{ $getTanya->Student->StudentProfiles->nama_lengkap }}</span>
+                    <span>{{ $getTanya->Student->StudentProfiles->nama_lengkap ?? '' }}</span>
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Sekolah :</span>
-                    <span>{{ $getTanya->Student->StudentProfiles->sekolah }}</span>
+                    <span>{{ $getTanya->Student->StudentProfiles->sekolah ?? '' }}</span>
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Kelas :</span>
-                    <span>{{ $getTanya->Kelas->kelas }}</span>
+                    <span>{{ $getTanya->Kelas->kelas ?? '' }}</span>
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Jam Tanya :</span>
-                    <span>{{ $getTanya->created_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') }}</span>
+                    <span>{{ $getTanya->created_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') ?? '' }}</span>
                 </div>
             </header>
             <div class="w-full mt-2 mx-2">
                 <div class="flex gap-2 text-lg mb-1">
                     <span class="text-gray-900 font-medium">Mata Pelajaran :</span>
-                    <span>{{ $getTanya->Mapel->mata_pelajaran }}</span>
+                    <span>{{ $getTanya->Mapel->mata_pelajaran ?? '' }}</span>
                 </div>
                 <div class="flex gap-2 text-lg">
                     <span class="text-gray-900 font-medium">Bab :</span>
-                    <span>{{ $getTanya->Bab->nama_bab }}</span>
+                    <span>{{ $getTanya->Bab->nama_bab ?? '' }}</span>
                 </div>
             </div>
             <div class="flex mx-6 my-6 gap-12">
@@ -35,7 +35,7 @@
                     <span class="text-gray-900 font-medium text-lg">Pertanyaan</span>
                     <div
                         class="h-[150px] bg-white shadow-xl shadow-gray-200 drop-shadow-xl rounded-xl overflow-y-auto text-sm p-4 mb-14 mt-4">
-                        <span>{{ $getTanya->pertanyaan }}</span>
+                        <span>{{ $getTanya->pertanyaan ?? '' }}</span>
                     </div>
                 </div>
                 <div class="w-3/4 mx-2">
@@ -73,11 +73,11 @@
             <header class="grid border-b-[1px] border-gray-200 pb-2">
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Mentor :</span>
-                    <span>{{ $getTanya->mentor }}</span>
+                    <span>{{ $getTanya->mentor ?? '' }}</span>
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Asal Sekolah :</span>
-                    <span>{{ $getTanya->asal_mengajar }}</span>
+                    <span>{{ $getTanya->asal_mengajar ?? '' }}</span>
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Kelas :</span>
@@ -85,7 +85,7 @@
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Jam Jawab :</span>
-                    <span>{{ $getTanya->updated_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') }}</span>
+                    <span>{{ $getTanya->updated_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') ?? '' }}</span>
                 </div>
             </header>
             <div class="flex mx-6 my-6 gap-12">
@@ -93,7 +93,7 @@
                     <span class="text-gray-900 font-medium text-lg">Jawaban</span>
                     <div
                         class="h-[150px] bg-white shadow-xl shadow-gray-200 drop-shadow-xl rounded-xl overflow-y-auto text-sm p-6 mt-4">
-                        <span>{{ $getTanya->jawaban }}</span>
+                        <span>{{ $getTanya->jawaban ?? '' }}</span>
                     </div>
                 </div>
                 <div class="w-3/4 mx-2 mt-16">
@@ -179,7 +179,7 @@
                         <span>Pertanyaan</span>
                         <div class="max-h-40 h-40 my-2 p-2 bg-white shadow-xl border-[1px] border-gray-200 rounded-md overflow-y-auto text-sm resize-none"
                             disabled>
-                            {!! nl2br(e($getRestore->pertanyaan)) !!}
+                            {!! nl2br(e($getRestore->pertanyaan)) ?? '' !!}
                         </div>
                     </div>
 
@@ -368,84 +368,9 @@
     <p>You do not have access to this dashboard.</p>
 @endif
 
+<script src="{{ asset('js/upload-image.js') }}"></script> <!--- show image tanya ---->
 
-
-<script>
-    function togglePopup() {
-        document.getElementById("popup-1").classList.toggle("active");
-    }
-</script>
-
-{{-- <script>
-    function openModal() {
-        var imgSrc = document.querySelector('#imagePreview img').src;
-        var modalImage = document.getElementById('modalImage');
-        modalImage.src = imgSrc;
-        document.getElementById('imageModal').showModal();
-    }
-
-    function closeModal() {
-        document.getElementById('imageModal').close();
-    }
-</script> --}}
-
-
-<script>
-    const button = document.getElementById('vibrateButton');
-
-    button.addEventListener('click', () => {
-        button.classList.add('vibrate');
-        setTimeout(() => {
-            button.classList.remove('vibrate');
-        }, 100);
-    });
-</script>
-
-<script>
-    var Btn = document.getElementById('btnUnBlocked');
-
-    function openBlocked() {
-        Btn.style.display = "block";
-    }
-</script>
-
-
-<script>
-    function previewImage(event) {
-        var file = event.target.files[0];
-        var reader = new FileReader();
-        reader.onload = function() {
-            var output = document.getElementById('imagePreview');
-            var textOutput = document.getElementById('textPreview');
-            output.innerHTML = '<img src="' + reader.result +
-                '" alt="Image Preview" class="w-full h-full object-cover">';
-            textOutput.innerHTML = 'Klik, pastikan gambar tidak blur!';
-        };
-        reader.readAsDataURL(file);
-    }
-
-    // popup result upload image
-    function openModal() {
-        var imgSrc = document.querySelector('#imagePreview img').src;
-        var modalImage = document.getElementById('modalImage');
-        modalImage.src = imgSrc;
-        document.getElementById('my_modal_2').showModal();
-    }
-
-    function closeModal() {
-        document.getElementById('my_modal_2').close();
-    }
-</script>
-
-<script>
-    const hideContent = document.getElementById('answer');
-
-    function showAnswer() {
-        hideContent.style.display = "block";
-    }
-</script>
-
-
+<!--- untuk membuka modal kembali jika ada validasi error pada form modal ---->
 <script>
     document.getElementById('submit').addEventListener('click', function() {
         const form = document.querySelector('#my_modal_3 form[action]');

@@ -95,7 +95,6 @@
                                     <span class="font-bold">{{ $program }}</span>
                                 </div>
                             </div>
-                            {{-- <span class="font-bold lg:text-md xl:text-md text-center">{{ $program }}</span> --}}
                         </div>
                     @endforeach
                 </div>

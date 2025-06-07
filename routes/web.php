@@ -87,8 +87,12 @@ Route::fallback(function () {
         // ROUTES DROPDOWN FASE, KELAS, MAPEL, BAB (AJAX)
         Route::get('/kelas/{id}', [KelasController::class, 'getKelas']);
         Route::get('/mapel/{id}', [KelasController::class, 'getMapel']);
-
         Route::get('/bab/{kode_mapel}/{kode_fase}', [KelasController::class, 'getBab']);
+
+        // CHART CONTROLLER (BERANDA ADMINISTRATOR)
+        Route::get('/chart-data-tanya-bulanan', [ChartController::class, 'chartTanyaBulanan'])->name('getChartDataTanyaBulanan');
+        Route::get('/chart-data-tanya-tahunan', [ChartController::class, 'chartTanyaTahunan'])->name('getChartDataTanyaTahunan');
+        Route::get('/chart-data-tanya-harian', [ChartController::class, 'chartTanyaHarian'])->name('getChartDataTanyaHarian');
 
     // MIDDLEWARE LOGIN
     Route::middleware([AuthMiddleware::class])->group(function () {
@@ -277,18 +281,38 @@ Route::fallback(function () {
     // BULKUPLOAD SYLLABUS
     Route::post('/syllabus/bulkupload/sub-bab', [SyllabusController::class, 'bulkUploadSubBab'])->name('syllabus.bulkupload.sub-bab');
 
-
-
-    Route::get('/paginateListMentor', [filterController::class, 'filterListMentor']);
-    Route::get('/paginateViewLaporan', [FilterController::class, 'filterViewLaporanTL']);
-
     // ENGLISH ZONE ACCESS MIDDLEWARE
     Route::middleware([CheckEnglishZone::class])->group(function () {
 
     });
     Route::get('/english-zone', [EnglishZoneController::class, 'index'])->name('englishZone.index');
 
+    // ROUTES ENGLISH ZONE
+    // Routes View
+    Route::get('upload-materi', [EnglishZoneController::class, 'uploadMateri'])->name('englisHone.uploadMateri');
+    Route::get('/upload-soal', [EnglishZoneController::class, 'uploadSoal'])->name('englishZone.uploadSoal');
+    // lalu route akan mendapatkan parameter yang dikirim oleh href tadi yang akan di proses oleh controller
+    Route::get('/pengayaan/{modul}/{id}', [EnglishZoneController::class, 'pengayaan'])->name('pengayaan');
+    Route::get('question-for-release', [EnglishZoneController::class, 'questionForRelease'])->name('englishZone.questionForRelease');
 
+    // Routes CRUD
+    Route::post('/upload-materi', [EnglishZoneController::class, 'uploadMateriStore'])->name('englishZone.uploadMateri');
+    Route::post('/upload-soal', [EnglishZoneController::class, 'uploadSoalStore'])->name('englishZone.uploadSoal');
+    Route::get('/englishZone-view/{id}', [EnglishZoneController::class, 'show'])->name('englishZone.show');
+
+    Route::post('/laporana', [EnglishZoneController::class, 'uploadImage'])->name('englishZone.uploadImage');
+    Route::post('/delete-image-endpoint', [EnglishZoneController::class, 'deleteImage'])->name('englishZone.deleteImage');
+
+    Route::post('/pengayaan/{id}', [EnglishZoneController::class, 'uploadJawaban'])->name('englishZoneJawaban.store');
+
+    Route::put('question-for-release/update', [englishZoneController::class, 'update'])->name('questionForRelease.update');
+
+    Route::get('/filter-questions', [filterController::class, 'questionStatus'])->name('filter.questions');
+
+    Route::get('video/{modul}', [EnglishZoneController::class, 'video'])->name('englishZone.video');
+
+    Route::get('/getCertificate', [CertificateController::class, 'generateCertificate'])->name('generateCertificate');
+    Route::post('/certificate', [EnglishZoneController::class, 'certificateStore'])->name('certificate.store');
 
 
     // ROUTES PKS (data sekolah & data murid pks)
@@ -330,63 +354,22 @@ Route::fallback(function () {
     Route::get('/sidebar', [WebController::class, 'sidebarBeranda']);
     Route::get('/sidebar-beranda-mobile', [WebController::class, 'sidebarBerandaMobile']);
 
+    // ROUTES MASTERDATA(KERJASAMA SEKOLAH B2B & B2G)
+    // VIEW
+    Route::get('/upload-surat-pks', [SuratPKSController::class, 'index'])->name('suratPKS');
+    // CRUD
+    Route::post('/suratPKS', [suratPKSController::class, 'uploadSuratPKS'])->name('suratPKS.store');
+    Route::post('/inputDataSekolah', [PksController::class, 'inputDataSekolahStore'])->name('inputDataSekolah.store');
+    // SHOW PDF
+    Route::get('/surat-pks-english-zone/{id}/{sekolah}', [SuratPKSController::class, 'generateSuratPKSEnglishZone'])->name('generateSuratPKSEnglishZone');
+
+    // ROUTES VISITASIDATA (KERJASAMA SEKOLAH B2B & B2G) (Sales)
+    // VIEW
+    Route::get('/visitasi/jadwal-kunjungan', [VisitasiDataController::class, 'jadwalKunjungan'])->name('jadwalKunjungan');
+    Route::get('/visitasi/data-kunjungan', [VisitasiDataController::class, 'dataKunjungan'])->name('dataKunjungan');
+    Route::get('/visitasi/cetak-pks', [VisitasiDataController::class, 'cetakPKS'])->name('cetakPKS');
+    Route::put('/status-cetak-pks/{id}', [PksController::class, 'updateStatusCetakPKS'])->name('statusCetakPKS.update');
+    // CRUD
+    Route::post('/visitasiData', [VisitasiDataController::class, 'visitasiDataStore'])->name('visitasiData.store');
+    Route::put('/visitasiData/{id}', [VisitasiDataController::class, 'updateStatusKunjungan'])->name('visitasiData.update');
 });
-
-// ROUTES ENGLISH ZONE
-// Routes View
-Route::get('upload-materi', [EnglishZoneController::class, 'uploadMateri'])->name('englisHone.uploadMateri');
-Route::get('/upload-soal', [EnglishZoneController::class, 'uploadSoal'])->name('englishZone.uploadSoal');
-// lalu route akan mendapatkan parameter yang dikirim oleh href tadi yang akan di proses oleh controller
-Route::get('/pengayaan/{modul}/{id}', [EnglishZoneController::class, 'pengayaan'])->name('pengayaan');
-Route::get('question-for-release', [EnglishZoneController::class, 'questionForRelease'])->name('englishZone.questionForRelease');
-
-// Routes CRUD
-Route::post('/upload-materi', [EnglishZoneController::class, 'uploadMateriStore'])->name('englishZone.uploadMateri');
-Route::post('/upload-soal', [EnglishZoneController::class, 'uploadSoalStore'])->name('englishZone.uploadSoal');
-Route::get('/englishZone-view/{id}', [EnglishZoneController::class, 'show'])->name('englishZone.show');
-
-Route::post('/laporana', [EnglishZoneController::class, 'uploadImage'])->name('englishZone.uploadImage');
-Route::post('/delete-image-endpoint', [EnglishZoneController::class, 'deleteImage'])->name('englishZone.deleteImage');
-
-Route::post('/pengayaan/{id}', [EnglishZoneController::class, 'uploadJawaban'])->name('englishZoneJawaban.store');
-
-Route::put('question-for-release/update', [englishZoneController::class, 'update'])->name('questionForRelease.update');
-
-Route::get('/filter-questions', [filterController::class, 'questionStatus'])->name('filter.questions');
-
-Route::get('video/{modul}', [EnglishZoneController::class, 'video'])->name('englishZone.video');
-
-// CHART CONTROLLER (BERANDA ADMINISTRATOR)
-Route::get('/chart-data-tanya-bulanan', [ChartController::class, 'chartTanyaBulanan'])->name('getChartDataTanyaBulanan');
-Route::get('/chart-data-tanya-tahunan', [ChartController::class, 'chartTanyaTahunan'])->name('getChartDataTanyaTahunan');
-Route::get('/chart-data-tanya-harian', [ChartController::class, 'chartTanyaHarian'])->name('getChartDataTanyaHarian');
-
-
-Route::get('/getCertificate', [CertificateController::class, 'generateCertificate'])->name('generateCertificate');
-Route::post('/certificate', [EnglishZoneController::class, 'certificateStore'])->name('certificate.store');
-
-
-// ROUTES MASTERDATA(KERJASAMA SEKOLAH B2B & B2G)
-// VIEW
-Route::get('/upload-surat-pks', [SuratPKSController::class, 'index'])->name('suratPKS');
-// CRUD
-Route::post('/suratPKS', [suratPKSController::class, 'uploadSuratPKS'])->name('suratPKS.store');
-Route::post('/inputDataSekolah', [PksController::class, 'inputDataSekolahStore'])->name('inputDataSekolah.store');
-// SHOW PDF
-Route::get('/surat-pks-english-zone/{id}/{sekolah}', [SuratPKSController::class, 'generateSuratPKSEnglishZone'])->name('generateSuratPKSEnglishZone');
-
-// ROUTES VISITASIDATA (KERJASAMA SEKOLAH B2B & B2G) (Sales)
-// VIEW
-Route::get('/visitasi/jadwal-kunjungan', [VisitasiDataController::class, 'jadwalKunjungan'])->name('jadwalKunjungan');
-Route::get('/visitasi/data-kunjungan', [VisitasiDataController::class, 'dataKunjungan'])->name('dataKunjungan');
-Route::get('/visitasi/cetak-pks', [VisitasiDataController::class, 'cetakPKS'])->name('cetakPKS');
-Route::put('/status-cetak-pks/{id}', [PksController::class, 'updateStatusCetakPKS'])->name('statusCetakPKS.update');
-// CRUD
-Route::post('/visitasiData', [VisitasiDataController::class, 'visitasiDataStore'])->name('visitasiData.store');
-Route::put('/visitasiData/{id}', [VisitasiDataController::class, 'updateStatusKunjungan'])->name('visitasiData.update');
-
-// ROUTES TESTING
-
-Route::get('/modules', [ModuleController::class, 'index'])->name('modules.index');
-Route::get('/modules/{id}', [ModuleController::class, 'show'])->name('modules.show');
-Route::post('/modules/{id}/complete', [ModuleController::class, 'complete'])->name('modules.complete');

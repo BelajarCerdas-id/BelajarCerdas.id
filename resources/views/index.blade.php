@@ -61,25 +61,7 @@
 
     <!---- jumbotron mobile ----->
     <section class="lg:hidden relative">
-        {{-- <div class="col-span-12 border border-green-500 h-[400px] sm:h-[500px] relative flex justify-center">
-                <!----- rounded mid  ----->
-                <div
-                    class="absolute left-[-60px] top-[30%] h-28 w-28 bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
-                </div>
-                <!----- rounded right  ----->
-                <div
-                    class="absolute right-[-1px] top-[20%] h-28 w-14 bg-white shadow-[0_10px_24px_rgba(0,0,0,0.23)] rounded-l-full">
-                </div>
-
-                <div
-                    class="absolute bottom-[-130px] w-full h-full max-h-[300px] max-w-[300px] sm:max-h-[400px] sm:max-w-[400px] bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
-                    <!---- image in here ---->
-                </div>
-                <img src="image/asset landing page.png" alt="" class="w-full h-full">
-            </div> --}}
-
         <div class="mx-4 flex flex-col items-center">
-
             <div
                 class="absolute top-3 w-[260px] h-[260px] sm:w-96 sm:h-96 sm:top-16 bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
                 <img src="image/aset orang landing page 3.png" alt=""
@@ -498,7 +480,6 @@
     var tanyaServices = document.getElementById('tanyaServiceContent');
     var haloGurServices = document.getElementById('haloGurServiceContent');
     var englishZoneServices = document.getElementById('englishZoneServiceContent');
-    var bimbelMapelUmumServices = document.getElementById('bimbelMapelUmumServiceContent');
 
     function tanyaServiceContent() {
         tanyaServices.style.right = "0%";
@@ -519,12 +500,5 @@
         tanyaServices.style.right = "-100%";
         haloGurServices.style.right = "-100%";
         bimbelMapelUmumServices.style.right = "-100%";
-    }
-
-    function bimbelMapelUmumServiceContent() {
-        bimbelMapelUmumServices.style.right = "0%";
-        tanyaServices.style.right = "-100%";
-        haloGurServices.style.right = "-100%";
-        englishZoneServices.style.right = "-100%";
     }
 </script>

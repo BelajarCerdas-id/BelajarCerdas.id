@@ -1,7 +1,7 @@
 @include('components/sidebar_beranda', ['headerSideNav' => 'TANYA'])
 
 @if (Auth::user()->role === 'Siswa' or Auth::user()->role === 'Murid')
-    <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
+    <div class="home-beranda z-[-1] md:z-0 mt-[40px] md:mt-0">
         <div class="content-beranda">
             <!--- alert success setelah kirim pertanyaan --->
             <div id="alert-success-insert-question"></div>
@@ -468,153 +468,29 @@
     </div>
 @endif
 
-<script src="{{ asset('js/Tanya/end-to-end/students-submit-questions-ajax.js') }}"></script>
-<script src="{{ asset('js/upload-image.js') }}"></script> <!--- upload image ---->
-<script src="{{ asset('js/content-riwayat.js') }}"></script> <!--- content riwayat tanya ---->
-<script src="{{ asset('js/Tanya/content-riwayat-harian-siswa.js') }}"></script> <!--- content tanya riwayat harian ---->
-<script src="{{ asset('js/Tanya/riwayat-siswa-ajax.js') }}"></script> <!--- script ajax filter data ---->
-<script src="{{ asset('js/Tanya/tanya-guru-ajax.js') }}"></script>
-<script src="{{ asset('js/Tanya/riwayat-guru-ajax.js') }}"></script>
-<script src="{{ asset('js/Tanya/updateStatusSoal-daily-student-handler.js') }}"></script>
-<script src="{{ asset('js/Tanya/content-tanya-answer-harian-student.js') }}"></script>
-<script src="{{ asset('js/Tanya/dependent-dropdown/fase-kelas-mapel-bab-dropdown.js') }}"></script>
+<!--- end to end  ---->
+<script src="{{ asset('js/Tanya/end-to-end/students-submit-questions-ajax.js') }}"></script> <!--- submit pertanyaan siswa ---->
+<script src="{{ asset('js/upload-image.js') }}"></script> <!--- show image tanya ---->
+<script src="{{ asset('js/Tanya/dependent-dropdown/fase-kelas-mapel-bab-dropdown.js') }}"></script> <!--- dependent dropdown ---->
+
+<!--- riwayat tanya user ---->
+<script src="{{ asset('js/Tanya/riwayat-siswa-ajax.js') }}"></script> <!--- riwayat student ---->
+<script src="{{ asset('js/Tanya/riwayat-guru-ajax.js') }}"></script> <!--- riwayat mentor ---->
+<script src="{{ asset('js/Tanya/tanya-guru-ajax.js') }}"></script> <!--- riwayat pertanyaan mentor ---->
+
+<!--- riwayat harian student ---->
+<script src="{{ asset('js/Tanya/content-riwayat-harian-siswa-toggle.js') }}"></script> <!--- toggle conntent riwayat harian siswa ---->
+<script src="{{ asset('js/Tanya/content-riwayat-tanya-harian-student.js') }}"></script> <!--- content tanya riwayat harian ---->
+<script src="{{ asset('js/Tanya/updateStatusSoal-daily-student-handler.js') }}"></script> <!--- handler button mark the question as read (tanya harian) ---->
+
+<!--- components ---->
+<script src="{{ asset('js/components/clear-error-on-input.js') }}"></script> <!--- clear error on input ---->
+<script src="{{ asset('js/components/question-answer-page-section/content-tanya-riwayat-toggle.js') }}"></script> <!--- content riwayat tanya ---->
+<script src="{{ asset('js/components/dropdown-mapel.js') }}"></script> <!--- dropdown mapel ---->
+<script src="{{ asset('js/components/btn-close-alert-success.js') }}"></script> <!--- btn close alert success ---->
+<script src="{{ asset('js/components/question-answer-page-section/restore-tanya-riwayat-radio-on-back.js') }}">
+</script> <!--- untuk mengembalikan radio header content tanya riwayat  ---->
 
 <!--- PUSHER LISTENER TANYA ---->
-<script src="{{ asset('js/pusher-listener/notif-badge-answered-rejected.js') }}"></script>
-
-<script>
-    // buat kembaklikan header radio nya ketika di back ke tanya menggunakan arrow back chrome
-    window.addEventListener("pageshow", function(event) {
-        document.getElementById('radio1').checked = true;
-        document.getElementById('unanswered').checked = true;
-        bindUpdateStatusAnsweredListeners();
-
-        fetchFilteredDataTanyaMentor(currentStatusTanyaMentor); // ini penting
-    });
-</script>
-
-<script>
-    // Script untuk mendengarkan event broadcast pada saat student bertanya ke mentor
-    let currentStatusTanyaMentor = 'semua';
-    document.addEventListener("DOMContentLoaded", () => {
-        window.Echo.channel('tanya')
-            .listen('.question.created', (e) => {
-                // console.log('✅ Komentar diterima dari broadcast:', e);
-                // Saat ada data baru, ambil ulang semua data dengan AJAX
-                console.log('✅ Broadcast diterima:', e); // <- Harusnya muncul
-                fetchFilteredDataTanyaMentor(currentStatusTanyaMentor);
-            });
-    });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Cek semua inputan dan hapus error message ketika user mengetik
-        document.querySelectorAll('input, select, textarea').forEach(function(el) {
-            el.addEventListener('input', function() {
-                // Hapus error class
-                el.classList.remove('border-red-400');
-                const errorMessage = el.nextElementSibling;
-                if (errorMessage && errorMessage.classList.contains('text-red-500')) {
-                    errorMessage.textContent = '';
-                }
-            });
-        });
-
-        // Untuk dropdown mapel
-        const dropdownWrapper = document.getElementById('dropdownWrapper');
-        const dropdownButton = document.getElementById('dropdownButton');
-
-        dropdownButton.addEventListener('click', function() {
-            // Hapus border merah dari dropdown
-            dropdownButton.classList.remove('border-red-400');
-            dropdownWrapper.classList.remove('border-red-400');
-
-            // Cari dan hapus pesan error
-            const errorMessage = document.querySelector('#error-mapel_id');
-            if (errorMessage) {
-                errorMessage.remove();
-            }
-        });
-    });
-</script>
-
-
-<script>
-    function toggleDropdown() {
-        let dropdownButton = document.querySelector('#dropdownButton #dropdown');
-        dropdown.classList.toggle("hidden");
-        let dropdownArrow = document.getElementById('dropdownArrow').classList.toggle('rotate-180');
-    }
-
-    function updateSelection(radio) {
-        const selectedKurikulum = document.getElementById("selectedKurikulum");
-        const selectedKoin = document.getElementById("selectedKoin");
-        const selectedIconKoin = document.getElementById("selectedIconKoin");
-
-        const label = radio.nextElementSibling;
-
-        const selectedLabelText = label.querySelector('span').textContent;
-        const selectedLabelKoin = label.querySelector('.koin').textContent;
-        // kalo mau nyalin selain text (image, font awesome, svg, dll pake clodeNode)
-        const selectedLabelIconKoin = label.querySelector('.iconKoin').cloneNode(true);
-        const inputMapel = document.getElementById("id_mapel");
-        const inputTarifKoin = document.getElementById('harga_koin');
-
-        selectedKurikulum.textContent = selectedLabelText;
-        selectedKoin.textContent = selectedLabelKoin;
-        selectedIconKoin.innerHTML = '';
-        selectedIconKoin.appendChild(selectedLabelIconKoin);
-
-        // Set hidden input mapel dan trigger event change
-        inputMapel.value = radio.value;
-        $('#id_mapel').trigger('change');
-
-        // Set hidden tarif koin dan trigger event change
-        inputTarifKoin.value = selectedLabelKoin;
-        $('#harga_koin').trigger('change');
-
-        // Menyembunyikan dropdown setelah memilih
-        toggleDropdown();
-    }
-</script>
-
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        setTimeout(function() {
-            document.getElementById('alertSuccess').remove();
-        }, 3000);
-
-        document.getElementById('btnClose').addEventListener('click', function() {
-            document.getElementById('alertSuccess').remove();
-        })
-    });
-</script>
-
-
-<script>
-    function limitTanyaAlert() {
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Kamu telah mencapai batas limit harian bertTANYA, silahkan kembali besok!",
-        });
-    }
-</script>
-
-<script>
-    const tanyaGuru = document.getElementById('questionTeacher');
-    const riwayatGuru = document.getElementById('historyTeacher');
-
-    function questionTeacher() {
-        tanyaGuru.style.display = "block";
-        riwayatGuru.style.display = "none";
-    }
-
-    function historyTeacher() {
-        tanyaGuru.style.display = "none";
-        riwayatGuru.style.display = "block";
-    }
-</script>
+<script src="{{ asset('js/pusher-listener/tanya/notif-badge-answered-rejected.js') }}"></script> <!--- pusher listener notif badge answer, rejected ---->
+<script src="{{ asset('js/pusher-listener/tanya/end-to-end-tanya.js') }}"></script> <!--- pusher listener mengirim dan menjawab pertanyaan ---->

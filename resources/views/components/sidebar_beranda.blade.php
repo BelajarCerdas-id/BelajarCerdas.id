@@ -524,7 +524,7 @@
                     </div>
                     <div class="content-dropdown">
                         <a href="{{ route('listQuestion.index') }}" class="link-href">List Pertanyaan</a>
-                        <a href="{{ route('tanya.mentor') }}" class="link-href">Soal Mentor</a>
+                        <a href="{{ route('tanya.mentor') }}" class="link-href">Verifikasi Pertanyaan</a>
                         <a href="{{ route('pembayaran.tanya.mentor.view') }}" class="link-href">Pembayaran Mentor</a>
                         <a href="{{ route('tanya.access') }}" class="link-href">Libur TANYA</a>
                     </div>
@@ -772,7 +772,8 @@
                                             <a href="{{ route('listQuestion.index') }}" class="link-href">
                                                 List Pertanyaan
                                             </a>
-                                            <a href="{{ route('tanya.mentor') }}" class="link-href">Soal Mentor</a>
+                                            <a href="{{ route('tanya.mentor') }}" class="link-href">Verifikasi
+                                                Pertanyaan</a>
                                             <a href="{{ route('pembayaran.tanya.mentor.view') }}"
                                                 class="link-href">Pembayaran Mentor</a>
                                             <a href="{{ route('tanya.access') }}" class="link-href">Libur TANYA</a>

@@ -1,9 +1,4 @@
-<x-layout>
-    {{-- <x-slot:title>{{ $title }}</x-slot:title> --}}
-</x-layout>
-<header>
-    <h1>About Us</h1>
-</header>
+<x-layout></x-layout>
 
 <main>
     <!-- Section: BelajarCerdas.id -->
@@ -137,22 +132,22 @@
                                                 </div>
                                             </div>
                                         </figure>
-                                        {{-- <figure class="swiper-slide">
+                                        <figure class="swiper-slide">
                                             <div class="w-24 h-24 lg:w-32 lg:h-32 rounded-full bg-[#60b5cf] relative">
                                                 <div
                                                     class="absolute -bottom-2 -right-2 bg-red-500 w-12 h-12 md:w-14 md:h-14 rounded-full text-2xl flex justify-center items-center">
                                                     <i class="fas fa-microscope"></i>
                                                 </div>
                                             </div>
-                                        </figure> --}}
-                                        {{-- <figure class="swiper-slide">
+                                        </figure>
+                                        <figure class="swiper-slide">
                                             <div class="w-24 h-24 lg:w-32 lg:h-32 rounded-full bg-[#60b5cf] relative">
                                                 <div
                                                     class="absolute -bottom-2 -right-2 bg-red-500 w-12 h-12 md:w-14 md:h-14 rounded-full text-2xl flex justify-center items-center">
                                                     <i class="fas fa-microscope"></i>
                                                 </div>
                                             </div>
-                                        </figure> --}}
+                                        </figure>
                                     </div>
                                     <div class="pagination-slider-our-team">
                                         <div class="swiper-button-prev slider-arrow">
@@ -173,29 +168,4 @@
     </section>
 </main>
 
-<script>
-    var swiper = new Swiper(".swiper", {
-        spaceBetween: 5, // Jarak antar kartu
-        loop: true, // Mengaktifkan loop agar terus berjalan
-        navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-        },
-        pagination: {
-            el: ".swiper-pagination",
-            clickable: true,
-            dynamicBullets: true,
-        },
-        breakpoints: {
-            0: {
-                slidesPerView: 2, // Menampilkan 2 kartu dalam satu tampilan
-            },
-            768: {
-                slidesPerView: 2,
-            },
-            1024: {
-                slidesPerView: 3,
-            },
-        }
-    });
-</script>
+<script src="{{ asset('js/swiper-js/swiper-our-best-team.js') }}"></script>

@@ -69,9 +69,11 @@ $(document).ready(function () {
                 $('#imagePreview img').attr('src', '').hide();
                 $('#textPreview').text('');
 
-                // Reset dropdown mapel jika perlu
-                $('#id_mapel').val('');
-                $('#dropdownButton').addClass('pointer-events-none opacity-50');
+                // Aktifkan ulang dropdown custom mapel
+                $('#dropdownButton').removeClass('pointer-events-none opacity-50'); // aktifkan interaksi
+                $('#id_mapel').prop('disabled', false); // jika pakai <select> tersembunyi
+
+                // Reset state terpilih sebelumnya
                 $('#selectedKurikulum').text('Harap pilih fase');
                 $('#selectedIconKoin').html('');
                 $('#selectedKoin').text('');

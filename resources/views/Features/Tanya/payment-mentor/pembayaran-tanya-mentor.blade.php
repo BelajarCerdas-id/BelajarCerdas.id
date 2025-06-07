@@ -49,14 +49,7 @@
     </div>
 @endif
 
-<script src="js/Tanya/payment-mentor/payment-tanya-mentor-ajax.js"></script>
+<script src="js/Tanya/payment-mentor/payment-tanya-mentor-ajax.js"></script> <!--- paginate payment tanya mentor  ---->
 
-<script>
-    // untuk mendengarkan event broadcast ketika admin membayar soal mentor
-    document.addEventListener("DOMContentLoaded", function() {
-        window.Echo.channel('paymentTanyaMentor')
-            .listen('.payment.tanya.mentor', (e) => {
-                paginatePaymentTanyaMentor();
-            })
-    })
-</script>
+<!--- PUSHER LISTENER TANYA ---->
+<script src="{{ asset('js/pusher-listener/tanya/payment-tanya-mentor.js') }}"></script>

@@ -199,22 +199,30 @@ class FilterController extends Controller
     // PAGINATE PAYMENT MENTOR (ADMINISTRATOR)
     public function paginateListMentorTanya(Request $request)
     {
-        $userMentor = UserAccount::with('MentorProfiles')->where('role', 'Mentor');
-
-        $data = $userMentor->orderBy('created_at', 'desc')->paginate(6);
+        // mengurutkan berdasarkan jumlah verifikasi menunggu terbanyak (withCount diambil dari tanyaVerificationMentor relasi dengann UserAccount)
+        $userMentor = UserAccount::with('MentorProfiles')
+            ->where('role', 'Mentor')
+            ->withCount([
+                'tanyaVerificationMentor as verifikasi_menunggu_count' => function ($query) {
+                    $query->where('status_verifikasi', 'Menunggu');
+                }
+            ])
+            ->orderByDesc('verifikasi_menunggu_count')
+            ->orderBy('created_at', 'desc') // fallback jika sama
+            ->paginate(6);
 
         $countData = [];
 
-        foreach($data as $item) {
-            $countData[$item->id] = TanyaVerifications::where('mentor_id', $item->id)->where('status_verifikasi', 'Menunggu')->count();
+        foreach($userMentor as $item) {
+            $countData[$item->id] = $item->verifikasi_menunggu_count;
         }
 
         broadcast(new CountMentorQuestionsAwaitVerification($countData))->toOthers();
 
         return response()->json([
-            'data' => $data->items(),
+            'data' => $userMentor->items(),
             'countData' => $countData,
-            'links' => (string) $data->links(),
+            'links' => (string) $userMentor->links(),
             'detailDataTanyaMentor' => route('tanya.mentor.accepted.view', ':id'),
         ]);
     }
@@ -386,27 +394,6 @@ class FilterController extends Controller
             'data' => $dataBatchDetailPaymentMentor->items(),
             'links' => (string) $dataBatchDetailPaymentMentor->links()->render(),
             'batchDetailPaymentMentor' => '/batch-detail-pembayaran-mentor/:id',
-        ]);
-    }
-
-    public function filterListMentor()
-    {
-        $user = session('user');
-
-        $query = userAccount::where('status', 'Mentor');
-        $countData = [];
-
-        $countData = $query->get()->mapWithKeys(function ($item) {
-            return [$item->email => Tanya::onlyTrashed()->where('email_mentor', $item->email)->count()];
-        });
-
-        $data = $query->orderBy('created_at', 'desc')->paginate(5);
-
-        return response()->json([
-            'countData' => $countData,
-            'data' => $data->items(),
-            'links' => (string) $data->links(),
-            'url' => route('laporan.edit', ':id')
         ]);
     }
 

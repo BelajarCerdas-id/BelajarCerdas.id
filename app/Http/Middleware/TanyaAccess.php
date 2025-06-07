@@ -52,30 +52,30 @@ class TanyaAccess
         //     }
         // }
 
-        $getDateTanyaAccess = ModelsTanyaAccess::where('status_access', 'Aktif')->first();
+        // $getDateTanyaAccess = ModelsTanyaAccess::where('status_access', 'Aktif')->first();
 
-        // libur pendidikan (libur semester, kenaikan kelas, awal puasa, dll)
-        if($getDateTanyaAccess) {
-            return redirect()->route('beranda')->with('alertAccess', 'Maaf, halaman ini tidak bisa diakses pada saat hari libur.');
-        }
+        // // libur pendidikan (libur semester, kenaikan kelas, awal puasa, dll)
+        // if($getDateTanyaAccess) {
+        //     return redirect()->route('beranda')->with('alertAccess', 'Maaf, halaman ini tidak bisa diakses pada saat hari libur.');
+        // }
 
-        // libur weekends
-        if (in_array($dayOfWeek, ['Saturday', 'Sunday'])) {
-            return redirect()->route('beranda')->with('alertAccess', 'Maaf, halaman ini hanya bisa diakses pada hari Senin - Jumat.');
-        }
+        // // libur weekends
+        // if (in_array($dayOfWeek, ['Saturday', 'Sunday'])) {
+        //     return redirect()->route('beranda')->with('alertAccess', 'Maaf, halaman ini hanya bisa diakses pada hari Senin - Jumat.');
+        // }
 
-        // libur nasional
-        // $response = Http::get('https://dayoffapi.vercel.app/api');
-        $response = Http::get('https://api-harilibur.vercel.app/api');
+        // // libur nasional
+        // // $response = Http::get('https://dayoffapi.vercel.app/api');
+        // $response = Http::get('https://api-harilibur.vercel.app/api');
 
-        $holidays = collect($response->json() ?? [])
-            ->where('is_national_holiday', true)
-            ->map(fn($holiday) => Carbon::parse($holiday['holiday_date'])->format('Y-m-d'))
-            ->toArray();
+        // $holidays = collect($response->json() ?? [])
+        //     ->where('is_national_holiday', true)
+        //     ->map(fn($holiday) => Carbon::parse($holiday['holiday_date'])->format('Y-m-d'))
+        //     ->toArray();
 
-        if (in_array($todayDate, $holidays, true)) {
-            return redirect()->route('beranda')->with('alertAccess', 'Maaf, halaman ini tidak bisa diakses pada hari libur nasional.');
-        }
+        // if (in_array($todayDate, $holidays, true)) {
+        //     return redirect()->route('beranda')->with('alertAccess', 'Maaf, halaman ini tidak bisa diakses pada hari libur nasional.');
+        // }
         return $next($request);
     }
 }

@@ -1,30 +1,6 @@
 <x-layout></x-layout>
 
 <main>
-    <!---- size lg, dst ----->
-    {{-- <section class="hidden lg:grid grid-cols-12 relative">
-        <div class="col-span-12 flex items-center relative w-full border-2">
-            <div class="absolute top-24 left-60 flex flex-col gap-8">
-                <div class="text-6xl font-bold">
-                    <span>MITRA CERDAS</span>
-                </div>
-                <div class="w-full xl:w-[27%] flex flex-wrap mt-[1px]">
-                    <span class="text-justify leading-6 flex-grow">
-                        Belajar Cerdas ID adalah platform edukasi inovatif yang membantumu memahami materi dengan
-                        lebih
-                        mudah, cepat, dan efektif.
-                        Dengan metode pembelajaran yang interaktif dan berbasis konsep, kami siap menemanimu meraih
-                        prestasi terbaik!.
-                    </span>
-                </div>
-                <button
-                    class="text-start w-max bg-[#60B5FF] py-2 px-6 rounded-lg shadow-md transition-all cursor-pointer text-white font-bold hover:scale-105">
-                    Daftar Mitra Cerdas
-                </button>
-            </div>
-
-        </div>
-    </section> --}}
     <div class="relative w-full h-[760px] bg-[url('image/services-pages/mitra-cerdas/gelombang_svg.svg')]">
         <img src="{{ asset('image/services-pages/mitra-cerdas/gelombang_svg.svg') }}" alt=""
             class="absolute left-0 top-0 z-[-1]]">
@@ -344,49 +320,6 @@
             </div>
         </div>
     </section>
-
-
-
-
-    {{-- <div class="bg-white border shadow-lg p-4 pr-16 md:pr-24">
-        <span class="font-bold">Pendaftaran Mitra</span>
-        <p class="text-gray-500 font-bold text-justify">Calon Mitra wajib mendaftar melalui tautan resmi:
-            Https://belajarcerdas.id</p>
-    </div>
-
-    <!-- Element nomor yang selalu berada di luar card putih -->
-    <div class="absolute top-0 right-0 h-full flex items-center">
-        <div class="bg-orange-300 rounded-l-full p-2 pr-4 flex items-center justify-center">
-            <span class="text-white text-3xl md:text-4xl font-bold">01</span>
-        </div>
-    </div> --}}
 </main>
 
-
-<script>
-    const swiper = new Swiper(".swiper", {
-        // slidesPerView: 1,
-        spaceBetween: 20,
-        loop: true,
-        pagination: {
-            el: ".swiper-pagination",
-            clickable: true,
-            dynamicBullets: true,
-        },
-        navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-        },
-        breakpoints: {
-            0: {
-                slidesPerView: 1, // Menampilkan 3 kartu dalam satu tampilan
-            },
-            768: {
-                slidesPerView: 2,
-            },
-            1024: {
-                slidesPerView: 3,
-            },
-        },
-    });
-</script>
+<script src="{{ asset('js/swiper-js/swiper-kata-mitra-cerdas.js') }}"></script>
