@@ -450,7 +450,6 @@
     </div>
 @endif
 
-
 <script src="js/chart.js"></script> <!--- chart js ---->
 
 <script src="{{ asset('js/Tanya/leaderboard-rank-tanya/leaderboard-rank-tanya-student.js') }}"></script>

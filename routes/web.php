@@ -135,6 +135,9 @@ Route::fallback(function () {
         // UPDATE COIN USER WHEN QUESTION REJECTED (with pusher)
         Route::get('/update-koin-student', [TanyaController::class, 'getKoinStudent'])->name('tanya.getKoinStudent');
 
+        // FILTER LEADERBOARD RANK TANYA STUDENT
+        Route::get('/leaderboard-rank-tanya-student', [FilterController::class, 'leaderboardRankTanya'])->name('filterLeaderboardRankTanyaStudent');
+
     // TANYA ACCESS MIDDLEWARE
     Route::middleware([TanyaAccess::class])->group(function () {
         // VIEWS
@@ -173,8 +176,6 @@ Route::fallback(function () {
         // CLAIM COIN DAILY (student)
         Route::post('/tanya/claim-coin', [TanyaController::class, 'claimCoinDaily'])->name('tanya.claimCoinDaily');
 
-        // FILTER LEADERBOARD RANK TANYA STUDENT
-        Route::get('/leaderboard-rank-tanya-student', [FilterController::class, 'leaderboardRankTanya'])->name('filterLeaderboardRankTanyaStudent');
     });
 
 

@@ -15,6 +15,12 @@
                     'message' => session('success-update-data'),
                 ])
             @endif
+            <!--- alert failed insert data libur tanya ---->
+            @if (session('failed-insert-data'))
+                @include('components.alert.failed-insert-data', [
+                    'message' => session('failed-insert-data'),
+                ])
+            @endif
             <!--- content libur tanya ---->
             <main>
                 <section class="bg-white shadow-lg rounded-lg p-4 border border-gray-200 h-60">
@@ -212,11 +218,6 @@
                                 <button>close</button>
                             </form>
                         </dialog>
-                    @endif
-                    @if (session('failed-insert-data'))
-                        @include('components.alert.failed-insert-data', [
-                            'message' => session('failed-insert-data'),
-                        ])
                     @endif
                 </section>
             </main>

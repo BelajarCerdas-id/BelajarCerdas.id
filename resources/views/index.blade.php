@@ -116,7 +116,7 @@
     <!-- Our Best Service (Dekstop) -->
     <div class="hidden lg:block">
         <div class="grid lg:grid-cols-2 xl:grid-cols-3 gap-8 z-[9999] mx-4 mt-6">
-            <div class="flex gap-4 bg-white rounded-4xl p-4 shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
+            <div class="flex gap-4 bg-white rounded-3xl p-4 shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
                 <div class="flex items-center w-[200px]">
                     <img src="image/asset icon landing page.png" alt="" class="w-full">
                 </div>
@@ -130,7 +130,7 @@
                     </p>
                 </div>
             </div>
-            <div class="flex gap-4 bg-white rounded-4xl p-4 shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
+            <div class="flex gap-4 bg-white rounded-3xl p-4 shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
                 <div class="flex items-center w-[200px]">
                     <img src="image/asset icon landing page.png" alt="" class="w-full">
                 </div>
@@ -145,7 +145,7 @@
                 </div>
             </div>
             <div
-                class="flex gap-4 bg-white rounded-4xl p-4 shadow-[0_10px_24px_rgba(0,0,0,0.23)] lg:col-span-2 lg:mx-auto lg:w-1/2 xl:w-auto xl:mx-0 xl:col-span-1">
+                class="flex gap-4 bg-white rounded-3xl p-4 shadow-[0_10px_24px_rgba(0,0,0,0.23)] lg:col-span-2 lg:mx-auto lg:w-1/2 xl:w-auto xl:mx-0 xl:col-span-1">
                 <div class="flex items-center w-[200px]">
                     <img src="image/asset icon landing page.png" alt="" class="w-full">
                 </div>
