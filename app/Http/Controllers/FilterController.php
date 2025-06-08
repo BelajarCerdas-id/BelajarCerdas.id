@@ -20,6 +20,7 @@ use App\Models\Mapel;
 use App\Models\MentorPaymentDetail;
 use App\Models\SubBab;
 use App\Models\MentorPayments;
+use App\Models\TanyaAccess;
 use App\Models\TanyaVerifications;
 use App\Models\Transactions;
 use App\Models\userAccount;
@@ -118,6 +119,16 @@ class FilterController extends Controller
             'data' => $data->items(),
             'links' => (string) $data->links(),
             'restoreUrl' => route('tanya.edit', ':id')
+        ]);
+    }
+
+    // TANYA ACCESS
+    public function tanyaAccess(Request $request)
+    {
+        $dataTanyaAccess = TanyaAccess::with('UserAccount.OfficeProfiles')->orderBy('created_at', 'desc')->paginate(10);
+
+        return response()->json([
+            'data' => $dataTanyaAccess->items(),
         ]);
     }
 
@@ -461,6 +472,7 @@ class FilterController extends Controller
         ]);
     }
 
+    // FILTERING ENGLISH ZONE QUESTIONS
     public function questionStatus(Request $request)
     {
         $user = session('user');

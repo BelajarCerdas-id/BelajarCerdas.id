@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\CountMentorQuestionsAwaitVerification;
+use App\Events\EventTanyaAccess;
 use App\Events\PaymentTanyaMentor;
 use App\Events\QuestionRejected;
 use App\Events\RollbackQuestion;
@@ -11,7 +12,7 @@ use App\Models\Fase;
 use App\Models\Star;
 use App\Models\Tanya;
 use App\Models\testing;
-use App\Models\tanyaAccess;
+use App\Models\TanyaAccess;
 use App\Models\userAccount;
 use Illuminate\Support\Str;
 use App\Models\Transactions;
@@ -35,7 +36,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Services\PaymentHandlers\CheckoutCoinHandler;
 use App\Services\PaymentHandlers\RenewCheckoutCoinHandler;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class TanyaController extends Controller
 {
@@ -593,49 +596,108 @@ class TanyaController extends Controller
     {
         $user = Auth::user();
 
+        $today = Carbon::today();
+        $start = Carbon::parse($request->tanggal_mulai);
+        $end = Carbon::parse($request->tanggal_akhir);
+
+        $statusAccess = ($today->between($start, $end)) ? 'Aktif' : 'Tidak Aktif';
+
         $getDataTanyaAccess = tanyaAccess::all();
 
-        $request->validate([
-            'tanggal_mulai' => 'required',
-            'tanggal_akhir' => 'required',
+        $validator = Validator::make($request->all(), [
+            'tanggal_mulai' => [
+                'required',
+                Rule::unique('tanya_accesses', 'tanggal_mulai')
+            ],
+            'tanggal_akhir' => [
+                'required',
+                Rule::unique('tanya_accesses', 'tanggal_akhir')
+            ],
         ], [
-            'nama_lengkap.required' => 'Harap masukkan nama lengkap!',
-            'status.required' => 'Harap isi status!',
-            'tanggal_mulai.required' => 'Harap pilih tanggal mulai!',
-            'tanggal_akhir.required' => 'Harap pilih tanggal akhir!',
+            'tanggal_mulai.required' => 'Harap pilih tanggal mulai.',
+            'tanggal_mulai.unique' => 'Tanggal mulai telah terdaftar.',
+            'tanggal_akhir.required' => 'Harap pilih tanggal akhir.',
+            'tanggal_akhir.unique' => 'Tanggal akhir telah terdaftar.',
         ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422); // Gunakan 422 Unprocessable Entity untuk validasi
+        }
+
         if($getDataTanyaAccess->isEmpty()) {
-            tanyaAccess::create([
+            $insertDataTanyaAccess = TanyaAccess::create([
                 'user_id' => $user->id,
                 'tanggal_mulai' => $request->tanggal_mulai,
                 'tanggal_akhir' => $request->tanggal_akhir,
+                'status_access' => $statusAccess
             ]);
-            return redirect()->back()->with('success-insert-data', 'Data berhasil disimpan!');
+
+            broadcast(new EventTanyaAccess($insertDataTanyaAccess))->toOthers();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data berhasil disimpan.',
+                'data' => $insertDataTanyaAccess
+            ]);
         } else {
-            return redirect()->back()->with('failed-insert-data', 'Data libur telah terdaftar, silahkan edit data untuk melakukan perubahan!.');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data libur telah terdaftar, silahkan edit data untuk melakukan perubahan.',
+                'data' => $getDataTanyaAccess
+            ]);
         }
     }
 
     // FUNCTION UPDATE TANYA ACCESS
     public function updateTanyaAccess(Request $request, String $id)
     {
-        $request->validate([
-            'tanggal_mulai' => 'required',
-            'tanggal_akhir' => 'required',
+        $today = Carbon::today();
+        $start = Carbon::parse($request->tanggal_mulai);
+        $end = Carbon::parse($request->tanggal_akhir);
+
+        $statusAccess = ($today->between($start, $end)) ? 'Aktif' : 'Tidak Aktif';
+
+        $validator = Validator::make($request->all(), [
+            'tanggal_mulai' => [
+                'required',
+                Rule::unique('tanya_accesses', 'tanggal_mulai')
+            ],
+            'tanggal_akhir' => [
+                'required',
+                Rule::unique('tanya_accesses', 'tanggal_akhir')
+            ],
         ], [
-            'tanggal_mulai.required' => 'Harap pilih tanggal mulai!',
-            'tanggal_akhir.required' => 'Harap pilih tanggal akhir!',
+            'tanggal_mulai.required' => 'Harap pilih tanggal mulai.',
+            'tanggal_mulai.unique' => 'Tanggal mulai telah terdaftar.',
+            'tanggal_akhir.required' => 'Harap pilih tanggal akhir.',
+            'tanggal_akhir.unique' => 'Tanggal akhir telah terdaftar.',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422); // Gunakan 422 Unprocessable Entity untuk validasi
+        }
 
         $updateDataLibur = tanyaAccess::find($id);
 
         $updateDataLibur->update([
             'tanggal_mulai' => $request->tanggal_mulai,
-            'tanggal_akhir' => $request->tanggal_akhir
+            'tanggal_akhir' => $request->tanggal_akhir,
+            'status_access' => $statusAccess
         ]);
 
-        return redirect()->back()->with('success-update-data', 'Data libur berhasil diubah!');
+        broadcast(new EventTanyaAccess($updateDataLibur))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data libur berhasil diubah!',
+            'data' => $updateDataLibur
+        ]);
     }
 
     // FUNCTION QUESTION ROLLBACK (administrator)
@@ -654,8 +716,6 @@ class TanyaController extends Controller
             'is_being_viewed' => false,
             'viewed_by' => null
         ]);
-
-        $rollbackQuestionData->save();
 
         broadcast(new QuestionAsked($rollbackQuestionData))->toOthers();
 

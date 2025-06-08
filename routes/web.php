@@ -185,8 +185,11 @@ Route::fallback(function () {
 
     // TANYA ACCESS CRUD (ADMINISTRATOR)
     Route::get('/tanya/access', [TanyaController::class, 'tanyaAccess'])->name('tanya.access'); // page tanya access
-    Route::post('/tanya-acccess-store', [TanyaController::class, 'tanyaAccessStore'])->name('tanyaAccessStore'); // insert data tanya access
-    Route::put('/tanya-acccess-update/{id}', [TanyaController::class, 'updateTanyaAccess'])->name('tanyaAccessUpdate'); // insert data tanya access
+    Route::post('/tanya-access-store', [TanyaController::class, 'tanyaAccessStore'])->name('tanyaAccessStore'); // insert data tanya access
+    Route::post('/tanya-access-update/{id}', [TanyaController::class, 'updateTanyaAccess'])->name('tanyaAccessUpdate'); // insert data tanya access
+
+    // FILTERING TANYA ACCESS
+    Route::get('/filter-tanya-access', [FilterController::class, 'tanyaAccess'])->name('filterTanyaAccess');
 
     // LIST PERTANYAAN ROLLBACK (ADMINISTRATOR)
     Route::get('/list-pertanyaan', [TanyaController::class, 'listQuestion'])->name('listQuestion.index');

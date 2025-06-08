@@ -96,14 +96,7 @@
     </div>
 @endif
 
-<script src="../../js/Tanya/payment-mentor/verification-tanya-mentor-ajax.js"></script>
+<script src="../../js/Tanya/payment-mentor/verification-tanya-mentor-ajax.js"></script> <!--- paginate verification tanya mentor  ---->
 
-<script>
-    // untuk mendengarkan event broadcast ketika admin memverifikasi diterima atau ditolak soal mentor
-    document.addEventListener("DOMContentLoaded", () => {
-        window.Echo.channel('TanyaMentorVerifications')
-            .listen('.tanya.mentor.verifications', (e) => {
-                paginateQuestionVerificationMentor();
-            });
-    });
-</script>
+<!--- PUSHER LISTENER TANYA ---->
+<script src="{{ asset('js/pusher-listener/tanya/verification-tanya-mentor.js') }}"></script>

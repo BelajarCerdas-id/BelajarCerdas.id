@@ -13,7 +13,7 @@ $(document).ready(function () {
         $btn.prop('disabled', true); // disable tombol
 
 
-    const formData = new FormData(this);
+        const formData = new FormData(this);
         const csrf = $('meta[name="csrf-token"]').attr('content');
 
         $.ajax({
