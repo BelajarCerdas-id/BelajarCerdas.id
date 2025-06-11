@@ -31,7 +31,7 @@
                         <!-- TABLE -->
                         <div class="overflow-x-auto max-h-[310px]">
                             <table class="table mt-4 border border-separate w-full">
-                                <thead class="thead-table-leaderboard-rank-tanya-student">
+                                <thead class="hidden thead-table-leaderboard-rank-tanya-student">
                                     <tr>
                                         <th class="border border-gray-400 px-3 py-2 text-center text-black">Rank</th>
                                         <th class="border border-gray-400 px-3 py-2 text-center text-black">Nama
@@ -371,4 +371,4 @@
 <script src="{{ asset('js/components/realtime-clock.js') }}"></script> <!--- realtime clock display ---->
 
 <!--- PUSHER LISTENER TANYA ---->
-<script src="{{ asset('js/pusher-listener/leaderboard-rank-tanya-student.js') }}"></script> <!--- leaderboard pusher listener ---->
+<script src="{{ asset('js/pusher-listener/tanya/leaderboard-rank-tanya-student.js') }}"></script> <!--- leaderboard pusher listener ---->

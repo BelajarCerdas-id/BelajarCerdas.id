@@ -1,32 +1,53 @@
-<x-layout></x-layout>
+<x-navbar></x-navbar>
 
 <main>
-    <div class="relative w-full h-[760px] bg-[url('image/services-pages/mitra-cerdas/gelombang_svg.svg')]">
+    <div class="jumbotron-mitra-cerdas relative hidden lg:block">
+        <!-- Background SVG -->
         <img src="{{ asset('image/services-pages/mitra-cerdas/gelombang_svg.svg') }}" alt=""
-            class="absolute left-0 top-0 z-[-1]]">
-        <div class="grid grid-cols-12 h-full">
-            <div class="col-span-6 border border-red-500 flex flex-col gap-6 justify-center ">
-                <span class="text-6xl font-bold">MITRA CERDAS</span>
-                <div class="xl:w-[45%]">
-                    <span class="text-justify leading-6 flex-grow">
-                        Mitra Cerdas adalah Guru profesional ataupun individu dewasa yang memiliki keilmuan di
-                        bidang
-                        pendidikan dan kemampuan sebagai tenaga pengajar.
+            class="jumbotoron-wave-background absolute top-0 left-0 w-full pointer-events-none">
+
+        <!-- Konten Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-10 h-full">
+            <!-- Teks dan Tombol -->
+            <div class="w-full h-full description-btn-register-mitra-cerdas relative">
+
+                <div class="relative flex flex-col justify-center gap-6 max-w-4xl">
+                    <h1 class="font-bold opacity-70">
+                        MITRA CERDAS
+                    </h1>
+                    <span class="max-w-2xl text-gray-700 mx-auto md:mx-0 leading-relaxed">
+                        Mitra Cerdas adalah Guru profesional ataupun individu dewasa yang memiliki keilmuan di bidang
+                        pendidikan
+                        dan kemampuan sebagai tenaga pengajar.
                     </span>
+                    <div>
+                        <!--- rounded gradient ---->
+                        <div class="absolute w-40 h-40 left-20 bottom-[-100px] z-[-1] rounded-full"
+                            style="background: radial-gradient(circle at bottom left, rgba(94, 242, 213, 0.4) 0%, rgba(255,255,255,0) 70%);">
+                        </div>
+
+                        <a href="{{ route('daftar.mentor') }}" class="z-10 relative">
+                            <button
+                                class="bg-[#60B5FF] w-50 h-12 rounded-lg shadow-md text-white font-semibold hover:scale-105 transition-transform">
+                                Daftar Mitra Cerdas
+                            </button>
+                        </a>
+                    </div>
                 </div>
-                <button
-                    class="text-start w-max bg-[#60B5FF] py-2 px-6 rounded-lg shadow-md transition-all cursor-pointer text-white font-bold hover:scale-105">
-                    Daftar Mitra Cerdas
-                </button>
             </div>
-            <div class="col-span-6 border border-yellow-500 z-20 relative">
-                <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cowok jas kuning.png') }}" alt=""
-                    class="w-[400px] absolute bottom-0">
+
+            <!-- Gambar Ilustrasi -->
+            <div class="relative flex justify-center items-end gap-4 w-full">
+                <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cowok jas kuning.png') }}"
+                    alt="Guru laki-laki" class="jumbotron-teacher-man-mitra-cerdas h-auto">
+
+                <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cewek.png') }}" alt="Guru laki-laki"
+                    class="jumbotron-teacher-woman-mitra-cerdas h-auto">
             </div>
         </div>
     </div>
 
-    <div class="relative z-10 flex justify-center my-20 mx-10 px-20">
+    <div class="relative z-10 flex justify-center my-20 mx-4 md:mx-10 px-4 md:px-20">
         <!--- wrapper background ---->
         <img src="{{ asset('image/services-pages/mitra-cerdas/bg kata mitra.png') }}" alt=""
             class="absolute top-0 left-0 w-full h-full z-[-20] rounded-lg pointer-events-none">
@@ -38,7 +59,7 @@
                 <div class="swiper mySwiper pt-20">
                     <div class="swiper-wrapper">
                         <!--- swiper slide 1 ---->
-                        <div class="swiper-slide">
+                        <div class="swiper-slide flex">
                             <figure class="relative bg-white rounded-4xl shadow-md p-6 max-w-[350px]">
                                 <div class="w-full flex justify-center">
                                     <div class="w-[120px] absolute top-[-50px]">
@@ -65,7 +86,7 @@
                             </figure>
                         </div>
                         <!--- swiper slide 2 ---->
-                        <div class="swiper-slide">
+                        <div class="swiper-slide flex">
                             <figure class="relative bg-white rounded-4xl shadow-md p-6 max-w-[350px]">
                                 <div class="w-full flex justify-center">
                                     <div class="w-[120px] absolute top-[-50px]">
@@ -91,7 +112,7 @@
                             </figure>
                         </div>
                         <!--- swiper slide 3 ---->
-                        <div class="swiper-slide">
+                        <div class="swiper-slide flex">
                             <figure class="relative bg-white rounded-4xl shadow-md p-6 max-w-[350px]">
                                 <div class="w-full flex justify-center">
                                     <div class="w-[120px] absolute top-[-50px]">
@@ -117,7 +138,7 @@
                             </figure>
                         </div>
                         <!--- swiper slide 4 ---->
-                        <div class="swiper-slide">
+                        <div class="swiper-slide flex">
                             <figure class="relative bg-white rounded-4xl shadow-md p-6 max-w-[350px]">
                                 <div class="w-full flex justify-center">
                                     <div class="w-[120px] absolute top-[-50px]">
@@ -144,30 +165,31 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- Pagination & Navigation buttons -->
-                <div class="pagination-slider-kata-mitra">
+                <div class="pagination-slider-kata-mitra px-20">
+
                     <!-- Pagination -->
-                    <div class="swiper-pagination absolute bottom-0"></div>
+                    <div class="swiper-pagination absolute !bottom-4 -translate-x-[20px]"></div>
+
                     <!-- Navigation Buttons -->
-                    <div class="button-slider z-30">
-                        <div class="swiper-button-prev slider-arrow">
-                            <div
-                                class="absolute left-[-75px] md:left-[-70px] top-[45%] z-30 bg-[#F35252] w-12.5 h-12 rounded-full transition-all duration-150 active:scale-90 shadow-md active:shadow-inner">
-                                <div id="button-slider-prev"
-                                    class="absolute left-[-1px] top-[-2px] z-30 pointer-events-auto text-white font-bold bg-[#FFE588] w-12 h-12 rounded-full text-4xl
+                    <div class="button-prev slider-arrow">
+                        <div
+                            class="absolute bottom-0 left-1/2 -translate-x-[150%] md:translate-x-0 md:bottom-auto md:left-[-70px] md:top-1/2 md:-translate-y-1/2 z-30 bg-[#F35252] w-12.5 h-12 rounded-full transition-all duration-150 active:scale-90 shadow-md active:shadow-inner">
+                            <div id="button-slider-prev"
+                                class="pointer-events-auto text-white font-bold bg-[#FFE588] w-12 h-12 rounded-full text-4xl
                                     flex items-center justify-center shadow-md">
-                                    <i class="fas fa-chevron-left"></i>
-                                </div>
+                                <i class="fas fa-chevron-left"></i>
                             </div>
                         </div>
-                        <div class="swiper-button-next slider-arrow">
-                            <div
-                                class="absolute right-[-75px] md:right-[-70px] top-[45%] z-30 bg-[#F35252] w-12.5 h-12 rounded-full transition-all duration-150 active:scale-90 shadow-md active:shadow-inner">
-                                <div id="button-slider-next"
-                                    class="absolute left-[3px] top-[-2px] z-30 pointer-events-auto text-white font-bold bg-[#FFE588] w-12 h-12 rounded-full text-4xl
+                    </div>
+                    <div class="button-next slider-arrow">
+                        <div
+                            class="absolute bottom-0 right-1/2 translate-x-[150%] md:translate-x-0 md:bottom-auto md:right-[-70px] md:top-1/2 md:-translate-y-1/2 z-30 bg-[#F35252] w-12.5 h-12 rounded-full transition-all duration-150 active:scale-90 shadow-md active:shadow-inner">
+                            <div id="button-slider-next"
+                                class="pointer-events-auto text-white font-bold bg-[#FFE588] w-12 h-12 rounded-full text-4xl
                                 flex items-center justify-center shadow-md">
-                                    <i class="fas fa-chevron-right"></i>
-                                </div>
+                                <i class="fas fa-chevron-right"></i>
                             </div>
                         </div>
                     </div>
@@ -177,7 +199,7 @@
     </div>
 
     <section>
-        <div class="relative h-max flex justify-center mx-10 py-4">
+        <div class="relative h-max flex justify-center mx-4 md:mx-10 py-4">
             <img src="{{ asset('image/services-pages/mitra-cerdas/bg kata mitra.png') }}"
                 class="absolute top-0 left-0 w-full h-full object-cover z-0 rounded-lg pointer-events-none"
                 alt="">
@@ -194,7 +216,8 @@
                                 <span class="font-bold text-[14.5px] sm:text-base">Pendaftaran Mitra</span>
                                 <div
                                     class="flex-shrink-1 relative top-[10px] left-4 w-[40px] h-full flex items-center sm:hidden">
-                                    <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 1.png') }}" alt=""
+                                    <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 1.png') }}"
+                                        alt=""
                                         class="w-full h-[80px] object-contain absolute pointer-events-none">
                                 </div>
                             </div>

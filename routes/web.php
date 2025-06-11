@@ -26,6 +26,7 @@ use App\Http\Controllers\EnglishZoneController;
 use App\Http\Controllers\MitraCerdasController;
 use App\Http\Controllers\VisitasiDataController;
 use App\Http\Controllers\AuthController; // login daftar
+use App\Http\Controllers\PaymentFeaturesController;
 use App\Http\Controllers\webController; // data biasa seperti foreach (tidak dari database) dan lain lain (jika ada selain foreach)
 
 Route::get('/', [webController::class, 'index'])->name('homePage');
@@ -79,10 +80,13 @@ Route::fallback(function () {
         // ROUTE LOGOUT
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+        // ROUTE PAYMENT FEATURES VIEW
+        Route::get('/pembayaran-fitur/{nama_fitur}', [PaymentFeaturesController::class, 'paymentFeaturesView'])->name('paymentFeaturesView');
+
         // COIN CHECKOUT (TANYA)
-        Route::get('/tanya-coin', [TanyaController::class, 'coinPackage'])->name('coinPackage');
-        Route::post('/checkout', [TanyaController::class, 'checkout'])->name('checkout');
-        Route::post('/renew-checkout/{id}', [TanyaController::class, 'renewPending'])->name('checkout.pending');
+        // Route::get('/tanya-coin', [TanyaController::class, 'coinPackage'])->name('coinPackage');
+        Route::post('/checkout', [PaymentFeaturesController::class, 'checkoutCoinTanya'])->name('checkout');
+        Route::post('/renew-checkout/{id}', [PaymentFeaturesController::class, 'renewCheckoutCoinTanya'])->name('checkout.pending');
 
         // ROUTES DROPDOWN FASE, KELAS, MAPEL, BAB (AJAX)
         Route::get('/kelas/{id}', [KelasController::class, 'getKelas']);

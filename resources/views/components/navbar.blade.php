@@ -1,8 +1,6 @@
-<x-script>
+<x-script></x-script>
 
-</x-script>
-
-<nav class="mb-40">
+<nav class="mb-32">
     <div class="flex justify-between items-center h-24 px-7 fixed w-full bg-white top-0 z-[9999]">
         <!-- navbar elements --->
         @if (request()->routeIs('homePage'))
@@ -25,7 +23,7 @@
                     @endif
                     <a href="{{ route('homePage') }}" class="">
                         <!-- logo bc -->
-                        <img src="image/logoBC.png" class="w-[80px]">
+                        <img src="{{ asset('image/logoBC.png') }}" class="w-[80px]">
                     </a>
                 </div>
                 @if (Auth::user() != null)
@@ -179,7 +177,7 @@
             </div>
         @elseif(request()->routeIs('mitraCerdas'))
             <!-- element top left -->
-            <div class="flex items-center justify-between w-full">
+            <div class="flex items-center justify-between w-full relative">
                 <div
                     class="absolute left-[-125px] top-[-20px] w-[260px] h-[75px]
                         bg-gradient-to-br from-[#FFE588]/70 to-white
@@ -207,7 +205,7 @@
                 @if (Auth::user() === null)
                     <a href="{{ route('homePage') }}" class="relative left-[25px]">
                         <!-- logo bc -->
-                        <img src="image/logoBC.png" class="w-[80px]">
+                        <img src="{{ asset('image/logoBC.png') }}" class="w-[80px]">
                     </a>
                 @else
                     <div class="flex items-center">
@@ -222,7 +220,7 @@
                         </div>
                         <!-- logo bc -->
                         <a href="{{ route('homePage') }}" class="relative left-[25px]">
-                            <img src="image/logoBC.png" class="w-[80px]">
+                            <img src="{{ asset('image/logoBC.png') }}" class="w-[80px]">
                         </a>
                     </div>
                     <!-- profile user -->
@@ -392,7 +390,7 @@
                     @endif
                     <a href="{{ route('homePage') }}" class="">
                         <!-- logo bc -->
-                        <img src="image/logoBC.png" class="w-[80px]">
+                        <img src="{{ asset('image/logoBC.png') }}" class="w-[80px]">
                     </a>
                 </div>
                 @if (Auth::user() != null)

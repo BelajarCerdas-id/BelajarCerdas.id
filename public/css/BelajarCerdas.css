@@ -1263,7 +1263,7 @@ input[type="radio"]:checked + .serviceOption .icon-service {
     white-space: nowrap;
 }
 
-/* image slider with swiper js (about) */
+/* image slider with swiper js (about & mitra cerdas pages) */
 .slider-container {
     width: 100%;
     max-width: 1000px;
@@ -2071,5 +2071,99 @@ input[type="radio"]:checked + label.checked-dropdown-mapel {
     .pagination-slider .swiper-button-prev {
         left: 27% !important;
         transform: translateX(-20%) !important;
+    }
+}
+
+/* Media Screen jumbtron-image-teacher (mitra cerdas) */
+@media (max-width: 1120px) {
+    .jumbotron-wave-background {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        height: 340px;
+    }
+
+    .jumbotron-teacher-man-mitra-cerdas {
+        width: 41%;
+    }
+
+    .jumbotron-teacher-woman-mitra-cerdas {
+        width: 32%;
+    }
+
+    .description-btn-register-mitra-cerdas {
+        padding: 0px 0px 0px 135px;
+    }
+
+    .description-btn-register-mitra-cerdas h1 {
+        font-size: 36px;
+    }
+
+    .description-btn-register-mitra-cerdas span {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 1121px) and (max-width: 1439px) {
+    .jumbotron-wave-background {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        height: 1000px;
+    }
+
+    .jumbotron-teacher-man-mitra-cerdas {
+        width: 41%;
+    }
+
+    .jumbotron-teacher-woman-mitra-cerdas {
+        width: 32%;
+    }
+
+    .description-btn-register-mitra-cerdas {
+        padding: 40px 0px 0px 160px;
+    }
+
+    .description-btn-register-mitra-cerdas h1 {
+        font-size: 36px;
+    }
+
+    .description-btn-register-mitra-cerdas span {
+        font-size: 18px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .jumbotron-wave-background {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        height: 740px;
+    }
+
+    .jumbotron-teacher-man-mitra-cerdas {
+        width: 41%;
+    }
+
+    .jumbotron-teacher-woman-mitra-cerdas {
+        width: 32%;
+    }
+
+    .description-btn-register-mitra-cerdas {
+        padding: 120px 0px 0px 210px;
+    }
+
+    .description-btn-register-mitra-cerdas h1 {
+        font-size: 60px;
+    }
+
+    .description-btn-register-mitra-cerdas span {
+        font-size: 20px;
     }
 }

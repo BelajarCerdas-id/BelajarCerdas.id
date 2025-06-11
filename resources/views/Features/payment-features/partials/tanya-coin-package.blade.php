@@ -6,7 +6,7 @@
             <!--- pilihhan paket koin tanya ----->
             <div>
                 <h2 class="font-bold text-lg">Pilih Paket Koin Kamu</h2>
-                @foreach ($dataCoinOptions as $item)
+                @foreach ($dataFeaturesPrices as $item)
                     @if ($item->variant_name != 'Koin Satuan')
                         <label class="block cursor-pointer w-full lg:w-max h-max my-6"
                             onclick="coinOption(this, {{ $item->id }})" data-feature-id="{{ $item->feature_id }}"

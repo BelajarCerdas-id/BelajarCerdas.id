@@ -1,4 +1,4 @@
-<x-layout></x-layout>
+<x-navbar></x-navbar>
 
 <main>
     <!-- Section: BelajarCerdas.id -->

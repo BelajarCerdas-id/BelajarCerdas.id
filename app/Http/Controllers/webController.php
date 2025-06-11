@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\englishZoneSoal;
 use App\Models\englishZoneMateri;
 use App\Models\englishZoneJawaban;
+use App\Models\Features;
 use App\Models\StudentProfiles;
 use App\Models\MentorPayments;
 use App\Models\MentorProfiles;
@@ -23,56 +24,66 @@ class webController extends Controller
 {
     public function index()
     {
-        $packets = [
-            [
-                'Image' => 'image/paket1.jpg',
-                'Desc1' => 'Membership Program',
-                'Desc2' => 'HaloGuru, Catatan, TANYA, PTN, dan English Zone',
-                'Discount' => 'Rp. 7.000.000 ',
-                'Price' => 'Rp. 1.300.000/Tahun',
-                'Link' => '/tanya-coin',
-                'Button' => 'Langganan Sekarang'
+        $features = Features::all();
+
+        $descriptionsFeatures = [
+            'TANYA' => [
+                'image_feature' => asset("image/logo-fitur/logo-tanya.png"),
+                'textButton' => 'Lihat Paket',
+                'price' => 'Rp 2.000 / Koin',
+
+                'descriptions' => [
+                    "Jam berTANYA 7.00 - 21.00",
+                    "Jenjang TANYA SD (Kelas 1 - 6) Mapel: B. Indonesia, English, IPAS, Matematika",
+                    "Jenjang TANYA SMP (Kelas 7 - 9) Mapel: B. Indonesia, English, IPA Terpadu, Matematika",
+                    "Jenjang TANYA SMA (Kelas 10 - 12) Mapel: B. Indonesia, English, Biologi, Fisika, Kimia, Matematika",
+                    "Gratis 10 koin TANYA setiap hari",
+                    "Cashback 1 koin per 1 perTANYAan terjawab",
+                    "5 koin untuk 1 berTANYA",
+                    "Koin akan dikembalikan jika perTANYAan ditolak",
+                    "Leaderboard TANYA Nasional",
+                    "Respons cepat kurang dari 5 menit",
+                    "Dijawab langsung oleh Tutor Expert",
+                ]
             ],
-            [
-                'Image' => 'image/paket2.jpg',
-                'Desc1' => 'Rekomendasi jurusan dan PTN',
-                'Desc2' => '96 kali pembelajaran hybrid dan 20 kali Try Out',
-                'Discount' => 'Rp. 7.000.000',
-                'Price' => 'Rp. 1.300.000/Tahun',
-                'Link' => '/tanya-coin',
-                'Button' => 'Langganan Sekarang'
+            'Soal dan Pembahasan' => [
+                'image_feature' => asset("image/logo-fitur/logo-englishZone.png"),
+                'textButton' => 'Segera Hadir',
+                'price' => 'Rp 2.000',
+
+                'descriptions' => [
+                    "Bank Soal per Sub-bab",
+                    "Soal Latihan dan Video Pembahasan",
+                    "Soal Ujian dan Pembahasan",
+                    "Laporan Perkembangan Hasil Latihan",
+                    "Laporan Perkembangan Hasil Ujian untuk orang tua",
+                    "Jenjang SOAL SD (Kelas 1 - 6) Mapel: B. Indonesia, English, IPAS, Matematika",
+                    "Jenjang TANYA SMP (Kelas 7 - 9) Mapel: B. Indonesia, English, IPA Terpadu, Matematika",
+                    "Jenjang TANYA SMA (Kelas 10 - 12) Mapel: B. Indonesia, English, Biologi, Fisika, Kimia, Matematika",
+                ]
             ],
-            [
-                'Image' => 'image/paket3.jpg',
-                'Desc1' => 'Catatan',
-                'Desc2' => 'Pemberian catatan per sub-bab dari guru',
-                'Discount' => 'Rp. 7.000.000 ',
-                'Price' => 'Rp. 1.300.000/Tahun',
-                'Link' => '/tanya-coin',
-                'Button' => 'Langganan Sekarang'
-            ],
-            [
-                'Image' => 'image/paket3.jpg',
-                'Desc1' => 'Tanya dijawab langsung oleh Guru Ahli',
-                'Desc2' => 'Jawaban PR dan Tugas lengkap dengan penjelasan',
-                'Discount' => '',
-                'Price' => 'Rp. 3.000/Koin',
-                'Link' => '/tanya-coin',
-                'Button' => 'Langganan Sekarang'
-            ],
-            [
-                'Image' => 'image/paket5.jpg',
-                'Desc1' => 'English Zone',
-                'Desc2' => 'Belajar "conversation" bersama guru ahli',
-                'Discount' => 'Rp. 7.000.000 ',
-                'Price' => 'Rp. 1.300.000/Tahun',
-                'Link' => '/tanya-coin',
-                'Button' => 'Langganan Sekarang'
+            'English Zone' => [
+                'image_feature' => asset("image/logo-fitur/logo-englishZone.png"),
+                'textButton' => 'Segera Hadir',
+                'price' => 'Rp 500.000',
+
+                'descriptions' => [
+                    "Kurikulum berstandar internasional (CEFR Level)",
+                    "Jenjang Belajar Per Level Selama 3 Bulan",
+                    "24x Sesi Interaktif Bersama Tutor Expert Selama 3 Bulan",
+                    "2x Sesi Interaktif per Minggu Selama 3 Bulan",
+                    "Belajar Bersama Tutor Expert Berpengalaman",
+                    "Metode Belajar Interaktif dan Praktis",
+                    "Tersedia Self-Assessment Test",
+                    "Laporan Belajar Setiap Bulan",
+                    "Materi dan Sertifikat Digital",
+                    "Rp.500.000/Bulan",
+                    "Bonus 100 Koin TANYA",
+                ]
             ],
         ];
-        return view('index', [
-            'packets' => $packets,
-        ]);
+
+        return view('index', compact('features', 'descriptionsFeatures'));
     }
 
     public function beranda()

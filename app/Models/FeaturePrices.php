@@ -18,6 +18,10 @@ class FeaturePrices extends Model
         'price',
     ];
 
+    public function Features() {
+        return $this->belongsTo(Features::class, 'feature_id');
+    }
+
     public function Transcations() {
         return $this->hasOne(Transactions::class, 'feature_variant_id');
     }

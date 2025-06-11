@@ -1,4 +1,5 @@
 <x-navbar></x-navbar>
+
 <main>
     <!---- jumbotron dekstop ----->
     <section class="hidden lg:grid grid-cols-12 relative">
@@ -283,45 +284,62 @@
     </div>
 </main>
 
-<div
-    class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 lg:grid-cols-4 gap-2 mx-2 lg:w-[90%] xl:w-max lg:mx-auto mt-40 border-2">
-    @foreach ($packets as $packet)
-        <article class="xl:w-[225px] xl:h-max bg-white shadow-lg rounded-lg overflow-hidden relative ... border-[1px]">
-            <section class="relative top-[-10px]">
-                <header>
-                    <img src="{{ $packet['Image'] }}" alt="" class="w-full h-[100px] object-cover">
-                </header>
-                <main>
-                    <ul class="text-sm list-none px-4 h-[150px]">
-                        <li class="flex gap-1 mt-4 mb-2">
-                            <i class="fa-solid fa-circle text-[8px] text-[--color-default] relative ... top-[6px]"></i>
-                            <span class="text-[12px] text-justify"><?= $packet['Desc1'] ?></span>
-                        </li>
-                        <li class="flex gap-1 mt-4 mb-2">
-                            <i class="fa-solid fa-circle text-[8px] text-[--color-default] relative ... top-[6px]"></i>
-                            <span class="text-[12px] text-justify"><?= $packet['Desc2'] ?></span>
-                        </li>
-                    </ul>
-                </main>
-                <footer class="text-center">
-                    <div class="border-b-[1px] border-gray-300 w-full"></div>
-                    <div class="priceList mt-10">
-                        <div class="flex justify-center gap-2">
-                            <a class="text-xs md:text-sm text-[--color-second] font-medium">Mulai dari</a>
-                            <span
-                                class="line-through text-red-500 font-bold text-xs md:text-sm">{{ $packet['Discount'] }}</span>
-                        </div>
-                        <span class="font-bold text-xs md:text-base">{{ $packet['Price'] }}</span>
-                    </div>
-                    <a href="{{ $packet['Link'] }}">
-                        <button
-                            class="bg-[--color-second] w-[90%] rounded-full h-[40px] text-white font-bold text-xs md:text-sm mt-4">{{ $packet['Button'] }}</button>
-                    </a>
-                </footer>
+<!----- price list features ------->
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 mt-40 justify-center items-center max-w-[1000px] mx-auto gap-6">
+
+    <!---- FEATURES ------>
+    @foreach ($features as $item)
+        <article class="border h-[600px] rounded-lg relative">
+            <!-- Gambar fitur -->
+            <figure class="border-b border-gray-200 h-32">
+                <img src="{{ $descriptionsFeatures[$item->nama_fitur]['image_feature'] ?? '' }}"
+                    alt="Logo Fitur {{ $item->nama_fitur }}" class="w-full h-full object-contain pointer-events-none">
+            </figure>
+
+            <!-- Nama fitur -->
+            <span
+                class="font-bold opacity-70 h-10 flex items-center justify-center border-b">{{ $item->nama_fitur }}</span>
+
+            <!-- Deskripsi produk -->
+            <section class="px-4 flex flex-col gap-4 overflow-y-auto max-h-69">
+                @foreach ($descriptionsFeatures[$item->nama_fitur]['descriptions'] ?? [] as $desc)
+                    <span class="inline-flex gap-1 text-sm">
+                        <i class="fa-solid fa-circle-check text-green-500 relative top-[2px]"></i>
+                        <span>{{ $desc }}</span>
+                    </span>
+                @endforeach
             </section>
+
+            <!-- Harga dan tombol -->
+            <div class="absolute bottom-4 w-full flex flex-col gap-4 border-t-[3px] border-gray-200 border-dashed">
+                <div class="flex flex-col items-center mt-4">
+                    <span class="text-xs font-bold opacity-70">Mulai dari</span>
+                    <span
+                        class="text-sm font-bold opacity-70">{{ $descriptionsFeatures[$item->nama_fitur]['price'] ?? '' }}</span>
+                </div>
+                <!-- kalau english zone dan soal pembahasan suda ada, if else nya hapus saja, soalnya list features price harus dibikin duluan padahal fitur nya blm siap -->
+                @if ($item->nama_fitur == 'TANYA')
+                    <a href="{{ route('paymentFeaturesView', $item->nama_fitur) }}" class="w-full flex justify-center"
+                        aria-label="{{ $item->nama_fitur }}">
+                        <button
+                            class="bg-[--color-second] w-[90%] rounded-full h-[32px] text-white font-bold text-xs md:text-sm">
+                            {{ $descriptionsFeatures[$item->nama_fitur]['textButton'] ?? '' }}
+                        </button>
+                    </a>
+                @else
+                    <a href="{{ route('homePage') }}" class="w-full flex justify-center"
+                        aria-label="{{ $item->nama_fitur }}">
+                        <button
+                            class="bg-[--color-second] w-[90%] rounded-full h-[32px] text-white font-bold text-xs md:text-sm">
+                            {{ $descriptionsFeatures[$item->nama_fitur]['textButton'] ?? '' }}
+                        </button>
+                    </a>
+                @endif
+            </div>
         </article>
     @endforeach
 </div>
+
 
 <div class="relative flex justify-center items-center min-h-screen p-6">
     <!-- Main Content -->
@@ -370,7 +388,7 @@
                 <h1 class="text-2xl md:text-4xl font-bold text-gray-800 absolute top-0 md:top-6">
                     BelajarCerdas.<span class="text-[--color-default]">id</span>
                 </h1>
-                <div class="mt-20">
+                <div class="mt-6">
                     <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8 text-justify">
                         BelajarCerdas.id hadir sebagai solusi inovatif di dunia pendidikan, menggabungkan kekuatan
                         teknologi online dengan pendekatan offline yang personal.
