@@ -95,7 +95,7 @@
                         oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                         class="w-full bg-white shadow-lg h-12 text-sm border-gray-200 border-[2px] outline-none rounded-md px-2
                             focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]"
-                        placeholder="Masukkan No.HP" maxlength="12">
+                        placeholder="Masukkan No.HP" maxlength="16">
                 </div>
 
                 <!-- Email -->
