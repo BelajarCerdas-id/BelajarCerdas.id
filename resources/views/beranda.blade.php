@@ -59,7 +59,7 @@
                             </div>
                         </div>
                         <!-- PERINGKAT USER-->
-                        <div class="hidden xl:block">
+                        <div class="">
                             <div id="container-leaderboard-rank-tanya-user"
                                 class="w-full h-26 bg-white absolute bottom-0 shadow-md border-t flex flex-col sm:flex-row sm:items-center sm:justify-between">
                                 <!--- show rank in ajax --->

@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Crud;
 use App\Models\Fase;
 use App\Models\RegisterOtp;
-use App\Models\userAccount;
+use App\Models\UserAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -31,7 +30,7 @@ class AuthController extends Controller
         ]);
 
         // Use a raw SQL query to fetch the user
-        $user = userAccount::where('email', $request->email)->first();
+        $user = UserAccount::where('email', $request->email)->first();
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
@@ -101,7 +100,7 @@ class AuthController extends Controller
             //     }
             // }
 
-            $user = userAccount::create([
+            $user = UserAccount::create([
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
                 'no_hp' => $request->no_hp,
@@ -171,7 +170,7 @@ class AuthController extends Controller
             //         ]);
             //     }
             // }
-            $user = userAccount::create([
+            $user = UserAccount::create([
                 'no_hp' => $request->no_hp,
                 'role' => 'Mentor',
             ]);

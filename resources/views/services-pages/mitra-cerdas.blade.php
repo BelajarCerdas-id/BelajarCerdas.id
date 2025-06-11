@@ -1,5 +1,4 @@
 <x-navbar></x-navbar>
-
 <main>
     <div class="jumbotron-mitra-cerdas relative hidden lg:block">
         <!-- Background SVG -->
