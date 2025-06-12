@@ -59,7 +59,7 @@ class MuridImport implements ToCollection, WithHeadingRow, SkipsEmptyRows, WithS
             if ($validator->fails()) {
                 $errors = array_merge($errors, $validator->errors()->all());
                 continue;
-            }ß
+            }
 
             UserAccount::firstOrCreate([
                 'nama_lengkap' => $row['nama_lengkap'],
