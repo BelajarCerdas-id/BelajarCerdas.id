@@ -15,8 +15,8 @@ class OfficeProfiles extends Model
         'nama_lengkap'
     ];
 
-    public function userAccount()
+    public function UserAccount()
     {
-        return $this->belongsTo(userAccount::class);
+        return $this->belongsTo(UserAccount::class);
     }
 }

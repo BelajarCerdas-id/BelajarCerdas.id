@@ -23,7 +23,7 @@ use App\Models\MentorPayments;
 use App\Models\TanyaAccess;
 use App\Models\TanyaVerifications;
 use App\Models\Transactions;
-use App\Models\userAccount;
+use App\Models\UserAccount;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Midtrans\Transaction;

@@ -384,7 +384,7 @@ class EnglishZoneController extends Controller
         $jenjangModulUser = $EnglishZoneUser->FeaturePricesVariant->variant_name;
 
         // terakhir, $getSoal akan mengambil semua data yang sesuai dengan column modul englishZoneSoal dengan operator $modul yang berasal dari parameter url
-        // cara ini hampir sama dengan metode view pada userAccount find($id), hanya saja ini menggunakan kondisi where, karena melakukan relasi antara column modul englishZoneSoal dengan column modul englishZoneMateri
+        // cara ini hampir sama dengan metode view pada UserAccount find($id), hanya saja ini menggunakan kondisi where, karena melakukan relasi antara column modul englishZoneSoal dengan column modul englishZoneMateri
         // get data untuk soal pilihan ganda
         $groupedSoal = englishZoneSoal::where('modul_soal', $modul)->where('status_soal', 'published')->where('jenjang_soal', $jenjangModulUser)->get()->groupBy('soal'); // sementara jangan pake inRamdomOrder() buat acak pg
         $getSoal = $groupedSoal->map(fn($materis) => $materis->first()); // Data utama tiap modul

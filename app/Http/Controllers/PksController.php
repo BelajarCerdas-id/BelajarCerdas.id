@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\bulkUploadTemplate;
 use App\Models\dataSuratPks;
 use App\Models\sekolahPks;
-use App\Models\userAccount;
+use App\Models\UserAccount;
 use Illuminate\Http\Request;
 
 class PksController extends Controller
@@ -43,7 +43,7 @@ class PksController extends Controller
     {
         $getSekolah = dataSuratPks::where('sekolah', $sekolah)->get();
 
-        $getMurid = userAccount::where('sekolah', $sekolah)->where('status', 'Murid')->get();
+        $getMurid = UserAccount::where('sekolah', $sekolah)->where('status', 'Murid')->get();
 
         return view('master-data-pks.civitas-sekolah.data-civitas-sekolah', compact('getMurid'));
     }
