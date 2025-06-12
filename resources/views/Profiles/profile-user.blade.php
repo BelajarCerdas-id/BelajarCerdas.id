@@ -557,12 +557,12 @@
                             <div class="mt-6">
                                 <span>Mentor Ahli</span>
                                 <div
-                                    class="bg-white h-max shadow-lg rounded-lg px-6 py-4  w-full mt-2                                                                                                                                                                                                                                                                                        ">
+                                    class="bg-white h-max shadow-lg rounded-lg px-6 py-4 w-full mt-2                                                                                                                                                                                                                                                                                        ">
                                     <div class="flex flex-wrap gap-4">
                                         @if ($dataMentorAhli)
                                             @foreach ($dataMentorAhli as $item)
                                                 <div
-                                                    class="w-32 h-8 flex items-center justify-center bg-[#4189e0] text-white text-sm rounded-md">
+                                                    class="min-w-32 h-8 px-4 flex items-center justify-center bg-[#4189e0] text-white text-sm rounded-md">
                                                     {{ $item->nama_fitur }}
                                                 </div>
                                             @endforeach

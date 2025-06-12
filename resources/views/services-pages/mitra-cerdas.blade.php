@@ -1,12 +1,22 @@
 <x-navbar></x-navbar>
 <main>
-    <div class="jumbotron-mitra-cerdas relative hidden lg:block">
+    <div class="jumbotron-mitra-cerdas border lg:border-none shadow-lg relative">
         <!-- Background SVG -->
         <img src="{{ asset('image/services-pages/mitra-cerdas/gelombang_svg.svg') }}" alt=""
-            class="jumbotoron-wave-background absolute top-0 left-0 w-full pointer-events-none">
+            class="jumbotoron-wave-background absolute top-0 left-0 w-full pointer-events-none hidden lg:block">
 
         <!-- Konten Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-10 h-full">
+        <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-10 h-full">
+
+            <!-- Gambar Ilustrasi (MOBILE) -->
+            <div class="relative flex justify-center items-end gap-4 w-full lg:hidden">
+                <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cowok jas kuning.png') }}"
+                    alt="Guru laki-laki" class="jumbotron-teacher-man-mitra-cerdas max-w-56">
+
+                <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cewek.png') }}" alt="Guru laki-laki"
+                    class="jumbotron-teacher-woman-mitra-cerdas max-w-44">
+            </div>
+
             <!-- Teks dan Tombol -->
             <div class="w-full h-full description-btn-register-mitra-cerdas relative">
 
@@ -21,7 +31,7 @@
                     </span>
                     <div>
                         <!--- rounded gradient ---->
-                        <div class="absolute w-40 h-40 left-20 bottom-[-100px] z-[-1] rounded-full"
+                        <div class="absolute w-40 h-40 left-20 bottom-[-100px] z-[-1] rounded-full hidden lg:block"
                             style="background: radial-gradient(circle at bottom left, rgba(94, 242, 213, 0.4) 0%, rgba(255,255,255,0) 70%);">
                         </div>
 
@@ -35,8 +45,8 @@
                 </div>
             </div>
 
-            <!-- Gambar Ilustrasi -->
-            <div class="relative flex justify-center items-end gap-4 w-full">
+            <!-- Gambar Ilustrasi (DEKSTOP) -->
+            <div class="relative flex justify-center items-end gap-4 w-full hidden lg:flex">
                 <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cowok jas kuning.png') }}"
                     alt="Guru laki-laki" class="jumbotron-teacher-man-mitra-cerdas h-auto">
 
@@ -46,7 +56,7 @@
         </div>
     </div>
 
-    <div class="relative z-10 flex justify-center my-20 mx-4 md:mx-10 px-4 md:px-20">
+    <div class="relative z-10 flex justify-center my-32 lg:my-48 mx-4 md:mx-10 px-4 md:px-20">
         <!--- wrapper background ---->
         <img src="{{ asset('image/services-pages/mitra-cerdas/bg kata mitra.png') }}" alt=""
             class="absolute top-0 left-0 w-full h-full z-[-20] rounded-lg pointer-events-none">
@@ -111,32 +121,6 @@
                             </figure>
                         </div>
                         <!--- swiper slide 3 ---->
-                        <div class="swiper-slide flex">
-                            <figure class="relative bg-white rounded-4xl shadow-md p-6 max-w-[350px]">
-                                <div class="w-full flex justify-center">
-                                    <div class="w-[120px] absolute top-[-50px]">
-                                        <img src="{{ asset('image/services-pages/mitra-cerdas/rahma.png') }}"
-                                            alt="" class="">
-                                    </div>
-                                </div>
-                                <div class="mt-14">
-                                    <p class="text-sm text-gray-700 mb-4 text-justify max-h-64">
-                                        Bergabung sebagai mitra di Belajar Cerdas memberi saya banyak manfaat.
-                                        Saya
-                                        bisa
-                                        membantu siswa memahami materi pelajaran dengan lebih baik. Selain itu,
-                                        saya
-                                        juga
-                                        mendapatkan banyak wawasan baru, bertemu dengan rekan sesama mitra, dan
-                                        tentunya
-                                        menikmati pengalaman seru dalam mendampingi proses belajar siswa!
-                                    </p>
-                                    <h4 class="font-semibold text-black italic text-center">Rahmawati</h4>
-                                    <div class="w-16 h-0.5 bg-black mx-auto mt-1"></div>
-                                </div>
-                            </figure>
-                        </div>
-                        <!--- swiper slide 4 ---->
                         <div class="swiper-slide flex">
                             <figure class="relative bg-white rounded-4xl shadow-md p-6 max-w-[350px]">
                                 <div class="w-full flex justify-center">

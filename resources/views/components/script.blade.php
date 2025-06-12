@@ -54,9 +54,10 @@
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-    <title>Document</title>
-    <link rel="shortcut icon" href="#" />
-    <link rel="icon" href="image/bc-favicon.ico">
+    <title>Belajar Cerdas</title>
+    <link rel="shortcut icon" type="image/png" href="{{ asset('image/favicon-bc/logobc_icon.png') }}">
+
+
 </head>
 
 <body class="overflow-x-hidden">

@@ -45,9 +45,8 @@ Route::get('/certif', function () {
     return view('certif');
 });
 
-Route::get('/about', function () {
-    return view('about');
-});
+Route::get('/about', [webController::class, 'about'])->name('about');
+
 
 Route::fallback(function () {
     return redirect()->route('homePage');

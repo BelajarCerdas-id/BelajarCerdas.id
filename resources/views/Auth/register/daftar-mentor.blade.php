@@ -84,7 +84,7 @@
                     <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}"
                         class="w-full bg-white shadow-lg h-12 text-sm border-gray-200 border-[2px] outline-none rounded-md px-2
                             focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]"
-                        placeholder="Masukkan Username">
+                        placeholder="Masukkan Nama Lengkap">
                 </div>
 
                 <!-- No HP -->

@@ -1,5 +1,4 @@
 <x-navbar></x-navbar>
-
 <main>
     <!---- jumbotron dekstop ----->
     <section class="hidden lg:grid grid-cols-12 relative">
@@ -69,7 +68,7 @@
                     class="w-full h-full sm:h-[415px] relative left-6 top-[-20px] sm:top-[-80px]">
             </div>
             <img src="image/asset landing page.png" alt="" class="w-full h-full sm:h-[500px]">
-            <div class="w-full md:text-left h-full flex flex-col justify-center gap-2 my-20">
+            <div class="w-full md:text-left h-full flex flex-col justify-center gap-6 my-20">
                 <div class="text-xl font-bold">
                     <span>Lebih Dari Sekedar</span>
                     <span class="text-[--color-default]">Edutech</span>
@@ -77,7 +76,7 @@
                 <div class="text-4xl md:text-bg-red-50 font-bold">
                     <span>Belajar Cerdas</span>
                 </div>
-                <div class="text-3xl sm:text-3xl md:text-4xl font-bold mt-[1px] !leading-[60px]">
+                <div class="text-3xl sm:text-3xl md:text-4xl font-bold mt-[1px]">
                     <span>Raih Prestasi</span>
                     <span class="">Lebih Tinggi!</span>
                 </div>
@@ -211,7 +210,7 @@
                     </div>
                 </div>
                 <!-- Right Side: Text Content -->
-                <div class="flex flex-col justify-center relative">
+                <div class="flex flex-col justify-center relative w-full h-full">
                     <div class="flex gap-2">
                         <h1 class="text-2xl sm:text-4xl font-bold absolute top-0 text-gray-800 md:top-6 flex gap-2">
                             <span>Our</span>
@@ -220,8 +219,8 @@
                         </h1>
                         <div class="border-b-4 border-[--color-default] mt-14 md:mt-20 w-96"></div>
                     </div>
-                    <div class="relative w-full h-80 flex overflow-hidden flex-col mt-6">
-                        <div class="absolute w-full h-full flex flex-col right-0 duration-700 ease-out"
+                    <div class="relative w-full h-full flex overflow-hidden flex-col mt-6">
+                        <div class="w-full h-full flex flex-col right-0 duration-700 ease-out"
                             id="tanyaServiceContent">
                             <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8">
                                 Tanya adalah fitur dari BelajarCerdas.id yang mempermudah siswa mendapatkan jawaban atas
@@ -239,7 +238,7 @@
                                 kapan saja dengan bimbingan langsung dari tim ahli kami.
                             </p>
                         </div>
-                        <div class="absolute w-full h-full flex flex-col right-[-100%] duration-700 ease-out"
+                        <div class="w-full h-full flex flex-col duration-700 ease-out hidden"
                             id="haloGurServiceContent">
                             <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8">
                                 Halo Guru adalah layanan yang menghubungkan siswa dengan mentor secara langsung melalui
@@ -260,7 +259,7 @@
                                 kapan saja.
                             </p>
                         </div>
-                        <div class="absolute w-full h-full flex flex-col right-[-100%] duration-700 ease-out"
+                        <div class="w-full h-full flex flex-col duration-700 ease-out hidden"
                             id="englishZoneServiceContent">
                             <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8">
                                 English Zone adalah layanan pembelajaran bahasa Inggris yang menghubungkan siswa dengan
@@ -363,7 +362,7 @@
             </div>
         </div>
         <!-- Left Side: Image -->
-        <div class="relative grid grid-cols-1 md:grid-cols-2 gap-6 h-auto my-20">
+        <div class="relative grid grid-cols-1 lg:grid-cols-2 gap-6 h-auto my-20">
             <!-- Left Content -->
             <div class="flex justify-center items-center">
                 <!-- Background Elements -->
@@ -385,7 +384,7 @@
             </div>
             <!-- Right Side: Text Content -->
             <div class="flex flex-col justify-center relative">
-                <h1 class="text-2xl md:text-4xl font-bold text-gray-800 absolute top-0 md:top-6">
+                <h1 class="text-2xl md:text-4xl font-bold text-gray-800">
                     BelajarCerdas.<span class="text-[--color-default]">id</span>
                 </h1>
                 <div class="mt-6">
@@ -500,23 +499,23 @@
     var englishZoneServices = document.getElementById('englishZoneServiceContent');
 
     function tanyaServiceContent() {
-        tanyaServices.style.right = "0%";
-        haloGurServices.style.right = "-100%";
-        englishZoneServices.style.right = "-100%";
-        bimbelMapelUmumServices.style.right = "-100%";
+        tanyaServices.style.display = "block";
+        haloGurServices.style.display = "none";
+        englishZoneServices.style.display = "none";
+        bimbelMapelUmumServices.style.display = "none";
     }
 
     function haloGurServiceContent() {
-        haloGurServices.style.right = "0%";
-        tanyaServices.style.right = "-100%";
-        englishZoneServices.style.right = "-100%";
-        bimbelMapelUmumServices.style.right = "-100%";
+        haloGurServices.style.display = "block";
+        tanyaServices.style.display = "none";
+        englishZoneServices.style.display = "none";
+        bimbelMapelUmumServices.style.display = "none";
     }
 
     function englishZoneServiceContent() {
-        englishZoneServices.style.right = "0%";
-        tanyaServices.style.right = "-100%";
-        haloGurServices.style.right = "-100%";
-        bimbelMapelUmumServices.style.right = "-100%";
+        englishZoneServices.style.display = "block";
+        tanyaServices.style.display = "none";
+        haloGurServices.style.display = "none";
+        bimbelMapelUmumServices.style.display = "none";
     }
 </script>

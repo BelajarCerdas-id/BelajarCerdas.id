@@ -57,9 +57,10 @@
 
                 @if (Auth::user() === null)
                     <div class="hidden sm:block space-x-6">
-                        <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
+                        {{-- <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
+                        <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active> --}}
+                        <x-nav-active href="{{ route('about') }}" :active="request()->is('about')">Tentang Kami</x-nav-active>
                         <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Mitra Cerdas</x-nav-active>
-                        <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active>
                     </div>
 
                     <div class="bars md:hidden list-none cursor-pointer text-gray-600 z-[9999]">
@@ -72,9 +73,10 @@
                     </div>
                 @else
                     <div class="hidden lg:block space-x-6">
-                        <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
+                        {{-- <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
+                        <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active> --}}
+                        <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Tentang Kami</x-nav-active>
                         <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Mitra Cerdas</x-nav-active>
-                        <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active>
                     </div>
                 @endif
 
@@ -129,7 +131,7 @@
                     id="accordion">
                     <div class="lg:hidden">
                         <div class="item w-[250px]">
-                            <div class="header">
+                            <ul class="header">
                                 <li class="list-item w-max {{ Auth::user() === null ? 'sm:hidden' : '' }}">
                                     <div class="dropdown-menu">
                                         <div class="toggle-menu hover:bg-gray-100 w-32 h-10 pl-2">
@@ -138,29 +140,37 @@
                                         </div>
                                         <div class="content-dropdown transition-all duration-500">
                                             <div class="content-dropdown">
-                                                <a href="{{ route('siswa') }}"
+                                                {{-- <a href="{{ route('siswa') }}"
                                                     class="link-href hover:!text-black items-start gap-[5px] !p-0 !pl-2">
                                                     <span class="hover:bg-gray-100 p-2 w-40 rounded-sm">
                                                         Siswa
                                                     </span>
-                                                </a>
+                                                </a> --}}
                                                 <a href="{{ route('mitraCerdas') }}"
                                                     class="link-href hover:!text-black items-start gap-[5px] !p-0 !pl-2">
                                                     <span class="hover:bg-gray-100 p-2 w-40 rounded-sm">
                                                         Mitra Cerdas
                                                     </span>
                                                 </a>
-                                                <a href=""
+                                                {{-- <a href=""
                                                     class="link-href hover:!text-black items-start gap-[5px] !p-0 !pl-2">
                                                     <span class="hover:bg-gray-100 p-2 w-40 rounded-sm">
                                                         Sekolah
                                                     </span>
-                                                </a>
+                                                </a> --}}
                                             </div>
                                         </div>
                                     </div>
                                 </li>
-                            </div>
+                                <li class="list-item w-max {{ Auth::user() === null ? 'sm:hidden' : '' }}">
+                                    <a href="{{ route('about') }}"
+                                        class="link-href hover:!text-black items-start gap-[5px] !pl-0 text-sm">
+                                        <span class="hover:bg-gray-100 p-2 w-40 rounded-sm">
+                                            Tentang Kami
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
 
                         <!--- button masuk / daftar ---->
@@ -253,9 +263,10 @@
 
                 @if (Auth::user() === null)
                     <div class="hidden sm:block space-x-6">
-                        <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
+                        {{-- <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
+                        <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active> --}}
+                        <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Tentang Kami</x-nav-active>
                         <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Mitra Cerdas</x-nav-active>
-                        <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active>
                     </div>
 
                     <div class="bars md:hidden list-none cursor-pointer text-gray-600 z-[9999]">
@@ -268,9 +279,10 @@
                     </div>
                 @else
                     <div class="hidden lg:block space-x-6">
-                        <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
+                        {{-- <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
+                        <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active> --}}
+                        <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Tentang Kami</x-nav-active>
                         <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Mitra Cerdas</x-nav-active>
-                        <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active>
                     </div>
                 @endif
 
@@ -326,7 +338,7 @@
                     id="accordion">
                     <div class="lg:hidden">
                         <div class="item w-[250px]">
-                            <div class="header">
+                            <ul class="header">
                                 <li class="list-item w-max {{ Auth::user() === null ? 'sm:hidden' : '' }}">
                                     <div class="dropdown-menu">
                                         <div class="toggle-menu hover:bg-gray-100 w-32 h-10 pl-2">
@@ -335,29 +347,37 @@
                                         </div>
                                         <div class="content-dropdown transition-all duration-500">
                                             <div class="content-dropdown">
-                                                <a href="{{ route('siswa') }}"
+                                                {{-- <a href="{{ route('siswa') }}"
                                                     class="link-href hover:!text-black items-start gap-[5px] !p-0 !pl-2">
                                                     <span class="hover:bg-gray-100 p-2 w-40 rounded-sm">
                                                         Siswa
                                                     </span>
-                                                </a>
+                                                </a> --}}
                                                 <a href="{{ route('mitraCerdas') }}"
                                                     class="link-href hover:!text-black items-start gap-[5px] !p-0 !pl-2">
                                                     <span class="hover:bg-gray-100 p-2 w-40 rounded-sm">
                                                         Mitra Cerdas
                                                     </span>
                                                 </a>
-                                                <a href=""
+                                                {{-- <a href=""
                                                     class="link-href hover:!text-black items-start gap-[5px] !p-0 !pl-2">
                                                     <span class="hover:bg-gray-100 p-2 w-40 rounded-sm">
                                                         Sekolah
                                                     </span>
-                                                </a>
+                                                </a> --}}
                                             </div>
                                         </div>
                                     </div>
                                 </li>
-                            </div>
+                                <li class="list-item w-max {{ Auth::user() === null ? 'sm:hidden' : '' }}">
+                                    <a href="{{ route('about') }}"
+                                        class="link-href hover:!text-black items-start gap-[5px] !pl-0 text-sm">
+                                        <span class="hover:bg-gray-100 p-2 w-40 rounded-sm">
+                                            Tentang Kami
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
 
                         <!--- button masuk / daftar ---->
@@ -424,9 +444,10 @@
 
                 @if (Auth::user() === null)
                     <div class="hidden sm:block space-x-6">
-                        <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
+                        {{-- <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
+                        <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active> --}}
+                        <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Tentang Kami</x-nav-active>
                         <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Mitra Cerdas</x-nav-active>
-                        <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active>
                     </div>
 
                     <div class="bars md:hidden list-none cursor-pointer text-gray-600 z-[9999]">
@@ -439,9 +460,10 @@
                     </div>
                 @else
                     <div class="hidden lg:block space-x-6">
-                        <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
+                        {{-- <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
+                        <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active> --}}
+                        <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Tentang Kami</x-nav-active>
                         <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Mitra Cerdas</x-nav-active>
-                        <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active>
                     </div>
                 @endif
 
@@ -496,7 +518,7 @@
                     id="accordion">
                     <div class="lg:hidden">
                         <div class="item w-[250px]">
-                            <div class="header">
+                            <ul class="header">
                                 <li class="list-item w-max {{ Auth::user() === null ? 'sm:hidden' : '' }}">
                                     <div class="dropdown-menu">
                                         <div class="toggle-menu hover:bg-gray-100 w-32 h-10 pl-2">
@@ -505,29 +527,37 @@
                                         </div>
                                         <div class="content-dropdown transition-all duration-500">
                                             <div class="content-dropdown">
-                                                <a href="{{ route('siswa') }}"
+                                                {{-- <a href="{{ route('siswa') }}"
                                                     class="link-href hover:!text-black items-start gap-[5px] !p-0 !pl-2">
                                                     <span class="hover:bg-gray-100 p-2 w-40 rounded-sm">
                                                         Siswa
                                                     </span>
-                                                </a>
+                                                </a> --}}
                                                 <a href="{{ route('mitraCerdas') }}"
                                                     class="link-href hover:!text-black items-start gap-[5px] !p-0 !pl-2">
                                                     <span class="hover:bg-gray-100 p-2 w-40 rounded-sm">
                                                         Mitra Cerdas
                                                     </span>
                                                 </a>
-                                                <a href=""
+                                                {{-- <a href=""
                                                     class="link-href hover:!text-black items-start gap-[5px] !p-0 !pl-2">
                                                     <span class="hover:bg-gray-100 p-2 w-40 rounded-sm">
                                                         Sekolah
                                                     </span>
-                                                </a>
+                                                </a> --}}
                                             </div>
                                         </div>
                                     </div>
                                 </li>
-                            </div>
+                                <li class="list-item w-max {{ Auth::user() === null ? 'sm:hidden' : '' }}">
+                                    <a href="{{ route('about') }}"
+                                        class="link-href hover:!text-black items-start gap-[5px] !pl-0 text-sm">
+                                        <span class="hover:bg-gray-100 p-2 w-40 rounded-sm">
+                                            Tentang Kami
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
 
                         <!--- button masuk / daftar ---->

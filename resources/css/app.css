@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
+/* @layer components {
     .item .activeIcon {
         @apply hidden;
     }
@@ -88,4 +88,4 @@
 
 .vibrate {
     animation: vibrate 0.1s linear;
-}
+} */

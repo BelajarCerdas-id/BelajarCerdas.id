@@ -159,7 +159,7 @@
         </div>
     </nav>
     <!--- Sidebar Beranda for mobile ---->
-    <div class="navbar-beranda-phone w-full h-20 flex justify-between items-center md:hidden bg-[--color-second] px-6 ">
+    <div class="navbar-beranda-phone w-full h-20 flex justify-between items-center md:hidden bg-[#153569] px-6 ">
         <div class="flex items-center h-full">
             <i class="fas fa-bars text-2xl relative top-1 cursor-pointer text-white" onclick="togglePopup()"></i>
             <a href="{{ route('homePage') }}">
@@ -382,8 +382,7 @@
         </div>
     </nav>
     <!--- Sidebar Beranda for mobile ---->
-    <nav
-        class="navbar-beranda-phone w-full h-20 flex justify-between items-center md:hidden bg-[--color-second] px-6 ">
+    <nav class="navbar-beranda-phone w-full h-20 flex justify-between items-center md:hidden bg-[#153569] px-6 ">
         <div class="flex items-center h-full">
             <i class="fas fa-bars text-2xl relative top-1 cursor-pointer text-white" onclick="togglePopup()"></i>
             <a href="{{ route('homePage') }}">
@@ -404,6 +403,13 @@
                                 class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
                                 <i class="fa-solid fa-house"></i>
                                 Beranda
+                            </div>
+                        </a>
+                        <a href="{{ route('profile') }}">
+                            <div
+                                class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
+                                <i class="fa-regular fa-circle-user text-lg"></i>
+                                Profile
                             </div>
                         </a>
                         <form action="{{ route('logout') }}" method="POST">
@@ -582,6 +588,7 @@
                         {{ $headerSideNav ?? '' }}
                     @endif
                 </header>
+
                 <!-- profile button dekstop -->
                 <li class="list-item">
                     <div class="dropdown-menu hidden lg:block">
@@ -664,8 +671,7 @@
     </div>
 
     <!--- Sidebar Beranda for mobile ---->
-    <nav
-        class="navbar-beranda-phone w-full h-20 flex justify-between items-center md:hidden bg-[--color-second] px-6 ">
+    <nav class="navbar-beranda-phone w-full h-20 flex justify-between items-center md:hidden bg-[#153569] px-6 ">
         <div class="flex items-center h-full">
             <i class="fas fa-bars text-2xl relative top-1 cursor-pointer text-white" onclick="togglePopup()"></i>
             <a href="{{ route('homePage') }}">
@@ -686,6 +692,13 @@
                                 class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
                                 <i class="fa-solid fa-house"></i>
                                 Beranda
+                            </div>
+                        </a>
+                        <a href="{{ route('profile') }}">
+                            <div
+                                class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
+                                <i class="fa-regular fa-circle-user text-lg"></i>
+                                Profile
                             </div>
                         </a>
                         <form action="{{ route('logout') }}" method="POST">

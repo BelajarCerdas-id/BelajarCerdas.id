@@ -49,7 +49,7 @@ class webController extends Controller
             'Soal dan Pembahasan' => [
                 'image_feature' => asset("image/logo-fitur/logo-englishZone.png"),
                 'textButton' => 'Segera Hadir',
-                'price' => 'Rp 2.000',
+                'price' => 'Rp 20.000',
 
                 'descriptions' => [
                     "Bank Soal per Sub-bab",
@@ -58,8 +58,9 @@ class webController extends Controller
                     "Laporan Perkembangan Hasil Latihan",
                     "Laporan Perkembangan Hasil Ujian untuk orang tua",
                     "Jenjang SOAL SD (Kelas 1 - 6) Mapel: B. Indonesia, English, IPAS, Matematika",
-                    "Jenjang TANYA SMP (Kelas 7 - 9) Mapel: B. Indonesia, English, IPA Terpadu, Matematika",
-                    "Jenjang TANYA SMA (Kelas 10 - 12) Mapel: B. Indonesia, English, Biologi, Fisika, Kimia, Matematika",
+                    "Jenjang SOAL SMP (Kelas 7 - 9) Mapel: B. Indonesia, English, IPA Terpadu, Matematika",
+                    "Jenjang SOAL SMA (Kelas 10 - 12) Mapel: B. Indonesia, English, Biologi, Fisika, Kimia, Matematika",
+                    "Bonus 100 Koin TANYA",
                 ]
             ],
             'English Zone' => [
@@ -78,7 +79,6 @@ class webController extends Controller
                     "Laporan Belajar Setiap Bulan",
                     "Materi dan Sertifikat Digital",
                     "Rp.500.000/Bulan",
-                    "Bonus 100 Koin TANYA",
                 ]
             ],
         ];
@@ -86,9 +86,24 @@ class webController extends Controller
         return view('index', compact('features', 'descriptionsFeatures'));
     }
 
+    public function mitraCerdas()
+    {
+        return view('services-pages.mitra-cerdas');
+    }
+
+    public function siswa()
+    {
+        return view('services-pages.siswa');
+    }
+
+    public function about()
+    {
+        return view('about');
+    }
+
     public function beranda()
     {
-        $user = Auth::user()->id;
+        $user = Auth::user();
 
         $getData = userAccount::where('status', 'Mentor')->get();
 
@@ -120,38 +135,38 @@ class webController extends Controller
 
         $countDataTanyaAll = Tanya::withTrashed()->get(); // menghitung jumlah seluruh data Tanya
 
-        $packetSiswa = [
-            [
-                'image' => 'image/paket1.jpg',
-                'text' => 'Sesi private online mapel Matematika & IPA.',
-                'url' => '',
-                'button' => 'HaloGur'
-            ],
-            [
-                'image' => 'image/logo-fitur/logo-englishZone.png',
-                'text' => 'Sesi Boot Camp for Conversation Only.',
-                'url' => '/english-zone',
-                'button' => 'English Zone'
-            ],
-            [
-                'image' => 'image/logo-fitur/logo-tanya.png',
-                'text' => 'TANYAkan soal sulit ke Guru Ahli.',
-                'url' => "/tanya",
-                'button' => 'TANYA'
-            ],
-            [
-                'image' => 'image/paket3.jpg',
-                'text' => 'Pendampingan belajar untuk masuk kampus idaman.',
-                'url' => '',
-                'button' => 'SNBT'
-            ],
-            [
-                'image' => 'image/paket5.jpg',
-                'text' => 'Lorem Ipsum',
-                'url' => '/catatan',
-                'button' => 'CATATAN'
-            ],
-        ];
+        if($user->role == 'Siswa') {
+            $packetSiswa = [
+                [
+                    'image' => 'image/logo-fitur/logo-tanya.png',
+                    'text' => 'TANYAkan soal sulit ke Guru Ahli.',
+                    'url' => "/tanya",
+                    'button' => 'TANYA'
+                ],
+                [
+                    'image' => 'image/logo-fitur/logo-englishZone.png',
+                    'text' => 'Sesi Boot Camp for Conversation Only.',
+                    'url' => '',
+                    'button' => 'Segera Hadir'
+                ],
+                [
+                    'image' => 'image/logo-fitur/logo-englishZone.png',
+                    'text' => '[Soal dan Pembahasan].',
+                    'url' => '',
+                    'button' => 'Segera Hadir'
+                ],
+            ];
+        } else {
+            $packetSiswa = [
+                [
+                    'image' => 'image/logo-fitur/logo-tanya.png',
+                    'text' => 'TANYAkan soal sulit ke Guru Ahli.',
+                    'url' => "/tanya",
+                    'button' => 'TANYA'
+                ],
+            ];
+        }
+
         return view('beranda', compact('packetSiswa', 'getData',  'getDataSiswa', 'getDataMurid', 'countSiswaTanya', 'getSiswa', 'sortedSiswa', 'countDataTanyaAll', 'countDataMentor'));
     }
 
@@ -217,16 +232,6 @@ class webController extends Controller
         }
 
         return view('certif', compact('user'));
-    }
-
-    public function mitraCerdas()
-    {
-        return view('services-pages.mitra-cerdas');
-    }
-
-    public function siswa()
-    {
-        return view('services-pages.siswa');
     }
 
     public function historiPembelian()

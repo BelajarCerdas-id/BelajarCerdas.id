@@ -1,41 +1,49 @@
 <x-navbar></x-navbar>
 
 <main>
-    <!-- Section: BelajarCerdas.id -->
+    <!-- Meet The Founder -->
     <section>
-        <article class="relative flex justify-center items-center min-h-screen p-6">
+        <article class="relative flex justify-center items-center mx-6 my-40">
             <!-- Main Content -->
-            <div
-                class="relative rounded-lg shadow-xl border-[1px] border-gray-200 w-full max-w-[1500px] h-auto p-6 md:p-10">
+            <div class="relative rounded-lg shadow-xl border-[1px] border-gray-200 w-full h-auto p-6 md:p-10">
                 <!-- Icon Top Element -->
                 <div class="absolute right-4 top-10 md:right-10 md:top-8">
                     <div class="relative w-8 md:w-12">
-                        <div class="absolute inset-0 bg-[#60b5cf] rotate-45 w-full h-2 md:h-3"></div>
-                        <div class="absolute inset-0 bg-[#60b5cf] -rotate-45 w-full h-2 md:h-3"></div>
+                        <!-- Diagonal Line 1 -->
+                        <div class="absolute inset-0 bg-[--color-default] rotate-[70deg] w-full h-2 md:h-3"></div>
+                        <!-- Diagonal Line 2 -->
+                        <div class="absolute inset-0 bg-[--color-default] rotate-[-70deg] w-full h-2 md:h-3"></div>
                     </div>
                 </div>
                 <!-- Icon Bottom Element -->
                 <div class="absolute right-4 bottom-10 md:right-10 md:bottom-12">
                     <div class="relative w-8 md:w-12">
-                        <div class="absolute inset-0 bg-[#60b5cf] w-full h-2 md:h-3"></div>
-                        <div class="absolute inset-0 bg-[#60b5cf] rotate-90 w-full h-2 md:h-3"></div>
+                        <!-- Diagonal Line 1 -->
+                        <div class="absolute inset-0 bg-[--color-default] w-full h-2 md:h-3"></div>
+                        <!-- Diagonal Line 2 -->
+                        <div class="absolute inset-0 bg-[--color-default] rotate-[45deg] w-full h-2 md:h-3"></div>
                     </div>
                 </div>
                 <!-- Icon left Bottom Element -->
-                <div class="absolute left-8 bottom-10 md:right-10 md:bottom-12">
+                <div class="absolute left-8 bottom-10 md:left-10 md:bottom-10">
                     <div class="relative w-8 md:w-12">
-                        <div class="absolute inset-0 bg-[#60b5cf] rotate-45 w-full h-2 md:h-3"></div>
-                        <div class="absolute inset-0 bg-[#60b5cf] -rotate-45 w-full h-2 md:h-3"></div>
+                        <!-- Diagonal Line 1 -->
+                        <div class="absolute inset-0 bg-[--color-default] rotate-[70deg] w-full h-2 md:h-3"></div>
+                        <!-- Diagonal Line 2 -->
+                        <div class="absolute inset-0 bg-[--color-default] rotate-[-70deg] w-full h-2 md:h-3"></div>
                     </div>
                 </div>
                 <!-- Left Side: Image -->
-                <div class="relative grid grid-cols-1 md:grid-cols-12 gap-6 h-auto my-20 border-2">
+                <div class="relative grid grid-cols-1 xl:grid-cols-2 gap-6 h-auto py-20">
                     <!-- Left Content -->
-                    <figure class="col-span-12 md:col-span-6 flex justify-center items-center">
-                        <div class="w-80 h-full bg-[#60b5cf] rounded-[14%]"></div>
+                    <figure class="flex justify-center items-center">
+                        {{-- <div class="w-80 h-full bg-[#60b5cf] rounded-[14%]"></div> --}}
+                        <img class="w-80 h-full"
+                            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                            alt="">
                     </figure>
                     <!-- Right Side: Text Content -->
-                    <div class="flex flex-col justify-center col-span-12 md:col-span-6 relative">
+                    <div class="flex flex-col justify-center relative">
                         <div class="mb-10">
                             <h2 class="text-4xl md:text-xl absolute top-0 md:top-6 flex flex-col gap-4">
                                 <span class="text-[#60b5cf] font-bold text-2xl">Meet the founder</span>
@@ -66,8 +74,83 @@
         </article>
     </section>
 
-    <section>
-        <article class="relative flex justify-center items-center min-h-screen p-6">
+    <!-- Meet The Our Best Team -->
+    <section class="flex justify-center mx-6 mb-20">
+        <div
+            class="bg-white py-24 sm:py-32 rounded-lg shadow-xl border-[1px] border-gray-200 w-full h-auto p-6 md:p-10">
+            <div class="mx-auto grid max-w-7xl gap-20 px-6 lg:px-8 xl:grid-cols-3">
+                <div class="max-w-6xl">
+                    <h2 class="font-semibold tracking-tight text-pretty text-gray-900 text-3xl">Meet our
+                        leadership</h2>
+                    <p class="mt-6 text-lg/8 text-gray-600 text-justify">
+                        Kami bangga memiliki tim yang terdiri dari individu-individu kompeten dari berbagai latar
+                        belakang dan keahlian. Setiap
+                        anggota tim kami tidak hanya memiliki pengalaman mendalam di bidangnya masing-masing, tetapi
+                        juga memahami dunia
+                        pendidikan dengan sangat baik.
+                    </p>
+                </div>
+                <ul role="list" class="grid gap-x-8 gap-y-12 sm:grid-cols-2 sm:gap-y-16 xl:col-span-2">
+                    <li>
+                        <div class="flex items-center gap-x-6">
+                            <img class="size-16 rounded-full"
+                                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                alt="">
+                            <div>
+                                <h3 class="text-base/7 font-semibold tracking-tight text-gray-900">Leslie Alexander</h3>
+                                <p class="text-sm/6 font-semibold text-indigo-600">[Position]</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex items-center gap-x-6">
+                            <img class="size-16 rounded-full"
+                                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                alt="">
+                            <div>
+                                <h3 class="text-base/7 font-semibold tracking-tight text-gray-900">Leslie Alexander</h3>
+                                <p class="text-sm/6 font-semibold text-indigo-600">[Position]</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex items-center gap-x-6">
+                            <img class="size-16 rounded-full"
+                                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                alt="">
+                            <div>
+                                <h3 class="text-base/7 font-semibold tracking-tight text-gray-900">Leslie Alexander</h3>
+                                <p class="text-sm/6 font-semibold text-indigo-600">[Position]</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex items-center gap-x-6">
+                            <img class="size-16 rounded-full"
+                                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                alt="">
+                            <div>
+                                <h3 class="text-base/7 font-semibold tracking-tight text-gray-900">Leslie Alexander</h3>
+                                <p class="text-sm/6 font-semibold text-indigo-600">[Position]</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex items-center gap-x-6">
+                            <img class="size-16 rounded-full"
+                                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                alt="">
+                            <div>
+                                <h3 class="text-base/7 font-semibold tracking-tight text-gray-900">Leslie Alexander</h3>
+                                <p class="text-sm/6 font-semibold text-indigo-600">[Position]</p>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- More people... -->
+                </ul>
+            </div>
+        </div>
+        {{-- <article class="relative flex justify-center items-center min-h-screen p-6">
             <!-- Main Content -->
             <div
                 class="relative rounded-lg shadow-xl border-[1px] border-gray-200 w-full max-w-[1500px] h-auto p-6 md:p-10">
@@ -164,7 +247,7 @@
                     </div>
                 </div>
             </div>
-        </article>
+        </article> --}}
     </section>
 </main>
 

@@ -49,18 +49,33 @@ function leaderboardRankTanyaStudent() {
 
                 const card = `
                     <div class="flex items-center gap-4 h-full">
-                        <div class="text-sm sm:text-base text-gray-700 border-r-2 h-full flex flex-col items-center justify-center border w-17">
+                        <div class="text-sm sm:text-base text-gray-700 border-r-2 h-full flex flex-col items-center justify-center border w-17 hidden xl:flex">
                             <span class="font-bold opacity-70 text-sm">Rank :</span>
                             <span class="font-semibold">
                                 ${rankUser}
                             </span>
                         </div>
-                        <div class="text-md font-bold opacity-70 ml-2">
+                        <div class="text-md font-bold opacity-70 ml-2 flex justify-center w-full xl:w-auto">
                             ${data.user.student_profiles?.nama_lengkap ?? ''}
                         </div>
                     </div>
+
+                    <div class="flex justify-between w-full border-t py-2 xl:hidden">
+                        <div class="text-sm sm:text-base text-gray-700 border-r-2 h-full flex flex-col items-center justify-center w-17 w-full">
+                            <span class="font-bold opacity-70 text-sm">Rank :</span>
+                            <span class="font-semibold">
+                                ${rankUser}
+                            </span>
+                        </div>
+                        <div
+                            class="text-sm sm:text-base text-gray-700 w-45 h-full px-4 flex flex-col items-center justify-center w-full">
+                                <span class="font-bold opacity-70 text-sm">Total berTANYA:</span>
+                                <span class="font-bold opacity-70">${data.countDataTanyaUserLogin ?? 0}</span>
+                        </div>
+                    </div>
+
                     <div
-                        class="text-sm sm:text-base text-gray-700 border-l-2 w-45 h-full px-4 flex flex-col items-center justify-center">
+                        class="text-sm sm:text-base text-gray-700 border-l-2 w-45 h-full px-4 flex flex-col items-center justify-center hidden xl:flex">
                             <span class="font-bold opacity-70 text-sm">Total berTANYA:</span>
                             <span class="font-bold opacity-70">${data.countDataTanyaUserLogin ?? 0}</span>
                     </div>

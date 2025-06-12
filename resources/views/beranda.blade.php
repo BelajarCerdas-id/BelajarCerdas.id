@@ -27,10 +27,10 @@
                 <div class="grid grid-cols-5 gap-6">
                     <div
                         class="relative lg:col-span-3 col-span-5 h-[440px] md:h-[480px] lg:h-[440px] bg-white shadow-lg rounded-lg">
-                        <span class="text-lg font-bold opacity-70">Pengguna Tanya Terbanyak</span>
+                        <span class="text-lg font-bold opacity-70 p-4">Pengguna Tanya Terbanyak</span>
                         <!-- TABLE -->
-                        <div class="overflow-x-auto max-h-[310px]">
-                            <table class="table mt-4 border border-separate w-full">
+                        <div class="overflow-x-auto max-h-[310px] p-4">
+                            <table class="table mt-4 border-separate w-full">
                                 <thead class="hidden thead-table-leaderboard-rank-tanya-student">
                                     <tr>
                                         <th class="border border-gray-400 px-3 py-2 text-center text-black">Rank</th>
@@ -46,7 +46,9 @@
                                             BerTANYA</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbody-leaderboard-rank-tanya-student"></tbody>
+                                <tbody id="tbody-leaderboard-rank-tanya-student">
+                                    <!--- show leaderboard rank in ajax --->
+                                </tbody>
                             </table>
                             <div
                                 class="pagination-container-leaderboard-rank-tanya-student flex justify-center my-4 sm:my-0">
@@ -61,34 +63,29 @@
                         <!-- PERINGKAT USER-->
                         <div class="">
                             <div id="container-leaderboard-rank-tanya-user"
-                                class="w-full h-26 bg-white absolute bottom-0 shadow-md border-t flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                                <!--- show rank in ajax --->
+                                class="w-full h-26 bg-white absolute bottom-0 shadow-md border-t flex flex-col xl:flex-row xl:items-center xl:justify-between">
+                                <!--- show rank user in ajax --->
                             </div>
                         </div>
                     </div>
                     <div class="lg:col-span-2 col-span-5 mt-8">
-                        <span class="text-lg"> Jadwal : </span>
-                        <div class="p-10 rounded-xl flex justify-center items-center bg-white shadow-lg mb-8">Jadwal
-                            Hari
-                            Ini
-                        </div>
                         <span class="text-lg"> Hari Ini : </span>
                         <div
                             class="lg:col-span-2 col-span-5 p-10 rounded-xl flex justify-center items-center bg-white shadow-lg">
                             <div id="timestamp" class="text-center text-lg font-bold"></div>
                         </div>
                     </div>
-                    <div class="lg:col-span-3 md:col-span-5 col-span-5">
-                        <div class="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-3 grid-cols-2 gap-4">
+                    <div class="lg:col-span-3 md:col-span-5 col-span-5 mt-10">
+                        <div class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-6">
                             @foreach ($packetSiswa as $packet)
                                 <div class="w-full h-full relative ... border-[1px] border-gray-200 rounded-lg">
                                     <header>
                                         <div class="w-full h-[110px] border-[1px] border-gray-200">
                                             <img src="{{ $packet['image'] }}" alt=""
-                                                class="w-full h-full object-cover">
+                                                class="w-full h-full object-contain">
                                         </div>
 
-                                        <section class="mt-10 w-full h-16 text-center">
+                                        <section class="mt-10 w-full h-16 text-center px-4">
                                             <span class="text-xs">{{ $packet['text'] }}</span>
                                         </section>
 
@@ -113,33 +110,27 @@
             <div class="max-w-full mx-6">
                 <div class="grid grid-cols-5 gap-6">
                     <div
-                        class="relative lg:col-span-3 col-span-5 md:h-[480px] lg:h-[440px] h-[440px] overflow-hidden bg-white shadow-lg rounded-lg">
-                        a
+                        class="relative lg:col-span-3 col-span-5 md:h-[480px] lg:h-[440px] h-[440px] overflow-hidden bg-white shadow-lg rounded-lg flex items-center justify-center">
+                        <span class="font-bold text-xl opacity-70">SEGERA HADIR</span>
                     </div>
                     <div class="lg:col-span-2 col-span-5 mt-8">
-                        <span class="text-lg"> Jadwal : </span>
-                        <div class="p-10 rounded-xl flex justify-center items-center bg-white shadow-lg mb-8">
-                            Jadwal
-                            Hari
-                            Ini
-                        </div>
                         <span class="text-lg"> Hari Ini : </span>
                         <div
                             class="lg:col-span-2 col-span-5 p-10 rounded-xl flex justify-center items-center bg-white shadow-lg">
                             <div id="timestamp" class="text-center text-lg font-bold"></div>
                         </div>
                     </div>
-                    <div class="lg:col-span-3 md:col-span-5 col-span-5">
-                        <div class="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-3 grid-cols-2 gap-4">
+                    <div class="lg:col-span-3 md:col-span-5 col-span-5 mt-10">
+                        <div class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-6">
                             @foreach ($packetSiswa as $packet)
                                 <div class="w-full h-full relative ... border-[1px] border-gray-200 rounded-lg">
                                     <header>
                                         <div class="w-full h-[110px] border-[1px] border-gray-200">
                                             <img src="{{ $packet['image'] }}" alt=""
-                                                class="w-full h-full object-cover">
+                                                class="w-full h-full object-contain">
                                         </div>
 
-                                        <section class="mt-10 w-full h-16 text-center">
+                                        <section class="mt-10 w-full h-16 text-center px-4">
                                             <span class="text-xs">{{ $packet['text'] }}</span>
                                         </section>
 

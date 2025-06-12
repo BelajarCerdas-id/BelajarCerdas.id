@@ -334,7 +334,7 @@ input[type="radio"]:checked a {
 .sidebar-beranda .list-menu a:hover .link_name,
 .sidebar-beranda .list-menu a:hover i {
     transition: all 0.5s ease;
-    color: var(--color-second);
+    color: #153569;
 }
 
 .sidebar-beranda.open .list-menu a .link_name {
@@ -390,7 +390,7 @@ input[type="radio"]:checked a {
 
 .list-menu a.active i,
 .list-menu a.active .link_name {
-    color: var(--color-second);
+    color: #153569;
 }
 
 .home-beranda {
@@ -2075,7 +2075,40 @@ input[type="radio"]:checked + label.checked-dropdown-mapel {
 }
 
 /* Media Screen jumbtron-image-teacher (mitra cerdas) */
-@media (max-width: 1120px) {
+@media (max-width: 1023px) {
+    .jumbotron-mitra-cerdas {
+        background: white;
+        margin: 0px 14px;
+        padding: 20px;
+        box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+    .jumbotron-wave-background {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        height: 340px;
+    }
+
+    .jumbotron-teacher-man-mitra-cerdas {
+        width: 41%;
+    }
+
+    .jumbotron-teacher-woman-mitra-cerdas {
+        width: 32%;
+    }
+
+    .description-btn-register-mitra-cerdas h1 {
+        font-size: 36px;
+    }
+
+    .description-btn-register-mitra-cerdas span {
+        font-size: 16px;
+    }
+}
+@media (min-width: 1024px) {
     .jumbotron-wave-background {
         position: absolute;
         left: 0;
