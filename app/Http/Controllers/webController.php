@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\TransactionFailed;
-use App\Models\userAccount;
+use App\Models\UserAccount;
 use App\Models\Level;
 use App\Models\Tanya;
 use Illuminate\Http\Request;
@@ -90,14 +90,14 @@ class webController extends Controller
     {
         $user = Auth::user()->id;
 
-        $getData = userAccount::where('status', 'Mentor')->get();
+        $getData = UserAccount::where('status', 'Mentor')->get();
 
         // FOR BERANDA ADMINISTRATOR
         $getMentor = UserAccount::where('role', 'Mentor')->get(); // mendapatkan user mentor
 
         $getDataSiswa = UserAccount::where('role', 'Siswa')->get(); // mendapatkan user siswa (B2C)
 
-        $getDataMurid = userAccount::where('role', 'Murid')->get(); // mendapatkan user murid (B2B)
+        $getDataMurid = UserAccount::where('role', 'Murid')->get(); // mendapatkan user murid (B2B)
 
         $countDataMentor = MentorProfiles::where('status_mentor', 'Diterima')->get(); // menghitung jumlah mentor yang diterima
 

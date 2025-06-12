@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\userAccount;
+use App\Models\UserAccount;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
@@ -59,9 +59,9 @@ class MuridImport implements ToCollection, WithHeadingRow, SkipsEmptyRows, WithS
             if ($validator->fails()) {
                 $errors = array_merge($errors, $validator->errors()->all());
                 continue;
-            }
+            }ß
 
-            userAccount::firstOrCreate([
+            UserAccount::firstOrCreate([
                 'nama_lengkap' => $row['nama_lengkap'],
                 'sekolah' => $row['sekolah'],
                 'fase' => $row['fase'] ?? null,
