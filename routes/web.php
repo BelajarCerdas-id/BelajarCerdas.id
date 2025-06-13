@@ -179,6 +179,8 @@ Route::fallback(function () {
 
         Route::post('/tanya/{id}/mark-viewed', [TanyaController::class, 'markViewed'])->name('tanya.markViewed');
         Route::put('/tanya/{id}/mark-viewed-back-button', [TanyaController::class, 'markViewedBackButton'])->name('tanya.markViewedBackButton');
+        Route::post('/tanya/{id}/mark-viewed-back-button', [TanyaController::class, 'markViewedBackButton'])->name('tanya.markViewedBackButton');
+
 
         // CLAIM COIN DAILY (student)
         Route::post('/tanya/claim-coin', [TanyaController::class, 'claimCoinDaily'])->name('tanya.claimCoinDaily');

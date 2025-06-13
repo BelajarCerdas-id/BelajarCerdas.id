@@ -24,13 +24,13 @@
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
         <div class="content-beranda">
             <div class="max-w-full">
-                <div class="grid grid-cols-5 gap-6">
+                <div class="grid grid-cols-5 gap-12">
                     <div
-                        class="relative lg:col-span-3 col-span-5 h-[440px] md:h-[480px] lg:h-[440px] bg-white shadow-lg rounded-lg">
-                        <span class="text-lg font-bold opacity-70 p-4">Pengguna Tanya Terbanyak</span>
+                        class="relative lg:col-span-3 col-span-5 h-[440px] md:h-[480px] lg:h-[440px] bg-white shadow-lg rounded-lg border">
                         <!-- TABLE -->
-                        <div class="overflow-x-auto max-h-[310px] p-4">
-                            <table class="table mt-4 border-separate w-full">
+                        <div class="overflow-x-auto max-h-[310px] p-4 mt-4">
+                            <span class="text-lg font-bold opacity-70">Pengguna Tanya Terbanyak</span>
+                            <table class="table border-separate w-full mt-2">
                                 <thead class="hidden thead-table-leaderboard-rank-tanya-student">
                                     <tr>
                                         <th class="border border-gray-400 px-3 py-2 text-center text-black">Rank</th>
@@ -71,11 +71,11 @@
                     <div class="lg:col-span-2 col-span-5 mt-8">
                         <span class="text-lg"> Hari Ini : </span>
                         <div
-                            class="lg:col-span-2 col-span-5 p-10 rounded-xl flex justify-center items-center bg-white shadow-lg">
+                            class="lg:col-span-2 col-span-5 p-10 rounded-xl flex justify-center items-center bg-white shadow-lg border mt-2">
                             <div id="timestamp" class="text-center text-lg font-bold"></div>
                         </div>
                     </div>
-                    <div class="lg:col-span-3 md:col-span-5 col-span-5 mt-10">
+                    <div class="lg:col-span-3 md:col-span-5 col-span-5">
                         <div class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-6">
                             @foreach ($packetSiswa as $packet)
                                 <div class="w-full h-full relative ... border-[1px] border-gray-200 rounded-lg">
@@ -108,19 +108,19 @@
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
         <div class="content-beranda mt-[120px]">
             <div class="max-w-full mx-6">
-                <div class="grid grid-cols-5 gap-6">
+                <div class="grid grid-cols-5 gap-12">
                     <div
-                        class="relative lg:col-span-3 col-span-5 md:h-[480px] lg:h-[440px] h-[440px] overflow-hidden bg-white shadow-lg rounded-lg flex items-center justify-center">
+                        class="relative lg:col-span-3 col-span-5 md:h-[480px] lg:h-[440px] h-[440px] overflow-hidden bg-white shadow-lg rounded-lg flex items-center justify-center border">
                         <span class="font-bold text-xl opacity-70">SEGERA HADIR</span>
                     </div>
                     <div class="lg:col-span-2 col-span-5 mt-8">
                         <span class="text-lg"> Hari Ini : </span>
                         <div
-                            class="lg:col-span-2 col-span-5 p-10 rounded-xl flex justify-center items-center bg-white shadow-lg">
+                            class="lg:col-span-2 col-span-5 p-10 rounded-xl flex justify-center items-center bg-white shadow-lg border">
                             <div id="timestamp" class="text-center text-lg font-bold"></div>
                         </div>
                     </div>
-                    <div class="lg:col-span-3 md:col-span-5 col-span-5 mt-10">
+                    <div class="lg:col-span-3 md:col-span-5 col-span-5">
                         <div class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-6">
                             @foreach ($packetSiswa as $packet)
                                 <div class="w-full h-full relative ... border-[1px] border-gray-200 rounded-lg">
@@ -189,7 +189,7 @@
                     </div>
                 </section>
                 <!---- chart TANYA harian  ----->
-                <div class="relative w-full bg-white shadow-lg p-4">
+                <div class="relative w-full bg-white shadow-lg p-4 mt-20">
                     <div class="relative !h-[520px] w-full">
                         <canvas id="myChart-days"
                             data-chart-tanya-harian="{{ route('getChartDataTanyaHarian') }}"></canvas>
@@ -293,13 +293,13 @@
                                         <!-- head -->
                                         <thead>
                                             <tr>
-                                                <th class="th-question">No</th>
-                                                <th class="th-question">Nama Lengkap</th>
-                                                <th class="th-question">Email</th>
-                                                <th class="th-question">No.Hp</th>
-                                                <th class="th-question">Kelas</th>
-                                                <th class="th-question">Asal Sekolah</th>
-                                                <th class="th-question">Total BerTANYA</th>
+                                                <th class="th-question text-black">No</th>
+                                                <th class="th-question text-black">Nama Lengkap</th>
+                                                <th class="th-question text-black">Email</th>
+                                                <th class="th-question text-black">No.Hp</th>
+                                                <th class="th-question text-black">Kelas</th>
+                                                <th class="th-question text-black">Asal Sekolah</th>
+                                                <th class="th-question text-black">Total BerTANYA</th>
                                             </tr>
                                         </thead>
                                         <tbody>

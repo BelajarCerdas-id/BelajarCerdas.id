@@ -133,7 +133,7 @@
     </div>
 @elseif (Auth::user()->role === 'Mentor')
     <main>
-        <section>
+        <section id="question-answer" data-question-id="{{ $getRestore->id }}">
             <div class="grid grid-cols-8 gap-2 mx-2 lg:w-[90%] lg:mx-auto mt-20">
                 <!---- sisi TANYA siswa ----->
                 <div class="col-span-8 md:col-span-4 bg-white shadow-lg border-[1px] border-gray-200 rounded-md">
@@ -369,6 +369,9 @@
 @endif
 
 <script src="{{ asset('js/upload-image.js') }}"></script> <!--- show image tanya ---->
+
+<!--- untuk tracker pertanyaan jika ada mentor sedang melihat soal dan lalu kembali menggunakan back button chrome maka status soal berubah ---->
+{{-- <script src="{{ asset('js/Tanya/end-to-end/view-questions-tracker.js') }}"></script> --}}
 
 <!--- untuk membuka modal kembali jika ada validasi error pada form modal ---->
 <script>

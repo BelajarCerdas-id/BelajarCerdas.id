@@ -264,6 +264,7 @@ class TanyaController extends Controller
     // FUNCTION MARK VIEWED "lihat soal" menjadi "sedang dilihat" (mentor)
     public function markViewed($id)
     {
+        $currentMentorId = Auth::user()->id;
         try {
             DB::beginTransaction();
 
@@ -288,7 +289,6 @@ class TanyaController extends Controller
 
             // Broadcast ke client lain
             broadcast(new QuestionAsked($tanya))->toOthers();
-
 
             return response()->json([
                 'message' => 'Berhasil mengambil soal.'

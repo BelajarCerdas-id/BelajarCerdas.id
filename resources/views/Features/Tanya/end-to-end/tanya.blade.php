@@ -1,6 +1,6 @@
 @include('components/sidebar_beranda', ['headerSideNav' => 'TANYA'])
 
-@if (Auth::user()->role === 'Siswa' or Auth::user()->role === 'Murid')
+@if (Auth::user()->role === 'Siswa')
     <div class="home-beranda z-[-1] md:z-0 mt-[40px] md:mt-0">
         <div class="content-beranda">
             <!--- alert success setelah kirim pertanyaan --->
@@ -190,6 +190,7 @@
                         </div>
                     </form>
                 </div>
+
                 <!-- Modal for displaying the image -->
                 <dialog id="my_modal_1" class="modal">
                     <div class="modal-box bg-white">
@@ -199,6 +200,7 @@
                         <button>close</button>
                     </form>
                 </dialog>
+
                 <!-- History Tanya -->
                 <div class="w-full h-auto hidden" id="riwayat">
                     <div class="flex justify-end">
@@ -493,4 +495,18 @@
 
 <!--- PUSHER LISTENER TANYA ---->
 <script src="{{ asset('js/pusher-listener/tanya/notif-badge-answered-rejected.js') }}"></script> <!--- pusher listener notif badge answer, rejected ---->
-<script src="{{ asset('js/pusher-listener/tanya/end-to-end-tanya.js') }}"></script> <!--- pusher listener mengirim dan menjawab pertanyaan ---->
+{{-- <script src="{{ asset('js/pusher-listener/tanya/end-to-end-tanya.js') }}"></script> <!--- pusher listener mengirim dan menjawab pertanyaan ----> --}}
+
+<script>
+    // Script untuk mendengarkan event broadcast pada saat student bertanya ke mentor
+    let currentStatusTanyaMentor = 'semua';
+    document.addEventListener("DOMContentLoaded", () => {
+        window.Echo.channel('tanya')
+            .listen('.question.created', (e) => {
+                // console.log('✅ Komentar diterima dari broadcast:', e);
+                // Saat ada data baru, ambil ulang semua data dengan AJAX
+                console.log('✅ Broadcast diterima:', e); // <- Harusnya muncul
+                fetchFilteredDataTanyaMentor(currentStatusTanyaMentor);
+            });
+    });
+</script>

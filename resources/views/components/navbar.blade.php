@@ -75,7 +75,7 @@
                     <div class="hidden lg:block space-x-6">
                         {{-- <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
                         <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active> --}}
-                        <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Tentang Kami</x-nav-active>
+                        <x-nav-active href="{{ route('about') }}" :active="request()->is('about')">Tentang Kami</x-nav-active>
                         <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Mitra Cerdas</x-nav-active>
                     </div>
                 @endif
@@ -265,7 +265,7 @@
                     <div class="hidden sm:block space-x-6">
                         {{-- <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
                         <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active> --}}
-                        <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Tentang Kami</x-nav-active>
+                        <x-nav-active href="{{ route('about') }}" :active="request()->is('about')">Tentang Kami</x-nav-active>
                         <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Mitra Cerdas</x-nav-active>
                     </div>
 
@@ -281,7 +281,7 @@
                     <div class="hidden lg:block space-x-6">
                         {{-- <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
                         <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active> --}}
-                        <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Tentang Kami</x-nav-active>
+                        <x-nav-active href="{{ route('about') }}" :active="request()->is('about')">Tentang Kami</x-nav-active>
                         <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Mitra Cerdas</x-nav-active>
                     </div>
                 @endif
@@ -446,7 +446,7 @@
                     <div class="hidden sm:block space-x-6">
                         {{-- <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
                         <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active> --}}
-                        <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Tentang Kami</x-nav-active>
+                        <x-nav-active href="{{ route('about') }}" :active="request()->is('about')">Tentang Kami</x-nav-active>
                         <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Mitra Cerdas</x-nav-active>
                     </div>
 
@@ -462,7 +462,7 @@
                     <div class="hidden lg:block space-x-6">
                         {{-- <x-nav-active href="{{ route('siswa') }}" :active="request()->is('siswa')">Siswa</x-nav-active>
                         <x-nav-active href="/about" :active="request()->is('sekolah')">Sekolah</x-nav-active> --}}
-                        <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Tentang Kami</x-nav-active>
+                        <x-nav-active href="{{ route('about') }}" :active="request()->is('about')">Tentang Kami</x-nav-active>
                         <x-nav-active href="{{ route('mitraCerdas') }}" :active="request()->is('mitra-cerdas')">Mitra Cerdas</x-nav-active>
                     </div>
                 @endif

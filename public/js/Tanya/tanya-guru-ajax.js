@@ -50,10 +50,6 @@ function fetchFilteredDataTanyaMentor(status, page = 1) {
             .replace(/'/g, '&#039;');
     };
 
-    // ini untuk url jika js didalam file yang sama dengan html
-    // const restoreUrl = `{{ route('getRestore.edit', ':id') }}`.replace(':id',
-    //     application.id);
-
     // ini untuk url yang js dengan html nya terpisah, route dilakukan di controller nya bukan di sini
     const restoreUrl = data.restoreUrl.replace(':id', application.id);
     const limitString = (str, limit) => str.length > limit ? str.substring(0, limit) + '...' : str;
