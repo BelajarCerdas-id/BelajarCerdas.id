@@ -13,7 +13,7 @@ use App\Models\Star;
 use App\Models\Tanya;
 use App\Models\testing;
 use App\Models\TanyaAccess;
-use App\Models\userAccount;
+use App\Models\UserAccount;
 use Illuminate\Support\Str;
 use App\Models\Transactions;
 use Illuminate\Http\Request;
@@ -70,7 +70,7 @@ class TanyaController extends Controller
         $siswaHistoryRestore = Tanya::onlyTrashed()->where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->paginate(2); // dataSiswa session tanya for page siswa (after soft delete)
         $teacherHistoryRestore = Tanya::onlyTrashed()->where('mentor_id', Auth::user()->id)->orderBy('created_at', 'desc')->get(); // getStore session tanya for page guru (after soft delete)
 
-        $getData = userAccount::where('status', 'Mentor')->get();
+        $getData = UserAccount::where('status', 'Mentor')->get();
 
         $dataAccept = Tanya::onlyTrashed()->whereIn('email_mentor', $getData->pluck('email'))->where('status', 'Diterima')->get()->groupBy('email_mentor');
 

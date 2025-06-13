@@ -20,7 +20,7 @@ class StudentProfiles extends Model
         'kode_jenjang_murid',
     ];
 
-    public function userAccount() {
+    public function UserAccount() {
         return $this->belongsTo(UserAccount::class);
     }
 
