@@ -151,13 +151,14 @@ $(document).ready(function () {
     $(document).on('change', '.toggle-mapel', function() {
         let id = $(this).data('id'); // Ambil ID mapel dari atribut data-id di checkbox
         let status = $(this).is(':checked') ? 'publish' : 'unpublish'; // Jika toggle ON maka publish, kalau OFF maka unpublish
-        let csrf = $('meta[name="csrf-token"]').attr('content');
 
         $.ajax({
             url: '/syllabus/curiculum/mapel/activate/' + id, // Endpoint ke server
             method: 'PUT', // Method HTTP PUT untuk update data
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             data: {
-                _token: csrf,
                 status_mata_pelajaran: status // Kirim status baru (publish/unpublish)
             },
             success: function(response) {
@@ -165,10 +166,14 @@ $(document).ready(function () {
                         .message); // Kalau berhasil, tampilkan pesan ke console
                     // Bisa juga tambahkan notifikasi atau toast di sini
             },
+            // error: function(xhr) {
+            //     alert('Gagal mengubah status.');
+            //     // Kalau gagal, toggle dikembalikan ke kondisi sebelumnya
+            //     $(this).prop('checked', !$(this).is(':checked'));
+            // }
             error: function(xhr) {
                 alert('Gagal mengubah status.');
-                // Kalau gagal, toggle dikembalikan ke kondisi sebelumnya
-                $(this).prop('checked', !$(this).is(':checked'));
+                checkbox.prop('checked', !checkbox.is(':checked')); // ← GUNAKAN INI
             }
             });
     });

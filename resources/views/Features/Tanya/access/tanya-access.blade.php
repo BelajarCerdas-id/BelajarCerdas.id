@@ -1,5 +1,4 @@
 @include('components/sidebar_beranda', ['headerSideNav' => 'Libur TANYA'])
-@extends('components/sidebar_beranda_mobile')
 
 @if (Auth::user()->role === 'Administrator')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
@@ -13,76 +12,41 @@
 
             <!--- content libur tanya ---->
             <main>
-                <section class="bg-white shadow-lg rounded-lg p-4 border border-gray-200 h-60">
-                    <div class="flex justify-between items-center mb-4">
+                <section class="bg-white shadow-lg rounded-lg p-4 border border-gray-200 h-80">
+                    <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
+
                         <span class="text-xl font-bold">Libur TANYA</span>
-                        <button onclick="uploadJadwalAccess(this)"
-                            class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold p-3 rounded-lg shadow-md transition-all text-xs">
-                            Buat Libur TANYA
-                        </button>
+
+                        <div class="flex justify-end mt-4 md:my-0">
+                            <button onclick="uploadJadwalAccess(this)"
+                                class="w-max bg-[#4189e0] hover:bg-blue-500 text-white font-bold p-3 rounded-lg shadow-md transition-all text-xs">
+                                Buat Libur TANYA
+                            </button>
+                        </div>
                     </div>
                     <div class="overflow-x-auto h-full">
                         <table class="table w-full border-collapse border border-gray-300">
                             <thead id="thead-table-tanya-access" class="hidden font-bold">
                                 <tr>
-                                    <th class="!text-center border border-gray-300">
+                                    <th class="!text-center border border-gray-300 text-center text-black">
                                         Tanggl Mulai
                                     </th>
-                                    <th class="!text-center border border-gray-300">
+                                    <th class="!text-center border border-gray-300 text-center text-black">
                                         Tanggal Akhir
                                     </th>
-                                    <th class="!text-center border border-gray-300">
+                                    <th class="!text-center border border-gray-300 text-center text-black">
                                         Status Tanggal Libur
                                     </th>
-                                    <th class="!text-center border border-gray-300">
+                                    <th class="!text-center border border-gray-300 text-center text-black">
                                         Status TANYA
                                     </th>
-                                    <th class="!text-center border border-gray-300">
+                                    <th class="!text-center border border-gray-300 text-center text-black">
                                         Action
                                     </th>
                                 </tr>
                             </thead>
                             <tbody id="tbody-table-tanya-access">
-                                {{-- @foreach ($dataTanyaAccess as $item)
-                                        <tr>
-                                            <td class="!text-center border border-gray-300">
-                                                {{ $item->tanggal_mulai->locale('id')->translatedFormat('l, d F Y') }}
-                                            </td>
-                                            <td class="!text-center border border-gray-300">
-                                                {{ $item->tanggal_akhir->locale('id')->translatedFormat('l, d F Y') }}
-                                            </td>
-                                            <td class="!text-center border border-gray-300">
-                                                {{ $item->status_access }}
-                                            </td>
-                                            <td class="!text-center border border-gray-300">
-                                                {{ $item->status_access === 'Aktif' ? 'Locked' : 'Unlocked' }}
-                                            </td>
-                                            <td class="!text-center border border-gray-300">
-                                                <div class="dropdown dropdown-left">
-                                                    <div tabindex="0" role="button">
-                                                        <i class="fa-solid fa-ellipsis-vertical cursor-pointer"></i>
-                                                    </div>
-                                                    <ul tabindex="0"
-                                                        class="dropdown-content menu bg-base-100 rounded-box z-1 w-max p-2 shadow-sm  z-[9999]">
-                                                        <li class="text-xs" onclick="editAccess(this)"
-                                                            data-tanggal-mulai="{{ $item->tanggal_mulai }}"
-                                                            data-tanggal-akhir="{{ $item->tanggal_akhir }}">
-                                                            <a>
-                                                                <i class="fa-solid fa-pen text-[#4189e0]"></i>
-                                                                Atur Tanggal
-                                                            </a>
-                                                        </li>
-                                                        <li class="text-xs" onclick="my_modal_3.showModal()">
-                                                            <a>
-                                                                <i class="fa-solid fa-eye text-[#4189e0]"></i>
-                                                                View History
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach --}}
+                                <!-- show data in ajax -->
                             </tbody>
                         </table>
 
@@ -98,23 +62,23 @@
 
                     <!--- modal untuk create libur tanya --->
                     <dialog id="my_modal_1" class="modal">
-                        <div class="modal-box bg-white w-max h-[620px]">
+                        <div class="modal-box bg-white w-[85%] md:w-max h-[620px]">
                             <form id="form-insert-tanya-access" class="form-insert">
                                 <!---- tanggal mulai access ---->
-                                <div class="w-max relative flex flex-col gap-2 mt-4">
+                                <div class="w-full md:w-max relative flex flex-col gap-2 mt-4">
                                     <span class="text-sm font-bold text-gray-600">Tanggal Mulai</span>
                                     <input type="text" id="datepicker-insert-tanggal-mulai" name="tanggal_mulai"
-                                        class="w-[385px] bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 cursor-pointer
+                                        class="w-full md:w-[385px] bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 cursor-pointer
                                         focus-within:border-[1px] focus-within:border-[dodgerblue] focus-within:shadow-[0_0_9px_0_dodgerblue]"
                                         value="" placeholder="dd-mm-yyyy">
                                     <i class="fa-regular fa-calendar absolute top-[60%] right-4"></i>
                                 </div>
                                 <span id="error-insert-tanggal_mulai" class="text-red-500 font-bold text-xs"></span>
                                 <!---- tanggal akhir access ---->
-                                <div class="w-max relative flex flex-col gap-2 mt-4">
+                                <div class="w-full relative flex flex-col gap-2 mt-4">
                                     <span class="text-sm font-bold text-gray-600">Tanggal Akhir</span>
                                     <input type="text" id="datepicker-insert-tanggal-akhir" name="tanggal_akhir"
-                                        class="w-[385px] bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 cursor-pointer focus-within:border-[1px]
+                                        class="w-full md:w-[385px] bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 cursor-pointer focus-within:border-[1px]
                                         focus-within:border-[dodgerblue] focus-within:shadow-[0_0_9px_0_dodgerblue]"
                                         value="" placeholder="dd-mm-yyyy">
                                     <i class="fa-regular fa-calendar absolute top-[60%] right-4"></i>
@@ -136,23 +100,23 @@
 
                     <!--- modal untuk edit libur tanya --->
                     <dialog id="my_modal_2" class="modal">
-                        <div class="modal-box bg-white w-max h-[620px]">
+                        <div class="modal-box bg-white w-[85%] md:w-max h-[620px]">
                             <form id="form-update-tanya-access" class="form-update">
                                 <!---- tanggal mulai access ---->
-                                <div class="w-max relative flex flex-col gap-2 mt-4">
+                                <div class="w-full relative flex flex-col gap-2 mt-4">
                                     <span class="text-sm font-bold text-gray-600">Tanggal Mulai</span>
                                     <input type="text" id="datepicker-tanggal-mulai" name="tanggal_mulai"
-                                        class="w-[385px] bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 cursor-pointer
+                                        class="w-full md:w-[385px] bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 cursor-pointer
                                         focus-within:border-[1px] focus-within:border-[dodgerblue] focus-within:shadow-[0_0_9px_0_dodgerblue]"
                                         value="" placeholder="dd-mm-yyyy">
                                     <i class="fa-regular fa-calendar absolute top-[60%] right-4"></i>
                                 </div>
                                 <span id="error-update-tanggal_mulai" class="text-red-500 font-bold text-xs"></span>
                                 <!---- tanggal akhir access ---->
-                                <div class="w-max relative flex flex-col gap-2 mt-4">
+                                <div class="w-full relative flex flex-col gap-2 mt-4">
                                     <span class="text-sm font-bold text-gray-600">Tanggal Akhir</span>
                                     <input type="text" id="datepicker-tanggal-akhir" name="tanggal_akhir"
-                                        class="w-[385px] bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 cursor-pointer focus-within:border-[1px]
+                                        class="w-full md:w-[385px] bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 cursor-pointer focus-within:border-[1px]
                                         focus-within:border-[dodgerblue] focus-within:shadow-[0_0_9px_0_dodgerblue]"
                                         value="" placeholder="dd-mm-yyyy">
                                     <i class="fa-regular fa-calendar absolute top-[60%] right-4"></i>
@@ -174,7 +138,7 @@
 
                     <!--- modal untuk show history upload libur TANYA --->
                     <dialog id="my_modal_3" class="modal">
-                        <div class="modal-box bg-white text-center">
+                        <div class="modal-box bg-white w-[85%] md:w-full text-center">
                             <span class="text-2xl">History</span>
                             <div class="flex items-center justify-between mt-6">
                                 <div class="flex items-center gap-2">

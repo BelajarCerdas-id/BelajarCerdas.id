@@ -16,16 +16,16 @@
                             <table class="table" id="filterTable">
                                 <thead class="thead-table">
                                     <tr>
-                                        <th class="th-table">No</th>
-                                        <th class="th-table">Nama Lengkap</th>
-                                        <th class="th-table">no_hp</th>
-                                        <th class="th-table">Status Pendidikan</th>
-                                        <th class="th-table">Bidang</th>
-                                        <th class="th-table">Jurusan</th>
-                                        <th class="th-table">Tahun Lulus</th>
-                                        <th class="th-table">Sekolah Mengajar</th>
+                                        <th class="th-table text-black">No</th>
+                                        <th class="th-table text-black">Nama Lengkap</th>
+                                        <th class="th-table text-black">no_hp</th>
+                                        <th class="th-table text-black">Status Pendidikan</th>
+                                        <th class="th-table text-black">Bidang</th>
+                                        <th class="th-table text-black">Jurusan</th>
+                                        <th class="th-table text-black">Tahun Lulus</th>
+                                        <th class="th-table text-black">Sekolah Mengajar</th>
                                         @foreach ($dataFeaturesRoles as $item)
-                                            <th class="th-table">{{ $item->Features->nama_fitur }}</th>
+                                            <th class="th-table text-black">{{ $item->Features->nama_fitur }}</th>
                                         @endforeach
                                     </tr>
                                 </thead>

@@ -45,7 +45,7 @@ function fetchDataTanyaAccess(page = 1) {
                                             <i class="fa-solid fa-ellipsis-vertical cursor-pointer"></i>
                                         </div>
                                         <ul tabindex="0"
-                                            class="dropdown-content menu bg-base-100 rounded-box z-1 w-max p-2 shadow-sm z-[9999]">
+                                            class="dropdown-content menu bg-white rounded-box z-1 w-max p-2 shadow-sm z-[9999]">
                                             <li class="text-xs" onclick="editAccess(this)"
                                                     data-tanggal-mulai="${application.tanggal_mulai}"
                                                     data-tanggal-akhir="${application.tanggal_akhir}">
@@ -129,7 +129,7 @@ $('#form-insert-tanya-access').on('submit', function (e) {
                 if (response.status === 'success' && response.message === 'Data berhasil disimpan.') {
                     $('#alert-success-insert-tanya-access').html(
                         `
-                        <div class=" w-full flex justify-center">
+                        <div class="w-full flex justify-center">
                             <div class="fixed z-[9999]">
                                 <div id="alertSuccess"
                                     class="relative top-[-45px] opacity-100 scale-90 bg-green-200 w-max p-3 flex items-center space-x-2 rounded-lg shadow-lg transition-all duration-300 ease-out">
@@ -238,7 +238,7 @@ $('#form-update-tanya-access').on('submit', function (e) {
 
                 $('#alert-success-update-tanya-access').html(
                     `
-                    <div class=" w-full flex justify-center">
+                    <div class="w-full flex justify-center">
                         <div class="fixed z-[9999]">
                             <div id="alertSuccess"
                                 class="relative top-[-45px] opacity-100 scale-90 bg-green-200 w-max p-3 flex items-center space-x-2 rounded-lg shadow-lg transition-all duration-300 ease-out">

@@ -16,16 +16,16 @@
                             <table class="table" id="filterTable">
                                 <thead class="thead-table">
                                     <tr>
-                                        <th class="th-table">No</th>
-                                        <th class="th-table">Nama Lengkap</th>
-                                        <th class="th-table">no_hp</th>
-                                        <th class="th-table">Status Pendidikan</th>
-                                        <th class="th-table">Bidang</th>
-                                        <th class="th-table">Jurusan</th>
-                                        <th class="th-table">Tahun Lulus</th>
-                                        <th class="th-table">Sekolah Mengajar</th>
-                                        <th class="th-table">Status Akun</th>
-                                        <th class="th-table">Status Mentor</th>
+                                        <th class="th-table text-black">No</th>
+                                        <th class="th-table text-black">Nama Lengkap</th>
+                                        <th class="th-table text-black">no_hp</th>
+                                        <th class="th-table text-black">Status Pendidikan</th>
+                                        <th class="th-table text-black">Bidang</th>
+                                        <th class="th-table text-black">Jurusan</th>
+                                        <th class="th-table text-black">Tahun Lulus</th>
+                                        <th class="th-table text-black">Sekolah Mengajar</th>
+                                        <th class="th-table text-black">Status Akun</th>
+                                        <th class="th-table text-black">Status Mentor</th>
                                     </tr>
                                 </thead>
                                 <tbody id="filterList">

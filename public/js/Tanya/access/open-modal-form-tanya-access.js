@@ -11,7 +11,8 @@
             static: true,
             theme: "dark",
             minDate: 'today',
-            clickOpens: true // Mencegah focus otomatis pada input type date
+            clickOpens: true, // Mencegah focus otomatis pada input type date
+            disableMobile: true // untuk mencegah datepicker bawaan browser mobile, agar tetap menggunakan Flatpickr meskipun di HP
         });
 
         flatpickr("#datepicker-insert-tanggal-akhir", {
@@ -23,7 +24,8 @@
             static: true,
             theme: "dark",
             minDate: 'today',
-            clickOpens: true // Mencegah focus otomatis pada input type date
+            clickOpens: true, // Mencegah focus otomatis pada input type date
+            disableMobile: true
         });
     }
 
@@ -48,7 +50,8 @@
             theme: "dark",
             minDate: 'today',
             defaultDate: tanggalMulai, // Set nilai default dari data
-            clickOpens: true
+            clickOpens: true,
+            disableMobile: true
         });
 
         flatpickr("#datepicker-tanggal-akhir", {
@@ -61,7 +64,8 @@
             theme: "dark",
             minDate: 'today',
             defaultDate: tanggalAkhir, // Set nilai default dari data
-            clickOpens: true
+            clickOpens: true,
+            disableMobile: true
         });
     }
 
