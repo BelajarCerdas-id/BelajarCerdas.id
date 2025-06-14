@@ -371,7 +371,7 @@
 <script src="{{ asset('js/upload-image.js') }}"></script> <!--- show image tanya ---->
 
 <!--- untuk tracker pertanyaan jika ada mentor sedang melihat soal dan lalu kembali menggunakan back button chrome maka status soal berubah ---->
-{{-- <script src="{{ asset('js/Tanya/end-to-end/view-questions-tracker.js') }}"></script> --}}
+<script src="{{ asset('js/Tanya/end-to-end/view-questions-tracker.js') }}"></script>
 
 <!--- untuk membuka modal kembali jika ada validasi error pada form modal ---->
 <script>

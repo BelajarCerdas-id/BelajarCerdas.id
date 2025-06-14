@@ -559,8 +559,7 @@
                         <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
                     </div>
                     <div class="content-dropdown">
-                        <a href="{{ route('englisHone.uploadMateri') }}" class="link-href">Bank Soal</a>
-                        <a href="{{ route('englisHone.uploadMateri') }}" class="link-href">Upload Soal</a>
+                        <a href="{{ route('bankSoal.view') }}" class="link-href">Bank Soal</a>
                     </div>
                 </div>
             </li>

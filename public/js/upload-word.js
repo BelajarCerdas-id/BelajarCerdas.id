@@ -1,24 +1,24 @@
-function previewExcel(event, target) {
+function previewWord(event, target) {
     var file = event.target.files[0];
 
-    if (file && file.name.endsWith('.xlsx')) {
+    if (file && file.name.endsWith('.docx')) {
         var textOutput = document.getElementById('textPreview-' + target);
         var textSize = document.getElementById('textSize-' + target);
         var textPages = document.getElementById('textPages-' + target);
         var textCircle = document.getElementById('textCircle-' + target);
-        var excelPreviewContainer = document.getElementById('excelPreviewContainer-' + target);
-        var excelLogo = document.getElementById('pdfLogo-' + target);
+        var wordPreviewContainer = document.getElementById('wordPreviewContainer-' + target);
+        var wordLogo = document.getElementById('logo-' + target);
 
         textOutput.innerHTML = truncateText(file.name, 20);
         textSize.innerHTML = formatFileSize(file.size);
         textCircle.innerHTML = "<i class='fas fa-circle text-gray-500'></i>";
-        excelPreviewContainer.classList.remove('hidden');
+        wordPreviewContainer.classList.remove('hidden');
 
-        // Path logo Excel
-        excelLogo.src = "/image/bulkUpload-file-logo/logo-excel.png";
-        textPages.innerHTML = "XLSX";
+        // Path logo word
+        wordLogo.src = "/image/bulkUpload-file-logo/logo-word.png";
+        textPages.innerHTML = "DOCX";
     } else {
-        alert('Please upload a valid Excel file.');
+        alert('Please upload a valid word file.');
     }
 }
 

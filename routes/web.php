@@ -27,6 +27,7 @@ use App\Http\Controllers\MitraCerdasController;
 use App\Http\Controllers\VisitasiDataController;
 use App\Http\Controllers\AuthController; // login daftar
 use App\Http\Controllers\PaymentFeaturesController;
+use App\Http\Controllers\SoalPembahasanController;
 use App\Http\Controllers\webController; // data biasa seperti foreach (tidak dari database) dan lain lain (jika ada selain foreach)
 
 Route::get('/', [webController::class, 'index'])->name('homePage');
@@ -235,6 +236,8 @@ Route::fallback(function () {
     Route::get('/paginate/report-mentor', [FilterController::class, 'paginateReportPaymentMentor'])->name('paginate.reportPaymentMentor');
     Route::get('/paginate/batch-detail-payment-mentor/{id}', [FilterController::class, 'paginateBatchDetailPaymentMentor'])->name('paginate.batchDetailPaymentMentor');
 
+    // SOAL DAN PEMBAHASAN ROUTES
+    Route::get('/bank-soal', [SoalPembahasanController::class, 'bankSoalView'])->name('bankSoal.view');
 
     //ROUTES SYLLABUS-SERVICES
     // VIEWS

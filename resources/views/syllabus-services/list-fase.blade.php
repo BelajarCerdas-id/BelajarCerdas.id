@@ -3,20 +3,21 @@
     'backButton' => "<i class='fa-solid fa-chevron-left'></i>",
     'headerSideNav' => 'Fase',
 ])
-@extends('components/sidebar_beranda_mobile')
 
 @if (Auth::user()->role === 'Administrator')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
         <div class="content-beranda">
-            @if (session('success-insert-data-fase'))
-                @include('components.alert.success-insert-data', [
-                    'message' => session('success-insert-data-fase'),
-                ])
-            @endif
-            <!--- alert nya menggunakan dari response json --->
-            <div id="alert-success-update-data-fase"></div>
-            <div id="alert-success-delete-data-fase"></div>
             <main>
+
+                @if (session('success-insert-data-fase'))
+                    @include('components.alert.success-insert-data', [
+                        'message' => session('success-insert-data-fase'),
+                    ])
+                @endif
+                <!--- alert nya menggunakan dari response json --->
+                <div id="alert-success-update-data-fase"></div>
+                <div id="alert-success-delete-data-fase"></div>
+
                 <section class="bg-white shadow-lg p-6 rounded-lg border-gray-200 border-[1px]">
                     <!---- Form input kurikulum  ---->
                     @if ($nama_kurikulum === 'Kurikulum Nasional')

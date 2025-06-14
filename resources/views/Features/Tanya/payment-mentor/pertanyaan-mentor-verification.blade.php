@@ -5,9 +5,9 @@
 ])
 
 @if (Auth::user()->role === 'Administrator')
-    <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
+    <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0 ">
         <div class="content-beranda">
-            <main>
+            <main class="border">
                 <section>
                     <div id="question-verification-container" class="overflow-x-auto mt-8 pb-20"
                         data-mentor-id="{{ $id }}">
