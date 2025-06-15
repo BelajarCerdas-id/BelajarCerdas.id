@@ -52,7 +52,7 @@
             <div
                 class="absolute bottom-[-60px] xl:bottom-[-90px] w-full h-full max-h-[425px] max-w-[425px] xl:max-h-[480px] xl:max-w-[480px] bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
                 <!---- image in here ---->
-                <img src="image/aset orang landing page 3.png" alt=""
+                <img src="image/aset orang landing page 3.webp" alt=""
                     class="relative h-[640px] xl:h-[679px] top-[-215px] left-[40px] xl:top-[-200px] xl:left-[72px]">
             </div>
             <img src="image/asset landing page.webp" alt="" class="w-full h-full">
@@ -64,7 +64,7 @@
         <div class="mx-4 flex flex-col items-center">
             <div
                 class="absolute top-3 w-[260px] h-[260px] sm:w-96 sm:h-96 sm:top-16 bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
-                <img src="image/aset orang landing page 3.png" alt=""
+                <img src="image/aset orang landing page 3.webp" alt=""
                     class="w-full h-full sm:h-[415px] relative left-6 top-[-20px] sm:top-[-80px]">
             </div>
             <img src="image/asset landing page.webp" alt="" class="w-full h-full sm:h-[500px]">
