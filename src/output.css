@@ -994,8 +994,8 @@
 .bg-\[url\(\'\/image\/register\/background-register\.png\'\)\] {
   background-image: url('/image/register/background-register.png');
 }
-.bg-\[url\(\'image\/services-pages\/mitra-cerdas\/gelombang_svg\.svg\'\)\] {
-  background-image: url('image/services-pages/mitra-cerdas/gelombang_svg.svg');
+.bg-\[url\(\'image\/services-pages\/mitra-cerdas\/gelombang\.webp\'\)\] {
+  background-image: url('image/services-pages/mitra-cerdas/gelombang.webp');
 }
 .bg-none {
   background-image: none;
