@@ -52,10 +52,10 @@
             <div
                 class="absolute bottom-[-60px] xl:bottom-[-90px] w-full h-full max-h-[425px] max-w-[425px] xl:max-h-[480px] xl:max-w-[480px] bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
                 <!---- image in here ---->
-                <img src="image/aset orang landing page 3.webp" alt=""
+                <img src="image/aset orang landing page 3.webp" loading="lazy" alt=""
                     class="relative h-[640px] xl:h-[679px] top-[-215px] left-[40px] xl:top-[-200px] xl:left-[72px]">
             </div>
-            <img src="image/asset landing page.webp" alt="" class="w-full h-full">
+            <img src="image/asset landing page.webp" loading="lazy" alt="" class="w-full h-full">
         </div>
     </section>
 
@@ -64,10 +64,10 @@
         <div class="mx-4 flex flex-col items-center">
             <div
                 class="absolute top-3 w-[260px] h-[260px] sm:w-96 sm:h-96 sm:top-16 bg-white rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
-                <img src="image/aset orang landing page 3.webp" alt=""
+                <img src="image/aset orang landing page 3.webp" loading="lazy" alt=""
                     class="w-full h-full sm:h-[415px] relative left-6 top-[-20px] sm:top-[-80px]">
             </div>
-            <img src="image/asset landing page.webp" alt="" class="w-full h-full sm:h-[500px]">
+            <img src="image/asset landing page.webp" loading="lazy" alt="" class="w-full h-full sm:h-[500px]">
             <div class="w-full md:text-left h-full flex flex-col justify-center gap-6 my-20">
                 <div class="text-xl font-bold">
                     <span>Lebih Dari Sekedar</span>
@@ -100,7 +100,7 @@
         <div class="grid lg:grid-cols-2 xl:grid-cols-3 gap-8 z-[9999] mx-4 mt-6">
             <div class="flex gap-4 bg-white rounded-3xl p-4 shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
                 <div class="flex items-center w-[200px]">
-                    <img src="image/asset icon landing page.png" alt="" class="w-full">
+                    <img src="image/asset icon landing page.png" loading="lazy" alt="" class="w-full">
                 </div>
                 <div class="">
                     <span class="font-bold">TANYA</span>
@@ -114,7 +114,7 @@
             </div>
             <div class="flex gap-4 bg-white rounded-3xl p-4 shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
                 <div class="flex items-center w-[200px]">
-                    <img src="image/asset icon landing page.png" alt="" class="w-full">
+                    <img src="image/asset icon landing page.png" loading="lazy" alt="" class="w-full">
                 </div>
                 <div class="">
                     <span class="font-bold">HALO GURU</span>
@@ -129,7 +129,7 @@
             <div
                 class="flex gap-4 bg-white rounded-3xl p-4 shadow-[0_10px_24px_rgba(0,0,0,0.23)] lg:col-span-2 lg:mx-auto lg:w-1/2 xl:w-auto xl:mx-0 xl:col-span-1">
                 <div class="flex items-center w-[200px]">
-                    <img src="image/asset icon landing page.png" alt="" class="w-full">
+                    <img src="image/asset icon landing page.png" loading="lazy" alt="" class="w-full">
                 </div>
                 <div class="">
                     <span class="font-bold">ENGLISH ZONE</span>
@@ -292,7 +292,7 @@
             <!-- Gambar fitur -->
             <figure class="border-b border-gray-200 h-32">
                 <img src="{{ $descriptionsFeatures[$item->nama_fitur]['image_feature'] ?? '' }}"
-                    alt="Logo Fitur {{ $item->nama_fitur }}" class="w-full h-full object-contain pointer-events-none">
+                    loading="lazy" alt="Logo Fitur {{ $item->nama_fitur }}" class="w-full h-full object-contain pointer-events-none">
             </figure>
 
             <!-- Nama fitur -->
@@ -369,7 +369,7 @@
                 <div class="bg-[--color-default] w-52 h-52 md:w-80 md:h-80 rounded-full relative">
                     <div class="w-[300px] md:w-[460px] relative left-[-24%] md:left-[-23%] top-[-25%] z-20">
                         <!-- Image -->
-                        <img src="image/asset_belajarcerdas2-01.png" alt="Person with laptop" class="">
+                        <img src="image/asset_belajarcerdas2-01.png" loading="lazy" alt="Person with laptop" class="">
                     </div>
                     <div class="absolute inset-0">
                         <div class="absolute top-0 left-0 bg-[--color-default] w-6 h-6 md:w-10 md:h-10 rounded-full">
@@ -433,11 +433,11 @@
             <div class="flex justify-center items-center">
                 <!-- image  -->
                 <div class="flex flex-col gap-4">
-                    <img src="{{ asset('image/icon1-ourGoals.png') }}" alt="Person with laptop"
+                    <img src="{{ asset('image/icon1-ourGoals.png') }}" loading="lazy" alt="Person with laptop"
                         class="relative z-10 w-full max-h-[300px] object-cover mx-auto">
-                    <img src="{{ asset('image/icon2-ourGoals.png') }}" alt="Person with laptop"
+                    <img src="{{ asset('image/icon2-ourGoals.png') }}" loading="lazy" alt="Person with laptop"
                         class="relative z-10 w-full max-h-[300px] object-cover mx-auto">
-                    <img src="{{ asset('image/icon3-ourGoals.png') }}" alt="Person with laptop"
+                    <img src="{{ asset('image/icon3-ourGoals.png') }}" loading="lazy" alt="Person with laptop"
                         class="relative z-10 w-full max-h-[300px] object-cover mx-auto">
                 </div>
             </div>
@@ -464,14 +464,14 @@
                 <!-- Right Side: icon text Content -->
                 <div class="flex flex-col gap-4">
                     <div class="flex gap-2">
-                        <img src="{{ asset('image/globe-icon.png') }}" alt="" class="w-6 object-contain">
+                        <img src="{{ asset('image/globe-icon.png') }}" loading="lazy" alt="" class="w-6 object-contain">
                         <span class="text-justify text-sm">
                             Menghadirkan Pembelajaran yang Relevan dan Bermakna. Kami fokus menjual konsep dan
                             pengalaman, bukan sekadar produk.
                         </span>
                     </div>
                     <div class="flex gap-2">
-                        <img src="{{ asset('image/science-icon.png') }}" alt="" class="w-6 object-contain">
+                        <img src="{{ asset('image/science-icon.png') }}" loading="lazy" alt="" class="w-6 object-contain">
                         <span class="text-justify text-sm">
                             Menyediakan Solusi Pendidikan yang Seamless. Menggabungkan pembelajaran online dan offline
                             untuk menyelesaikan
@@ -479,7 +479,7 @@
                         </span>
                     </div>
                     <div class="flex gap-2">
-                        <img src="{{ asset('image/telescope-icon.png') }}" alt=""
+                        <img src="{{ asset('image/telescope-icon.png') }}" loading="lazy" alt=""
                             class="w-6 object-contain">
                         <span class="text-justify text-sm">
                             Menjangkau prospek yang sesuai: sekolah, guru, dan siswa yang berkeputusan untuk
