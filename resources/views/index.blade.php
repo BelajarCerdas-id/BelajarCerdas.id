@@ -55,7 +55,7 @@
                 <img src="image/aset orang landing page 3.png" alt=""
                     class="relative h-[640px] xl:h-[679px] top-[-215px] left-[40px] xl:top-[-200px] xl:left-[72px]">
             </div>
-            <img src="image/asset landing page.png" alt="" class="w-full h-full">
+            <img src="image/asset landing page.webp" alt="" class="w-full h-full">
         </div>
     </section>
 
@@ -67,7 +67,7 @@
                 <img src="image/aset orang landing page 3.png" alt=""
                     class="w-full h-full sm:h-[415px] relative left-6 top-[-20px] sm:top-[-80px]">
             </div>
-            <img src="image/asset landing page.png" alt="" class="w-full h-full sm:h-[500px]">
+            <img src="image/asset landing page.webp" alt="" class="w-full h-full sm:h-[500px]">
             <div class="w-full md:text-left h-full flex flex-col justify-center gap-6 my-20">
                 <div class="text-xl font-bold">
                     <span>Lebih Dari Sekedar</span>

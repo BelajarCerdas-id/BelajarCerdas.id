@@ -2,7 +2,7 @@
 <main>
     <div class="jumbotron-mitra-cerdas border lg:border-none shadow-lg relative">
         <!-- Background SVG -->
-        <img src="{{ asset('image/services-pages/mitra-cerdas/gelombang_svg.svg') }}" alt=""
+        <img src="{{ asset('image/services-pages/mitra-cerdas/gelombang.webp') }}" alt=""
             class="jumbotoron-wave-background absolute top-0 left-0 w-full pointer-events-none hidden lg:block">
 
         <!-- Konten Grid -->
@@ -10,10 +10,10 @@
 
             <!-- Gambar Ilustrasi (MOBILE) -->
             <div class="relative flex justify-center items-end gap-4 w-full lg:hidden">
-                <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cowok jas kuning.png') }}"
+                <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cowok jas kuning.webp') }}"
                     alt="Guru laki-laki" class="jumbotron-teacher-man-mitra-cerdas max-w-56">
 
-                <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cewek.png') }}" alt="Guru laki-laki"
+                <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cewek.webp') }}" alt="Guru laki-laki"
                     class="jumbotron-teacher-woman-mitra-cerdas max-w-44">
             </div>
 
@@ -47,10 +47,10 @@
 
             <!-- Gambar Ilustrasi (DEKSTOP) -->
             <div class="relative flex justify-center items-end gap-4 w-full hidden lg:flex">
-                <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cowok jas kuning.png') }}"
+                <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cowok jas kuning.webp') }}"
                     alt="Guru laki-laki" class="jumbotron-teacher-man-mitra-cerdas h-auto">
 
-                <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cewek.png') }}" alt="Guru laki-laki"
+                <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cewek.webp') }}" alt="Guru laki-laki"
                     class="jumbotron-teacher-woman-mitra-cerdas h-auto">
             </div>
         </div>
@@ -58,7 +58,7 @@
 
     <div class="relative z-10 flex justify-center my-32 lg:my-48 mx-4 md:mx-10 px-4 md:px-20">
         <!--- wrapper background ---->
-        <img src="{{ asset('image/services-pages/mitra-cerdas/bg kata mitra.png') }}" alt=""
+        <img src="{{ asset('image/services-pages/mitra-cerdas/bg kata mitra.webp') }}" alt=""
             class="absolute top-0 left-0 w-full h-full z-[-20] rounded-lg pointer-events-none">
         <div class="w-full my-14">
             <!--- header ---->
@@ -72,7 +72,7 @@
                             <figure class="relative bg-white rounded-4xl shadow-md p-6 max-w-[350px]">
                                 <div class="w-full flex justify-center">
                                     <div class="w-[120px] absolute top-[-50px]">
-                                        <img src="{{ asset('image/services-pages/mitra-cerdas/wahyu.png') }}"
+                                        <img src="{{ asset('image/services-pages/mitra-cerdas/wahyu.webp') }}"
                                             alt="" class="">
                                     </div>
                                 </div>
@@ -99,7 +99,7 @@
                             <figure class="relative bg-white rounded-4xl shadow-md p-6 max-w-[350px]">
                                 <div class="w-full flex justify-center">
                                     <div class="w-[120px] absolute top-[-50px]">
-                                        <img src="{{ asset('image/services-pages/mitra-cerdas/danien.png') }}"
+                                        <img src="{{ asset('image/services-pages/mitra-cerdas/danien.webp') }}"
                                             alt="" class="">
                                     </div>
                                 </div>
@@ -125,7 +125,7 @@
                             <figure class="relative bg-white rounded-4xl shadow-md p-6 max-w-[350px]">
                                 <div class="w-full flex justify-center">
                                     <div class="w-[120px] absolute top-[-50px]">
-                                        <img src="{{ asset('image/services-pages/mitra-cerdas/rahma.png') }}"
+                                        <img src="{{ asset('image/services-pages/mitra-cerdas/rahma.webp') }}"
                                             alt="" class="">
                                     </div>
                                 </div>
@@ -183,7 +183,7 @@
 
     <section>
         <div class="relative h-max flex justify-center mx-4 md:mx-10 py-4">
-            <img src="{{ asset('image/services-pages/mitra-cerdas/bg kata mitra.png') }}"
+            <img src="{{ asset('image/services-pages/mitra-cerdas/bg kata mitra.webp') }}"
                 class="absolute top-0 left-0 w-full h-full object-cover z-0 rounded-lg pointer-events-none"
                 alt="">
 
@@ -199,7 +199,7 @@
                                 <span class="font-bold text-[14.5px] sm:text-base">Pendaftaran Mitra</span>
                                 <div
                                     class="flex-shrink-1 relative top-[10px] left-4 w-[40px] h-full flex items-center sm:hidden">
-                                    <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 1.png') }}"
+                                    <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 1.webp') }}"
                                         alt=""
                                         class="w-full h-[80px] object-contain absolute pointer-events-none">
                                 </div>
@@ -211,7 +211,7 @@
                         </div>
                         <div class="hidden sm:block">
                             <div class="flex-shrink-1 relative w-[80px] h-full flex items-center">
-                                <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 1.png') }}" alt=""
+                                <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 1.webp') }}" alt=""
                                     class="w-full h-[80px] object-contain absolute pointer-events-none">
                             </div>
                         </div>
@@ -224,7 +224,7 @@
                                 <span class="font-bold text-[14.5px] sm:text-base">Dokumen Persyaratan</span>
                                 <div
                                     class="flex-shrink-1 relative top-[10px] left-4 w-[40px] h-full flex items-center sm:hidden">
-                                    <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 2.png') }}"
+                                    <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 2.webp') }}"
                                         alt=""
                                         class="w-full h-[80px] object-contain absolute pointer-events-none">
                                 </div>
@@ -237,7 +237,7 @@
                         </div>
                         <div class="hidden sm:block">
                             <div class="flex-shrink-1 relative w-[80px] h-full flex items-center">
-                                <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 2.png') }}" alt=""
+                                <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 2.webp') }}" alt=""
                                     class="w-full h-[80px] object-contain absolute pointer-events-none">
                             </div>
                         </div>
@@ -250,7 +250,7 @@
                                 <span class="font-bold text-[14.5px] sm:text-base">Perubahan Kebijakan</span>
                                 <div
                                     class="flex-shrink-1 relative top-[10px] left-4 w-[40px] h-full flex items-center sm:hidden">
-                                    <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 3.png') }}"
+                                    <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 3.webp') }}"
                                         alt=""
                                         class="w-full h-[80px] object-contain absolute pointer-events-none">
                                 </div>
@@ -263,7 +263,7 @@
                         </div>
                         <div class="hidden sm:block">
                             <div class="flex-shrink-1 relative w-[80px] h-full flex items-center">
-                                <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 3.png') }}" alt=""
+                                <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 3.webp') }}" alt=""
                                     class="w-full h-[80px] object-contain absolute pointer-events-none">
                             </div>
                         </div>
@@ -276,7 +276,7 @@
                                 <span class="font-bold text-[14.5px] sm:text-base">Hak Pengelola Program</span>
                                 <div
                                     class="flex-shrink-1 relative top-[10px] left-4 w-[40px] h-full flex items-center sm:hidden">
-                                    <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 4.png') }}"
+                                    <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 4.webp') }}"
                                         alt=""
                                         class="w-full h-[80px] object-contain absolute pointer-events-none">
                                 </div>
@@ -290,7 +290,7 @@
                         <div class="hidden sm:block">
                             <div
                                 class="flex-shrink-1 relative top-[-10px] sm:top-[0.5px] right-0 left-[10px] sm:left-[-2px] lg:left-[2px] w-[80px] h-full flex items-center">
-                                <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 4.png') }}" alt=""
+                                <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 4.webp') }}" alt=""
                                     class="w-full h-[80px] lg:h-[90px] object-contain absolute pointer-events-none">
                             </div>
                         </div>
@@ -303,7 +303,7 @@
                                 <span class="font-bold text-[14.5px] sm:text-base">Pembatasan Tanggung Jawab</span>
                                 <div
                                     class="flex-shrink-1 relative top-[10px] left-4 w-[40px] h-full flex items-center sm:hidden">
-                                    <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 5.png') }}"
+                                    <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 5.webp') }}"
                                         alt=""
                                         class="w-full h-[80px] object-contain absolute pointer-events-none">
                                 </div>
@@ -317,7 +317,7 @@
                         </div>
                         <div class="hidden sm:block">
                             <div class="flex-shrink-1 relative w-[80px] h-full flex items-center">
-                                <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 5.png') }}" alt=""
+                                <img src="{{ asset('image/services-pages/mitra-cerdas/s&k 5.webp') }}" alt=""
                                     class="w-full h-[80px] object-contain absolute pointer-events-none">
                             </div>
                         </div>
