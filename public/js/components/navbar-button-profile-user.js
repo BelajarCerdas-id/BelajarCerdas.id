@@ -39,19 +39,19 @@
         });
 
         // Event listener untuk sub-dropdown (toggle-menu2)
-        toggles2.forEach(toggle => {
-            toggle.addEventListener("click", () => {
-                const parent = toggle.closest('.content-dropdown'); // Cari elemen sub-dropdown
+        // toggles2.forEach(toggle => {
+        //     toggle.addEventListener("click", () => {
+        //         const parent = toggle.closest('.content-dropdown'); // Cari elemen sub-dropdown
 
-                if (parent.classList.contains("show")) {
-                    // Jika sudah terbuka, tutup
-                    parent.classList.remove("show");
-                } else {
-                    // Jika belum terbuka, tutup yang lain lalu buka yang ini
-                    closeAllSubDropdowns();
-                    closeAllListDropdowns();
-                    parent.classList.add("show");
-                }
-            });
-        });
+        //         if (parent.classList.contains("show")) {
+        //             // Jika sudah terbuka, tutup
+        //             parent.classList.remove("show");
+        //         } else {
+        //             // Jika belum terbuka, tutup yang lain lalu buka yang ini
+        //             closeAllSubDropdowns();
+        //             closeAllListDropdowns();
+        //             parent.classList.add("show");
+        //         }
+        //     });
+        // });
     });

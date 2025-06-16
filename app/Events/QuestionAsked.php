@@ -32,9 +32,9 @@ class QuestionAsked implements ShouldBroadcast
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    public function broadcastOn(): channel
+    public function broadcastOn(): Channel
     {
-        return new channel('tanya');
+        return new Channel('tanya');
     }
 
     public function broadcastAs(): string

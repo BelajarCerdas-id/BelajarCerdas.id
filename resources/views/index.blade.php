@@ -113,16 +113,14 @@
                 </div>
             </div>
             <div class="flex gap-4 bg-white rounded-3xl p-4 shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
-                <div class="flex items-center w-[200px]">
+                <div class="flex items-center w-[130px]">
                     <img src="image/asset icon landing page.png" alt="" class="w-full">
                 </div>
                 <div class="">
-                    <span class="font-bold">HALO GURU</span>
+                    <span class="font-bold">SOAL DAN PEMBAHASAN</span>
                     <p class="text-sm text-justify">
-                        Halo Guru adalah layanan yang menghubungkan siswa dengan mentor secara langsung melalui
-                        chat. Siswa dan mentor dapat
-                        mendaftar secara mandiri, dan siswa memiliki kebebasan untuk memilih mentor dari daftar yang
-                        tersedia.
+                        Fitur Soal dan Pembahasan akan membantu siswa memahami soal dari setiap sub-bab di mata
+                        pelajaran pilihan dengan dilengkapi video pembahasan.
                     </p>
                 </div>
             </div>
@@ -456,9 +454,9 @@
                 </div>
                 <div class="my-4">
                     <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8 text-justify">
-                        Kami tidak hanya menawarkan produk, tetapi menciptakan pengalaman yang relevan dan bermakna bagi
-                        konsumen kami. Dengan pendekatan Konsep STAR,
-                        tujuan kami adalah:
+                        BelajarCerdas.id tidak menawarkan produk edukasi, melainkan sebuah pengalaman belajar yang
+                        relevan dan bermakna bagi Siswa dan Orang Tua. Dengan pendekatan Konsep STAR (Situation Task
+                        Action Result), tujuan kami adalah:
                     </p>
                 </div>
                 <!-- Right Side: icon text Content -->
@@ -466,25 +464,20 @@
                     <div class="flex gap-2">
                         <img src="{{ asset('image/globe-icon.png') }}" alt="" class="w-6 object-contain">
                         <span class="text-justify text-sm">
-                            Menghadirkan Pembelajaran yang Relevan dan Bermakna. Kami fokus menjual konsep dan
-                            pengalaman, bukan sekadar produk.
+                            Menyediakan Solusi Belajar yang Seamless bagi Siswa untuk Meraih Hasil Belajar yang Optimal.
                         </span>
                     </div>
                     <div class="flex gap-2">
                         <img src="{{ asset('image/science-icon.png') }}" alt="" class="w-6 object-contain">
                         <span class="text-justify text-sm">
-                            Menyediakan Solusi Pendidikan yang Seamless. Menggabungkan pembelajaran online dan offline
-                            untuk menyelesaikan
-                            tantangan.
+                            Menghadirkan Pengalaman Belajar yang Bermakna di Ponsel, Gawai, dan Laptop Para Siswa.
                         </span>
                     </div>
                     <div class="flex gap-2">
                         <img src="{{ asset('image/telescope-icon.png') }}" alt=""
                             class="w-6 object-contain">
                         <span class="text-justify text-sm">
-                            Menjangkau prospek yang sesuai: sekolah, guru, dan siswa yang berkeputusan untuk
-                            berinvestasi dalam pendidikan
-                            berkualitas.
+                            Membangun Kemitraan dengan Sekolah, Guru, dan Orang Tua serta Siswa dengan Konsep STAR.
                         </span>
                     </div>
                 </div>

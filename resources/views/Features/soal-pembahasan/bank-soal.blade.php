@@ -15,8 +15,6 @@
                         </button>
                     </div>
 
-                    TEST SYNC
-
                     <!--- modal bulkupload soal pembahasan --->
                     <dialog id="my_modal_1" class="modal">
                         <div class="modal-box bg-white w-max">
