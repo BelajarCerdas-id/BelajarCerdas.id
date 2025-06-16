@@ -8,55 +8,34 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> <!--- alpine js cdn ---->
-
-    <!--- fotnt awesome CDN ---->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
-    <!--- daisy cdn ---->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css">
-
-    <link rel="stylesheet" href="{{ asset('css/BelajarCerdas.css') }}"> <!--- link CSS ---->
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!--- source script filter data(ajax) ---->
-
-    <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script> <!--- CKEDITOR 5 ---->
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script> <!-- upload PDF ---->
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!--- sweetAlert CDN  ---->
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!--- chart js cdn ---->
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"> <!--- flatpickr ---->
-
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> <!--- flatpickr ---->
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" /> <!-- swiper js CDN -->
-
-    <script src="https://cdn.tailwindcss.com"></script> <!--- tailwind cdn ---->
-    @vite('resources/css/app.css') <!--- vite ---->
-    @vite('resources/js/app.js') <!--- vite pusher ---->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-    <!--- script midtrans snap js (diganti "sandbox" nya kalau suda production)) ---->
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}">
-    </script>
-
-    <!--- link for icon video ---->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
-
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
     <title>Belajar Cerdas</title>
     <link rel="shortcut icon" type="image/png" href="{{ asset('image/favicon-bc/logobc_icon.png') }}">
 
+    {{-- Preconnect hints for essential external resources --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://unpkg.com">
+
+    {{-- Fonts: ensure display=swap --}}
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    {{-- Your compiled app.css (includes Tailwind, DaisyUI if configured) --}}
+    @vite('resources/css/app.css')
+
+    {{-- Your custom BelajarCerdas.css (consider merging into app.css if possible) --}}
+    <link rel="stylesheet" href="{{ asset('css/BelajarCerdas.css') }}">
+
+    {{-- Asynchronously load Font Awesome (or self-host) --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"></noscript>
+
+    {{-- REMOVED: DaisyUI CDN (if integrated with Tailwind via @vite) --}}
+    {{-- REMOVED: All other CDN scripts (CKEditor, PDF.js, Chart.js, jQuery, Flatpickr, Swiper, SweetAlert2, Midtrans) --}}
 
 </head>
 
@@ -67,7 +46,15 @@
         }
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script> {{-- swiper js CDN --}}
+    {{-- Main application JavaScript (from Vite) --}}
+    @vite('resources/js/app.js')
+
+    {{-- Alpine.js (deferred is good) --}}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    {{-- This is where page-specific scripts or dynamic imports will be pushed --}}
+    @stack('scripts')
+
 </body>
 
 </html>
