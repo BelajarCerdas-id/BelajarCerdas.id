@@ -162,82 +162,11 @@
     <p>You do not have access to this pages.</p>
 @endif
 
-<script src="{{ asset('js/syllabus-services/paginate-syllabus-bab-ajax.js') }}"></script>
+<script src="{{ asset('js/syllabus-services/paginate-syllabus-bab-ajax.js') }}"></script> <!--- paginate bab ---->
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        window.Echo.channel('syllabus')
-            .listen('.syllabus.crud', (event) => {
-                paginateSyllabusBab();
-            });
-    });
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        setTimeout(function() {
-            document.getElementById('alertSuccess').remove();
-        }, 3000);
-
-        document.getElementById('btnClose').addEventListener('click', function() {
-            document.getElementById('alertSuccess').remove();
-        })
-    });
-</script>
-
-<script>
-    function historyBab(element) {
-        const modal = document.getElementById('my_modal_2');
-        const namaLengkap = element.getAttribute('data-nama_lengkap');
-        const status = element.getAttribute('data-status');
-        const updatedAt = element.getAttribute('data-updated_at');
-
-        document.getElementById('text-nama_lengkap').innerText = namaLengkap;
-        document.getElementById('text-status').innerText = status;
-        document.getElementById('text-updated_at').innerText = updatedAt;
-
-        modal.showModal();
-    }
-
-    function closeModal() {
-        const closeModal = document.getElementById('my_modal_3');
-        closeModal.close();
-    }
-</script>
+<!--- COMPONENTS ---->
+<script src="{{ asset('js/components/clear-error-on-input.js') }}"></script> <!--- clear error on input ---->
 
 
-<script>
-    document.getElementById('submit-button').addEventListener('click', function() {
-        const form = document.querySelector('#my_modal_1 form[action]');
-        form.submit(); // Submit the form
-    })
-</script>
-
-@if (session('formErrorId'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const modalId = 'my_modal_1_' + {{ session('formErrorId') }};
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.showModal();
-            }
-        })
-    </script>
-@endif
-
-<!---- buat hapus border dan text error ketika after validasi ------>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Cek semua inputan dan hapus error message ketika user mengetik
-        document.querySelectorAll('input, select, textarea').forEach(function(el) {
-            el.addEventListener('input', function() {
-                // Hapus error class
-                el.classList.remove('border-red-400');
-                const errorMessage = el.nextElementSibling;
-                if (errorMessage && errorMessage.classList.contains('text-red-500')) {
-                    errorMessage.textContent = '';
-                }
-            });
-        });
-    });
-</script>
+<!--- PUSHER LISTENER ---->
+<script src="{{ asset('js/pusher-listener/syllabus-services/list-bab-listener.js') }}"></script> <!--- pusher listener list bab ---->

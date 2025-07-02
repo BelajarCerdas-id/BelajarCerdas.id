@@ -257,7 +257,7 @@ $('#subBabForm').on('submit', function (e) {
                     document.getElementById('alertSuccess').remove();
                 });
 
-            // Memanggil fungsi untuk memuat ulang data
+                // Memanggil fungsi untuk memuat ulang data
                 paginateSyllabusSubBab();
             }
         },
@@ -272,6 +272,26 @@ $('#subBabForm').on('submit', function (e) {
         }
     });
 });
+
+
+// open modal history sub bab
+function historySubBab(element) {
+    const modal = document.getElementById('my_modal_2');
+    const namaLengkap = element.getAttribute('data-nama_lengkap');
+    const status = element.getAttribute('data-status');
+    const updatedAt = element.getAttribute('data-updated_at');
+
+    document.getElementById('text-nama_lengkap').innerText = namaLengkap;
+    document.getElementById('text-status').innerText = status;
+    document.getElementById('text-updated_at').innerText = updatedAt;
+
+    modal.showModal();
+}
+
+function closeModal() {
+    const closeModal = document.getElementById('my_modal_3');
+    closeModal.close();
+}
 
 // Event listener tombol "delete mapel" (open modal)
 $(document).off('click', '.btn-delete-sub-bab').on('click', '.btn-delete-sub-bab', function(e) {
@@ -333,7 +353,7 @@ $('#deleteSubBabForm').on('submit', function (e) {
                     document.getElementById('alertSuccess').remove();
                 });
 
-            // Memanggil fungsi untuk memuat ulang data
+                // Memanggil fungsi untuk memuat ulang data
                 paginateSyllabusSubBab();
             }
         },

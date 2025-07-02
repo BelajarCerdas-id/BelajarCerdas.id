@@ -45,13 +45,4 @@
 <script src="{{ asset('js/accordion-soal.js') }}"></script> <!-- accordion script -->
 
 <!--- PUSHER LISTENER ---->
-<script src="{{ asset('js/pusher-listener/soal-pembahasan/bank-soal-detail.js') }}"></script> <!--- pusher listener update soal in bank soal detail view ---->
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        window.Echo.channel('bankSoal')
-            .listen('.bank.soal', (e) => {
-                paginateBankSoalDetail();
-            });
-    });
-</script>
+<script src="{{ asset('js/pusher-listener/soal-pembahasan/bank-soal-detail.js') }}"></script> <!--- pusher listener insert bank soal and edit soal in bankSoal detail ---->

@@ -1,13 +1,25 @@
 function previewExcel(event, target) {
     var file = event.target.files[0];
+    var textOutput = document.getElementById('textPreview-' + target);
+    var textSize = document.getElementById('textSize-' + target);
+    var textPages = document.getElementById('textPages-' + target);
+    var textCircle = document.getElementById('textCircle-' + target);
+    var excelPreviewContainer = document.getElementById('excelPreviewContainer-' + target);
+    var excelLogo = document.getElementById('pdfLogo-' + target);
+
+    // Jika tidak ada file (user cancel), reset preview
+    if (!file) {
+        // reset excel preview
+        $('#excelPreviewContainer-bulkUpload-excel').addClass('hidden');
+        $('#textPreview-bulkUpload-excel').text('');
+        $('#textSize-bulkUpload-excel').text('');
+        $('#textPages-bulkUpload-excel').text('');
+        $('#textCircle-bulkUpload-excel').html('');
+        $('#logo-bulkUpload-excel img').attr('src', '').hide();
+        return;
+    }
 
     if (file && file.name.endsWith('.xlsx')) {
-        var textOutput = document.getElementById('textPreview-' + target);
-        var textSize = document.getElementById('textSize-' + target);
-        var textPages = document.getElementById('textPages-' + target);
-        var textCircle = document.getElementById('textCircle-' + target);
-        var excelPreviewContainer = document.getElementById('excelPreviewContainer-' + target);
-        var excelLogo = document.getElementById('pdfLogo-' + target);
 
         textOutput.innerHTML = truncateText(file.name, 20);
         textSize.innerHTML = formatFileSize(file.size);

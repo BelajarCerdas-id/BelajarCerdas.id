@@ -8,22 +8,25 @@
                     'message' => session('success-insert-data-kurikulum'),
                 ])
             @endif
-            <!--- alert nya menggunakan dari response json --->
-            <div id="alert-success-update-data-curiculum"></div>
-            <div id="alert-success-delete-data-curiculum"></div>
 
             @if (session('success-import-data-sub-bab'))
                 @include('components.alert.success-insert-data', [
                     'message' => session('success-import-data-sub-bab'),
                 ])
             @endif
+
+            <!--- alert nya menggunakan dari response json --->
+            <div id="alert-success-update-data-curiculum"></div>
+            <div id="alert-success-delete-data-curiculum"></div>
+            <div id="alert-success-import-syllabus"></div>
+
             <main>
                 <section class="bg-white shadow-lg p-6 rounded-lg border-gray-200 border-[1px]">
                     <!---- BulkUpload Button  ---->
                     <div class="flex justify-end mb-10 lg:mb-0">
                         <button
                             class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold h-8 px-6 rounded-lg shadow-md transition-all text-sm flex gap-2 items-center justify-center"
-                            onclick="my_modal_4_.showModal()">
+                            onclick="my_modal_4.showModal()">
                             <i class="fa-solid fa-circle-plus"></i>
                             Bulk Upload
                         </button>
@@ -156,33 +159,39 @@
                     </dialog>
 
                     <!---- modal BulkUpload  ---->
-                    <dialog id="my_modal_4_" class="modal">
+                    <dialog id="my_modal_4" class="modal">
                         <div class="modal-box bg-white w-max">
-                            <span class="text-md flex justify-center font-bold opacity-70">Upload Syllabus</span>
-                            <form action="{{ route('syllabus.bulkupload.sub-bab') }}" method="POST"
-                                enctype="multipart/form-data">
-                                @csrf
-                                <div class="w-full mt-8">
+
+                            <div class="flex justify-center font-bold opacity-70">
+                                <span class="">Upload Syllabus</span>
+                                <sup class="text-red-500 pl-1 pt-4 text-md">&#42;</sup>
+                            </div>
+
+                            <form id="bulkUpload-syllabus-form" enctype="multipart/form-data">
+                                <div class="w-full mt-4">
                                     <div class="w-full h-auto">
+
+                                        <!--- show bulkUpload word errors --->
+                                        <div id="error-bulkUpload-excel" class="my-4 max-h-42 overflow-y-auto"></div>
+
                                         <div class="text-xs mt-1">
                                             <span>Maksimum ukuran file 10MB. <br> File dapat dalam format .xlsx.</span>
                                         </div>
                                         <div class="upload-icon">
                                             <div class="flex flex-col max-w-[260px]">
                                                 <div id="excelPreview" class="max-w-[280px] cursor-pointer mt-4">
-                                                    <div id="excelPreviewContainer-civitas-data-sekolah"
+                                                    <div id="excelPreviewContainer-bulkUpload-excel"
                                                         class="bg-white shadow-lg rounded-lg w-max py-2 pr-4 border-[1px] border-gray-200 hidden">
                                                         <div class="flex items-center">
-                                                            <img id="pdfLogo-civitas-data-sekolah"
-                                                                class="w-[56px] h-max">
+                                                            <img id="pdfLogo-bulkUpload-excel" class="w-[56px] h-max">
                                                             <div class="mt-2 leading-5">
-                                                                <span id="textPreview-civitas-data-sekolah"
+                                                                <span id="textPreview-bulkUpload-excel"
                                                                     class="font-bold text-sm"></span><br>
-                                                                <span id="textSize-civitas-data-sekolah"
+                                                                <span id="textSize-bulkUpload-excel"
                                                                     class="text-xs"></span>
-                                                                <span id="textCircle-civitas-data-sekolah"
+                                                                <span id="textCircle-bulkUpload-excel"
                                                                     class="relative top-[-2px] text-[5px]"></span>
-                                                                <span id="textPages-civitas-data-sekolah"
+                                                                <span id="textPages-bulkUpload-excel"
                                                                     class="text-xs"></span>
                                                             </div>
                                                         </div>
@@ -193,26 +202,15 @@
                                     </div>
                                     <div
                                         class="content-upload w-[385px] h-9 bg-[#4189e0] hover:bg-blue-500 text-white font-bold rounded-lg mt-6 mb-2">
-                                        <label for="file-upload-civitas-data-sekolah"
+                                        <label for="bulkUpload-excel"
                                             class="w-full h-full flex justify-center items-center cursor-pointer gap-2">
                                             <i class="fa-solid fa-arrow-up-from-bracket"></i>
                                             <span>Upload File</span>
                                         </label>
-                                        <input id="file-upload-civitas-data-sekolah" name="file" class="hidden"
-                                            onchange="previewExcel(event, 'civitas-data-sekolah')" type="file"
-                                            accept=".xlsx, .xls, .csv">
+                                        <input id="bulkUpload-excel" name="bulkUpload-syllabus" class="hidden"
+                                            onchange="previewExcel(event, 'bulkUpload-excel')" type="file"
+                                            accept=".xlsx">
                                     </div>
-                                    @if (session('formError') === 'import-sub-bab')
-                                        <div
-                                            class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mt-2 h-max max-h-96 overflow-y-auto">
-                                            <p class="font-bold">Terjadi kesalahan dalam import data:</p>
-                                            <ul>
-                                                @foreach ($errors->all() as $error)
-                                                    <li>- {{ $error }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
                                 </div>
                                 <!-- Tombol Kirim -->
                                 <div class="flex justify-end mt-8">
@@ -235,89 +233,13 @@
     <p>You do not have access to this pages.</p>
 @endif
 
-<script src="{{ asset('js/syllabus-services/paginate-syllabus-kurikulum-ajax.js') }}"></script>
-<script src="{{ asset('js/upload-excel.js') }}"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        window.Echo.channel('syllabus')
-            .listen('.syllabus.crud', (event) => {
-                fetchFilteredDataSyllabusCuriculum();
-            });
-    });
-</script>
+<script src="{{ asset('js/syllabus-services/paginate-syllabus-kurikulum-ajax.js') }}"></script> <!--- paginate kurikulum ---->
+<script src="{{ asset('js/upload-excel.js') }}"></script> <!--- show excel ---->
+<script src="{{ asset('js/syllabus-services/form-action-bulkUpload-syllabus.js') }}"></script> <!--- form action bulkUpload syllabus ---->
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        setTimeout(function() {
-            document.getElementById('alertSuccess').remove();
-        }, 3000);
+<!--- COMPONENTS ---->
+<script src="{{ asset('js/components/clear-error-on-input.js') }}"></script> <!--- clear error on input ---->
 
-        document.getElementById('btnClose').addEventListener('click', function() {
-            document.getElementById('alertSuccess').remove();
-        })
-    });
-</script>
-
-<script>
-    function historyCuriculum(element) {
-        const modal = document.getElementById('my_modal_2');
-        const namaLengkap = element.getAttribute('data-nama_lengkap');
-        const status = element.getAttribute('data-status');
-        const updatedAt = element.getAttribute('data-updated_at');
-
-        document.getElementById('text-nama_lengkap').innerText = namaLengkap;
-        document.getElementById('text-status').innerText = status;
-        document.getElementById('text-updated_at').innerText = updatedAt;
-
-        modal.showModal();
-    }
-
-    function closeModal() {
-        const closeModal = document.getElementById('my_modal_3');
-        closeModal.close();
-    }
-</script>
-
-
-@if (session('formErrorId'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let modalId = "my_modal_1_" + {{ session('formErrorId') }};
-            let modal = document.getElementById(modalId);
-            if (modal) {
-                modal.showModal();
-            }
-        });
-    </script>
-@endif
-
-@if (session('formError') === 'import-sub-bab')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const modalId = 'my_modal_4_';
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.showModal();
-            }
-        })
-    </script>
-@endif
-
-
-<!---- buat hapus border dan text error ketika after validasi ------>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Cek semua inputan dan hapus error message ketika user mengetik
-        document.querySelectorAll('input, select, textarea').forEach(function(el) {
-            el.addEventListener('input', function() {
-                // Hapus error class
-                el.classList.remove('border-red-400');
-                const errorMessage = el.nextElementSibling;
-                if (errorMessage && errorMessage.classList.contains('text-red-500')) {
-                    errorMessage.textContent = '';
-                }
-            });
-        });
-    });
-</script>
+<!--- PUSHER LISTENER ---->
+<script src="{{ asset('js/pusher-listener/syllabus-services/list-kurikulum-listener.js') }}"></script> <!--- pusher listener list kurikulum ---->

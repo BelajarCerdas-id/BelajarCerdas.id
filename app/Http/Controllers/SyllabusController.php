@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\SyllabusCrud;
 use App\Imports\SyllabusImport;
+use App\Imports\SyllabusSheetImport;
 use App\Models\Bab;
 use App\Models\BabFeatureStatus;
 use App\Models\Fase;
@@ -13,12 +14,12 @@ use App\Models\Kurikulum;
 use App\Models\Mapel;
 use App\Models\SubBab;
 use App\Models\SubBabFeatureStatus;
-use App\Models\UserAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Validation\ValidationException;
 
 class SyllabusController extends Controller
 {
@@ -688,22 +689,41 @@ class SyllabusController extends Controller
         ]);
     }
 
-    public function bulkUploadSubBab(Request $request)
+    // FUNCTION BULKUPLOAD SYLLABUS (EXCEL)
+    public function bulkUploadSyllabus(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'file' => 'required|file|mimes:xlsx,xls,csv|max:10240',
+            'bulkUpload-syllabus' => 'required|file|mimes:xlsx,xls,csv|max:10240',
         ], [
-            'file.required' => 'File tidak boleh kosong.',
-            'file.mimes' => 'Format file harus xlsx, xls, atau csv.',
+            'bulkUpload-syllabus.required' => 'File tidak boleh kosong.',
+            'bulkUpload-syllabus.mimes' => 'Format file harus .xlsx.',
         ]);
 
-        if($request->file('file')) {
-            $userId = Auth::id();
-            Excel::import(new SyllabusImport($userId), $request->file('file'));
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => [
+                    'form_errors' => $validator->errors(),
+                    'excel_validation_errors' => [],
+                ]
+            ], 422);
+        }
 
-            return back()->with('success-import-data-sub-bab', 'Import Sub Bab berhasil.');
-        } else {
-            return back()->withErrors($validator)->with('formError', 'import-sub-bab')->withInput();
+        try {
+            $userId = Auth::id();
+            Excel::import(new SyllabusSheetImport($userId, $request->file('bulkUpload-syllabus')), $request->file('bulkUpload-syllabus'));
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Import syllabus berhasil.',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'errors' => [
+                    'form_errors' => [],
+                    'excel_validation_errors' => $e->errors()['import'] ?? [],
+                ]
+            ], 422);
         }
     }
+
 }

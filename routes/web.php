@@ -316,7 +316,7 @@ Route::fallback(function () {
     Route::get('/paginate-syllabus-service-sub-bab/{nama_kurikulum}/{kurikulum_id}/{fase_id}/{kelas_id}/{mapel_id}/{bab_id}', [FilterController::class, 'paginateSyllabusSubBab'])->name('syllabus.subBab');
 
     // BULKUPLOAD SYLLABUS
-    Route::post('/syllabus/bulkupload/sub-bab', [SyllabusController::class, 'bulkUploadSubBab'])->name('syllabus.bulkupload.sub-bab');
+    Route::post('/syllabus/bulkupload/syllabus', [SyllabusController::class, 'bulkUploadSyllabus'])->name('syllabus.bulkupload');
 
     // ENGLISH ZONE ACCESS MIDDLEWARE
     Route::middleware([CheckEnglishZone::class])->group(function () {
