@@ -60,21 +60,23 @@ $(document).ready(function () {
                 // Reset form (kecuali dropdown custom mapel sama image preview)
                 $('#questions-form')[0].reset();
 
-                $('#id_kelas').html('<option disabled selected>Harap pilih fase</option>').prop('disabled', true).removeClass('opacity-100 cursor-pointer').addClass('opacity-50 cursor-default');
-                $('#id_mapel').html('<option disabled selected>Harap pilih fase</option>').prop('disabled', true).removeClass('opacity-100 cursor-pointer').addClass('opacity-50 cursor-default');
-                $('#id_bab').html('<option disabled selected>Harap pilih mata pelajaran</option>').prop('disabled', true).removeClass('opacity-100 cursor-pointer').addClass('opacity-50 cursor-default');
+                $('#id_kelas').html('<option disabled selected>Pilih Kelas</option>').prop('disabled', true).removeClass('opacity-100 cursor-pointer').addClass('opacity-50 cursor-default');
+                $('#id_mapel').html('<option disabled selected>Pilih Mata Pelajaran</option>').prop('disabled', true).removeClass('opacity-100 cursor-pointer').addClass('opacity-50 cursor-default');
+                $('#id_bab').html('<option disabled selected>Pilih Bab</option>').prop('disabled', true).removeClass('opacity-100 cursor-pointer').addClass('opacity-50 cursor-default');
 
                 // Reset image preview
                 $('#file-upload').val('');
                 $('#imagePreview img').attr('src', '').hide();
                 $('#textPreview').text('');
 
+                // Nonaktifkan dropdown button (custom UI)
+                $('#dropdownButton').addClass('pointer-events-none opacity-50');
+
                 // Aktifkan ulang dropdown custom mapel
-                $('#dropdownButton').removeClass('pointer-events-none opacity-50'); // aktifkan interaksi
                 $('#id_mapel').prop('disabled', false); // jika pakai <select> tersembunyi
 
                 // Reset state terpilih sebelumnya
-                $('#selectedKurikulum').text('Harap pilih fase');
+                $('#selectedKurikulum').text('Pilih Mata Pelajaran');
                 $('#selectedIconKoin').html('');
                 $('#selectedKoin').text('');
 

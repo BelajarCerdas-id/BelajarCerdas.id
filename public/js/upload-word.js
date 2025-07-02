@@ -1,14 +1,26 @@
 function previewWord(event, target) {
     var file = event.target.files[0];
 
-    if (file && file.name.endsWith('.docx')) {
-        var textOutput = document.getElementById('textPreview-' + target);
-        var textSize = document.getElementById('textSize-' + target);
-        var textPages = document.getElementById('textPages-' + target);
-        var textCircle = document.getElementById('textCircle-' + target);
-        var wordPreviewContainer = document.getElementById('wordPreviewContainer-' + target);
-        var wordLogo = document.getElementById('logo-' + target);
+    var textOutput = document.getElementById('textPreview-' + target);
+    var textSize = document.getElementById('textSize-' + target);
+    var textPages = document.getElementById('textPages-' + target);
+    var textCircle = document.getElementById('textCircle-' + target);
+    var wordPreviewContainer = document.getElementById('wordPreviewContainer-' + target);
+    var wordLogo = document.getElementById('logo-' + target);
 
+    // Jika tidak ada file (user cancel), reset preview
+    if (!file) {
+        // reset word preview
+        $('#wordPreviewContainer-bulkUpload-word').addClass('hidden');
+        $('#textPreview-bulkUpload-word').text('');
+        $('#textSize-bulkUpload-word').text('');
+        $('#textPages-bulkUpload-word').text('');
+        $('#textCircle-bulkUpload-word').html('');
+        $('#logo-bulkUpload-word img').attr('src', '').hide();
+        return;
+    }
+
+    if (file && file.name.endsWith('.docx')) {
         textOutput.innerHTML = truncateText(file.name, 20);
         textSize.innerHTML = formatFileSize(file.size);
         textCircle.innerHTML = "<i class='fas fa-circle text-gray-500'></i>";

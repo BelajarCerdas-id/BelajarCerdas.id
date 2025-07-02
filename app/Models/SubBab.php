@@ -54,4 +54,8 @@ class SubBab extends Model
         return $this->hasMany(SubBabFeatureStatus::class, 'sub_bab_id');
     }
 
+    // SOAL PEMBAHASAN QUESTIONS
+    public function SoalPembahasanQuestions() {
+        return $this->hasOne(SoalPembahasanQuestions::class, 'sub_bab_id');
+    }
 }

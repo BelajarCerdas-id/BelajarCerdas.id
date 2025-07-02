@@ -113,6 +113,13 @@ function paginateSyllabusFase() {
             }
         });
     }
+    function bindPaginationLinks(kurikulumName, kurikulumId) {
+        $('.pagination-container-syllabus-fase').off('click', 'a').on('click', 'a', function(event) {
+            event.preventDefault(); // Cegah perilaku default link
+            const page = new URL(this.href).searchParams.get('page'); // Dapatkan nomor halaman dari link
+            fetchFilteredDataSyllabusFase(kurikulumName, kurikulumId, page); // Ambil data yang difilter untuk halaman yang ditentukan
+        });
+    }
 }
 
 $(document).ready(function () {
@@ -127,14 +134,6 @@ $(document).ready(function () {
     // Ambil semua saat halaman dimuat
     paginateSyllabusFase();
 });
-
-function bindPaginationLinks(kurikulumName, kurikulumId) {
-    $('.pagination-container-syllabus-fase').off('click', 'a').on('click', 'a', function(event) {
-        event.preventDefault(); // Cegah perilaku default link
-        const page = new URL(this.href).searchParams.get('page'); // Dapatkan nomor halaman dari link
-        fetchFilteredDataSyllabusFase(kurikulumName, kurikulumId, page); // Ambil data yang difilter untuk halaman yang ditentukan
-    });
-}
 
 // Event listener tombol "edit fase" (open modal)
 $(document).off('click', '.btn-edit-fase').on('click', '.btn-edit-fase', function(e) {

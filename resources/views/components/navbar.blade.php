@@ -23,7 +23,7 @@
                     @endif
                     <a href="{{ route('homePage') }}" class="">
                         <!-- logo bc -->
-                        <img src="{{ asset('image/logoBC.webp') }}" class="w-[80px]">
+                        <img src="{{ asset('image/logoBC.png') }}" class="w-[80px]">
                     </a>
                 </div>
                 @if (Auth::user() != null)
@@ -215,7 +215,7 @@
                 @if (Auth::user() === null)
                     <a href="{{ route('homePage') }}" class="relative left-[25px]">
                         <!-- logo bc -->
-                        <img src="{{ asset('image/logoBC.webp') }}" class="w-[80px]">
+                        <img src="{{ asset('image/logoBC.png') }}" class="w-[80px]">
                     </a>
                 @else
                     <div class="flex items-center">
@@ -230,7 +230,7 @@
                         </div>
                         <!-- logo bc -->
                         <a href="{{ route('homePage') }}" class="relative left-[25px]">
-                            <img src="{{ asset('image/logoBC.webp') }}" class="w-[80px]">
+                            <img src="{{ asset('image/logoBC.png') }}" class="w-[80px]">
                         </a>
                     </div>
                     <!-- profile user -->
@@ -410,7 +410,7 @@
                     @endif
                     <a href="{{ route('homePage') }}" class="">
                         <!-- logo bc -->
-                        <img src="{{ asset('image/logoBC.webp') }}" class="w-[80px]">
+                        <img src="{{ asset('image/logoBC.png') }}" class="w-[80px]">
                     </a>
                 </div>
                 @if (Auth::user() != null)

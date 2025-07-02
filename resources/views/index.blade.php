@@ -113,7 +113,7 @@
                 </div>
             </div>
             <div class="flex gap-4 bg-white rounded-3xl p-4 shadow-[0_10px_24px_rgba(0,0,0,0.23)]">
-                <div class="flex items-center w-[200px]">
+                <div class="flex items-center w-[130px]">
                     <img src="image/asset icon landing page.png" alt="" class="w-full">
                 </div>
                 <div class="">
@@ -185,13 +185,13 @@
                         </label>
                         <input type="radio" id="haloGurServiceRadio" name="radioService">
                         <label for="haloGurServiceRadio" class="flex items-center gap-4 serviceOption"
-                            onclick="haloGurServiceContent()">
+                            onclick="soalPembahasanServiceContent()">
                             <div class="icon-service">
                                 <i class="fa-solid fa-jedi text-4xl"></i>
                             </div>
                             <div class="title-service">
-                                <h1 class="font-bold">Halo Guru</h1>
-                                <span>Koneksi Langsung dengan Mentor Terbaik</span>
+                                <h1 class="font-bold">Soal Dan Pembahasan</h1>
+                                <span>Mengerjakan dan Memahami Soal Menjadi Lebih Mudah dengan Video Pembahasan</span>
                             </div>
                         </label>
                         <input type="radio" id="englishZoneServiceRadio" name="radioService">
@@ -236,29 +236,13 @@
                                 kapan saja dengan bimbingan langsung dari tim ahli kami.
                             </p>
                         </div>
-                        <div class="w-full h-full flex flex-col duration-700 ease-out hidden"
-                            id="haloGurServiceContent">
+                        <div class="w-full h-full duration-700 ease-out hidden" id="soalPembahasanServiceContent">
                             <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8">
-                                Halo Guru adalah layanan yang menghubungkan siswa dengan mentor secara langsung melalui
-                                chat. Siswa dan mentor dapat
-                                mendaftar secara mandiri, dan siswa memiliki kebebasan untuk memilih mentor dari daftar
-                                yang
-                                tersedia. Dengan
-                                pendekatan
-                                crowdsource, pertanyaan siswa dijawab secara cepat dan akurat.
-                            </p>
-                            <p class="mt-4 text-gray-600 text-sm md:text-base leading-6 md:leading-8">
-                                Layanan ini dirancang untuk memberikan pengalaman belajar yang fleksibel dan personal,
-                                memastikan setiap siswa
-                                mendapatkan bimbingan sesuai kebutuhan mereka. Halo Guru adalah solusi tepat untuk
-                                belajar
-                                efektif dengan bimbingan
-                                ahli
-                                kapan saja.
+                                Fitur Soal dan Pembahasan akan membantu siswa memahami soal dari setiap sub-bab di mata
+                                pelajaran pilihan dengan dilengkapi video pembahasan.
                             </p>
                         </div>
-                        <div class="w-full h-full flex flex-col duration-700 ease-out hidden"
-                            id="englishZoneServiceContent">
+                        <div class="w-full h-full duration-700 ease-out hidden" id="englishZoneServiceContent">
                             <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8">
                                 English Zone adalah layanan pembelajaran bahasa Inggris yang menghubungkan siswa dengan
                                 mentor pilihan mereka. Siswa
@@ -298,7 +282,7 @@
                 class="font-bold opacity-70 h-10 flex items-center justify-center border-b">{{ $item->nama_fitur }}</span>
 
             <!-- Deskripsi produk -->
-            <section class="px-4 flex flex-col gap-4 overflow-y-auto max-h-69">
+            <section class="px-4 flex flex-col gap-4 overflow-y-auto max-h-69 overflow-hidden">
                 @foreach ($descriptionsFeatures[$item->nama_fitur]['descriptions'] ?? [] as $desc)
                     <span class="inline-flex gap-1 text-sm">
                         <i class="fa-solid fa-circle-check text-green-500 relative top-[2px]"></i>
@@ -491,7 +475,7 @@
 
 <script>
     var tanyaServices = document.getElementById('tanyaServiceContent');
-    var haloGurServices = document.getElementById('haloGurServiceContent');
+    var haloGurServices = document.getElementById('soalPembahasanServiceContent');
     var englishZoneServices = document.getElementById('englishZoneServiceContent');
 
     function tanyaServiceContent() {
@@ -501,7 +485,7 @@
         bimbelMapelUmumServices.style.display = "none";
     }
 
-    function haloGurServiceContent() {
+    function soalPembahasanServiceContent() {
         haloGurServices.style.display = "block";
         tanyaServices.style.display = "none";
         englishZoneServices.style.display = "none";

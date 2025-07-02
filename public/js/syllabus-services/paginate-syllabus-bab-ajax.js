@@ -142,7 +142,13 @@ function paginateSyllabusBab() {
             }
         });
     }
-
+    function bindPaginationLinks(kurikulumName, kurikulumId, faseId, kelasId, mapelId) {
+        $('.pagination-container-syllabus-bab').off('click', 'a').on('click', 'a', function(event) {
+            event.preventDefault(); // Cegah perilaku default link
+            const page = new URL(this.href).searchParams.get('page'); // Dapatkan nomor halaman dari link
+            fetchFilteredDataSyllabusBab(kurikulumName, kurikulumId, faseId, kelasId, mapelId, page); // Ambil data yang difilter untuk halaman yang ditentukan
+        });
+    }
 }
 
 $(document).ready(function () {
@@ -187,16 +193,6 @@ $(document).ready(function () {
             });
         });
 });
-
-
-function bindPaginationLinks(kurikulumName, kurikulumId, faseId, kelasId, mapelId) {
-    $('.pagination-container-syllabus-bab').off('click', 'a').on('click', 'a', function(event) {
-        event.preventDefault(); // Cegah perilaku default link
-        const page = new URL(this.href).searchParams.get('page'); // Dapatkan nomor halaman dari link
-        fetchFilteredDataSyllabusBab(kurikulumName, kurikulumId, faseId, kelasId, mapelId, page); // Ambil data yang difilter untuk halaman yang ditentukan
-    });
-}
-
 
 // Event listener tombol "edit mapel" (open modal)
 $(document).off('click', '.btn-edit-bab').on('click', '.btn-edit-bab', function(e) {

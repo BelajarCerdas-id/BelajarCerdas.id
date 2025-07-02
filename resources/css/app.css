@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* @import "tailwindcss/preflight";
+@import "tailwindcss/utilities"; */
+@plugin "daisyui";
+
+/* @import "tailwindcss";
+
+@source "..*.blade.php";
+/* @source "..*.js"; */
+
 /* @layer components {
     .item .activeIcon {
         @apply hidden;

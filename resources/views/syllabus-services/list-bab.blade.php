@@ -57,7 +57,8 @@
                                     <th class="border border-gray-300 w-[80%] text-[14px] text-center" rowspan="2">
                                         Detail
                                     </th>
-                                    <th class="!text-center border border-gray-300" colspan="2">
+                                    <th class="!text-center border border-gray-300"
+                                        colspan="{{ count($dataFeaturesRoles) ?? 0 }}">
                                         Features
                                     </th>
                                     <th class="!text-center border border-gray-300" rowspan="2">

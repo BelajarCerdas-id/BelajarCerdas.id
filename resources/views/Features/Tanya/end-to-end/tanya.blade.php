@@ -80,7 +80,7 @@
                                 <select name="kelas_id" id="id_kelas"
                                     class="bg-white shadow-lg h-12 border-gray-200 border outline-none rounded-md px-2 opacity-50 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-default"
                                     data-old-kelas="{{ old('kelas_id') }}" disabled>
-                                    <option class="hidden">Harap pilih fase</option>
+                                    <option class="hidden">Pilih Kelas</option>
                                 </select>
                                 <span id="error-kelas_id" class="text-red-500 font-bold text-xs pt-2"></span>
                             </div>
@@ -101,10 +101,11 @@
                                     <div class="w-full relative my-2 border-gray-200 border outline-none"
                                         id="dropdownWrapper">
                                         <div id="dropdownButton"
-                                            class="h-12 px-4 bg-white shadow-lg cursor-pointer flex justify-between items-center font-bold pointer-events-none opacity-50"
+                                            class="h-12 pl-4 pr-1 bg-white shadow-lg cursor-pointer flex justify-between items-center font-bold pointer-events-none opacity-50"
                                             onclick="toggleDropdown()">
                                             <!--- left content ---->
-                                            <span id="selectedKurikulum" class="!font-normal">Harap pilih fase</span>
+                                            <span id="selectedKurikulum" class="!font-normal">Pilih Mata
+                                                Pelajaran</span>
                                             <!--- right content ---->
                                             <div class="flex items-center gap-8">
                                                 <!--- label harga koin dan font awesome --->
@@ -112,7 +113,7 @@
                                                     <span id="selectedIconKoin"></span>
                                                     <span id="selectedKoin"></span>
                                                 </div>
-                                                <i class="fas fa-chevron-up transition-transform duration-500 text-xs"
+                                                <i class="fas fa-chevron-down transition-transform duration-500 text-xs font-bold"
                                                     id="dropdownArrow"></i>
                                             </div>
                                         </div>
@@ -130,7 +131,7 @@
                                 <select name="bab_id" id="id_bab"
                                     class="bg-white shadow-lg h-12 border-gray-200 border outline-none rounded-md px-2 opacity-50 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-default"
                                     data-old-bab="{{ old('bab_id') }}" disabled>
-                                    <option class="hidden">Harap pilih mata pelajaran</option>
+                                    <option class="hidden">Pilih Bab</option>
                                 </select>
                                 <span id="error-bab_id" class="text-red-500 font-bold text-xs pt-2"></span>
                             </div>

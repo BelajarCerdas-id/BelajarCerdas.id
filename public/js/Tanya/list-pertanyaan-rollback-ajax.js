@@ -11,81 +11,81 @@ function fetchFilteredDataTanyaRollback(page = 1) {
 
         if (data.data.length > 0) {
 
-        $.each(data.data, function (index, application) {
-        const formatDate = (dateString) => {
-        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            $.each(data.data, function (index, application) {
+            const formatDate = (dateString) => {
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
-        const date = new Date(dateString);
-        const dayName = days[date.getDay()];
-        const day = date.getDate();
-        const monthName = months[date.getMonth()];
-        const year = date.getFullYear();
+                const date = new Date(dateString);
+                const dayName = days[date.getDay()];
+                const day = date.getDate();
+                const monthName = months[date.getMonth()];
+                const year = date.getFullYear();
 
-        return `${dayName}, ${day}-${monthName}-${year}`;
-    };
+                return `${dayName}, ${day}-${monthName}-${year}`;
+            };
 
-    const timeFormatter = new Intl.DateTimeFormat('id-ID', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
+            const timeFormatter = new Intl.DateTimeFormat('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+            });
+
+            const createdAt = application.created_at ? `${formatDate(application.created_at)}, ${timeFormatter.format(new Date(application.created_at))}` : 'Tanggal tidak tersedia';
+
+            const nl2br = (text) => {
+                if (!text) return '';
+                return text.replace(/\n/g, '<br>');
+            };
+
+            const escapeHtml = (text) => {
+                return text
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            };
+
+            // ini untuk url yang js dengan html nya terpisah, route dilakukan di controller nya bukan di sini
+            const limitString = (str, limit) => str.length > limit ? str.substring(0, limit) + '...' : str;
+            const updateIsBeingViewed = data.updateIsBeingViewed.replace(':id', application.id);
+
+        $('#tableListTanyaRollback').append(`
+            <tr class="text-xs">
+                <td class="td-table !text-black !text-center">${index + 1}</td>
+                <td class="td-table !text-black !text-center">${(application.student?.student_profiles?.nama_lengkap || '')}</td>
+                <td class="td-table !text-black !text-center">${application.kelas?.kelas || ''}</td>{!! nl2br(e($tanya->pertanyaan)) !!}
+                <td class="td-table !text-black">${nl2br(escapeHtml(application.pertanyaan))}</td>
+                <td class="td-table !text-black !text-center">${application.mapel?.mata_pelajaran}</td>
+                <td class="td-table !text-black !text-center">${application.bab?.nama_bab}</td>
+                <td class="td-table !text-black !text-center">${createdAt}</td>
+                <td class="td-table !text-black !text-center">
+                    ${
+                        application.is_being_viewed
+                        ? `<span class="text-gray-500 italic">Sedang Dilihat</span>`
+                        : `-`
+                    }
+                </td>
+                <td class="td-table !text-black !text-center">
+                    ${
+                        application.is_being_viewed
+                        ? `${application.viewed_by?.mentor_profiles?.nama_lengkap} <br>
+                            ${application.viewed_by?.no_hp}
+                        `
+                        : `-`
+                    }
+                </td>
+                <td class="td-table !text-black !text-center">
+                    ${
+                        application.is_being_viewed
+                        ? `<a href="${updateIsBeingViewed}" class="btn-rollback-question text-blue-500" data-id="${application.id}">Kembalikan ke antrean</a>`
+                        : `-`
+                    }
+                </td>
+            </tr>
+        `);
     });
-
-    const createdAt = application.created_at ? `${formatDate(application.created_at)}, ${timeFormatter.format(new Date(application.created_at))}` : 'Tanggal tidak tersedia';
-
-    const nl2br = (text) => {
-        if (!text) return '';
-        return text.replace(/\n/g, '<br>');
-    };
-
-    const escapeHtml = (text) => {
-        return text
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
-    };
-
-    // ini untuk url yang js dengan html nya terpisah, route dilakukan di controller nya bukan di sini
-    const limitString = (str, limit) => str.length > limit ? str.substring(0, limit) + '...' : str;
-    const updateIsBeingViewed = data.updateIsBeingViewed.replace(':id', application.id);
-
-    $('#tableListTanyaRollback').append(`
-        <tr class="text-xs">
-            <td class="td-table !text-black !text-center">${index + 1}</td>
-            <td class="td-table !text-black !text-center">${(application.student?.student_profiles?.nama_lengkap || '')}</td>
-            <td class="td-table !text-black !text-center">${application.kelas?.kelas || ''}</td>{!! nl2br(e($tanya->pertanyaan)) !!}
-            <td class="td-table !text-black">${nl2br(escapeHtml(application.pertanyaan))}</td>
-            <td class="td-table !text-black !text-center">${application.mapel?.mata_pelajaran}</td>
-            <td class="td-table !text-black !text-center">${application.bab?.nama_bab}</td>
-            <td class="td-table !text-black !text-center">${createdAt}</td>
-            <td class="td-table !text-black !text-center">
-                ${
-                    application.is_being_viewed
-                    ? `<span class="text-gray-500 italic">Sedang Dilihat</span>`
-                    : `-`
-                }
-            </td>
-            <td class="td-table !text-black !text-center">
-                ${
-                    application.is_being_viewed
-                    ? `${application.viewed_by?.mentor_profiles?.nama_lengkap} <br>
-                        ${application.viewed_by?.no_hp}
-                    `
-                    : `-`
-                }
-            </td>
-            <td class="td-table !text-black !text-center">
-                ${
-                    application.is_being_viewed
-                    ? `<a href="${updateIsBeingViewed}" class="btn-rollback-question text-blue-500" data-id="${application.id}">Kembalikan ke antrean</a>`
-                    : `-`
-                }
-            </td>
-        </tr>
-    `);
-});
 
     // Append pagination links
         $('.pagination-container-tanya-rollback').html(data.links);

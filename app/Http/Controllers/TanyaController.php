@@ -42,7 +42,8 @@ use Illuminate\Validation\Rule;
 
 class TanyaController extends Controller
 {
-    // FUNCTION VIEW TANYA
+    // END TO END
+    // function view tanya (student & mentor)
     public function index()
     {
         // mengambil tanggal hari ini
@@ -89,91 +90,7 @@ class TanyaController extends Controller
         return view('Features.Tanya.end-to-end..tanya', compact('getTanya', 'historyStudent', 'historyStudentAnswered', 'historyStudentReject', 'teacherHistoryRestore', 'siswaHistoryRestore', 'dataAccept',  'countDataTanyaAnsweredUser', 'countDataTanyaRejectedUser', 'historyCoinDaily', 'getFase'));
     }
 
-    // HISTORY CONTENT DAILY TANYA UNANSWERED, ANSWERED, REJECTED WITH PUSHER (student)
-    function getHistoryUnansweredTanya(Request $request)
-    {
-        $today = now();
-
-        // history belum terjawab
-        $historyStudentUnAnswered = Tanya::with('Kelas', 'Mapel', 'Bab')->withTrashed()->where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')
-        ->where('status_soal', 'Menunggu')->whereDate('created_at', $today)->get();
-
-        return response()->json([
-            'data' => $historyStudentUnAnswered
-        ]);
-    }
-
-    function getHistoryAnsweredTanya(Request $request)
-    {
-        $today = now();
-
-        // history terjawab
-        $historyStudentAnswered = Tanya::with('Kelas', 'Mapel', 'Bab')->onlyTrashed()->where('user_id', Auth::user()->id)
-        ->where('status_soal', 'Diterima')->orderBy('updated_at', 'desc')
-        ->whereDate('created_at', $today)->get();
-
-        $data = $historyStudentAnswered->map(function ($item) {
-            $item->questionAnswerDaily = route('tanya.updateStatusSoalRestore', ['id' => $item->id]);
-            return $item;
-        });
-
-        return response()->json([
-            'data' => $historyStudentAnswered
-        ]);
-    }
-
-    function getHistoryRejectedTanya(Request $request)
-    {
-        $today = now();
-
-        // history ditolak
-        $historyStudentRejected = Tanya::with('Kelas', 'Mapel', 'Bab')->onlyTrashed()->where('user_id', Auth::user()->id)
-        ->where('status_soal', 'Ditolak')->orderBy('updated_at', 'desc')
-        ->whereDate('created_at', $today)->get();
-
-        $data = $historyStudentRejected->map(function ($item) {
-            $item->questionRejectedDaily = route('tanya.updateStatusSoalRestore', ['id' => $item->id]);
-            return $item;
-        });
-
-        return response()->json([
-            'data' => $historyStudentRejected
-        ]);
-    }
-
-    // Claim koin tanya harian
-    public function claimCoinDaily(Request $request)
-    {
-        $user = Auth::user();
-
-        $historyCoinDaily = CoinHistory::where('user_id', $user->id)->where('tipe_koin', 'Masuk')
-        ->where('sumber_koin', 'Koin Harian')->whereDate('created_at', now())->first();
-
-        $tanyaCoinUsers = TanyaUserCoin::where('user_id', $user->id)->first();
-
-        if(!$tanyaCoinUsers) {
-            TanyaUserCoin::create([
-                'user_id' => $user->id,
-                'jumlah_koin' => 10
-            ]);
-        } else {
-            $tanyaCoinUsers->update([
-                'user_id' => $user->id,
-                'jumlah_koin' => $tanyaCoinUsers->jumlah_koin + 10
-            ]);
-        }
-
-        CoinHistory::create([
-            'user_id' => $user->id,
-            'jumlah_koin' => 10,
-            'tipe_koin' => 'Masuk',
-            'sumber_koin' => 'Koin Harian',
-        ]);
-
-        return redirect()->route('tanya.index')->with('success-claim-daily-coin', 'Klaim koin tanya harian berhasil!');
-    }
-
-    // INSERT PERTANYAAN (student)
+    // function insert question (student)
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -245,7 +162,7 @@ class TanyaController extends Controller
         ]);
     }
 
-    // FUNCTION EDIT PERTANYAAN (mentor)
+    // function edit question (mentor)
     public function edit(string $id)
     {
         $getTanya = Tanya::with('Student.StudentProfiles', 'Kelas', 'Mapel', 'Bab')->find($id); // for answer
@@ -254,14 +171,15 @@ class TanyaController extends Controller
 
         $getRestore = Tanya::withTrashed()->findOrFail($id);
 
-        if(!$getTanya or !$postReject or !$getRestore) {
+
+        if (!$getTanya || !$postReject || !$getRestore ||$getTanya->is_being_viewed && $getTanya->viewed_by !== Auth::user()->id) {
             return redirect('/tanya');
         }
 
         return view('Features.Tanya.end-to-end.view', compact('getTanya', 'postReject', 'getRestore'));
     }
 
-    // FUNCTION MARK VIEWED "lihat soal" menjadi "sedang dilihat" (mentor)
+    // function mark viewed "lihat soal" menjadi "sedang dilihat" (mentor)
     public function markViewed($id)
     {
         $currentMentorId = Auth::user()->id;
@@ -301,19 +219,22 @@ class TanyaController extends Controller
         }
     }
 
-    // FUNCTION MARK VIEWED "lihat soal" menjadi "sedang dilihat" back button di view pertanyaan (mentor)
+    // function mark viewed "lihat soal" menjadi "tidak sedang dilihat" back button di view pertanyaan (mentor)
     public function markViewedBackButton($id)
     {
         $updateLihatBackButton = Tanya::where('id',$id)->firstOrFail();
 
-        $updateLihatBackButton->update(['is_being_viewed' => false]);
+        $updateLihatBackButton->update([
+            'is_being_viewed' => false,
+            'viewed_by' => null
+        ]);
 
         broadcast(new QuestionAsked($updateLihatBackButton))->toOthers();
 
         return redirect('/tanya');
     }
 
-    // FUNCTION JAWAB PERTANYAAN DITERIMA STUDENT (mentor)
+    // function answer question 'diterima' student (mentor)
     public function update(Request $request, string $id)
     {
         $user = Auth::user();
@@ -412,7 +333,7 @@ class TanyaController extends Controller
     }
 
 
-    // FUNCTION JAWAB PERTANYAAN DITOLAK STUDENT (mentor)
+    // function reject question 'ditolak' student (mentor)
     public function updateReject(Request $request, string $id)
     {
         $user = Auth::user();
@@ -479,7 +400,7 @@ class TanyaController extends Controller
         return redirect('/tanya')->with('success-reject-tanya', 'Pertanyaan berhasil ditolak!');
     }
 
-    // FUNCTION UNTUK UPDATE KOIN STUDENT SECARA REALTIME
+    // function for update koin student in realtime
     public function getKoinStudent(Request $request)
     {
         $user = Auth::user();
@@ -491,21 +412,121 @@ class TanyaController extends Controller
             'jumlah_koin' => $tanyaKoinUsers->jumlah_koin
         ]);
     }
+
     public function restore($id)
     {
         $user = Tanya::withTrashed()->with('Student.StudentProfiles', 'Mentor.MentorProfiles')->findOrFail($id);
+
         $user->restore();
+
         return redirect()->route('tanya')->with('flashdata', 'user restores succcessfully.');
     }
 
+    // function for show onlyTrashed question student (student & mentor)
     public function viewRestore(string $id)
     {
-        // findOrFail berfungsi untuk mencari semua record berdasarkan primary key (biasanya ID)
-        $getRestore = Tanya::with('Student.StudentProfiles', 'Mentor.MentorProfiles', 'Kelas', 'Mapel', 'Bab')->withTrashed()->findOrFail($id);
+        // untuk menampilkan data tanya yang sudah dijawab sesuai dengan id user
+        $getRestore = Tanya::with('Student.StudentProfiles', 'Mentor.MentorProfiles', 'Kelas', 'Mapel', 'Bab')->withTrashed()->where(function ($query) {
+            $query->where('user_id', Auth::user()->id)->orWhere('mentor_id', Auth::user()->id);
+        })->find($id);
+
+        if(!$getRestore) {
+            return redirect('/tanya');
+        }
+
         return view('Features.Tanya.end-to-end.restore', compact('getRestore'));
     }
 
-    //updateStatusSoal di riwayat harian per satuan klik (student)
+    // CLAIM COIN DAILY TANYA (student)
+    public function claimCoinDaily(Request $request)
+    {
+        $user = Auth::user();
+
+        $historyCoinDaily = CoinHistory::where('user_id', $user->id)->where('tipe_koin', 'Masuk')
+        ->where('sumber_koin', 'Koin Harian')->whereDate('created_at', now())->first();
+
+        $tanyaCoinUsers = TanyaUserCoin::where('user_id', $user->id)->first();
+
+        if(!$tanyaCoinUsers) {
+            TanyaUserCoin::create([
+                'user_id' => $user->id,
+                'jumlah_koin' => 10
+            ]);
+        } else {
+            $tanyaCoinUsers->update([
+                'user_id' => $user->id,
+                'jumlah_koin' => $tanyaCoinUsers->jumlah_koin + 10
+            ]);
+        }
+
+        CoinHistory::create([
+            'user_id' => $user->id,
+            'jumlah_koin' => 10,
+            'tipe_koin' => 'Masuk',
+            'sumber_koin' => 'Koin Harian',
+        ]);
+
+        return redirect()->route('tanya.index')->with('success-claim-daily-coin', 'Klaim koin tanya harian berhasil!');
+    }
+
+
+    // HISTORY CONTENT DAILY TANYA UNANSWERED, ANSWERED, REJECTED WITH PUSHER (student)
+    // daily history unAnswered student
+    public function getHistoryUnansweredTanya(Request $request)
+    {
+        $today = now();
+
+        // history belum terjawab
+        $historyStudentUnAnswered = Tanya::with('Kelas', 'Mapel', 'Bab')->withTrashed()->where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')
+        ->where('status_soal', 'Menunggu')->whereDate('created_at', $today)->get();
+
+        return response()->json([
+            'data' => $historyStudentUnAnswered
+        ]);
+    }
+
+    // daily history answered student
+    public function getHistoryAnsweredTanya(Request $request)
+    {
+        $today = now();
+
+        // history terjawab
+        $historyStudentAnswered = Tanya::with('Kelas', 'Mapel', 'Bab')->onlyTrashed()->where('user_id', Auth::user()->id)
+        ->where('status_soal', 'Diterima')->orderBy('updated_at', 'desc')
+        ->whereDate('created_at', $today)->get();
+
+        $data = $historyStudentAnswered->map(function ($item) {
+            $item->questionAnswerDaily = route('tanya.updateStatusSoalRestore', ['id' => $item->id]);
+            return $item;
+        });
+
+        return response()->json([
+            'data' => $historyStudentAnswered
+        ]);
+    }
+
+    // daily history rejected student
+    public function getHistoryRejectedTanya(Request $request)
+    {
+        $today = now();
+
+        // history ditolak
+        $historyStudentRejected = Tanya::with('Kelas', 'Mapel', 'Bab')->onlyTrashed()->where('user_id', Auth::user()->id)
+        ->where('status_soal', 'Ditolak')->orderBy('updated_at', 'desc')
+        ->whereDate('created_at', $today)->get();
+
+        $data = $historyStudentRejected->map(function ($item) {
+            $item->questionRejectedDaily = route('tanya.updateStatusSoalRestore', ['id' => $item->id]);
+            return $item;
+        });
+
+        return response()->json([
+            'data' => $historyStudentRejected
+        ]);
+    }
+
+    // UPDATE STATUS QUESTION IN HISTORY DAILY EVERY HISTORY IS CLICKED
+    //update status soal riwayat harian per satuan klik (student)
     public function markQuestionAsReadById($id)
     {
         $getTanya = Tanya::onlyTrashed()->where('status_soal_student', 'Belum Dibaca')
@@ -523,10 +544,11 @@ class TanyaController extends Controller
         ]);
     }
 
-    //updateStatusSoal semua di riwayat harian dalam satu klik menggunakan button (student)
+    //update semua status soal di riwayat harian dalam satu klik menggunakan button (student)
     public function markAllQuestionsAsReadById($id)
     {
-        $getTanyaAnswered = Tanya::onlyTrashed()->where('user_id', $id)->where('status_soal_student', 'Belum Dibaca')->where('status_soal',  'Diterima')->get();
+        $getTanyaAnswered = Tanya::onlyTrashed()->where('user_id', $id)->where('status_soal_student', 'Belum Dibaca')
+        ->where('status_soal',  'Diterima')->get();
 
         foreach ($getTanyaAnswered as $tanya) {
             $tanya->update(['status_soal_student' => 'Telah Dibaca']);
@@ -540,7 +562,8 @@ class TanyaController extends Controller
 
     public function markAllQuestionsRejectedAsReadById($id)
     {
-        $getTanyaRejected = Tanya::onlyTrashed()->where('user_id', $id)->where('status_soal_student', 'Belum Dibaca')->where('status_soal', 'Ditolak')->get();
+        $getTanyaRejected = Tanya::onlyTrashed()->where('user_id', $id)->where('status_soal_student', 'Belum Dibaca')
+        ->where('status_soal', 'Ditolak')->get();
 
         foreach ($getTanyaRejected as $tanya) {
             $tanya->update(['status_soal_student' => 'Telah Dibaca']);
@@ -552,7 +575,7 @@ class TanyaController extends Controller
         ]);
     }
 
-    //updateStatusSoal riwayat harian pada saat melihat jawaban (student)
+    //update status soal riwayat harian pada saat melihat jawaban menggunakan href (student)
     public function updateStatusSoalRestore($id)
     {
         $getRestore = Tanya::onlyTrashed()->find($id);
@@ -565,6 +588,7 @@ class TanyaController extends Controller
     }
 
     // FUNCTION TANYA ACCESS
+    // tanya access view
     public function tanyaAccess()
     {
         $dataTanyaAccess = tanyaAccess::all();
@@ -595,7 +619,7 @@ class TanyaController extends Controller
         return view('Features.Tanya.access.tanya-access', compact('dataTanyaAccess'));
     }
 
-    // FUNCTION INSERT TANYA ACCESS
+    // function insert tanya access
     public function tanyaAccessStore(Request $request)
     {
         $user = Auth::user();
@@ -655,7 +679,7 @@ class TanyaController extends Controller
         }
     }
 
-    // FUNCTION UPDATE TANYA ACCESS
+    // function update tanya access
     public function updateTanyaAccess(Request $request, String $id)
     {
         $today = Carbon::today();
@@ -705,6 +729,7 @@ class TanyaController extends Controller
     }
 
     // FUNCTION QUESTION ROLLBACK (administrator)
+    // rollback question view
     public function listQuestion()
     {
         $questionData = Tanya::all();
@@ -712,6 +737,7 @@ class TanyaController extends Controller
         return view('Features.Tanya.end-to-end.rollback-question', compact('questionData'));
     }
 
+    // function rollback question
     public function rollbackQuestion($id)
     {
         $rollbackQuestionData = Tanya::where('id', $id)->firstOrFail();
@@ -731,6 +757,7 @@ class TanyaController extends Controller
     }
 
     // FUNCTION TANYA RANK (MENTOR)
+    // tanya rank view
     public function tanyaRank()
     {
         // untuk mendapatkan rank mentor saat ini
@@ -759,7 +786,7 @@ class TanyaController extends Controller
         return view('Features.Tanya.rank.tanya-rank', compact('currentRankMentor', 'dataTanyaRankProgressDiterima', 'dataTanyaRankProgressDitolak', 'dataTanyaRankProgressApproved', 'dataTanyaRankProgressRejected', 'rewardRankMentor'));
     }
 
-    // FUNCTION PAYMENT MENTOR (ADMINISTRATOR)
+    // FUNCTION VERIFICATION QUESTION MENTOR (ADMINISTRATOR)
     // function list mentor tanya view
     public function mentorTanya()
     {
@@ -960,14 +987,15 @@ class TanyaController extends Controller
         ]);
     }
 
-    // function pembayaran mentor view
+    // function PAYMENT MENTOR (administrator)
+    // payment mentor view
     public function paymentMentorView()
     {
         $getTanyaMentorVerifiedSuccess = MentorPayments::with('Mentor.MentorProfiles')->orderBy('created_at', 'desc')->get();
         return view('Features.Tanya.payment-mentor.pembayaran-tanya-mentor', compact('getTanyaMentorVerifiedSuccess'));
     }
 
-    // function pembayaran mentor update status
+    // function payment mentor (paid)
     public function paymentMentorUpdate(Request $request, $id)
     {
         $getTanyaMentorVerifiedSuccess = MentorPayments::with('Mentor.MentorProfiles')->where('id', $id)->firstOrFail();

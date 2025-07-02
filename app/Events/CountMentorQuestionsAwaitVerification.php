@@ -34,7 +34,7 @@ class CountMentorQuestionsAwaitVerification implements ShouldBroadcast
         return new Channel('CountMentorQuestionsAwaitVerification');
     }
 
-    public function broadcastAs()
+    public function broadcastAs(): string
     {
         return 'count.mentor.questions.await.verification';
     }

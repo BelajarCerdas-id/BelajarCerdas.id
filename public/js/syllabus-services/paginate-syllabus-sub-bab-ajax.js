@@ -133,7 +133,13 @@ function paginateSyllabusSubBab() {
             }
         });
     }
-
+    function bindPaginationLinks(kurikulumName, kurikulumId, faseId, kelasId, mapelId, babId) {
+        $('.pagination-container-syllabus-sub-bab').off('click', 'a').on('click', 'a', function(event) {
+            event.preventDefault(); // Cegah perilaku default link
+            const page = new URL(this.href).searchParams.get('page'); // Dapatkan nomor halaman dari link
+            fetchFilteredDataSyllabusSubBab(kurikulumName, kurikulumId, faseId, kelasId, mapelId, babId, page); // Ambil data yang difilter untuk halaman yang ditentukan
+        });
+    }
 }
 
 $(document).ready(function () {
@@ -164,16 +170,6 @@ $(document).ready(function () {
             });
         });
 });
-
-
-function bindPaginationLinks(kurikulumName, kurikulumId, faseId, kelasId, mapelId, babId) {
-    $('.pagination-container-syllabus-sub-bab').off('click', 'a').on('click', 'a', function(event) {
-        event.preventDefault(); // Cegah perilaku default link
-        const page = new URL(this.href).searchParams.get('page'); // Dapatkan nomor halaman dari link
-        fetchFilteredDataSyllabusSubBab(kurikulumName, kurikulumId, faseId, kelasId, mapelId, babId, page); // Ambil data yang difilter untuk halaman yang ditentukan
-    });
-}
-
 
 // Event listener tombol "edit mapel" (open modal)
 $(document).off('click', '.btn-edit-sub-bab').on('click', '.btn-edit-sub-bab', function(e) {
@@ -229,7 +225,7 @@ $('#subBabForm').on('submit', function (e) {
             _token: $('meta[name="csrf-token"]').attr('content')
         },
         success: function (response) {
-            // Menutup modal
+            // Menutup modal setelah berhasil insert data
             const modal = document.getElementById('my_modal_1');
             if (modal) {
                 modal.close();

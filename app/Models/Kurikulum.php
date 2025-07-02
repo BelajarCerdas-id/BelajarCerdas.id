@@ -20,6 +20,7 @@ class Kurikulum extends Model
         return $this->belongsTo(UserAccount::class, 'user_id');
     }
 
+    // SYLLABUS
     public function Fase()
     {
         return $this->hasOne(Fase::class, 'kurikulum_id');
@@ -43,5 +44,10 @@ class Kurikulum extends Model
     public function SubBab()
     {
         return $this->hasOne(SubBab::class, 'kurikulum_id');
+    }
+
+    // SOAL PEMBAHASAN QUESTIONS
+    public function SoalPembahasanQuestions() {
+        return $this->hasOne(SoalPembahasanQuestions::class, 'administrator_id');
     }
 }

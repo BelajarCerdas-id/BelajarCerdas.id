@@ -30,7 +30,7 @@ class RollbackQuestion implements ShouldBroadcast
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    public function broadcastOn(): channel
+    public function broadcastOn(): Channel
     {
         return new Channel('tanya');
     }

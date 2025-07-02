@@ -1,7 +1,8 @@
     function toggleDropdown() {
         let dropdownButton = document.querySelector('#dropdownButton #dropdown');
         dropdown.classList.toggle("hidden");
-        let dropdownArrow = document.getElementById('dropdownArrow').classList.toggle('rotate-180');
+        // let dropdownArrow = document.getElementById('dropdownArrow').classList.toggle('rotate-180'); using rotate style
+        let dropdownArrow = document.getElementById('dropdownArrow');
     }
 
     function updateSelection(radio) {

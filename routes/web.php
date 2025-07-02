@@ -10,7 +10,7 @@ use App\Http\Controllers\OtpController;
 use App\Http\Controllers\PksController;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Controllers\ChartController;
-use App\Http\Controllers\KelasController;
+use App\Http\Controllers\MasterAcademicController;
 use App\Http\Controllers\TanyaController;
 use App\Http\Middleware\CheckEnglishZone;
 use App\Http\Controllers\FilterController;
@@ -89,9 +89,16 @@ Route::fallback(function () {
         Route::post('/renew-checkout/{id}', [PaymentFeaturesController::class, 'renewCheckoutCoinTanya'])->name('checkout.pending');
 
         // ROUTES DROPDOWN FASE, KELAS, MAPEL, BAB (AJAX)
-        Route::get('/kelas/{id}', [KelasController::class, 'getKelas']);
-        Route::get('/mapel/{id}', [KelasController::class, 'getMapel']);
-        Route::get('/bab/{kode_mapel}/{kode_fase}', [KelasController::class, 'getBab']);
+        Route::get('/kelas/{id}', [MasterAcademicController::class, 'getKelas']); // kelas by fase
+        Route::get('/kurikulum/kelas/{id}', [MasterAcademicController::class, 'getKelasByKurikulum']); // kelas by kurikulum
+
+        Route::get('/mapel/{id}', [MasterAcademicController::class, 'getMapel']); // mapel by fase
+        Route::get('/kelas/mapel/{id}', [MasterAcademicController::class, 'getMapelByKelas']); // mapel by kelas
+
+        Route::get('tanya/bab/{kode_mapel}', [MasterAcademicController::class, 'getBabTanyaFeature']); // mapel by tanya feature
+        Route::get('/soal-pembahasan/bab/{kode_mapel}', [MasterAcademicController::class, 'getBabSoalPembahasanFeature']); // mapel by soal pembahasan feature
+
+        Route::get('/sub-bab/{kode_bab}', [MasterAcademicController::class, 'getSubBabSoalPembahasanFeature']); // bab by soal pembahasan feature
 
         // CHART CONTROLLER (BERANDA ADMINISTRATOR)
         Route::get('/chart-data-tanya-bulanan', [ChartController::class, 'chartTanyaBulanan'])->name('getChartDataTanyaBulanan');
@@ -182,12 +189,10 @@ Route::fallback(function () {
         Route::put('/tanya/{id}/mark-viewed-back-button', [TanyaController::class, 'markViewedBackButton'])->name('tanya.markViewedBackButton');
         Route::post('/tanya/{id}/mark-viewed-back-button', [TanyaController::class, 'markViewedBackButton'])->name('tanya.markViewedBackButton');
 
-
         // CLAIM COIN DAILY (student)
         Route::post('/tanya/claim-coin', [TanyaController::class, 'claimCoinDaily'])->name('tanya.claimCoinDaily');
 
     });
-
 
     // TANYA ACCESS CRUD (ADMINISTRATOR)
     Route::get('/tanya/access', [TanyaController::class, 'tanyaAccess'])->name('tanya.access'); // page tanya access
@@ -237,7 +242,28 @@ Route::fallback(function () {
     Route::get('/paginate/batch-detail-payment-mentor/{id}', [FilterController::class, 'paginateBatchDetailPaymentMentor'])->name('paginate.batchDetailPaymentMentor');
 
     // SOAL DAN PEMBAHASAN ROUTES
-    Route::get('/bank-soal', [SoalPembahasanController::class, 'bankSoalView'])->name('bankSoal.view');
+    // BANK SOAL VIEWS (ADMINISTRATOR)
+    Route::get('/soal-pembahasan/bank-soal', [SoalPembahasanController::class, 'bankSoalView'])->name('bankSoal.view');
+    Route::get('/soal-pembahasan/bank-soal/{subBab}/{subBabId}', [SoalPembahasanController::class, 'bankSoalDetail'])->name('bankSoal.detail.view');
+    Route::get('/soal-pembahasan/bank-soal/{subBab}/{subBabId}/{id}', [SoalPembahasanController::class, 'editQuestionView'])->name('bankSoal.edit.question.view');
+    Route::get('/soal-pembahasan/bank-soal/form/{subBab}/{subBabId}/{id}', [SoalPembahasanController::class, 'formEditQuestion'])->name('bankSoal.form.edit.question');
+    Route::post('/soal-pembahasan/bank-soal/update/{id}', [SoalPembahasanController::class, 'editQuestion'])->name('bankSoal.edit.question.update');
+
+    // CRUD BANK SOAL (ADMINISTRATOR)
+    Route::post('/soal-pembahasan/bank-soal-store', [SoalPembahasanController::class, 'bankSoalStore'])->name('bankSoal.store');
+    Route::put('/soal-pembahasan/bank-soal/activate/{subBabId}', [SoalPembahasanController::class, 'bankSoalActivate'])->name('bankSoal.activate');
+
+    // PAGINATE BANK SOAL (ADMINISTRATOR)
+    Route::get('/soal-pembahasan/paginate/bank-soal', [FilterController::class, 'paginateBankSoal'])->name('bankSoal.paginate');
+    Route::get('/soal-pembahasan/paginate/bank-soal/{subBab}/{subBabId}', [FilterController::class, 'paginateBankSoalDetail'])->name('bankSoalDetail.paginate');
+
+    // UPLOAD & DELETE IMAGE BANK SOAL WITH CKEDITOR
+    Route::post('/bank-soal/edit-image', [SoalPembahasanController::class, 'editImageBankSoal'])->name('soalPembahasan.editImage');
+    Route::post('/bank-soal/delete-image/endpoint', [SoalPembahasanController::class, 'deleteImageBankSoal'])->name('soalPembahasan.deleteImage');
+
+    // SOAL PEMBAHASAN PRACTICE (STUDENT)
+    // Route::get('/soal-pembahasan/latihan', [SoalPembahasanController::class, 'bankSoalView'])->name('bankSoal.view');
+
 
     //ROUTES SYLLABUS-SERVICES
     // VIEWS

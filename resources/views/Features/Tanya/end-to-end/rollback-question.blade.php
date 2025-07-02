@@ -10,16 +10,16 @@
                     <table class="table" id="tableTanyaRollback">
                         <thead class="thead-table-tanya-rollback hidden">
                             <tr>
-                                <th class="th-table">No</th>
-                                <th class="th-table">Nama Siswa</th>
-                                <th class="th-table">Kelas</th>
-                                <th class="th-table">Pertanyaan</th>
-                                <th class="th-table">Mata Pelajaran</th>
-                                <th class="th-table">Bab</th>
-                                <th class="th-table">Jam_Tanya</th>
-                                <th class="th-table">Status Soal</th>
-                                <th class="th-table">Viewed By</th>
-                                <th class="th-table">Rollback Action</th>
+                                <th class="th-table text-black">No</th>
+                                <th class="th-table text-black">Nama Siswa</th>
+                                <th class="th-table text-black">Kelas</th>
+                                <th class="th-table text-black">Pertanyaan</th>
+                                <th class="th-table text-black">Mata Pelajaran</th>
+                                <th class="th-table text-black">Bab</th>
+                                <th class="th-table text-black">Jam_Tanya</th>
+                                <th class="th-table text-black">Status Soal</th>
+                                <th class="th-table text-black">Viewed By</th>
+                                <th class="th-table text-black">Rollback Action</th>
                             </tr>
                         </thead>
                         <tbody id="tableListTanyaRollback">

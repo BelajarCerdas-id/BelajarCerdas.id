@@ -46,12 +46,12 @@
             </div>
 
             <!-- Gambar Ilustrasi (DEKSTOP) -->
-            <div class="relative flex justify-center items-end gap-4 w-full hidden lg:flex">
+            <div class="relative flex justify-center items-end gap-4 w-full">
                 <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cowok jas kuning.webp') }}"
-                    alt="Guru laki-laki" class="jumbotron-teacher-man-mitra-cerdas h-auto">
+                    alt="Guru laki-laki" class="jumbotron-teacher-man-mitra-cerdas h-auto hidden lg:flex">
 
                 <img src="{{ asset('image/services-pages/mitra-cerdas/teacher cewek.webp') }}" alt="Guru laki-laki"
-                    class="jumbotron-teacher-woman-mitra-cerdas h-auto">
+                    class="jumbotron-teacher-woman-mitra-cerdas h-auto hidden lg:flex">
             </div>
         </div>
     </div>
@@ -72,7 +72,7 @@
                             <figure class="relative bg-white rounded-4xl shadow-md p-6 max-w-[350px]">
                                 <div class="w-full flex justify-center">
                                     <div class="w-[120px] absolute top-[-50px]">
-                                        <img src="{{ asset('image/services-pages/mitra-cerdas/wahyu.webp') }}"
+                                        <img src="{{ asset('image/services-pages/mitra-cerdas/Sutan Sahlan.png') }}"
                                             alt="" class="">
                                     </div>
                                 </div>
@@ -89,7 +89,7 @@
                                         meningkatkan kemampuan dalam membimbing siswa. Terima kasih, Belajar
                                         Cerdas!
                                     </p>
-                                    <h4 class="font-semibold text-black italic text-center">Wahyu Hendana</h4>
+                                    <h4 class="font-semibold text-black italic text-center">Sutan Sahlan</h4>
                                     <div class="w-16 h-0.5 bg-black mx-auto mt-1"></div>
                                 </div>
                             </figure>
@@ -99,7 +99,7 @@
                             <figure class="relative bg-white rounded-4xl shadow-md p-6 max-w-[350px]">
                                 <div class="w-full flex justify-center">
                                     <div class="w-[120px] absolute top-[-50px]">
-                                        <img src="{{ asset('image/services-pages/mitra-cerdas/danien.webp') }}"
+                                        <img src="{{ asset('image/services-pages/mitra-cerdas/danien.png') }}"
                                             alt="" class="">
                                     </div>
                                 </div>
@@ -125,7 +125,7 @@
                             <figure class="relative bg-white rounded-4xl shadow-md p-6 max-w-[350px]">
                                 <div class="w-full flex justify-center">
                                     <div class="w-[120px] absolute top-[-50px]">
-                                        <img src="{{ asset('image/services-pages/mitra-cerdas/rahma.webp') }}"
+                                        <img src="{{ asset('image/services-pages/mitra-cerdas/danien.png') }}"
                                             alt="" class="">
                                     </div>
                                 </div>
@@ -141,7 +141,7 @@
                                         tentunya
                                         menikmati pengalaman seru dalam mendampingi proses belajar siswa!
                                     </p>
-                                    <h4 class="font-semibold text-black italic text-center">Rahmawati</h4>
+                                    <h4 class="font-semibold text-black italic text-center">Danien Haqien</h4>
                                     <div class="w-16 h-0.5 bg-black mx-auto mt-1"></div>
                                 </div>
                             </figure>

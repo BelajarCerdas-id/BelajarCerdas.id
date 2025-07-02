@@ -43,11 +43,10 @@
                     <div class="border-b-2 border-gray-200 mt-4"></div>
 
                     <!---- Table list data kelas  ---->
-                    <div class="overflow-x-auto mt-8 pb-24">
-                        <table id="container-syllabus-kelas" id="tableSyllabusKelas"
-                            class="table w-full border-collapse border border-gray-300"
-                            data-nama-kurikulum="{{ $nama_kurikulum }}" data-kurikulum-id="{{ $kurikulum_id }}"
-                            data-fase-id="{{ $fase_id }}">
+                    <div id="container-syllabus-kelas" data-nama-kurikulum="{{ $nama_kurikulum }}"
+                        data-kurikulum-id="{{ $kurikulum_id }}" data-fase-id="{{ $fase_id }}"
+                        class="overflow-x-auto mt-8 pb-24">
+                        <table id="tableSyllabusKelas" class="table w-full border-collapse border border-gray-300">
                             <thead class="thead-table-syllabus-kelas hidden">
                                 <tr>
                                     <th class="border border-gray-300 w-[80%]">

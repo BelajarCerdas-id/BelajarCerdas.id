@@ -59,4 +59,9 @@ class Bab extends Model
     {
         return $this->hasOne(Tanya::class, 'bab_id');
     }
+
+    // SOAL PEMBAHASAN QUESTIONS
+    public function SoalPembahasanQuestions() {
+        return $this->hasOne(SoalPembahasanQuestions::class, 'administrator_id');
+    }
 }

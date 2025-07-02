@@ -1,5 +1,5 @@
 <x-script></x-script>
-@if (Auth::user()->role === 'Siswa' or Auth::user()->role === 'Murid')
+@if (Auth::user()->role === 'Siswa')
     <main>
         <section>
             <div class="grid grid-cols-8 gap-2 mx-2 lg:w-[90%] lg:mx-auto mt-20">

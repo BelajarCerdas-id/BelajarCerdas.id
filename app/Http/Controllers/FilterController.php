@@ -20,6 +20,7 @@ use App\Models\Mapel;
 use App\Models\MentorPaymentDetail;
 use App\Models\SubBab;
 use App\Models\MentorPayments;
+use App\Models\SoalPembahasanQuestions;
 use App\Models\TanyaAccess;
 use App\Models\TanyaVerifications;
 use App\Models\Transactions;
@@ -30,6 +31,12 @@ use Midtrans\Transaction;
 
 class FilterController extends Controller
 {
+    // PAGINATE LIST MENTOR APPLY & ACTIVE
+    public function paginateListMentorActive(Request $request)
+    {
+
+    }
+
     // FILTERING & PAGINATION TANYA STUDENT, MENTOR, ADMINISTRATOR
     public function filterHistoryStudent(Request $request)
     {
@@ -47,7 +54,7 @@ class FilterController extends Controller
         return response()->json([
             'data' => $data->items(),
             'links' => (string) $data->links()->render(), // Convert pagination links to string
-            'restoreUrl' => route('tanya.updateStatusSoalRestore', ':id')
+            'restoreUrl' => route('getRestore.edit', ':id')
         ]);
     }
 
@@ -471,6 +478,89 @@ class FilterController extends Controller
             'user' => $user,
         ]);
     }
+
+    // PAGINATE & FILTERING BANK SOAL
+    public function paginateBankSoal(Request $request)
+    {
+        $dataBankSoal = SoalPembahasanQuestions::with(['Kurikulum', 'Kelas', 'Mapel', 'Bab', 'SubBab'])->groupBy('sub_bab_id')->paginate(10);
+
+        return response()->json([
+            'data' => $dataBankSoal->items(),
+            'links' => (string) $dataBankSoal->links(),
+            'bankSoalDetail' => '/soal-pembahasan/bank-soal/:subBab/:subBabId',
+        ]);
+    }
+
+    public function paginateBankSoalDetail(Request $request, $subBab, $subBabId)
+    {
+        // Ambil semua soal yang memiliki sub_bab_id tertentu, lalu ambil relasi SubBab juga
+        $allQuestions = SoalPembahasanQuestions::with('SubBab')
+            ->where('sub_bab_id', $subBabId)
+            ->get(); // hasilnya Collection, bukan query builder lagi
+
+        // Group by column 'questions'
+        $grouped = $allQuestions->groupBy('questions');
+
+        $videoIds = [];
+
+        // Loop untuk mendapatkan ID video dari URL
+        foreach ($grouped as $groupedSoal) {
+            $videoId = null;
+
+            // Cari explanation yang mengandung url video menggunakan regex, lalu mengambil 1 data pertama dari masing" array group soal.
+            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $groupedSoal[0]['explanation'], $matches)) {
+                $videoId = $matches[1] ?? $matches[2];
+            }
+
+            $videoIds[] = $videoId;
+        }
+
+        // PAGINATION
+        // Ambil nomor halaman dari request (default 1 jika tidak ada)
+        // $page = $request->input('page', 1);
+
+        // // Tentukan jumlah soal per halaman
+        // $perPage = 10;
+
+        // // Potong hasil grup sesuai halaman saat ini
+        // // Misalnya: halaman 2, ambil dari index 2 hingga 3
+        // $paginated = $grouped->slice(($page - 1) * $perPage, $perPage)->all();
+
+        // // Buat objek paginator manual karena kita pakai collection biasa (bukan builder karena uda di get dan groupBy di awal)
+        // $paginatedCollection = new \Illuminate\Pagination\LengthAwarePaginator(
+        //     collect($paginated)->values(),   // data yang ditampilkan di halaman ini
+        //     $grouped->count(),               // total item setelah di-group
+        //     $perPage,                        // jumlah per halaman
+        //     $page,                           // halaman saat ini
+        //     ['path' => url()->current()]     // URL dasar untuk link pagination
+        // );
+
+        // // Menyiapkan array untuk ID video
+        // $videoIds = [];
+
+        // // Loop untuk mendapatkan ID video dari URL
+        // foreach ($paginatedCollection as $groupedSoal) {
+        //     $videoId = null;
+
+        //     // Cari explanation yang mengandung url video menggunakan regex, lalu mengambil 1 data pertama dari masing" array group soal.
+        //     if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $groupedSoal[0]['explanation'], $matches)) {
+        //         $videoId = $matches[1] ?? $matches[2];
+        //     }
+
+        //     $videoIds[] = $videoId;
+        // }
+
+        // Menyiapkan array untuk ID video
+
+        // Return sebagai JSON
+        return response()->json([
+            'data' => $grouped->values(), // daftar soal yang ditampilkan di halaman ini
+            'videoIds' => $videoIds, // untuk menampilkan video in iframe
+            'editQuestion' => '/soal-pembahasan/bank-soal/:subBab/:subBabId/:id',
+            // 'links' => (string) $grouped->links(), // navigasi pagination (HTML string)
+        ]);
+    }
+
 
     // FILTERING ENGLISH ZONE QUESTIONS
     public function questionStatus(Request $request)

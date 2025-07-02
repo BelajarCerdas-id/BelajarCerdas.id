@@ -55,4 +55,9 @@ class Kelas extends Model
     {
         return $this->hasOne(StudentProfiles::class, 'kelas_id');
     }
+
+    // SOAL PEMBAHASAN QUESTIONS
+    public function SoalPembahasanQuestions() {
+        return $this->hasOne(SoalPembahasanQuestions::class, 'administrator_id');
+    }
 }

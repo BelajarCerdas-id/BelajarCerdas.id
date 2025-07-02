@@ -60,7 +60,7 @@ class TanyaAccess
         // }
 
         // // libur weekends
-        // if (in_array($dayOfWeek, ['Saturday', 'Sunday'])) {
+        // if (in_array($dayOfWeek, ['Saturday', 'Monday'])) {
         //     return redirect()->route('beranda')->with('alertAccess', 'Maaf, halaman ini hanya bisa diakses pada hari Senin - Jumat.');
         // }
 

@@ -47,12 +47,12 @@
                         <div class="mb-10">
                             <h2 class="text-4xl md:text-xl absolute top-0 md:top-6 flex flex-col gap-4">
                                 <span class="text-[#60b5cf] font-bold text-2xl">Meet the founder</span>
-                                <span class="font-bold text-3xl lg:text-4xl">Kunto Widyasmoro</span>
+                                <span class="font-bold text-3xl lg:text-4xl">Dafa Marchiano</span>
                             </h2>
                         </div>
                         <div class="mt-14 md:mt-20">
                             <p class="text-gray-600 text-sm md:text-base leading-6 md:leading-8 text-justify">
-                                BelajarCerdas.id lahir dari visi Kunto Widyasmoro, seorang ahli IT yang berkomitmen
+                                BelajarCerdas.id lahir dari visi Dafa Marchiano, seorang ahli IT yang berkomitmen
                                 untuk menciptakan solusi pendidikan
                                 modern yang relevan dengan kebutuhan zaman. Dengan latar belakang yang kuat dalam
                                 pengembangan teknologi, ia merancang

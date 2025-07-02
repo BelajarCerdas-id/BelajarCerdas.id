@@ -107,6 +107,11 @@ class UserAccount extends Authenticatable
         return $this->hasOne(MentorPaymentDetail::class, 'mentor_payment_id');
     }
 
+    // SOAL PEMBAHASAN QUESTIONS
+    public function SoalPembahasanQuestions() {
+        return $this->hasOne(SoalPembahasanQuestions::class, 'administrator_id');
+    }
+
     public function getProfileAttribute() {
         return match ($this->role) {
             'Siswa' => $this->StudentProfiles,

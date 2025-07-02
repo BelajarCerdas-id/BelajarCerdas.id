@@ -1,5 +1,4 @@
 @include('components/sidebar_beranda', ['headerSideNav' => 'Upload Soal'])
-@extends('components/sidebar_beranda_mobile')
 
 @if (Auth::user()->role === 'Administrator')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">

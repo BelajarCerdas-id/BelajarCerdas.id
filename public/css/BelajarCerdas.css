@@ -743,7 +743,7 @@ input[type="radio"]:checked + .checked-timeline {
     border-radius: 7px;
 }
 
-.wrapper-content-accordion-pengayaan {
+.wrapper-content-accordion-questions {
     background: #fff;
     border: 1px solid rgba(0, 0, 0, 0.2);
     padding: 0 20px;
@@ -765,7 +765,7 @@ input[type="radio"]:checked + .checked-timeline {
     font-weight: bold;
 }
 
-.toggleButton-pengayaan {
+.toggleButton-questions {
     width: 100%;
     display: flex;
     align-items: center;
@@ -788,10 +788,6 @@ input[type="radio"]:checked + .checked-timeline {
 
 .wrapper-content-accordion1 {
     margin-top: 40px;
-}
-
-.wrapper-content-accordion-soal {
-    margin-top: 20px;
 }
 
 .box-content-accordion {
@@ -892,7 +888,7 @@ input[type="radio"]:checked + .checked-timeline {
     overflow-x: auto;
 }
 
-/* buat nampilin ul dan ol yang ke hidden karena menggunakan daisy ui */
+/* buat nampilin ul dan ol yang ke hidden karena menggunakan daisy ui (CKEDITOR STYLING)*/
 .ck-content ul {
     list-style-type: disc;
     /* Mengembalikan bullet list */
@@ -908,13 +904,15 @@ input[type="radio"]:checked + .checked-timeline {
 }
 
 .ck-content img {
-    width: 100px;
+    width: 600px;
     text-align: left !important; /* Menetapkan gambar ke kiri, jika ada aturan yang bertentangan */
     float: left !important;
 }
 
 .ckeditor {
     resize: none;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
 
 .pilihanSoal .option {
@@ -1961,6 +1959,17 @@ input:checked + .content-menu::after {
 input[type="radio"]:checked + label.checked-dropdown-mapel {
     background-color: rgba(0, 0, 0, 0.03); /* Warna abu transparan */
     color: gray;
+}
+
+/* ---------- show bullets and number formats in accordion question soal pembahasan (soalnya ul ol ke hidden sama class lain) ------------- */
+#grid-list-soal ul {
+    list-style: disc !important;
+    padding-left: 15px;
+}
+
+#grid-list-soal ol {
+    list-style: decimal !important;
+    padding-left: 24px;
 }
 
 @media screen and (max-width: 900px) {

@@ -48,6 +48,7 @@ $(document).ready(function () {
         if (oldFase) {
             $('#id_fase').val(oldFase).trigger('change');
         }
+
         // Ketika id_fase berubah
         $('#id_fase').on('change', function() {
             var fase_id = $(this).val();
@@ -65,7 +66,7 @@ $(document).ready(function () {
                         $('#dropdownButton')
                             .removeClass('pointer-events-none opacity-50');
 
-                        titleDropdown.text('Pilih Mapel');
+                        titleDropdown.text('Pilih Mata Pelajaran');
 
                         if (data.length === 0) {
                             dropdown.append(
@@ -117,10 +118,9 @@ $(document).ready(function () {
         // Ketika id_mapel berubah
         $('#id_mapel').on('change', function() {
             var mapel_id = $(this).val();
-            var fase_id = $('#id_fase').val();
-            if (mapel_id, fase_id) {
+            if (mapel_id) {
                 $.ajax({
-                    url: '/bab/' + mapel_id + '/' + fase_id,
+                    url: 'tanya/bab/' + mapel_id,
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {

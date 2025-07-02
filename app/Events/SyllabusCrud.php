@@ -37,7 +37,7 @@ class SyllabusCrud implements ShouldBroadcast
         return new Channel('syllabus');
     }
 
-    public function broadcastAs()
+    public function broadcastAs(): string
     {
         return 'syllabus.crud';
     }

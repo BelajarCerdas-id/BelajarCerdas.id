@@ -113,6 +113,13 @@ function paginateSyllabusKelas() {
             }
         });
     }
+    function bindPaginationLinks(kurikulumName, kurikulumId, faseId) {
+        $('.pagination-container-syllabus-kelas').off('click', 'a').on('click', 'a', function(event) {
+            event.preventDefault(); // Cegah perilaku default link
+            const page = new URL(this.href).searchParams.get('page'); // Dapatkan nomor halaman dari link
+            fetchFilteredDataSyllabusKelas(kurikulumName, kurikulumId, faseId, page); // Ambil data yang difilter untuk halaman yang ditentukan
+        });
+    }
 }
 
 $(document).ready(function () {
@@ -130,14 +137,6 @@ $(document).ready(function () {
     paginateSyllabusKelas();
 });
 
-
-function bindPaginationLinks(kurikulumName, kurikulumId, faseId) {
-        $('.pagination-container-syllabus-kelas').off('click', 'a').on('click', 'a', function(event) {
-        event.preventDefault(); // Cegah perilaku default link
-        const page = new URL(this.href).searchParams.get('page'); // Dapatkan nomor halaman dari link
-        fetchFilteredDataSyllabusKelas(kurikulumName, kurikulumId, faseId, page); // Ambil data yang difilter untuk halaman yang ditentukan
-    });
-}
 
 // Event listener tombol "edit kelas" (open modal)
 $(document).off('click', '.btn-edit-kelas').on('click', '.btn-edit-kelas', function(e) {

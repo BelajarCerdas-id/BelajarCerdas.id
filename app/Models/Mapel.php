@@ -54,4 +54,9 @@ class Mapel extends Model
     {
         return $this->hasOne(Tanya::class, 'mapel_id');
     }
+
+    // SOAL PEMBAHASAN QUESTIONS
+    public function SoalPembahasanQuestions() {
+        return $this->hasOne(SoalPembahasanQuestions::class, 'administrator_id');
+    }
 }
