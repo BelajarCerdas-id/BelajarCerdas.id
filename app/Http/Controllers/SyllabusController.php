@@ -45,8 +45,11 @@ class SyllabusController extends Controller
             'nama_kurikulum.unique' => 'Nama kurikulum telah terdaftar!',
         ]);
 
-        if($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->with('formError', 'create')->withInput();
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422); // Gunakan 422 Unprocessable Entity untuk validasi
         }
 
         $data = Kurikulum::create([
@@ -57,7 +60,10 @@ class SyllabusController extends Controller
 
         broadcast(new SyllabusCrud('kurikulum', 'create', $data))->toOthers();
 
-        return redirect()->back()->with('success-insert-data-kurikulum', 'Kurikulum Berhasil Ditambahkan');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Kurikulum Berhasil Ditambahkan',
+        ]);
     }
 
     public function curiculumUpdate(Request $request, String $id)
@@ -444,18 +450,24 @@ class SyllabusController extends Controller
                 'required',
                 Rule::unique('babs', 'nama_bab')->where('kelas_id', $kelas_id)->where('kurikulum_id', $kurikulum_id)->where('mapel_id', $mapel_id)
             ],
+            'semester' => 'required',
         ], [
             'nama_bab.required' => 'Harap masukkan bab!',
             'nama_bab.unique' => 'Bab telah terdaftar!',
+            'semester.required' => 'Harap pilih semester!',
         ]);
 
-        if($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->with('formError', 'create')->withInput();
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422); // Gunakan 422 Unprocessable Entity untuk validasi
         }
 
         $data = Bab::create([
             'user_id' => $user->id,
             'nama_bab' => $request->nama_bab,
+            'semester' => $request->semester,
             'kode' => $request->nama_bab,
             'kelas_id' => $kelas_id,
             'mapel_id' => $mapel_id,
@@ -465,8 +477,10 @@ class SyllabusController extends Controller
 
         broadcast(new SyllabusCrud('bab', 'create', $data))->toOthers();
 
-
-        return redirect()->back()->with('success-insert-data-bab', 'Bab Berhasil Ditambahkan');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Bab Berhasil Ditambahkan',
+        ]);
     }
 
     public function babUpdate(Request $request, $kurikulum_id, $kelas_id, $mapel_id, $id)
@@ -478,9 +492,11 @@ class SyllabusController extends Controller
                 'required',
                 Rule::unique('babs', 'nama_bab')->where('kelas_id', $kelas_id)->where('mapel_id', $mapel_id)->where('kurikulum_id', $kurikulum_id)
             ],
+            'semester' => 'required',
         ], [
             'nama_bab.required' => 'Harap masukkan bab!',
             'nama_bab.unique' => 'Bab telah terdaftar!',
+            'semester.required' => 'Harap pilih semester!',
         ]);
 
         if ($validator->fails()) {
@@ -492,6 +508,7 @@ class SyllabusController extends Controller
 
         $dataBab->update([
             'nama_bab' => $request->nama_bab,
+            'semester' => $request->semester,
             'kode' => $request->nama_bab,
         ]);
 

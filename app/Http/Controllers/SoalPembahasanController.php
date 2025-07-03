@@ -377,6 +377,7 @@ class SoalPembahasanController extends Controller
         ]);
     }
 
+    // FUNCTION EDIT DELETE IMAGE BANKSOAL CKEDITOR
     // controller upload & delete image edit image in question with ckeditor
     public function editImageBankSoal(Request $request) {
     // Menangani upload gambar
@@ -410,6 +411,12 @@ class SoalPembahasanController extends Controller
         return response()->json(['message' => 'Gambar tidak ditemukan'], 404);
     }
 
+
+    // FUNCTION SOAL PEMBAHASAN (STUDENT)
+    public function soalPembahasan()
+    {
+        return view('Features.soal-pembahasan.assessment.soal-pembahasan');
+    }
 
     // FUNCTION PRACTICE
     public function practice()

@@ -12,6 +12,7 @@ class Bab extends Model
     protected $fillable = [
         'user_id',
         'nama_bab',
+        'semester',
         'kode',
         'kelas_id',
         'mapel_id',

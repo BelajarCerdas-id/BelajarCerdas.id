@@ -50,9 +50,9 @@ function paginateSyllabusBab() {
                     const updatedAt = application.updated_at ? `${formatDate(application.updated_at)}, ${timeFormatter.format(new Date(application.updated_at))}` : 'Tanggal tidak tersedia';
 
                         let subBabDetail = data.subBabDetail.replace(':nama_kurikulum', application.kurikulum?.nama_kurikulum).replace(':kurikulum_id', application.kurikulum_id)
-                                            .replace(':fase_id', application.fase_id).replace(':kelas_id', application.kelas_id).replace(':mapel_id', application.mapel_id).replace(':bab_id', application.id);
+                                        .replace(':fase_id', application.fase_id).replace(':kelas_id', application.kelas_id).replace(':mapel_id', application.mapel_id).replace(':bab_id', application.id);
                         let babUpdate = data.babUpdate.replace(':kurikulum_id', application.kurikulum_id).replace(':kelas_id', application.kelas_id).replace(':mapel_id', application.mapel_id)
-                                            .replace(':id', application.id);
+                                        .replace(':id', application.id);
 
                         let featureCheckboxesBab = '';
 
@@ -77,6 +77,9 @@ function paginateSyllabusBab() {
                         $('#tableListSyllabusBab').append(`
                             <tr class="text-xs">
                                 <td class="border border-gray-300">${application.nama_bab}</td>
+
+                                <td class="border border-gray-300 text-center">${application.semester}</td>
+
                                 <td class="border text-center border-gray-300">
                                     <a href="${subBabDetail}" class="btn-subBab-detail" data-nama-kurikulum="${application.kurikulum?.nama_kurikulum}" data-kurikulum-id="${application.kurikulum_id}"
                                     data-fase-id="${application.fase_id}" data-kelas-id="${application.kelas_id}" data-mapel-id="${application.mapel_id}" data-bab-id="${application.id}">
@@ -96,7 +99,7 @@ function paginateSyllabusBab() {
                                                 class="dropdown-content menu bg-base-100 rounded-box z-1 w-max p-2 shadow-sm z-[9999]">
                                                 <li class="text-xs">
                                                     <a href="#" class="btn-edit-bab" data-kurikulum-id="${application.kurikulum_id}" data-kelas-id="${application.kelas_id}"
-                                                        data-mapel-id="${application.mapel_id}" data-id="${application.id}" data-nama-bab="${application.nama_bab}">
+                                                        data-mapel-id="${application.mapel_id}" data-id="${application.id}" data-nama-bab="${application.nama_bab}" data-semester="${application.semester}">
                                                         <i class="fa-solid fa-pen text-[#4189e0]"></i>
                                                         Edit Bab
                                                     </a>
@@ -151,6 +154,77 @@ function paginateSyllabusBab() {
     }
 }
 
+// INSERT BAB
+$('#insert-bab-form').on('submit', function (e) {
+    e.preventDefault();
+
+    const kurikulumName = $(this).data('nama-kurikulum');
+    const kurikulumId = $(this).data('kurikulum-id');
+    const faseId = $(this).data('fase-id');
+    const kelasId = $(this).data('kelas-id');
+    const mapelId = $(this).data('mapel-id');
+
+    const formData = new FormData(this);
+
+    $.ajax({
+        url: `/syllabus/curiculum/${kurikulumName}/${kurikulumId}/${faseId}/${kelasId}/${mapelId}/bab/store`,
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+                $('#alert-success-insert-data-bab').html(
+                    `
+                    <div class=" w-full flex justify-center">
+                        <div class="fixed z-[9999]">
+                            <div id="alertSuccess"
+                                class="relative top-[-45px] opacity-100 scale-90 bg-green-200 w-max p-3 flex items-center space-x-2 rounded-lg shadow-lg transition-all duration-300 ease-out">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current text-green-600" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="text-green-600 text-sm">${response.message}</span>
+                                <i class="fas fa-times cursor-pointer text-green-600" id="btnClose"></i>
+                            </div>
+                        </div>
+                    </div>
+                    `
+                );
+
+                // Reset form
+                $('#insert-bab-form')[0].reset();
+
+                setTimeout(function() {
+                    document.getElementById('alertSuccess').remove();
+                }, 3000);
+
+                document.getElementById('btnClose').addEventListener('click', function () {
+                    document.getElementById('alertSuccess').remove();
+                });
+
+                // Memanggil fungsi untuk memuat ulang data
+                paginateSyllabusBab();
+        },
+        error: function (xhr) {
+            if (xhr.status === 422) {
+                const response = xhr.responseJSON;
+
+                $.each(response.errors, function (field, messages) {
+                    $(`#error-${field}`).text(messages[0]);
+                    $(`[name="${field}"]`).addClass('border-red-400 border-2');
+                });
+            } else {
+                alert('Terjadi kesalahan saat mengirim data.');
+            }
+        }
+    });
+});
+
+// ACTIVATE BAB
 $(document).ready(function () {
     const kurikulumName = $(this).data('nama-kurikulum');
     const kurikulumId = $(this).data('kurikulum-id');
@@ -194,7 +268,7 @@ $(document).ready(function () {
         });
 });
 
-// Event listener tombol "edit mapel" (open modal)
+// Event listener tombol "edit bab" (open modal)
 $(document).off('click', '.btn-edit-bab').on('click', '.btn-edit-bab', function(e) {
     e.preventDefault();
 
@@ -203,7 +277,7 @@ $(document).off('click', '.btn-edit-bab').on('click', '.btn-edit-bab', function(
     const mapelId = $(this).data('mapel-id');
     const babId = $(this).data('id');
     const babName = $(this).data('nama-bab');
-
+    const semesterName = $(this).data('semester');
 
     // set id ke form untuk submit
     $('#babForm').data('kurikulum-id', curiculumId);
@@ -216,11 +290,13 @@ $(document).off('click', '.btn-edit-bab').on('click', '.btn-edit-bab', function(
 
     // Reset text error
     $('#error-bab').text('');
+    $('#error-semester').text('');
 
     // Tampilkan modal
     const modal = document.getElementById('my_modal_1');
     if (modal) {
         $('#nama_bab').val(babName);
+        $('#semester').val(semesterName);
         modal.showModal();
     }
 });
@@ -233,6 +309,7 @@ $('#babForm').on('submit', function (e) {
     const mapelId = $(this).data('mapel-id');
     const babId = $(this).data('id');
     const babName = $('#nama_bab').val();
+    const semester = $('#semester').val();
 
     // Kosongkan error sebelumnya
     $('#error-bab').text('');
@@ -242,6 +319,7 @@ $('#babForm').on('submit', function (e) {
         method: 'POST',
         data: {
             nama_bab: babName,
+            semester: semester,
             _token: $('meta[name="csrf-token"]').attr('content')
         },
         success: function (response) {
@@ -288,6 +366,10 @@ $('#babForm').on('submit', function (e) {
                     $('#error-bab').text(errors.nama_bab[0]);
                     $('#nama_bab').addClass('border-2 border-red-400');
                 }
+                if (errors && errors.semester) {
+                    $('#error-semester').text(errors.semester[0]);
+                    $('#semester').addClass('border-2 border-red-400');
+                }
             }
         }
     });
@@ -328,6 +410,7 @@ $(document).off('click', '.btn-delete-bab').on('click', '.btn-delete-bab', funct
     }
 });
 
+// delete bab
 $('#deleteBabForm').on('submit', function (e) {
     e.preventDefault();
 

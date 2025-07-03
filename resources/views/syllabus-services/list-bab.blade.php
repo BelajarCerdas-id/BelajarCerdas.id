@@ -7,38 +7,53 @@
 @if (Auth::user()->role === 'Administrator')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
         <div class="content-beranda">
-            @if (session('success-insert-data-bab'))
-                @include('components.alert.success-insert-data', [
-                    'message' => session('success-insert-data-bab'),
-                ])
-            @endif
             <!--- alert nya menggunakan dari response json --->
+            <div id="alert-success-insert-data-bab"></div>
             <div id="alert-success-update-data-bab"></div>
             <div id="alert-success-delete-data-bab"></div>
             <main>
                 <section class="bg-white shadow-lg p-6 rounded-lg border-gray-200 border-[1px]">
-                    <form
-                        action="{{ route('bab.store', [$nama_kurikulum, $kurikulum_id, $fase_id, $kelas_id, $mapel_id]) }}"
-                        method="POST">
-                        @csrf
-                        <label class="text-sm">Nama Bab</label>
-                        <div class="flex relative max-w-lg mt-2">
-                            <div class="flex gap-2 w-full">
-                                <input type="text" name="nama_bab"
-                                    class="w-full bg-white shadow-lg h-11 border-gray-200 border-[2px] outline-none rounded-full text-xs px-2
-                                    focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]
-                                    {{ $errors->has('nama_bab') && session('formError') === 'create' ? 'border-[1px] border-red-400' : '' }}"
-                                    value="{{ $errors->has('nama_bab') && session('formError') === 'create' ? old('nama_bab') : '' }}"
-                                    placeholder="Masukkan Nama Bab">
-                                <button
-                                    class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-full shadow-md transition-all h-max text-md">
-                                    Tambah
-                                </button>
+                    <form id="insert-bab-form" class="flex items-center gap-4" data-nama-kurikulum="{{ $nama_kurikulum }}"
+                        data-kurikulum-id="{{ $kurikulum_id }}" data-fase-id="{{ $fase_id }}"
+                        data-kelas-id="{{ $kelas_id }}" data-mapel-id="{{ $mapel_id }}">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+                            <div class="w-full">
+                                <label class="text-sm">Nama Bab<sup class="text-red-500 pl-1">&#42;</sup></label>
+                                <div class="">
+                                    <div class="w-full">
+                                        <input type="text" name="nama_bab"
+                                            class="w-full bg-white shadow-lg h-11 border-gray-200 border-[2px] outline-none rounded-full text-xs px-2
+                                            focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]"
+                                            placeholder="Masukkan Nama Bab">
+                                        <span id="error-nama_bab" class="text-red-500 font-bold text-xs pt-2"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="w-full">
+                                <label class="text-sm">Semester<sup class="text-red-500 pl-1">&#42;</sup></label>
+                                <div class="flex flex-col lg:flex-row gap-6">
+                                    <div class="w-full">
+                                        <select name="semester"
+                                            class="w-full bg-white shadow-lg h-12 border-gray-200 border outline-none rounded-full px-4 text-xs focus:border-[1px]
+                                            focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer">
+                                            <option value="" class="hidden">Pilih Semester</option>
+                                            <option value="1" {{ old('semester') == '1' ? 'selected' : '' }}>
+                                                1
+                                            </option>
+                                            <option value="2" {{ old('semester') == '2' ? 'selected' : '' }}>
+                                                2
+                                            </option>
+                                        </select>
+                                        <span id="error-semester" class="text-red-500 font-bold text-xs pt-2"></span>
+                                    </div>
+                                    <button
+                                        class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 mt-2 rounded-full shadow-md transition-all h-max text-md">
+                                        Tambah
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        @if ($errors->has('nama_bab') && session('formError') === 'create')
-                            <span class="text-red-500 font-bold text-xs pt-2">{{ $errors->first('nama_bab') }}</span>
-                        @endif
                     </form>
 
                     <div class="border-b-2 border-gray-200 mt-4"></div>
@@ -54,7 +69,10 @@
                                     <th class="border border-gray-300 w-[80%] text-[14px]" rowspan="2">
                                         Bab
                                     </th>
-                                    <th class="border border-gray-300 w-[80%] text-[14px] text-center" rowspan="2">
+                                    <th class="border border-gray-300 text-[14px] text-center" rowspan="2">
+                                        Semester
+                                    </th>
+                                    <th class="border border-gray-300 w-[10%] text-[14px] text-center" rowspan="2">
                                         Detail
                                     </th>
                                     <th class="!text-center border border-gray-300"
@@ -91,13 +109,23 @@
                         <div class="modal-box bg-white w-max">
                             <form id="babForm">
                                 <span class="text-xl font-bold flex justify-center">Edit Bab</span>
-                                <div class="mt-4 w-80">
+                                <div class="mt-4 w-80 flex flex-col gap-6">
                                     <!---- Form bab ---->
-                                    <label class="text-sm">Nama Bab</label>
-                                    <input type="text" id="nama_bab" name="nama_bab"
-                                        class="w-full bg-white shadow-lg h-11 border-gray-200 border-[1px] outline-none rounded-full text-xs px-2 mt-2"
-                                        value="" placeholder="Masukkan Nama Bab">
-                                    <span id="error-bab" class="text-red-500 text-xs mt-1 font-bold"></span>
+                                    <div class="">
+                                        <label class="text-sm">Nama Bab</label>
+                                        <input type="text" id="nama_bab" name="nama_bab"
+                                            class="w-full bg-white shadow-lg h-11 border-gray-200 border-[1px] outline-none rounded-full text-xs px-2 mt-2"
+                                            value="" placeholder="Masukkan Nama Bab">
+                                        <span id="error-bab" class="text-red-500 text-xs mt-1 font-bold"></span>
+                                    </div>
+
+                                    <div class="">
+                                        <label class="text-sm">Semester</label>
+                                        <input type="text" id="semester" name="semester"
+                                            class="w-full bg-white shadow-lg h-11 border-gray-200 border-[1px] outline-none rounded-full text-xs px-2 mt-2"
+                                            value="" placeholder="Masukkan Semester">
+                                        <span id="error-semester" class="text-red-500 text-xs mt-1 font-bold"></span>
+                                    </div>
                                 </div>
                                 <!---- button submit ---->
                                 <div class="flex justify-end mt-8">

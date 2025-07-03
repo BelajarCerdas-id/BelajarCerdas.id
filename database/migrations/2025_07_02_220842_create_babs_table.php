@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('user_accounts')->onDelete('cascade');
             $table->string('nama_bab');
+            $table->integer('semester');
             $table->string('kode');
             $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
             $table->foreignId('mapel_id')->constrained('mapels')->onDelete('cascade');
