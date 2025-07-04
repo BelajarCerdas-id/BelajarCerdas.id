@@ -46,7 +46,7 @@ function paginateBankSoalDetail() {
 
                             // Tambahkan class img jika ada gambar
                             if (containsImage) {
-                                content = addClassToImgTags(item.options_value, 'max-w-[120px] rounded my-2');
+                                content = addClassToImgTags(item.options_value, 'max-w-[300px] rounded my-2');
                             }
 
                             // cek apakah optionsValue mengandung image
@@ -75,6 +75,13 @@ function paginateBankSoalDetail() {
                         // Ambil videoId yang sesuai dengan index pada masing" group soal
                         const videoId = response.videoIds[index];
 
+                        const imageInExplanation = /<img\s+[^>]*src=/.test(first.explanation);
+
+                        // Tambahkan class img jika ada gambar
+                        if (imageInExplanation) {
+                            first.explanation = addClassToImgTags(first.explanation, 'max-w-[350px] rounded my-2');
+                        }
+
                         // Tampilkan video jika explanation itu adalah link video, jika tidak tampilkan explanation teks
                         const videoExplanation = videoId ? `
                             <div class="border max-w-sm !h-60 flex justify-start">
@@ -86,7 +93,7 @@ function paginateBankSoalDetail() {
                                         allowfullscreen></iframe>
                                 </div>
                             </div>
-                        ` : `<div class="w-max flex flex-col items-start gap-4">${first.explanation}</div>`;
+                        ` : `<div class="max-w-7xl flex flex-col items-start gap-4">${imageInExplanation ? first.explanation : first.explanation}</div>`;
 
                         // untuk memisahkan teks sebelum dengan img dan text setelah img
                         const splitQuestions = first.questions.split('<img'); // split sebelum <img>
