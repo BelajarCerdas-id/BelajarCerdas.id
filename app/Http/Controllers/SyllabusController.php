@@ -46,25 +46,19 @@ class SyllabusController extends Controller
             'nama_kurikulum.unique' => 'Nama kurikulum telah terdaftar!',
         ]);
 
+        if($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->with('formError', 'create')->withInput();
+        }
+
         $data = Kurikulum::create([
             'user_id' => $user->id,
             'nama_kurikulum' => $request->nama_kurikulum,
             'kode' => $request->nama_kurikulum,
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validator->errors()
-            ], 422); // Gunakan 422 Unprocessable Entity untuk validasi
-        }
-
         broadcast(new SyllabusCrud('kurikulum', 'create', $data))->toOthers();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Kurikulum Berhasil Ditambahkan',
-        ]);
+        return redirect()->back()->with('success-insert-data-kurikulum', 'Kurikulum Berhasil Ditambahkan');
     }
 
     public function curiculumUpdate(Request $request, String $id)

@@ -8,7 +8,6 @@
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
         <div class="content-beranda">
             <main>
-
                 @if (session('success-insert-data-fase'))
                     @include('components.alert.success-insert-data', [
                         'message' => session('success-insert-data-fase'),

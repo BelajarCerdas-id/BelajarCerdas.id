@@ -33,21 +33,31 @@
                         </button>
                     </div>
                     <!---- Form input kurikulum  ---->
-                    <form id="insert-curiculum-form">
-                        <label class="text-sm">Nama Kurikulum</label>
-                        <div class="flex relative max-w-lg mt-2">
-                            <div class="flex gap-2 w-full">
-                                <input type="text" name="nama_kurikulum"
-                                    class="w-full bg-white shadow-lg h-11 border-gray-200 border-[2px] outline-none rounded-full text-xs px-2
-                                    focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]"
-                                    placeholder="Masukkan Nama Kurikulum">
-                                <button
-                                    class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-full shadow-md transition-all h-max text-md">
-                                    Tambah
-                                </button>
+                    <form action="{{ route('kurikulum.store') }}" method="POST">
+                        @csrf
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+                            <div class="w-full">
+                                <label class="text-sm">Nama Kurikulum<sup class="text-red-500 pl-1">&#42;</sup></label>
+                                <div class="flex relative max-w-lg mt-2">
+                                    <div class="flex gap-2 w-full">
+                                        <input type="text" name="nama_kurikulum"
+                                            class="w-full bg-white shadow-lg h-11 border-gray-200 border-[2px] outline-none rounded-full text-xs px-2
+                                            focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]
+                                            {{ $errors->has('nama_kurikulum') && session('formError') === 'create' ? 'border-[1px] border-red-400' : '' }}"
+                                            value="{{ $errors->has('nama_kurikulum') && session('formError') === 'create' ? old('nama_kurikulum') : '' }}"
+                                            placeholder="Masukkan Nama Kurikulum">
+                                        <button
+                                            class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-full shadow-md transition-all h-max text-md">
+                                            Tambah
+                                        </button>
+                                    </div>
+                                </div>
+                                @if ($errors->has('nama_kurikulum') && session('formError') === 'create')
+                                    <span
+                                        class="text-red-500 font-bold text-xs pt-2">{{ $errors->first('nama_kurikulum') }}</span>
+                                @endif
                             </div>
                         </div>
-                        <span id="error-nama_kurikulum" class="text-red-500 font-bold text-xs pt-2"></span>
                     </form>
 
                     <div class="border-b-2 border-gray-200 mt-4"></div>
