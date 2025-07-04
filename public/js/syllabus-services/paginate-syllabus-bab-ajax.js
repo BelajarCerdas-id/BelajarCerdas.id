@@ -199,7 +199,7 @@ $(document).ready(function () {
 });
 
 // INSERT BAB
-$('#insert-bab-form').on('submit', function (e) {
+$(document).on('submit', '#insert-bab-form', function (e) {
     e.preventDefault();
 
     const kurikulumName = $(this).data('nama-kurikulum');
