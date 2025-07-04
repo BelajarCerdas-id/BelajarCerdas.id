@@ -46,18 +46,18 @@ class SyllabusController extends Controller
             'nama_kurikulum.unique' => 'Nama kurikulum telah terdaftar!',
         ]);
 
+        $data = Kurikulum::create([
+            'user_id' => $user->id,
+            'nama_kurikulum' => $request->nama_kurikulum,
+            'kode' => $request->nama_kurikulum,
+        ]);
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
                 'errors' => $validator->errors()
             ], 422); // Gunakan 422 Unprocessable Entity untuk validasi
         }
-
-        $data = Kurikulum::create([
-            'user_id' => $user->id,
-            'nama_kurikulum' => $request->nama_kurikulum,
-            'kode' => $request->nama_kurikulum,
-        ]);
 
         broadcast(new SyllabusCrud('kurikulum', 'create', $data))->toOthers();
 
@@ -458,11 +458,8 @@ class SyllabusController extends Controller
             'semester.required' => 'Harap pilih semester!',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validator->errors()
-            ], 422); // Gunakan 422 Unprocessable Entity untuk validasi
+        if($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->with('formError', 'create')->withInput();
         }
 
         $data = Bab::create([
@@ -478,10 +475,7 @@ class SyllabusController extends Controller
 
         broadcast(new SyllabusCrud('bab', 'create', $data))->toOthers();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Bab Berhasil Ditambahkan',
-        ]);
+        return redirect()->back()->with('success-insert-data-bab', 'Bab Berhasil Ditambahkan');
     }
 
     public function babUpdate(Request $request, $kurikulum_id, $kelas_id, $mapel_id, $id)

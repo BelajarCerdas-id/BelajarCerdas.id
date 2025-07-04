@@ -1,5 +1,4 @@
-<x-script></x-script>
-<div class=" w-full flex justify-center">
+<div class="w-full flex justify-center">
     <div class="fixed z-[9999]">
         <div id="alertSuccess"
             class="relative top-[-45px] opacity-100 scale-90 bg-green-200 w-max p-3 flex items-center space-x-2 rounded-lg shadow-lg transition-all duration-300 ease-out">
@@ -13,3 +12,5 @@
         </div>
     </div>
 </div>
+
+<script src="{{ asset('js/components/btn-close-alert-success.js') }}"></script>

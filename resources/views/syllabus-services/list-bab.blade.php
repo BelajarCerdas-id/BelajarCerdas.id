@@ -6,27 +6,36 @@
 
 @if (Auth::user()->role === 'Administrator')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
-        <div class="content-beranda">
+        <div class="content-beranda z-[-999]">
+
+            @if (session('success-insert-data-bab'))
+                @include('components.alert.success-insert-data', [
+                    'message' => session('success-insert-data-bab'),
+                ])
+            @endif
+
             <!--- alert nya menggunakan dari response json --->
-            <div id="alert-success-insert-data-bab"></div>
             <div id="alert-success-update-data-bab"></div>
             <div id="alert-success-delete-data-bab"></div>
             <main>
                 <section class="bg-white shadow-lg p-6 rounded-lg border-gray-200 border-[1px]">
-                    <form id="insert-bab-form" class="flex items-center gap-4" data-nama-kurikulum="{{ $nama_kurikulum }}"
-                        data-kurikulum-id="{{ $kurikulum_id }}" data-fase-id="{{ $fase_id }}"
-                        data-kelas-id="{{ $kelas_id }}" data-mapel-id="{{ $mapel_id }}">
+                    <form
+                        action="{{ route('bab.store', [$nama_kurikulum, $kurikulum_id, $fase_id, $kelas_id, $mapel_id]) }}"
+                        method="POST">
+                        @csrf
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
                             <div class="w-full">
                                 <label class="text-sm">Nama Bab<sup class="text-red-500 pl-1">&#42;</sup></label>
-                                <div class="">
-                                    <div class="w-full">
-                                        <input type="text" name="nama_bab"
-                                            class="w-full bg-white shadow-lg h-11 border-gray-200 border-[2px] outline-none rounded-full text-xs px-2
-                                            focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]"
-                                            placeholder="Masukkan Nama Bab">
-                                        <span id="error-nama_bab" class="text-red-500 font-bold text-xs pt-2"></span>
-                                    </div>
+                                <div class="w-full">
+                                    <input type="text" name="nama_bab"
+                                        class="w-full bg-white shadow-lg h-11 border-gray-200 border outline-none rounded-full text-xs px-2
+                                        focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]
+                                        {{ $errors->has('nama_bab') && session('formError') === 'create' ? 'border-[1px] border-red-400' : '' }}"
+                                        value="{{ old('nama_bab') }}" placeholder="Masukkan Nama Bab">
+                                    @if ($errors->has('nama_bab') && session('formError') === 'create')
+                                        <span
+                                            class="text-red-500 font-bold text-xs pt-2">{{ $errors->first('nama_bab') }}</span>
+                                    @endif
                                 </div>
                             </div>
 
@@ -36,7 +45,8 @@
                                     <div class="w-full">
                                         <select name="semester"
                                             class="w-full bg-white shadow-lg h-12 border-gray-200 border outline-none rounded-full px-4 text-xs focus:border-[1px]
-                                            focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer">
+                                            focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer
+                                            {{ $errors->has('semester') && session('formError') === 'create' ? 'border-[1px] border-red-400' : '' }}">
                                             <option value="" class="hidden">Pilih Semester</option>
                                             <option value="1" {{ old('semester') == '1' ? 'selected' : '' }}>
                                                 1
@@ -45,7 +55,10 @@
                                                 2
                                             </option>
                                         </select>
-                                        <span id="error-semester" class="text-red-500 font-bold text-xs pt-2"></span>
+                                        @if ($errors->has('semester') && session('formError') === 'create')
+                                            <span
+                                                class="text-red-500 font-bold text-xs pt-2">{{ $errors->first('semester') }}</span>
+                                        @endif
                                     </div>
                                     <button
                                         class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 mt-2 rounded-full shadow-md transition-all h-max text-md">

@@ -117,9 +117,7 @@ $(document).ready(function() {
     currentKurikulumName = kurikulumName;
     currentKurikulumId = kurikulumId;
 
-});
-
-// INSERT KURIKULUM
+    // INSERT KURIKULUM
 $('#insert-curiculum-form').on('submit', function (e) {
     e.preventDefault();
 
@@ -181,6 +179,7 @@ $('#insert-curiculum-form').on('submit', function (e) {
             }
         }
     });
+});
 });
 
 
