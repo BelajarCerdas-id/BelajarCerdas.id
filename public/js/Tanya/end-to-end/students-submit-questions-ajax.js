@@ -14,7 +14,6 @@ $(document).ready(function () {
 
 
         const formData = new FormData(this);
-        const csrf = $('meta[name="csrf-token"]').attr('content');
 
         $.ajax({
             url: '/tanya/store',
