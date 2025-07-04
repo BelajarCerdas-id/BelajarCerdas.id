@@ -154,6 +154,50 @@ function paginateSyllabusBab() {
     }
 }
 
+// ACTIVATE BAB
+$(document).ready(function () {
+    const kurikulumName = $(this).data('nama-kurikulum');
+    const kurikulumId = $(this).data('kurikulum-id');
+    const faseId = $(this).data('fase-id');
+    const kelasId = $(this).data('kelas-id');
+    const mapelId = $(this).data('mapel-id');
+    const babId = $(this).data('bab-id');
+
+    currentKurikulumId = kurikulumId;
+    currentKurikulumName = kurikulumName;
+    currentFaseId = faseId;
+    currentKelasId = kelasId;
+    currentMapelId = mapelId;
+    currentBabId = babId;
+
+    // Ambil data semua saat halaman dimuat
+    paginateSyllabusBab();
+
+        $(document).on('change', '.checkbox-bab', function() {
+            let id = $(this).data('id-bab'); // bab_id
+            let feature_id = $(this).data('feature'); // feature_id
+            let status_bab = $(this).is(':checked') ? 'publish' : 'unpublish';
+            let csrf = $('meta[name="csrf-token"]').attr('content');
+
+            $.ajax({
+                url: '/syllabus/curiculum/bab/activate/' + id,
+                type: 'PUT',
+                data: {
+                    _token: csrf,
+                    status_bab: status_bab,
+                    feature_id: feature_id // Kirim feature_id ke server
+                },
+                success: function(response) {
+                    console.log(response.message);
+                },
+                error: function(xhr) {
+                    alert('Gagal mengubah status.');
+                    $(this).prop('checked', !$(this).is(':checked'));
+                }
+            });
+        });
+});
+
 // INSERT BAB
 $('#insert-bab-form').on('submit', function (e) {
     e.preventDefault();
@@ -222,50 +266,6 @@ $('#insert-bab-form').on('submit', function (e) {
             }
         }
     });
-});
-
-// ACTIVATE BAB
-$(document).ready(function () {
-    const kurikulumName = $(this).data('nama-kurikulum');
-    const kurikulumId = $(this).data('kurikulum-id');
-    const faseId = $(this).data('fase-id');
-    const kelasId = $(this).data('kelas-id');
-    const mapelId = $(this).data('mapel-id');
-    const babId = $(this).data('bab-id');
-
-    currentKurikulumId = kurikulumId;
-    currentKurikulumName = kurikulumName;
-    currentFaseId = faseId;
-    currentKelasId = kelasId;
-    currentMapelId = mapelId;
-    currentBabId = babId;
-
-    // Ambil data semua saat halaman dimuat
-    paginateSyllabusBab();
-
-        $(document).on('change', '.checkbox-bab', function() {
-            let id = $(this).data('id-bab'); // bab_id
-            let feature_id = $(this).data('feature'); // feature_id
-            let status_bab = $(this).is(':checked') ? 'publish' : 'unpublish';
-            let csrf = $('meta[name="csrf-token"]').attr('content');
-
-            $.ajax({
-                url: '/syllabus/curiculum/bab/activate/' + id,
-                type: 'PUT',
-                data: {
-                    _token: csrf,
-                    status_bab: status_bab,
-                    feature_id: feature_id // Kirim feature_id ke server
-                },
-                success: function(response) {
-                    console.log(response.message);
-                },
-                error: function(xhr) {
-                    alert('Gagal mengubah status.');
-                    $(this).prop('checked', !$(this).is(':checked'));
-                }
-            });
-        });
 });
 
 // Event listener tombol "edit bab" (open modal)
