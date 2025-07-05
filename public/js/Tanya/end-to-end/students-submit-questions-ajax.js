@@ -83,7 +83,7 @@ $(document).ready(function () {
 
 
                 // inisialisasi pertanyaan student (pada halaman tanya mentor)
-                fetchFilteredDataRiwayatMentor();
+                fetchFilteredDataTanyaMentor();
             },
             error: function (xhr) {
                 if (xhr.status === 422) {
