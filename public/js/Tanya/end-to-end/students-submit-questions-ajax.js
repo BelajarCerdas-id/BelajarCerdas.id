@@ -80,6 +80,10 @@ $(document).ready(function () {
                 $('#selectedKoin').text('');
 
                 $btn.prop('disabled', false); // undisable tombol
+
+
+                // inisialisasi pertanyaan student (pada halaman tanya mentor)
+                fetchFilteredDataRiwayatMentor();
             },
             error: function (xhr) {
                 if (xhr.status === 422) {
