@@ -4,8 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Events\BankSoalEditQuestion;
 use App\Events\BankSoalListener;
+use App\Models\Bab;
+use App\Models\Fase;
+use App\Models\Kelas;
 use App\Models\Kurikulum;
+use App\Models\Mapel;
+use App\Models\SoalPembahasanAnswers;
 use App\Models\SoalPembahasanQuestions;
+use App\Models\SubBab;
+use App\Models\UserAccount;
 use App\Services\DocxImageExtractor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,14 +44,14 @@ class SoalPembahasanController extends Controller
     public function bankSoalActivate(Request $request, $subBabId)
     {
         $request->validate([
-            'status_soal' => 'required|in:Publish,Unpublish'
+            'status_bank_soal' => 'required|in:Publish,Unpublish'
         ]);
 
         $dataBankSoal = SoalPembahasanQuestions::where('sub_bab_id', $subBabId)->get();
 
         foreach ($dataBankSoal as $soal) {
             $soal->update([
-                'status_soal' => $request->status_soal
+                'status_bank_soal' => $request->status_bank_soal
             ]);
         }
 
@@ -321,31 +328,39 @@ class SoalPembahasanController extends Controller
                 $finalAnswerKey = $answerMap[$answerKey] ?? null;
 
                 if (empty($formErrors)) {
-                    foreach ($answerMap as $optionField => $label) {
-                        if (!empty($dataSoal[$optionField])) {
-                            $createBankSoal = SoalPembahasanQuestions::firstOrCreate([
-                                'questions' => $dataSoal['QUESTION'],
-                                'options_key' => $label,
-                            ], [
-                                'administrator_id' => $userId,
-                                'kurikulum_id' => $request->kurikulum_id,
-                                'kelas_id' => $request->kelas_id,
-                                'mapel_id' => $request->mapel_id,
-                                'bab_id' => $request->bab_id,
-                                'sub_bab_id' => $request->sub_bab_id,
-                                'questions' => $dataSoal['QUESTION'],
-                                'options_key' => $label,
-                                'options_value' => $dataSoal[$optionField],
-                                'answer_key' => $finalAnswerKey,
-                                'skilltag' => trim(strip_tags($dataSoal['SKILLTAG'] ?? '')),
-                                'difficulty' => trim(strip_tags($dataSoal['DIFFICULTY'] ?? '')),
-                                'explanation' => $dataSoal['EXPLANATION'] ?? '',
-                                'status_soal' => trim(strip_tags($dataSoal['STATUS'] ?? '')),
-                                'tipe_soal' => trim(strip_tags($dataSoal['TYPE'] ?? '')),
-                            ]);
+                    // Cek apakah soal dengan pertanyaan yang sama sudah ada
+                    $existingQuestion = SoalPembahasanQuestions::where('questions', $dataSoal['QUESTION'])->first();
+
+                    // Insert hanya akan dijalankan jika soal belum ada
+                    if (!$existingQuestion) {
+                        // mengecek Jika ada soal dengan sub_bab yang sama dan status_bank_soal = 'Publish', jika tidak maka null (default Unpublish)
+                        $statusBankSoal = SoalPembahasanQuestions::where('sub_bab_id', $request->sub_bab_id)
+                            ->where('status_bank_soal', 'Publish')
+                            ->exists() ? 'Publish' : null;
+
+                        foreach ($answerMap as $optionField => $label) {
+                            if (!empty($dataSoal[$optionField])) {
+                                SoalPembahasanQuestions::create([
+                                    'administrator_id' => $userId,
+                                    'kurikulum_id'     => $request->kurikulum_id,
+                                    'kelas_id'         => $request->kelas_id,
+                                    'mapel_id'         => $request->mapel_id,
+                                    'bab_id'           => $request->bab_id,
+                                    'sub_bab_id'       => $request->sub_bab_id,
+                                    'questions'        => $dataSoal['QUESTION'],
+                                    'options_key'      => $label,
+                                    'options_value'    => $dataSoal[$optionField],
+                                    'answer_key'       => $finalAnswerKey,
+                                    'skilltag'         => trim(strip_tags($dataSoal['SKILLTAG'] ?? '')),
+                                    'difficulty'       => trim(strip_tags($dataSoal['DIFFICULTY'] ?? '')),
+                                    'explanation'      => $dataSoal['EXPLANATION'] ?? '',
+                                    'status_soal'      => trim(strip_tags($dataSoal['STATUS'] ?? '')),
+                                    'tipe_soal'        => trim(strip_tags($dataSoal['TYPE'] ?? '')),
+                                    'status_bank_soal' => $statusBankSoal,
+                                ]);
+                            }
                         }
                     }
-
                 }
             }
 
@@ -411,19 +426,166 @@ class SoalPembahasanController extends Controller
         return response()->json(['message' => 'Gambar tidak ditemukan'], 404);
     }
 
-
     // FUNCTION SOAL PEMBAHASAN (STUDENT)
-    public function soalPembahasan()
+    // function soal pembahasan preview kelas by fase student
+    public function soalPembahasanKelasView()
     {
-        return view('Features.soal-pembahasan.assessment.soal-pembahasan');
+        // Mendapatkan user yang sedang login
+        $user = Auth::user();
+
+        // Mendapatkan kelas berdasarkan fase user
+        $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+
+        return view('Features.soal-pembahasan.soal-pembahasan-kelas', compact('getKelasByFase'));
+    }
+
+    // function soal pembahasan preview mapel by kelas
+    public function soalPembahasanMapelView($kelas, $kelas_id)
+    {
+        // Mendapatkan user yang sedang login
+        $user = Auth::user();
+
+        // Mendapatkan kelas berdasarkan fase user
+        $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+
+        // Mendapatkan mapel berdasarkan kelas yang dipilih user
+        $getMapelByKelas = Mapel::where('kelas_id', $kelas_id)->get();
+
+        return view('Features.soal-pembahasan.soal-pembahasan-mapel', compact(
+            'kelas', 'kelas_id', 'getKelasByFase', 'getMapelByKelas'
+        ));
+    }
+
+    public function soalPembahasanBabView($kelas, $kelas_id, $mata_pelajaran, $mapel_id)
+    {
+        // Mendapatkan user yang sedang login
+        $user = Auth::user();
+
+        // Mendapatkan kelas berdasarkan fase user
+        $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+
+        // Mendapatkan bab berdasarkan mapel yang dipilih user
+        $getBabByMapel = Bab::where('mapel_id', $mapel_id)->get();
+
+        return view('Features.soal-pembahasan.soal-pembahasan-bab', compact(
+            'kelas', 'kelas_id', 'mata_pelajaran', 'mapel_id', 'getKelasByFase', 'getBabByMapel'
+        ));
+    }
+
+    public function soalPembahasanSubBabView($kelas, $kelas_id, $mata_pelajaran, $mapel_id, $bab_id)
+    {
+        // Mendapatkan user yang sedang login
+        $user = Auth::user();
+
+        // Mendapatkan kelas berdasarkan fase user
+        $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+
+        // Mendapatkan sub bab berdasarkan mapel yang dipilih user
+        $getSubBabByBab = SubBab::where('bab_id', $bab_id)->get();
+
+        return view('Features.soal-pembahasan.soal-pembahasan-sub-bab', compact(
+            'kelas', 'kelas_id', 'mata_pelajaran', 'mapel_id', 'bab_id',  'getKelasByFase', 'getSubBabByBab'
+        ));
+    }
+
+    public function soalPembahasanAssessmentView($kelas, $kelas_id, $mata_pelajaran, $mapel_id, $bab_id)
+    {
+        // Mendapatkan user yang sedang login
+        $user = Auth::user();
+
+        // Mendapatkan kelas berdasarkan fase user
+        $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+
+        return view('Features.soal-pembahasan.soal-pembahasan-list-assessment', compact(
+            'kelas', 'kelas_id', 'mata_pelajaran', 'mapel_id', 'bab_id', 'getKelasByFase',
+        ));
     }
 
     // FUNCTION PRACTICE
-    public function practice()
+    public function practice($kelas, $kelas_id, $mata_pelajaran, $mapel_id, $bab_id, $sub_bab_id)
     {
-        return view('Features.soal-pembahasan.assessment.practice.soal-pembahasan-practice');
+        // mendapatkan bab name
+        $getBabName = Bab::where('id', $bab_id)->first();
+
+        // mendapatkan sub bab name
+        $getSubBabName = SubBab::where('id', $sub_bab_id)->first();
+
+        return view('Features.soal-pembahasan.assessment.practice.soal-pembahasan-practice', compact(
+            'kelas', 'kelas_id', 'mata_pelajaran', 'mapel_id', 'bab_id', 'sub_bab_id', 'getBabName', 'getSubBabName'
+        ));
+    }
+
+    public function practiceQuestionsForm($sub_bab_id)
+    {
+        // grouping question by sub bab dan mengurukan soal dimulai dari soal yang berstatus free terlebih dahulu
+        $getQuestionsBySubBab = SoalPembahasanQuestions::where('sub_bab_id', $sub_bab_id)->where('status_bank_soal', 'Publish')
+            ->where('tipe_soal', 'Ujian')->get()->sortBy(function ($item) {
+                return $item->status_soal === 'Free' ? 0 : 1; // 0 ditampilin lebih dulu
+            })->values();
+
+        $groupedQuestions = $getQuestionsBySubBab->groupBy('questions');
+
+        $videoIds = [];
+
+        // Loop untuk mendapatkan ID video dari URL
+        foreach ($groupedQuestions as $item) {
+            $videoId = null;
+
+            // Cari explanation yang mengandung url video menggunakan regex, lalu mengambil 1 data pertama dari masing" array group soal.
+            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $item[0]['explanation'], $matches)) {
+                $videoId = $matches[1] ?? $matches[2];
+            }
+
+            $videoIds[] = $videoId;
+        }
+
+        $questionsAnswer = SoalPembahasanAnswers::where('student_id', Auth::id())->pluck('user_answer_option', 'question_id');
+
+        return response()->json([
+            'data' => $groupedQuestions->values(),
+            'questionsAnswer' => $questionsAnswer,
+            'videoIds' => $videoIds, // untuk menampilkan video in iframe
+        ]);
+    }
+
+    public function practiceAnswer(Request $request, $id)
+    {
+        $userId = Auth::id();
+
+        $validator = Validator::make($request->all(), [
+            'user_answer_option' => 'required',
+        ], [
+            'user_answer_option.required' => 'Harap pilih jawaban',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $answerStore = SoalPembahasanAnswers::create([
+            'student_id' => $userId,
+            'question_id' => $request->question_id,
+            'user_answer_option' => $request->user_answer_option,
+            'question_answer_value' => '10'
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Jawaban berhasil disimpan',
+        ]);
     }
 
     // FUNCTION EXAM
+    public function exam($kelas, $kelas_id, $mata_pelajaran, $mapel_id, $bab_id)
+    {
+        // mendapatkan bab name
+        $getBabName = Bab::where('id', $bab_id)->first();
 
+        return view('Features.soal-pembahasan.assessment.exam.soal-pembahasan-exam', compact(
+            'kelas', 'kelas_id', 'mata_pelajaran', 'mapel_id', 'bab_id', 'getBabName'
+        ));
+    }
 }

@@ -241,7 +241,7 @@ Route::fallback(function () {
     Route::get('/paginate/report-mentor', [FilterController::class, 'paginateReportPaymentMentor'])->name('paginate.reportPaymentMentor');
     Route::get('/paginate/batch-detail-payment-mentor/{id}', [FilterController::class, 'paginateBatchDetailPaymentMentor'])->name('paginate.batchDetailPaymentMentor');
 
-    // SOAL DAN PEMBAHASAN ROUTES
+    // ROUTES SOAL DAN PEMBAHASAN
     // BANK SOAL VIEWS (ADMINISTRATOR)
     Route::get('/soal-pembahasan/bank-soal', [SoalPembahasanController::class, 'bankSoalView'])->name('bankSoal.view');
     Route::get('/soal-pembahasan/bank-soal/{subBab}/{subBabId}', [SoalPembahasanController::class, 'bankSoalDetail'])->name('bankSoal.detail.view');
@@ -261,8 +261,26 @@ Route::fallback(function () {
     Route::post('/bank-soal/edit-image', [SoalPembahasanController::class, 'editImageBankSoal'])->name('soalPembahasan.editImage');
     Route::post('/bank-soal/delete-image/endpoint', [SoalPembahasanController::class, 'deleteImageBankSoal'])->name('soalPembahasan.deleteImage');
 
-    // SOAL PEMBAHASAN PRACTICE (STUDENT)
-    // Route::get('/soal-pembahasan/latihan', [SoalPembahasanController::class, 'bankSoalView'])->name('bankSoal.view');
+    // SOAL PEMBAHASAN (STUDENT)
+    Route::get('/soal-pembahasan', [SoalPembahasanController::class, 'soalPembahasanKelasView'])->name('soalPembahasanKelas.view');
+    Route::get('/soal-pembahasan/{kelas}/{kelas_id}', [SoalPembahasanController::class, 'soalPembahasanMapelView'])->name('soalPembahasanMapel.view');
+    Route::get('/soal-pembahasan/{kelas}/{kelas_id}/{mata_pelajaran}/{mapel_id}/bab', [SoalPembahasanController::class, 'soalPembahasanBabView'])->name('soalPembahasanBab.view');
+    Route::get('/soal-pembahasan/{kelas}/{kelas_id}/{mata_pelajaran}/{mapel_id}/{bab_id}/sub-bab', [SoalPembahasanController::class, 'soalPembahasanSubBabView'])->name('soalPembahasanSubBab.view');
+    Route::get('/soal-pembahasan/{kelas}/{kelas_id}/{mata_pelajaran}/{mapel_id}/{bab_id}/assessment', [SoalPembahasanController::class, 'soalPembahasanAssessmentView'])->name('soalPembahasanAssessment.view');
+
+    // ASSESSMENT
+    // PRACTICE VIEW
+    Route::get('/soal-pembahasan/kelas/{kelas}/{kelas_id}/{mata_pelajaran}/{mapel_id}/{bab_id}/{sub_bab_id}/assessment/latihan', [SoalPembahasanController::class, 'practice'])->name('soalPembahasanAssessment.practice');
+
+    // PRACTICE QUESTIONS FORM
+    Route::get('/soal-pembahasan/kelas/{sub_bab_id}/assessment/latihan', [SoalPembahasanController::class, 'practiceQuestionsForm'])->name('practiceQuestions.form');
+
+    // PRACTICE ANSWER
+    Route::post('/soal-pembahasan/kelas/{sub_bab_id}/assessment/latihan/answer', [SoalPembahasanController::class, 'practiceAnswer'])->name('soalPembahasanAssessment.practice.answer');
+
+    // EXAM VIEW
+    Route::get('/soal-pembahasan/kelas/{kelas}/{kelas_id}/{mata_pelajaran}/{mapel_id}/{bab_id}/assessment/ujian', [SoalPembahasanController::class, 'exam'])->name('soalPembahasanAssessment.exam');
+
 
 
     //ROUTES SYLLABUS-SERVICES

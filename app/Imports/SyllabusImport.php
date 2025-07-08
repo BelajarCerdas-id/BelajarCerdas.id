@@ -119,6 +119,7 @@ class SyllabusImport implements ToCollection, WithHeadingRow, SkipsEmptyRows, Wi
             $bab = Bab::firstOrCreate([
                 'user_id' => $this->userId,
                 'nama_bab' => $row['bab'],
+                'semester' => $row['semester'],
                 'kelas_id' => $kelas->id,
                 'mapel_id' => $mapel->id,
                 'fase_id' => $fase->id,

@@ -26,7 +26,6 @@ function paginateBankSoalDetail() {
                         const first = group[0]; // Karena setiap group itu array dari soal yang sama
 
                         // Mengiterasi setiap opsi dari soal tersebut
-                        // Mengiterasi setiap opsi dari soal tersebut
                         function addClassToImgTags(html, className) {
                             return html
                                 .replace(/<img\b(?![^>]*class=)[^>]*>/g, (imgTag) => {

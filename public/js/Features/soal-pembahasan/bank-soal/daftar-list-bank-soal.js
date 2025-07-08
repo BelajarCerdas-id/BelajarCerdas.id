@@ -22,12 +22,12 @@ function paginateBankSoal(page = 1) {
                     <td class="td-table !text-black !text-center">${application.mapel?.mata_pelajaran}</td>
                     <td class="td-table !text-black !text-center">${application.bab?.nama_bab}</td>
                     <td class="td-table !text-black !text-center">${application.sub_bab?.sub_bab}</td>
-                    <td class="td-table !text-black !text-center">${application.status_soal === 'Publish' ? 'Publish' : 'Unpublish'}</td>
+                    <td class="td-table !text-black !text-center">${application.status_bank_soal === 'Publish' ? 'Publish' : 'Unpublish'}</td>
                     <td class="border text-center border-gray-300">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" class="hidden peer toggle-active-bank-soal"
                                 data-sub_bab_id="${application.sub_bab_id}"
-                                ${application.status_soal === 'Publish' ? 'checked' : ''} />
+                                ${application.status_bank_soal === 'Publish' ? 'checked' : ''} />
                             <div
                                 class="w-11 h-6 bg-gray-300 peer-checked:bg-green-500 rounded-full transition-colors duration-300 ease-in-out">
                             </div>
@@ -76,7 +76,7 @@ $(document).ready(function () {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             data: {
-                status_soal: status // Kirim status baru (publish/unpublish)
+                status_bank_soal: status // Kirim status baru (publish/unpublish)
             },
             success: function (response) {
                 // inisialisasi update data terbaru setelah berhasil insert data

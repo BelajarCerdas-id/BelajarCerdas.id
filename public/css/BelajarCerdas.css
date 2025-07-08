@@ -1867,7 +1867,7 @@ input[type="number"]::-ms-reveal {
     margin-top: 50px;
 }
 
-/*------------------------------- css buycoin siswa (onclick content) -------------------------*/
+/*------------------------------- BUY COIN SISWA (ONCLICK CONTENT) -------------------------*/
 input[type="radio"]:checked + label .paket-koin {
     border: 3px solid #4189e0;
 }
@@ -1897,7 +1897,7 @@ input:checked + .content-menu::after {
     /* after buat centang nya biar ada di sebelah kanan text dan logo */
 }
 
-/* ---------- accordion choose payment ------------- */
+/* ---------- ACCORDION CHOOSE PAYMENT ------------- */
 .container-accordion-payment {
     max-width: 530px;
     width: 100%;
@@ -1957,21 +1957,39 @@ input:checked + .content-menu::after {
 }
 
 input[type="radio"]:checked + label.checked-dropdown-mapel {
-    background-color: rgba(0, 0, 0, 0.03); /* Warna abu transparan */
+    background-color: rgba(0, 0, 0, 0.03);
     color: gray;
 }
 
-/* ---------- show bullets and number formats in accordion question soal pembahasan (soalnya ul ol ke hidden sama class lain) ------------- */
-#grid-list-soal ul {
+/* ---------- SOAL PEMBAHASAN FEATURE  ------------- */
+/* ---------- show bullets and number formats in accordion, practice, exam question ------------- */
+#grid-list-soal ul,
+#practice-questions-form ul {
     list-style: disc !important;
     padding-left: 15px;
 }
 
-#grid-list-soal ol {
+#grid-list-soal ol,
+#practice-questions-form ol {
     list-style: decimal !important;
     padding-left: 24px;
 }
 
+/* ---------- show checked after select one options in assessment question  ------------- */
+input[type="radio"]:checked + label.checked-option {
+    background-color: rgba(0, 0, 0, 0.09);
+}
+
+input[type="radio"]:checked + label.nomor-soal {
+    background-color: rgba(0, 0, 0, 0.09);
+}
+
+/* ---------- show checked list class item  ------------- */
+.list-class-item.active .link-href-class {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* ---------- MEDIA SCREEN  ------------- */
 @media screen and (max-width: 900px) {
     #slide1:checked ~ #controls label:nth-child(2),
     #slide2:checked ~ #controls label:nth-child(3),
@@ -1989,8 +2007,7 @@ input[type="radio"]:checked + label.checked-dropdown-mapel {
     }
 }
 
-/* Media Screen */
-/* Media Screen sidebar */
+/* SIDEBAR BERANDA */
 @media screen and (max-width: 768px) {
     .home-beranda {
         left: 0px;
@@ -2031,8 +2048,6 @@ input[type="radio"]:checked + label.checked-dropdown-mapel {
 
     .sidebar-beranda.open ~ .home-beranda {
         width: 100%;
-        /* display: flex;
-        justify-content: center; */
         border: 1px solid grey;
         margin-top: 78px;
         left: 0;
@@ -2043,7 +2058,7 @@ input[type="radio"]:checked + label.checked-dropdown-mapel {
     }
 }
 
-/* Media Screen arrow pagination (about) */
+/* ARROW PAGINATION (ABOUT PAGE) */
 @media (max-width: 1277px) {
     .pagination-slider .swiper-button-next {
         left: 75% !important;
@@ -2083,7 +2098,7 @@ input[type="radio"]:checked + label.checked-dropdown-mapel {
     }
 }
 
-/* Media Screen jumbtron-image-teacher (mitra cerdas) */
+/* JUMBOTRON IMAGE TEACHER (MITRA CERDAS PAGE) */
 @media (max-width: 1023px) {
     .jumbotron-mitra-cerdas {
         background: white;
