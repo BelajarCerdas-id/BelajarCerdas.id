@@ -24,7 +24,7 @@ class SyllabusSheetImport implements WithMultipleSheets
         // Load file Excel (.xlsx) ke dalam objek Spreadsheet
         // $this->file adalah file yang dikirim dari form upload
         // getRealPath() memberikan path file sementara yang bisa dibaca oleh PhpSpreadsheet
-        $spreadsheet = IOFactory::load($this->file->getRealPath());
+        $spreadsheet = IOFactory::load($this->file->getPathName());
 
         foreach ($spreadsheet->getSheetNames() as $sheetName) {
             // Buat instance SyllabusImport untuk tiap sheet. contoh:
