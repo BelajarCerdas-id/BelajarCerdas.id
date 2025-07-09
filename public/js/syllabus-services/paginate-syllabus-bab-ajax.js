@@ -76,9 +76,9 @@ function paginateSyllabusBab() {
 
                         $('#tableListSyllabusBab').append(`
                             <tr class="text-xs">
-                                <td class="border border-gray-300">${application.nama_bab}</td>
+                                <td class="border border-gray-300">${application.nama_bab ?? '-'}</td>
 
-                                <td class="border border-gray-300 text-center">${application.semester}</td>
+                                <td class="border border-gray-300 text-center">${application.semester ?? '-'}</td>
 
                                 <td class="border text-center border-gray-300">
                                     <a href="${subBabDetail}" class="btn-subBab-detail" data-nama-kurikulum="${application.kurikulum?.nama_kurikulum}" data-kurikulum-id="${application.kurikulum_id}"

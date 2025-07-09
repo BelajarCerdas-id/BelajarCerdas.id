@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained('user_accounts');
             $table->foreignId('question_id')->constrained('soal_pembahasan_questions');
             $table->string('user_answer_option');
-            $table->integer('question_answer_value');
+            $table->integer('question_score')->nullable();
             $table->timestamps();
         });
     }

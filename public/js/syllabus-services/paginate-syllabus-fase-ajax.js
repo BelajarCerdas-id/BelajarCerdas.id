@@ -48,7 +48,7 @@ function paginateSyllabusFase() {
 
                         $('#tableListSyllabusFase').append(`
                             <tr class="text-xs">
-                                <td class="border border-gray-300">${application.nama_fase}</td>
+                                <td class="border border-gray-300">${application.nama_fase ?? '-'}</td>
                                 <td class="border text-center border-gray-300">
                                     <a href="${kelasDetail}" class="btn-kelas-detail" data-id="${application.id}" data-nama-kurikulum="${application.kurikulum?.nama_kurikulum}"
                                     data-kurikulum-id="${application.kurikulum_id}">

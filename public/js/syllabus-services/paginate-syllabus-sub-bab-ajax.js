@@ -76,7 +76,7 @@ function paginateSyllabusSubBab() {
 
                         $('#tableListSyllabusSubBab').append(`
                             <tr class="text-xs">
-                                <td class="border border-gray-300">${application.sub_bab}</td>
+                                <td class="border border-gray-300">${application.sub_bab ?? '-'}</td>
                                 ${featureCheckboxesSubBab}
                                 <td class="border text-center border-gray-300">
                                     <div class="dropdown dropdown-left">

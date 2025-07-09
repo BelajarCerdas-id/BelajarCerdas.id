@@ -53,7 +53,7 @@ function paginateSyllabusMapel() {
 
                         $('#tableListSyllabusMapel').append(`
                             <tr class="text-xs">
-                                <td class="border border-gray-300">${application.mata_pelajaran}</td>
+                                <td class="border border-gray-300">${application.mata_pelajaran ?? '-'}</td>
                                 <td class="border text-center border-gray-300">
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" class="hidden peer toggle-mapel"

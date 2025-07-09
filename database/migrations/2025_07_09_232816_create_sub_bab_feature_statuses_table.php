@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bab_feature_statuses', function (Blueprint $table) {
+        Schema::create('sub_bab_feature_statuses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bab_id')->constrained('babs')->onDelete('cascade');
+            $table->foreignId('sub_bab_id')->constrained('sub_babs')->onDelete('cascade');
             $table->foreignId('feature_id')->constrained('features')->onDelete('cascade');
-            $table->enum('status_bab', ['publish', 'unpublish'])->default('unpublish');
+            $table->enum('status_sub_bab', ['publish', 'unpublish'])->default('unpublish');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bab_feature_statuses');
+        Schema::dropIfExists('sub_bab_feature_statuses');
     }
 };

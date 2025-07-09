@@ -281,6 +281,9 @@ Route::fallback(function () {
     // EXAM VIEW
     Route::get('/soal-pembahasan/kelas/{kelas}/{kelas_id}/{mata_pelajaran}/{mapel_id}/{bab_id}/assessment/ujian', [SoalPembahasanController::class, 'exam'])->name('soalPembahasanAssessment.exam');
 
+    // EXAM QUESTIONS FORM
+    Route::get('/soal-pembahasan/kelas/{bab_id}/assessment/ujian', [SoalPembahasanController::class, 'examQuestionsForm'])->name('examQuestions.form');
+
 
 
     //ROUTES SYLLABUS-SERVICES

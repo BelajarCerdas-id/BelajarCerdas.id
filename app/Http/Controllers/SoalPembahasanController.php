@@ -519,7 +519,7 @@ class SoalPembahasanController extends Controller
     {
         // grouping question by sub bab dan mengurukan soal dimulai dari soal yang berstatus free terlebih dahulu
         $getQuestionsBySubBab = SoalPembahasanQuestions::where('sub_bab_id', $sub_bab_id)->where('status_bank_soal', 'Publish')
-            ->where('tipe_soal', 'Ujian')->get()->sortBy(function ($item) {
+            ->where('tipe_soal', 'Latihan')->get()->sortBy(function ($item) {
                 return $item->status_soal === 'Free' ? 0 : 1; // 0 ditampilin lebih dulu
             })->values();
 
@@ -587,5 +587,37 @@ class SoalPembahasanController extends Controller
         return view('Features.soal-pembahasan.assessment.exam.soal-pembahasan-exam', compact(
             'kelas', 'kelas_id', 'mata_pelajaran', 'mapel_id', 'bab_id', 'getBabName'
         ));
+    }
+
+    public function examQuestionsForm($bab_id)
+    {
+        $getQuestionsByBab = SoalPembahasanQuestions::where('bab_id', $bab_id)->where('status_bank_soal', 'Publish')
+            ->where('tipe_soal', 'Ujian')->get()->sortBy(function ($item) {
+                return $item->status_soal === 'Free' ? 0 : 1; // 0 ditampilin lebih dulu
+            })->values();
+
+        $groupedQuestions = $getQuestionsByBab->groupBy('questions');
+
+        $videoIds = [];
+
+        // Loop untuk mendapatkan ID video dari URL
+        foreach ($groupedQuestions as $item) {
+            $videoId = null;
+
+            // Cari explanation yang mengandung url video menggunakan regex, lalu mengambil 1 data pertama dari masing" array group soal.
+            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $item[0]['explanation'], $matches)) {
+                $videoId = $matches[1] ?? $matches[2];
+            }
+
+            $videoIds[] = $videoId;
+        }
+
+        $questionsAnswer = SoalPembahasanAnswers::where('student_id', Auth::id())->pluck('user_answer_option', 'question_id');
+
+        return response()->json([
+            'data' => $groupedQuestions->values(),
+            'questionsAnswer' => $questionsAnswer,
+            'videoIds' => $videoIds, // untuk menampilkan video in iframe
+        ]);
     }
 }

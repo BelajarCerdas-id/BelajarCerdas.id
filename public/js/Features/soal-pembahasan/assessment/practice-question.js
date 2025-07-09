@@ -100,7 +100,6 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
 
             // Render Nomor Soal
             const nomorSoalHTML = groupedQuestions.map((group, index) => {
-                const videoId = response.videoIds[index];
                 return `
                     <input type="radio" id="nomor${index}" name="nomorSoal" class="hidden">
                     <label for="nomor${index}" class="nomor-soal border border-gray-400 py-1 hover:bg-gray-200 cursor-pointer text-xs" data-index="${index}">

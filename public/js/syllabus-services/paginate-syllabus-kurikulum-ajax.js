@@ -36,7 +36,7 @@ function fetchFilteredDataSyllabusCuriculum(page = 1) {
 
                     $('#tableListSyllabusCuriculum').append(`
                         <tr class="text-xs">
-                            <td class="border border-gray-300">${application.nama_kurikulum}</td>
+                            <td class="border border-gray-300">${application.nama_kurikulum ?? '-'}</td>
                             <td class="border text-center border-gray-300">
                                 <a href="${faseDetail}" class="btn-fase-detail" data-id="${application.id}" data-nama-kurikulum="${application.nama_kurikulum}">
                                     <div class="text-[#4189e0]">

@@ -49,7 +49,7 @@ function paginateSyllabusKelas() {
 
                         $('#tableListSyllabusKelas').append(`
                             <tr class="text-xs">
-                                <td class="border border-gray-300">${application.kelas}</td>
+                                <td class="border border-gray-300">${application.kelas ?? '-'}</td>
                                 <td class="border text-center border-gray-300">
                                     <a href="${mapelDetail}" class="btn-mapel-detail" data-nama-kurikulum="${application.kurikulum?.nama_kurikulum}" data-kurikulum-id="${application.kurikulum_id}"
                                     data-fase-id="${application.fase_id}" data-kelas-id="${application.id}">

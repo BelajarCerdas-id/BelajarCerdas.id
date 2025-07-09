@@ -55,7 +55,7 @@
                     </div>
 
                     <!--- Content Bottom --->
-                    <div id="practice-questions-form" data-bab-id="{{ $bab_id }}"></div>
+                    <div id="exam-questions-form" data-bab-id="{{ $bab_id }}"></div>
                     <!--- Form exam in ajax --->
                 </section>
             </main>

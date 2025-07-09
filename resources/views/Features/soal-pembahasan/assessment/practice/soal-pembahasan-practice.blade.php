@@ -65,7 +65,9 @@
                     </div>
 
                     <!--- Content Bottom --->
-                    <div id="practice-questions-form" data-sub-bab-id="{{ $sub_bab_id }}"></div>
+                    <div id="practice-questions-form" data-sub-bab-id="{{ $sub_bab_id }}">
+                        <!--- Form practice in ajax --->
+                    </div>
                 </section>
             </main>
         </div>

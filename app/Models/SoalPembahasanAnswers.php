@@ -13,7 +13,7 @@ class SoalPembahasanAnswers extends Model
         'student_id',
         'question_id',
         'user_answer_option',
-        'question_answer_value',
+        'question_score',
     ];
 
     public function UserAccount()

@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('options_value');
             $table->string('answer_key');
             $table->integer('skilltag');
-            $table->enum('difficulty', ['Mudah', 'Sedang', 'Sulit']);
+            $table->enum('difficulty', ['Mudah', 'Sedang', 'Sukar']);
             $table->text('explanation');
             $table->enum('status_bank_soal', ['Unpublish', 'Publish'])->default('Unpublish');
             $table->enum('status_soal', ['Free', 'Premium']);

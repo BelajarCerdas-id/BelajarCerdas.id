@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+     console.log("checked-class-option.js loaded ✅");
     // Auto aktifkan menu berdasarkan URL yang sedang dibuka
     const currentUrl = window.location.href;
     const allLinks = document.querySelectorAll(".link-href-class"); // Ambil semua link
