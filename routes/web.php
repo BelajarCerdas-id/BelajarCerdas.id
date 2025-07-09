@@ -262,11 +262,11 @@ Route::fallback(function () {
     Route::post('/bank-soal/delete-image/endpoint', [SoalPembahasanController::class, 'deleteImageBankSoal'])->name('soalPembahasan.deleteImage');
 
     // SOAL PEMBAHASAN (STUDENT)
-    Route::get('/soal-pembahasan', [SoalPembahasanController::class, 'soalPembahasanKelasView'])->name('soalPembahasanKelas.view');
-    Route::get('/soal-pembahasan/{kelas}/{kelas_id}', [SoalPembahasanController::class, 'soalPembahasanMapelView'])->name('soalPembahasanMapel.view');
-    Route::get('/soal-pembahasan/{kelas}/{kelas_id}/{mata_pelajaran}/{mapel_id}/bab', [SoalPembahasanController::class, 'soalPembahasanBabView'])->name('soalPembahasanBab.view');
-    Route::get('/soal-pembahasan/{kelas}/{kelas_id}/{mata_pelajaran}/{mapel_id}/{bab_id}/sub-bab', [SoalPembahasanController::class, 'soalPembahasanSubBabView'])->name('soalPembahasanSubBab.view');
-    Route::get('/soal-pembahasan/{kelas}/{kelas_id}/{mata_pelajaran}/{mapel_id}/{bab_id}/assessment', [SoalPembahasanController::class, 'soalPembahasanAssessmentView'])->name('soalPembahasanAssessment.view');
+    Route::get('/soal-pembahasan/kelas', [SoalPembahasanController::class, 'soalPembahasanKelasView'])->name('soalPembahasanKelas.view');
+    Route::get('/soal-pembahasan/kelas/{kelas}/{kelas_id}/mapel', [SoalPembahasanController::class, 'soalPembahasanMapelView'])->name('soalPembahasanMapel.view');
+    Route::get('/soal-pembahasan/kelas/{kelas}/{kelas_id}/mapel/{mata_pelajaran}/{mapel_id}/bab', [SoalPembahasanController::class, 'soalPembahasanBabView'])->name('soalPembahasanBab.view');
+    Route::get('/soal-pembahasan/kelas/{kelas}/{kelas_id}/mapel/{mata_pelajaran}/{mapel_id}/{bab_id}/sub-bab', [SoalPembahasanController::class, 'soalPembahasanSubBabView'])->name('soalPembahasanSubBab.view');
+    Route::get('/soal-pembahasan/kelas/{kelas}/{kelas_id}/mapel/{mata_pelajaran}/{mapel_id}/{bab_id}/assessment', [SoalPembahasanController::class, 'soalPembahasanAssessmentView'])->name('soalPembahasanAssessment.view');
 
     // ASSESSMENT
     // PRACTICE VIEW

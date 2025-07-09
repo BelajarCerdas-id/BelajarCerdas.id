@@ -10,7 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const classOptions = link.closest('.list-class-item');
 
-            classOptions.classList.add("active"); // Kalau <a> langsung di list-item tanpa dropdown
+            if (classOptions) {
+                classOptions.classList.add("active"); // Kalau <a> langsung di list-item tanpa dropdown
+            }
         }
     });
 });
