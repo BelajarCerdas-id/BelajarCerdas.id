@@ -333,14 +333,14 @@ class SoalPembahasanController extends Controller
 
                     // Insert hanya akan dijalankan jika soal belum ada
                     if (!$existingQuestion) {
-                        // mengecek Jika ada soal dengan sub_bab yang sama dan status_bank_soal = 'Publish', jika tidak maka null (default Unpublish)
+                        // mengecek Jika ada soal dengan sub_bab yang sama dan status_bank_soal = 'Publish', jika tidak maka Unpublish
                         $statusBankSoal = SoalPembahasanQuestions::where('sub_bab_id', $request->sub_bab_id)
                             ->where('status_bank_soal', 'Publish')
-                            ->exists() ? 'Publish' : null;
+                            ->exists() ? 'Publish' : 'Unpublish';
 
                         foreach ($answerMap as $optionField => $label) {
                             if (!empty($dataSoal[$optionField])) {
-                                SoalPembahasanQuestions::create([
+                                $createBankSoal = SoalPembahasanQuestions::create([
                                     'administrator_id' => $userId,
                                     'kurikulum_id'     => $request->kurikulum_id,
                                     'kelas_id'         => $request->kelas_id,
