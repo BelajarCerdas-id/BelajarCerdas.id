@@ -165,7 +165,7 @@ $(document).ready(function () {
                 },
                 error: function(xhr) {
                     alert('Gagal mengubah status.');
-                    $(this).prop('checked', !$(this).is(':checked'));
+                    checkbox.prop('checked', !checkbox.is(':checked')); // ← GUNAKAN INI
                 }
             });
         });

@@ -1964,13 +1964,15 @@ input[type="radio"]:checked + label.checked-dropdown-mapel {
 /* ---------- SOAL PEMBAHASAN FEATURE  ------------- */
 /* ---------- show bullets and number formats in accordion, practice, exam question ------------- */
 #grid-list-soal ul,
-#practice-questions-form ul {
+#practice-questions-form ul,
+.exam-question-form ul {
     list-style: disc !important;
     padding-left: 15px;
 }
 
 #grid-list-soal ol,
-#practice-questions-form ol {
+#practice-questions-form ol,
+.exam-question-form ol {
     list-style: decimal !important;
     padding-left: 24px;
 }

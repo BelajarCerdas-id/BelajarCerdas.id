@@ -15,8 +15,7 @@
                 <section>
                     <span class="text-lg font-bold opacity-70">LIST SOAL</span>
                     <!--- daftar list soal --->
-                    <div id="container-bank-soal-detail" data-sub-bab="{{ $subBab }}"
-                        data-sub-bab-id="{{ $subBabId }}">
+                    <div id="container-bank-soal-detail" data-sub-bab-id="{{ $subBabId }}">
                         <div id="grid-list-soal" class="container-accordion mb-8">
                             <!-- show data in ajax -->
                         </div>

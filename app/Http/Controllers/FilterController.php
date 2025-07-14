@@ -487,11 +487,11 @@ class FilterController extends Controller
         return response()->json([
             'data' => $dataBankSoal->items(),
             'links' => (string) $dataBankSoal->links(),
-            'bankSoalDetail' => '/soal-pembahasan/bank-soal/:subBab/:subBabId',
+            'bankSoalDetail' => '/soal-pembahasan/bank-soal/:subBabId/detail',
         ]);
     }
 
-    public function paginateBankSoalDetail(Request $request, $subBab, $subBabId)
+    public function paginateBankSoalDetail(Request $request, $subBabId)
     {
         // Ambil semua soal yang memiliki sub_bab_id tertentu, lalu ambil relasi SubBab juga
         $allQuestions = SoalPembahasanQuestions::with('SubBab')
@@ -556,7 +556,7 @@ class FilterController extends Controller
         return response()->json([
             'data' => $grouped->values(), // daftar soal yang ditampilkan di halaman ini
             'videoIds' => $videoIds, // untuk menampilkan video in iframe
-            'editQuestion' => '/soal-pembahasan/bank-soal/:subBab/:subBabId/:id',
+            'editQuestion' => '/soal-pembahasan/bank-soal/:subBabId/:id',
             // 'links' => (string) $grouped->links(), // navigasi pagination (HTML string)
         ]);
     }

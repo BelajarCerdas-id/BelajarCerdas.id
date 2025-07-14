@@ -4,7 +4,7 @@
     <!--- Sidebar Beranda for dekstop ---->
     <aside class="sidebar-beranda hidden md:block">
         <div class="logo_details flex items-center justify-center">
-            <a href="/">
+            <a href="{{ route('beranda') }}">
                 <img src="{{ asset('image/logoBC.png') }}" alt="" class="w-2/5">
             </a>
         </div>
@@ -162,7 +162,7 @@
     <div class="navbar-beranda-phone w-full h-20 flex justify-between items-center md:hidden bg-[#153569] px-6 ">
         <div class="flex items-center h-full">
             <i class="fas fa-bars text-2xl relative top-1 cursor-pointer text-white" onclick="togglePopup()"></i>
-            <a href="{{ route('homePage') }}">
+            <a href="{{ route('beranda') }}">
                 <img src="{{ asset('image/logoBC.png') }}" alt="" class="w-[65px] ml-4">
             </a>
         </div>
@@ -242,7 +242,7 @@
     <!--- Sidebar Beranda for dekstop ---->
     <aside class="sidebar-beranda hidden md:block">
         <div class="logo_details flex items-center justify-center">
-            <a href="/">
+            <a href="{{ route('beranda') }}">
                 <img src="{{ asset('image/logoBC.png') }}" alt="" class="w-2/5">
             </a>
         </div>
@@ -385,7 +385,7 @@
     <nav class="navbar-beranda-phone w-full h-20 flex justify-between items-center md:hidden bg-[#153569] px-6 ">
         <div class="flex items-center h-full">
             <i class="fas fa-bars text-2xl relative top-1 cursor-pointer text-white" onclick="togglePopup()"></i>
-            <a href="{{ route('homePage') }}">
+            <a href="{{ route('beranda') }}">
                 <img src="{{ asset('image/logoBC.png') }}" alt="" class="w-[65px] ml-4">
             </a>
         </div>
@@ -480,7 +480,7 @@
     </aside>
 @elseif(Auth::user()->role === 'Administrator')
     <aside class="sidebar-beranda-administrator hidden md:block">
-        <a href="{{ route('homePage') }}">
+        <a href="{{ route('beranda') }}">
             <div class="logo_details flex items-center justify-center">
                 <img src="{{ asset('image/logoBC.png') }}" alt="" class="w-2/4">
             </div>
@@ -673,7 +673,7 @@
     <nav class="navbar-beranda-phone w-full h-20 flex justify-between items-center md:hidden bg-[#153569] px-6 ">
         <div class="flex items-center h-full">
             <i class="fas fa-bars text-2xl relative top-1 cursor-pointer text-white" onclick="togglePopup()"></i>
-            <a href="{{ route('homePage') }}">
+            <a href="{{ route('beranda') }}">
                 <img src="{{ asset('image/logoBC.png') }}" alt="" class="w-[65px] ml-4">
             </a>
         </div>

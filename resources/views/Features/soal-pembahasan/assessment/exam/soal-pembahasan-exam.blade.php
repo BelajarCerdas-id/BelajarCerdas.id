@@ -5,50 +5,92 @@
         <div class="content-beranda">
             <main>
                 <section>
-                    <div class="h-full bg-white shadow-lg border pb-4 mb-8">
+                    <div class="h-full bg-white shadow-lg border p-4 mb-8">
                         <!--- Content Top --->
-                        <div class="grid grid-cols-2 md:grid-cols-3 w-full md:w-max p-4 gap-4">
-                            <!--- Jenis Soal --->
-                            <div class="w-full md:w-max">
-                                <div
-                                    class="border border-gray-400 py-[4px] w-full md:w-32 text-sm text-center font-bold opacity-70">
-                                    Jenis Soal</div>
-                                <div
-                                    class="border border-gray-400 py-[4px] w-full md:w-32 text-sm text-center font-bold opacity-70">
-                                    Latihan</div>
-                            </div>
+                        <div class="flex flex-col xl:flex-row xl:justify-between w-full gap-6">
+                            <!--- left side --->
+                            <div class="flex w-full md:w-max gap-4">
+                                <!--- Jenis Soal --->
+                                <div class="w-full md:w-max">
+                                    <div
+                                        class="border border-gray-400 py-[4px] w-full md:w-32 text-xs md:text-sm text-center font-bold opacity-70">
+                                        Jenis Soal</div>
+                                    <div
+                                        class="border border-gray-400 py-[4px] w-full md:w-32 text-xs md:text-sm text-center font-bold opacity-70">
+                                        Ujian</div>
+                                </div>
 
-                            <!--- Kelas --->
-                            <div class="w-full md:w-max">
-                                <div
-                                    class="border border-gray-400 py-[4px] w-full md:w-32 text-sm text-center font-bold opacity-70">
-                                    Kelas</div>
-                                <div
-                                    class="border border-gray-400 py-[4px] w-full md:w-32 text-sm text-center font-bold opacity-70">
-                                    {{ $kelas }}
+                                <!--- Kelas --->
+                                <div class="w-full md:w-max">
+                                    <div
+                                        class="border border-gray-400 py-[4px] w-full md:w-32 text-xs md:text-sm text-center font-bold opacity-70">
+                                        Kelas</div>
+                                    <div
+                                        class="border border-gray-400 py-[4px] w-full md:w-32 text-xs md:text-sm text-center font-bold opacity-70">
+                                        {{ $kelas }}
+                                    </div>
+                                </div>
+
+                                <!--- mapel --->
+                                <div class="w-full md:w-max col-span-2 md:col-span-1">
+                                    <div
+                                        class="border border-gray-400 py-[4px] w-full md:w-32 text-xs md:text-sm text-center font-bold opacity-70">
+                                        Mata Pelajaran
+                                    </div>
+                                    <div
+                                        class="border border-gray-400 py-[4px] w-full md:w-32 text-xs md:text-sm text-center font-bold opacity-70">
+                                        {{ $mata_pelajaran }}
+                                    </div>
                                 </div>
                             </div>
 
-                            <!--- mapel --->
-                            <div class="w-full md:w-max col-span-2 md:col-span-1">
-                                <div
-                                    class="border border-gray-400 py-[4px] w-full md:w-32 text-sm text-center font-bold opacity-70">
-                                    Mata Pelajaran
+                            <!--- right side --->
+                            <div class="flex w-full md:w-max gap-4">
+                                <!--- Jenis Soal --->
+                                <div class="w-full md:w-max">
+                                    <div
+                                        class="border border-gray-400 py-[4px] w-full md:w-32 text-xs md:text-sm text-center font-bold opacity-70">
+                                        Waktu Tersisa
+                                    </div>
+                                    <div id="timer-exam"
+                                        class="border border-gray-400 py-[4px] w-full md:w-32 text-xs md:text-sm text-center font-bold opacity-70">
+                                        -
+                                    </div>
                                 </div>
-                                <div
-                                    class="border border-gray-400 py-[4px] w-full md:w-32 text-sm text-center font-bold opacity-70">
-                                    {{ $mata_pelajaran }}
+
+                                <!--- Kelas --->
+                                <div class="w-full md:w-max">
+                                    <div
+                                        class="border border-gray-400 py-[4px] w-full md:w-32 text-xs md:text-sm text-center font-bold opacity-70">
+                                        Nilai Kamu
+                                    </div>
+                                    <div id="score-exam"
+                                        class="border border-gray-400 py-[4px] w-full md:w-32 text-xs md:text-sm text-center font-bold opacity-70">
+                                        -
+                                    </div>
+                                </div>
+
+                                <!--- mapel --->
+                                <div class="w-full md:w-max col-span-2 md:col-span-1">
+                                    <div
+                                        class="border border-gray-400 py-[4px] w-full md:w-32 text-xs md:text-sm text-center font-bold opacity-70">
+                                        Durasi Jawab
+                                    </div>
+                                    <div id="timer-duration"
+                                        class="border border-gray-400 py-[4px] w-full md:w-32 text-xs md:text-sm text-center font-bold opacity-70">
+                                        -
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!--- Bab --->
-                        <div class="w-full p-4">
+                        <div class="w-full pt-4">
                             <div
-                                class="border border-gray-400 py-[4px] w-full text-sm text-center font-bold opacity-70">
+                                class="border border-gray-400 py-[4px] w-full text-xs md:text-sm text-center font-bold opacity-70">
                                 Bab
                             </div>
-                            <div class="border border-gray-400 py-[4px] w-full text-sm outline-none px-2">
+                            <div class="border border-gray-400 py-[4px] w-full text-xs md:text-sm outline-none px-2">
                                 {{ $getBabName->nama_bab }}
                             </div>
                         </div>

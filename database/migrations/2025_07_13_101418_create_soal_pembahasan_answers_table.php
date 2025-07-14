@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('question_id')->constrained('soal_pembahasan_questions');
             $table->string('user_answer_option');
             $table->integer('question_score')->nullable();
+            $table->enum('status_answer', ['Draft', 'Saved']);
+            $table->string('exam_answer_duration')->nullable();
             $table->timestamps();
         });
     }

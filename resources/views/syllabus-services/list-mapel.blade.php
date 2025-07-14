@@ -55,10 +55,10 @@
                                         Kelas
                                     </th>
                                     <th class="!text-center border border-gray-300">
-                                        Detail
+                                        Action
                                     </th>
                                     <th class="!text-center border border-gray-300">
-                                        Action
+                                        Detail
                                     </th>
                                     <th class="!text-center border border-gray-300">
                                         <i class="fa-solid fa-ellipsis-vertical cursor-pointer"></i>

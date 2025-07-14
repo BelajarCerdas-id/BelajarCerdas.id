@@ -2,16 +2,14 @@ function paginateBankSoalDetail() {
     const container = document.getElementById('container-bank-soal-detail');
     if (!container) return;
 
-    const subBabName = container.dataset.subBab;
     const subBabId = container.dataset.subBabId;
-    if (!subBabName) return;
     if (!subBabId) return;
 
-    fetchFilteredDataBankSoalDetail(subBabName, subBabId);
+    fetchFilteredDataBankSoalDetail(subBabId);
 
-    function fetchFilteredDataBankSoalDetail(subBab, subBabId) {
+    function fetchFilteredDataBankSoalDetail(subBabId) {
         $.ajax({
-            url: `/soal-pembahasan/paginate/bank-soal/${subBabName}/${subBabId}`,
+            url: `/soal-pembahasan/paginate/bank-soal/${subBabId}/detail`,
             method: 'GET',
             // data: {
             //     page: page // Include the page parameter
@@ -120,7 +118,7 @@ function paginateBankSoalDetail() {
                         `;
 
                         // untuk edit soal
-                        let editQuestion = response.editQuestion.replace(':subBab', subBab).replace(':subBabId', subBabId).replace(':id', first.id);
+                        let editQuestion = response.editQuestion.replace(':subBabId', subBabId).replace(':id', first.id);
 
                         const card = `
 
@@ -188,33 +186,3 @@ function paginateBankSoalDetail() {
 $(document).ready(function () {
     paginateBankSoalDetail();
 });
-
-                        // Mengiterasi setiap opsi dari soal tersebut
-                        // function addClassToImgTags(html, className) {
-                        //     return html
-                        //         .replace(/<img\b(?![^>]*class=)[^>]*>/g, (imgTag) => {
-                        //             // Tambahkan class jika belum ada atribut class
-                        //             return imgTag.replace('<img', `<img class="${className}"`);
-                        //         })
-                        //         .replace(/<img\b([^>]*?)class="(.*?)"/g, (imgTag, before, existingClasses) => {
-                        //             // Tambahkan class ke img yang sudah punya class
-                        //             return `<img ${before}class="${existingClasses} ${className}"`;
-                        //         });
-                        // }
-
-                        // const optionsHTML = group.map((item) => {
-                        //     const containsImage = /<img\s+[^>]*src=/.test(item.options_value);
-                        //     let content = item.options_value;
-
-                        //     // Tambahkan class img jika ada gambar
-                        //     if (containsImage) {
-                        //         content = addClassToImgTags(item.options_value, 'max-w-[120px] rounded my-2');
-                        //     }
-
-                        //     return `
-                        //         <div class="${containsImage ? 'max-w-7xl' : 'max-w-7xl'} border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex flex-start gap-[4px]
-                        //             ${item.options_key === item.answer_key ? 'border-green-400 bg-green-400 text-white font-bold' : ''}">
-                        //             <div class="font-bold min-w-[30px]">${item.options_key}.</div>
-                        //             <div class="w-full">${content}</div>
-                        //         </div>`;
-                        // }).join('');

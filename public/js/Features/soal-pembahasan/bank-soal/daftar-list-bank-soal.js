@@ -12,7 +12,7 @@ function paginateBankSoal(page = 1) {
             if (data.data.length > 0) {
                 $.each(data.data, function (index, application) {
 
-                    let bankSoalDetail = data.bankSoalDetail.replace(':subBab', application.sub_bab?.sub_bab).replace(':subBabId', application.sub_bab_id);
+                let bankSoalDetail = data.bankSoalDetail.replace(':subBabId', application.sub_bab_id);
 
                 $('#tableListBankSoal').append(`
                 <tr class="text-xs">
@@ -60,7 +60,6 @@ function paginateBankSoal(page = 1) {
 }
 
 $(document).ready(function () {
-    const subBabName = $(this).data('sub_bab');
     const subBabId = $(this).data('sub_bab_id');
     // Ambil data yang berstatus 'semua' saat halaman dimuat (jadi ini menampilkan semua data tanpa filter)
     paginateBankSoal();

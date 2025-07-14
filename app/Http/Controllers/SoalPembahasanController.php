@@ -5,27 +5,18 @@ namespace App\Http\Controllers;
 use App\Events\BankSoalEditQuestion;
 use App\Events\BankSoalListener;
 use App\Models\Bab;
-use App\Models\Fase;
 use App\Models\Kelas;
 use App\Models\Kurikulum;
 use App\Models\Mapel;
 use App\Models\SoalPembahasanAnswers;
 use App\Models\SoalPembahasanQuestions;
 use App\Models\SubBab;
-use App\Models\UserAccount;
 use App\Services\DocxImageExtractor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\Element\Table;
-use PhpOffice\PhpWord\Element\Text;
-use PhpOffice\PhpWord\Element\TextRun;
-use PhpOffice\PhpWord\Element\Image;
-use PhpOffice\PhpWord\Element\TextBreak;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
@@ -64,9 +55,9 @@ class SoalPembahasanController extends Controller
     }
 
     // function bankSoal detail view
-    public function bankSoalDetail($subBab, $subBabId)
+    public function bankSoalDetail($subBabId)
     {
-        return view('Features.soal-pembahasan.bank-soal.bank-soal-detail', compact('subBab', 'subBabId'));
+        return view('Features.soal-pembahasan.bank-soal.bank-soal-detail', compact('subBabId'));
     }
 
     // function bankSoal edit question view
@@ -517,14 +508,53 @@ class SoalPembahasanController extends Controller
 
     public function practiceQuestionsForm($sub_bab_id)
     {
-        // grouping question by sub bab dan mengurukan soal dimulai dari soal yang berstatus free terlebih dahulu
-        $getQuestionsBySubBab = SoalPembahasanQuestions::where('sub_bab_id', $sub_bab_id)->where('status_bank_soal', 'Publish')
-            ->where('tipe_soal', 'Latihan')->get()->sortBy(function ($item) {
-                return $item->status_soal === 'Free' ? 0 : 1; // 0 ditampilin lebih dulu
-            })->values();
+        // Mendapatkan tanggal hari ini
+        $today = now()->format('Y-m-d');
 
-        $groupedQuestions = $getQuestionsBySubBab->groupBy('questions');
+        // Buat key unik session berdasarkan user, bab, today
+        $sessionKey = 'soal-pembahasan-practice-questions-' . $today . '-' . Auth::id() .  '_' . $sub_bab_id;
 
+        // Cek apakah data soal sudah ada di session
+        if (session()->has($sessionKey)) {
+            // Jika ada di session, ambil datanya dan ubah ke bentuk collection dalam bentuk nested group
+            $groupedQuestions = collect(session($sessionKey))->map(fn($group) => collect($group))->values();
+        } else {
+            // Jika tidak ada di session, ambil soal dari database berdasarkan bab, status Publish, dan tipe Latihan
+            $getQuestionsBySubBab = SoalPembahasanQuestions::where('sub_bab_id', $sub_bab_id)
+                ->where('status_bank_soal', 'Publish')
+                ->where('tipe_soal', 'Latihan')
+                ->get()
+                ->sortBy(fn($item) => $item->status_soal === 'Free' ? 0 : 1)
+                ->values();
+
+            // Mengelompokkan data berdasarkan soal
+            $groupedQuestions = $getQuestionsBySubBab->groupBy('questions');
+
+            // Memisahkan group soal menjadi dua bagian: 1. Free dan 2. Premium
+            $sortedGroups = $groupedQuestions->partition(
+                fn($group) => $group[0]->status_soal === 'Free'
+            );
+
+            // mengacak dan mengambil 3 soal dari group free
+            $shuffledFree = $sortedGroups[0]->values()->shuffle()->take(3);
+
+            // mengacak dan mengambil jumlah sisa soal dari group premium
+            $shuffledPremium = $sortedGroups[1]->values()->shuffle();
+
+            // Gabungkan soal Free dan Premium, lalu ambil maksimal 20 soal dari hasil gabungan
+            $selectedGroups = $shuffledFree->concat($shuffledPremium)->take(20);
+
+            // Acak urutan opsi jawaban dalam setiap soal
+            $groupedQuestions = $selectedGroups->map(fn($group) => $group->shuffle()->values())->values();
+
+            // Simpan hasil soal ke session agar tidak berubah saat reload
+            session([$sessionKey => $groupedQuestions]);
+        }
+
+        // Mendapatkan jawaban user
+        $questionsAnswer = SoalPembahasanAnswers::where('student_id', Auth::id())->pluck('user_answer_option', 'question_id');
+
+        // Inisialisasi array kosong untuk menampung video ID dari YouTube
         $videoIds = [];
 
         // Loop untuk mendapatkan ID video dari URL
@@ -536,10 +566,9 @@ class SoalPembahasanController extends Controller
                 $videoId = $matches[1] ?? $matches[2];
             }
 
+            // Simpan videoId ke array videoIds
             $videoIds[] = $videoId;
         }
-
-        $questionsAnswer = SoalPembahasanAnswers::where('student_id', Auth::id())->pluck('user_answer_option', 'question_id');
 
         return response()->json([
             'data' => $groupedQuestions->values(),
@@ -569,7 +598,7 @@ class SoalPembahasanController extends Controller
             'student_id' => $userId,
             'question_id' => $request->question_id,
             'user_answer_option' => $request->user_answer_option,
-            'question_answer_value' => '10'
+            'status_answer' => 'Saved'
         ]);
 
         return response()->json([
@@ -591,13 +620,59 @@ class SoalPembahasanController extends Controller
 
     public function examQuestionsForm($bab_id)
     {
-        $getQuestionsByBab = SoalPembahasanQuestions::where('bab_id', $bab_id)->where('status_bank_soal', 'Publish')
-            ->where('tipe_soal', 'Ujian')->get()->sortBy(function ($item) {
-                return $item->status_soal === 'Free' ? 0 : 1; // 0 ditampilin lebih dulu
-            })->values();
+        // Buat key unik session berdasarkan user dan bab
+        $sessionKeys = 'soal-pembahasan-exam-questions-' . Auth::id() . '_' . $bab_id;
 
-        $groupedQuestions = $getQuestionsByBab->groupBy('questions');
+        // Cek apakah data soal sudah ada di session
+        if  (session()->has($sessionKeys)) {
+            // Jika ada di session, ambil datanya dan ubah ke bentuk collection dalam bentuk nested group
+            $groupedQuestions = collect(session($sessionKeys))->map(fn($group) => collect($group))->values();
 
+        } else {
+            // Jika tidak ada di session, ambil soal dari database berdasarkan bab, status Publish, dan tipe ujian
+            $getQuestionsByBab = SoalPembahasanQuestions::where('bab_id', $bab_id)->where('status_bank_soal', 'Publish')
+                ->where('tipe_soal', 'Ujian')->get();
+
+            // Mengelompokkan data berdasarkan soal
+            $groupedQuestions = $getQuestionsByBab->groupBy('questions');
+
+            // Acak urutan soal, ambil hanya 60 soal pertama
+            $shuffleQuestions = $groupedQuestions->values()->shuffle()->take(60);
+
+            // Acak urutan opsi jawaban dalam setiap soal
+            $groupedQuestions = $shuffleQuestions->map(fn($group) => $group->shuffle()->values())->values();
+
+            // Simpan hasil soal ke session agar tidak berubah saat reload
+            session([$sessionKeys => $groupedQuestions]);
+        }
+
+        // Ambil semua ID soal (karena groupedQuestions adalah nested collection, gunakan flatten)
+        $questionIds = $groupedQuestions->flatten()->pluck('id')->toArray();
+
+        // Mendapatkan jawaban user berdasarkan question id
+        $questionsAnswer = SoalPembahasanAnswers::where('student_id', Auth::id())
+        ->whereIn('question_id', $questionIds)
+        ->get()
+        // Ubah hasil koleksi menjadi associative array (map)
+        // dengan key = question_id dan value = seluruh atribut jawaban
+        ->mapWithKeys(fn($item) => [$item->question_id => $item->attributesToArray()]);
+
+        // Ambil jawaban user yang sudah disimpan (status "Saved") lengkap dengan relasi soalnya
+        $answer = SoalPembahasanAnswers::with('soalPembahasanQuestions')->where('student_id', Auth::id())->where('status_answer', 'Saved')->get();
+
+        // Hitung skor ujian dengan menjumlahkan skor dari soal-soal yang sudah dijawab
+        $scoreExam = $answer->sum('question_score');
+
+        // menghitung banyaknya soal
+        $total = $groupedQuestions->count();
+
+        // Hitung nilai masing-masing soal => 100 / total soal => nilai setiap soal
+        $scoreEachQuestion = $total ? 100 / $total : 0;
+
+        // mengambil waktu pengerjaan ujian pertama dari answer
+        $examAnswerDuration = $answer->pluck('exam_answer_duration')->first();
+
+        // Inisialisasi array kosong untuk menampung video ID dari YouTube
         $videoIds = [];
 
         // Loop untuk mendapatkan ID video dari URL
@@ -609,15 +684,59 @@ class SoalPembahasanController extends Controller
                 $videoId = $matches[1] ?? $matches[2];
             }
 
+            // Simpan videoId ke array videoIds
             $videoIds[] = $videoId;
         }
-
-        $questionsAnswer = SoalPembahasanAnswers::where('student_id', Auth::id())->pluck('user_answer_option', 'question_id');
 
         return response()->json([
             'data' => $groupedQuestions->values(),
             'questionsAnswer' => $questionsAnswer,
-            'videoIds' => $videoIds, // untuk menampilkan video in iframe
+            'videoIds' => $videoIds,
+            'scoreExam' => $scoreExam,
+            'examAnswerDuration' => $examAnswerDuration,
+            'scoreEachQuestion' => $scoreEachQuestion
         ]);
     }
+
+    public function examAnswer(Request $request, $id)
+    {
+        $userId = Auth::id();
+
+        $validator = Validator::make($request->all(), [
+            'user_answer_option' => 'required',
+            'status_answer' => 'required|in:Draft,Saved',
+        ], [
+            'user_answer_option.required' => 'Harap pilih jawaban.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // mencari soal berdasarkan request question_id
+        $question = SoalPembahasanQuestions::findOrFail($request->question_id);
+
+        // jika jawaban sudah ada maka update, jika belum ada maka create
+        SoalPembahasanAnswers::updateOrCreate(
+            [
+                'student_id' => $userId,
+                'question_id' => $request->question_id,
+            ],
+            [
+                'user_answer_option' => $request->user_answer_option,
+                'status_answer' => $request->status_answer,
+                'question_score' => [$request->status_answer === 'Saved' || $request->status_answer === 'Draft'] && $request->user_answer_option === $question->answer_key ? $request->question_score : 0,
+                'exam_answer_duration' => $request->exam_answer_duration
+            ],
+        );
+
+        return response()->json([
+            'status' => 'success',
+            'message' => $request->status_answer === 'Saved' ? 'Jawaban disimpan' : 'Jawaban ditandai',
+        ]);
+    }
+
 }

@@ -32,7 +32,17 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
 
             // Helper untuk generate pilihan jawaban (option)
             const generateOptions = (group) => {
-                return group.map((item) => {
+                // Inisialisasi array untuk menyimpan opsi jawaban A - E
+                const optionKeys = ['A', 'B', 'C', 'D', 'E'];
+
+                // Membuat salinan dari array group agar tidak merubah data aslinya
+                // Dalam kasus ini, tidak dilakukan shuffle lagi untuk mempertahankan urutan opsi dari server
+                const shuffleOptions = [...group];
+
+                return shuffleOptions.map((item, index) => {
+                    // Menentukan huruf label untuk opsi saat ini, berdasarkan urutan index (0 => A, 1 => B, dst)
+                    const newKey = optionKeys[index]; // newKey ini hanya untuk memanipulasi visualisasi options agar tetap A - E, padahal aslinya option sudah di acak
+
                     const containsImage = /<img\s+[^>]*src=/.test(item.options_value);
 
                     // Tambahkan class img jika ada gambar
@@ -61,7 +71,7 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
                             optionsValue = `
                                 <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}">
                                 <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] cursor-pointer checked-option ${statusClass}">
-                                    <div class="font-bold min-w-[30px]">${item.options_key}.</div>
+                                    <div class="font-bold min-w-[30px]">${newKey}.</div>
                                     <div class="w-full flex flex-col gap-8">${item.options_value}</div>
                                 </label>
                             `;
@@ -69,7 +79,7 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
                             optionsValue = `
                                 <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}">
                                 <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] cursor-pointer checked-option ${statusClass}">
-                                    ${item.options_key}. ${item.options_value}
+                                    ${newKey}. ${item.options_value}
                                 </label>
                             `;
                         }
@@ -78,14 +88,14 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
                         if (containsImage) {
                             optionsValue = `
                                 <div class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] checked-option ${statusClass}">
-                                    <div class="font-bold min-w-[30px]">${item.options_key}.</div>
+                                    <div class="font-bold min-w-[30px]">${newKey}.</div>
                                     <div class="w-full flex flex-col gap-8">${item.options_value}</div>
                                 </div>
                             `;
                         } else {
                             optionsValue = `
                                 <div class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] checked-option ${statusClass}">
-                                    ${item.options_key}. ${item.options_value}
+                                    ${newKey}. ${item.options_value}
                                 </div>
                             `;
                         }
@@ -100,9 +110,20 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
 
             // Render Nomor Soal
             const nomorSoalHTML = groupedQuestions.map((group, index) => {
+                let statusClassNumberQuestions = '';
+
+                // menggunakan group[0] jika ingin membuat dan melihat semua nomor soal benar / salah, jika menggunakan soal.id hanya akan aktif jika soal nya sedang dilihat
+                // Memeriksa apakah soal sudah dijawab oleh pengguna dan apakah jawaban user benar
+                if (questionsAnswer[group[0].id] === soal.answer_key) {
+                    statusClassNumberQuestions = '!bg-green-200 text-green-600 font-bold';
+                // Memeriksa apakah soal sudah dijawab oleh pengguna dan apakah jawaban user salah
+                } else if (questionsAnswer[group[0].id] && questionsAnswer[group[0].id] !== soal.answer_key) {
+                    statusClassNumberQuestions = '!bg-red-200 text-red-600 font-bold';
+                }
+
                 return `
                     <input type="radio" id="nomor${index}" name="nomorSoal" class="hidden">
-                    <label for="nomor${index}" class="nomor-soal border border-gray-400 py-1 hover:bg-gray-200 cursor-pointer text-xs" data-index="${index}">
+                    <label for="nomor${index}" class="nomor-soal border border-gray-400 py-1 hover:bg-gray-200 cursor-pointer text-xs ${statusClassNumberQuestions}" data-index="${index}">
                         <span class="font-bold">${index + 1}</span>
                         ${group[0].status_soal === 'Premium' ? '<i class="fas fa-lock text-[--color-default]"></i>' : ''}
                     </label>
@@ -177,7 +198,6 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
                     <div>${textAfterImage}</div>
                 </div>
             `;
-
 
             // Final Render HTML
             const formHtml = `

@@ -28,19 +28,19 @@
                         <table class="table w-full border-collapse border border-gray-300">
                             <thead id="thead-table-tanya-access" class="hidden font-bold">
                                 <tr>
-                                    <th class="!text-center border border-gray-300 text-center text-black">
+                                    <th class="!text-center border border-gray-300 text-black">
                                         Tanggl Mulai
                                     </th>
-                                    <th class="!text-center border border-gray-300 text-center text-black">
+                                    <th class="!text-center border border-gray-300 text-black">
                                         Tanggal Akhir
                                     </th>
-                                    <th class="!text-center border border-gray-300 text-center text-black">
+                                    <th class="!text-center border border-gray-300 text-black">
                                         Status Tanggal Libur
                                     </th>
-                                    <th class="!text-center border border-gray-300 text-center text-black">
+                                    <th class="!text-center border border-gray-300 text-black">
                                         Status TANYA
                                     </th>
-                                    <th class="!text-center border border-gray-300 text-center text-black">
+                                    <th class="!text-center border border-gray-300 text-black">
                                         Action
                                     </th>
                                 </tr>

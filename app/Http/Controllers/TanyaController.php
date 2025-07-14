@@ -47,7 +47,7 @@ class TanyaController extends Controller
     public function index()
     {
         // mengambil tanggal hari ini
-        $today = now();
+        $today = Carbon::now()->format('Y-m-d');
 
         // ambil semua data di tanya (belum di soft delete)
         $getTanya = Tanya::with('Student')->get();
@@ -440,10 +440,11 @@ class TanyaController extends Controller
     // CLAIM COIN DAILY TANYA (student)
     public function claimCoinDaily(Request $request)
     {
+        $today = now()->format('Y-m-d');
         $user = Auth::user();
 
         $historyCoinDaily = CoinHistory::where('user_id', $user->id)->where('tipe_koin', 'Masuk')
-        ->where('sumber_koin', 'Koin Harian')->whereDate('created_at', now())->first();
+        ->where('sumber_koin', 'Koin Harian')->whereDate('created_at', $today)->first();
 
         $tanyaCoinUsers = TanyaUserCoin::where('user_id', $user->id)->first();
 

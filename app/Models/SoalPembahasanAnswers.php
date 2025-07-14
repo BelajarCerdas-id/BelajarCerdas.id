@@ -14,6 +14,8 @@ class SoalPembahasanAnswers extends Model
         'question_id',
         'user_answer_option',
         'question_score',
+        'status_answer',
+        'exam_answer_duration',
     ];
 
     public function UserAccount()

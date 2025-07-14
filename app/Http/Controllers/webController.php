@@ -2,23 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\TransactionFailed;
 use App\Models\UserAccount;
 use App\Models\Level;
 use App\Models\Tanya;
-use Illuminate\Http\Request;
-use App\Models\englishZoneSoal;
-use App\Models\englishZoneMateri;
-use App\Models\englishZoneJawaban;
 use App\Models\Features;
 use App\Models\StudentProfiles;
 use App\Models\MentorPayments;
 use App\Models\MentorProfiles;
 use App\Models\Transactions;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Container\Attributes\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class webController extends Controller
 {
@@ -179,50 +171,6 @@ class webController extends Controller
     {
         return view('components/sidebar_beranda');
     }
-
-    // controller upload soal bobot a - e
-    // public function uploadSoal()
-    // {
-    //     $englishZoneBobot= [
-    //         [
-    //             'title_editor' => 'Pilihan A',
-    //             'title_bobot' => 'Bobot A',
-    //             'value_editor' => 'pilihan_A',
-    //             'value_bobot' => 'bobot_A',
-    //         ],
-    //         [
-    //             'title_editor' => 'Pilihan B',
-    //             'title_bobot' => 'Bobot B',
-    //             'value_editor' => 'pilihan_B',
-    //             'value_bobot' => 'bobot_B',
-    //         ],
-    //         [
-    //             'title_editor' => 'Pilihan C',
-    //             'title_bobot' => 'Bobot C',
-    //             'value_editor' => 'pilihan_C',
-    //             'value_bobot' => 'bobot_C',
-    //         ],
-    //         [
-    //             'title_editor' => 'Pilihan D',
-    //             'title_bobot' => 'Bobot D',
-    //             'value_editor' => 'pilihan_D',
-    //             'value_bobot' => 'bobot_D',
-    //         ],
-    //         [
-    //             'title_editor' => 'Pilihan E',
-    //             'title_bobot' => 'Bobot E',
-    //             'value_editor' => 'pilihan_E',
-    //             'value_bobot' => 'bobot_E',
-    //         ],
-    //     ];
-
-    //     $user = session('user');
-    //     if(!isset($user)) {
-    //         return redirect('/login');
-    //     }
-
-    //     return view('upload-soal', compact('user', 'englishZoneBobot'));
-    // }
 
     public function certificate()
     {

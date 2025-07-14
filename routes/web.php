@@ -15,17 +15,14 @@ use App\Http\Controllers\TanyaController;
 use App\Http\Middleware\CheckEnglishZone;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\ImportController;
-use App\Http\Controllers\ModuleController;
-use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ScrapperController;
 use App\Http\Controllers\SuratPKSController;
 use App\Http\Controllers\SyllabusController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\EnglishZoneController;
 use App\Http\Controllers\MitraCerdasController;
 use App\Http\Controllers\VisitasiDataController;
-use App\Http\Controllers\AuthController; // login daftar
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PaymentFeaturesController;
 use App\Http\Controllers\SoalPembahasanController;
 use App\Http\Controllers\webController; // data biasa seperti foreach (tidak dari database) dan lain lain (jika ada selain foreach)
@@ -244,9 +241,9 @@ Route::fallback(function () {
     // ROUTES SOAL DAN PEMBAHASAN
     // BANK SOAL VIEWS (ADMINISTRATOR)
     Route::get('/soal-pembahasan/bank-soal', [SoalPembahasanController::class, 'bankSoalView'])->name('bankSoal.view');
-    Route::get('/soal-pembahasan/bank-soal/{subBab}/{subBabId}', [SoalPembahasanController::class, 'bankSoalDetail'])->name('bankSoal.detail.view');
-    Route::get('/soal-pembahasan/bank-soal/{subBab}/{subBabId}/{id}', [SoalPembahasanController::class, 'editQuestionView'])->name('bankSoal.edit.question.view');
-    Route::get('/soal-pembahasan/bank-soal/form/{subBab}/{subBabId}/{id}', [SoalPembahasanController::class, 'formEditQuestion'])->name('bankSoal.form.edit.question');
+    Route::get('/soal-pembahasan/bank-soal/{subBabId}/detail', [SoalPembahasanController::class, 'bankSoalDetail'])->name('bankSoal.detail.view');
+    Route::get('/soal-pembahasan/bank-soal/{subBabId}/{id}', [SoalPembahasanController::class, 'editQuestionView'])->name('bankSoal.edit.question.view');
+    Route::get('/soal-pembahasan/bank-soal/form/{subBabId}/{id}', [SoalPembahasanController::class, 'formEditQuestion'])->name('bankSoal.form.edit.question');
     Route::post('/soal-pembahasan/bank-soal/update/{id}', [SoalPembahasanController::class, 'editQuestion'])->name('bankSoal.edit.question.update');
 
     // CRUD BANK SOAL (ADMINISTRATOR)
@@ -284,6 +281,8 @@ Route::fallback(function () {
     // EXAM QUESTIONS FORM
     Route::get('/soal-pembahasan/kelas/{bab_id}/assessment/ujian', [SoalPembahasanController::class, 'examQuestionsForm'])->name('examQuestions.form');
 
+    // EXAM ANSWER
+    Route::post('/soal-pembahasan/kelas/{babId}/assessment/ujian/answer', [SoalPembahasanController::class, 'examAnswer'])->name('soalPembahasanAssessment.exam.answer');
 
 
     //ROUTES SYLLABUS-SERVICES
