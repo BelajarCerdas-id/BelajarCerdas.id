@@ -284,6 +284,15 @@ Route::fallback(function () {
     // EXAM ANSWER
     Route::post('/soal-pembahasan/kelas/{babId}/assessment/ujian/answer', [SoalPembahasanController::class, 'examAnswer'])->name('soalPembahasanAssessment.exam.answer');
 
+    // PAGINATE RIWAYAT ASSESSMENT (PRACTICE AND EXAM STUDENT)
+    Route::get('/soal-pembahasan/riwayat-assessment/paginate', [FilterController::class, 'paginateRiwayatAssessmentPracticeExam'])->name('riwayatAssessment.paginate');
+
+    // HISTORY ASSESSMENT (PRACTICE AND EXAM)
+    Route::get('/soal-pembahasan/riwayat-assessment/{materi_id}/{tipe_soal}/{date}/{kelas}/{mata_pelajaran}', [SoalPembahasanController::class, 'historyAssessmentView'])->name('historyAssessment.view');
+
+    // HISTORY QUESTIONS ASSESSMENT (PRACTICE AND EXAM, untuk menampilkan soal yang sudah dijawab)
+    Route::get('/soal-pembahasan/riwayat-assessment/{materi_id}/{tipe_soal}/{date}/{kelas}/{mata_pelajaran}/questions', [SoalPembahasanController::class, 'historyQuestionsAssessment'])->name('historyQuestionSoalPembahasanAssessment');
+
 
     //ROUTES SYLLABUS-SERVICES
     // VIEWS

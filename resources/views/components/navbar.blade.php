@@ -593,7 +593,7 @@
                 @endif
 
                 <div class="px-6">
-                    <form action="{{ route('auth.login') }}" method="POST" autocomplete="off">
+                    <form action="{{ route('auth.login') }}" method="POST" autocomplete="OFF">
                         @csrf
                         <div class="w-full mb-6">
                             <label class="text-sm">Email</label>

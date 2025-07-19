@@ -1,23 +1,34 @@
 let currentQuestionIndex = 0; // Global, default ke soal pertama
 
-function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
+function historyQuestionsAssessmentAnswered(materiId, tipeSoal, date, kelasId, mapelId, selectedIndex = 0) {
     $.ajax({
-        url: `/soal-pembahasan/kelas/${subBabId}/assessment/latihan`,
+        url: `/soal-pembahasan/riwayat-assessment/${materiId}/${tipeSoal}/${date}/${kelasId}/${mapelId}/questions`,
         method: 'GET',
         success: function (response) {
-            const container = document.getElementById('practice-questions-form');
-            const containerPracticeForm = $('#practice-questions-content');
+            const container = document.getElementById('history-questions-assessment-answered');
             if (!container) return;
 
-            containerPracticeForm.empty();
+            // groupedQuestions adalah array yang berisi grup soal
             const groupedQuestions = response.data;
+
+            // questionsAnswer adalah objek yang menyimpan jawaban user
             const questionsAnswer = response.questionsAnswer;
 
+            // Jika tidak ada soal (data kosong), maka hentikan proses
             if (groupedQuestions.length === 0) return;
 
+            // Ambil grup soal berdasarkan indeks soal yang sedang dipilih user (selectedIndex)
             const soalGroup = groupedQuestions[selectedIndex];
-            const soal = soalGroup[0];
 
+            // Cari soal pertama dalam grup ini yang sudah dijawab oleh user
+            // `questionsAnswer[q.id]` akan bernilai truthy kalau soal itu sudah dijawab
+            const answeredItem = soalGroup.find(q => questionsAnswer[q.id]);
+
+            // Jika ditemukan soal yang sudah dijawab (answeredItem), maka gunakan itu
+            // Jika tidak, pakai soal pertama dalam grup (soalGroup[0])
+            const soal = answeredItem || soalGroup[0];
+
+            // Helper untuk menambahkan class ke tag img
             function addClassToImgTags(html, className) {
                 return html
                     .replace(/<img\b(?![^>]*class=)[^>]*>/g, (imgTag) => {
@@ -65,25 +76,7 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
                     let optionsValue = '';
 
                     // memeriksa apakah soal sudah dijawab oleh pengguna
-                    if (!questionsAnswer[soal.id]) {
-                        // memeriksa apakah options_value terdapat image atau tidak
-                        if (containsImage) {
-                            optionsValue = `
-                                <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}">
-                                <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] cursor-pointer checked-option ${statusClass}">
-                                    <div class="font-bold min-w-[30px]">${newKey}.</div>
-                                    <div class="w-full flex flex-col gap-8">${item.options_value}</div>
-                                </label>
-                            `;
-                        } else {
-                            optionsValue = `
-                                <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}">
-                                <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] cursor-pointer checked-option ${statusClass}">
-                                    ${newKey}. ${item.options_value}
-                                </label>
-                            `;
-                        }
-                    } else {
+                    // if (questionsAnswer[soal.id]) {
                         // memeriksa apakah options_value terdapat image atau tidak
                         if (containsImage) {
                             optionsValue = `
@@ -99,7 +92,7 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
                                 </div>
                             `;
                         }
-                    }
+                    // }
 
                     // Render opsi jawaban
                     return `
@@ -109,17 +102,24 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
             };
 
             // Render Nomor Soal
+            // Mapping setiap grup soal untuk membuat elemen HTML tombol nomor soal
             const nomorSoalHTML = groupedQuestions.map((group, index) => {
 
                 let statusClassNumberQuestions = '';
 
-                // menggunakan group[0] jika ingin membuat dan melihat semua nomor soal benar / salah, jika menggunakan soal.id hanya akan aktif jika soal nya sedang dilihat
-                // Memeriksa apakah soal sudah dijawab oleh pengguna dan apakah jawaban user benar
-                if (questionsAnswer[group[0].id] === group[0].answer_key) {
-                    statusClassNumberQuestions = '!bg-green-200 text-green-600 font-bold';
-                // Memeriksa apakah soal sudah dijawab oleh pengguna dan apakah jawaban user salah
-                } else if (questionsAnswer[group[0].id] && questionsAnswer[group[0].id] !== group[0].answer_key) {
-                    statusClassNumberQuestions = '!bg-red-200 text-red-600 font-bold';
+                // Mencari soal dalam grup ini yang sudah dijawab oleh user
+                // `questionsAnswer` adalah objek yang menyimpan jawaban user, dengan key = question.id
+                // Jadi kita mencari salah satu soal dalam group[] yang sudah dijawab user
+                const answeredItem = group.find(q => questionsAnswer[q.id]);
+
+                // Jika ada soal dalam grup ini yang sudah dijawab
+                if (answeredItem) {
+                    // Jika jawaban user sama dengan kunci jawaban soal tersebut
+                    if (questionsAnswer[answeredItem.id] === answeredItem.answer_key) {
+                        statusClassNumberQuestions = '!bg-green-200 text-green-600 font-bold';
+                    } else {
+                        statusClassNumberQuestions = '!bg-red-200 text-red-600 font-bold';
+                    }
                 }
 
                 return `
@@ -143,7 +143,7 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
             // memeriksa apakah soal sudah dijawab oleh pengguna, jika sudah maka button menjadi disabled
             const buttonSubmitAnswerHTML = isAnswered
                 ? `<button class="border py-[6px] w-full text-xs lg:text-sm text-center bg-gray-200 opacity-70 rounded-md" disabled>Simpan Jawaban</button>`
-                : `<button id="button-submit-practice-answer" class="border py-[6px] w-full text-xs lg:text-sm text-center bg-[--color-default] text-white font-bold rounded-md hover:brightness-90" data-sub-bab-id="${subBabId}">Simpan Jawaban</button>`;
+                : `<button id="button-submit-practice-answer" class="border py-[6px] w-full text-xs lg:text-sm text-center bg-[--color-default] text-white font-bold rounded-md hover:brightness-90">Simpan Jawaban</button>`;
 
             // show button correct or wrong answer
             // memeriksa apakah soal sudah dijawab oleh pengguna dan apakah jawaban user benar / salah
@@ -200,9 +200,9 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
                 </div>
             `;
 
+
             // Final Render HTML
             const formHtml = `
-                <form id="bank-soal-practice-question-form" data-sub-bab-id="${subBabId}">
                     <div class="h-max bg-white shadow-lg border pb-4 flex flex-col xl:flex-row gap-8 p-4">
                         <div class="w-full xl:w-[70%] h-max order-2 xl:order-none">
 
@@ -234,7 +234,6 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
                             <div id="nomor-soal-container" class="grid grid-cols-6 gap-1 text-center text-xs border border-gray-400">${nomorSoalHTML}</div>
                         </div>
                     </div>
-                </form>
 
                 <dialog id="my_modal_1" class="modal">
                     <div class="modal-box bg-white max-w-7xl max-h-[600px]">
@@ -259,84 +258,20 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
             $(document).off('click', '.nomor-soal').on('click', '.nomor-soal', function () {
                 const index = parseInt($(this).data('index'));
                 currentQuestionIndex = index;
-                fetchPracticeQuestionsForm(subBabId, index);
+                historyQuestionsAssessmentAnswered(materiId, tipeSoal, date, kelasId, mapelId, index);
             });
         }
     });
 }
 
-// Fetch soal latihan
-function practiceQuestions() {
-    const container = document.getElementById('practice-questions-form');
-    if (!container) return;
-
-    const subBabId = container.dataset.subBabId;
-
-    if (!subBabId) return;
-
-    fetchPracticeQuestionsForm(subBabId, currentQuestionIndex);
-}
-
-// Inisialisasi saat halaman siap
 $(document).ready(function () {
-    practiceQuestions();
+    const container = $('#history-questions-assessment-answered');
+
+    const materiId = container.data('materiId');
+    const tipeSoal = container.data('tipeSoalId');
+    const date = container.data('date');
+    const kelas = container.data('kelasId');
+    const mapel = container.data('mapelId');
+
+    historyQuestionsAssessmentAnswered(materiId, tipeSoal, date, kelas, mapel, currentQuestionIndex);
 });
-
-// Listener radio -> update input hidden
-$(document).on('change', 'input[type="radio"][name^="options_value_"]', function () {
-    const soalId = $(this).data('soal-id');
-    const selectedOption = $(this).val();
-    $(`#userAnswer${soalId}`).val(selectedOption);
-    $('#error-user_answer_option').text('');
-});
-
-// Submit form jawaban
-$(document).on('submit', '#bank-soal-practice-question-form', function (e) {
-    e.preventDefault();
-    const subBabId = $(this).data('sub-bab-id');
-    const formData = new FormData(this);
-
-    $.ajax({
-        url: `/soal-pembahasan/kelas/${subBabId}/assessment/latihan/answer`,
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (response) {
-            // jika success, inisialisasi content untuk memunculkan soal yang terakhir dikerjakan
-            fetchPracticeQuestionsForm(subBabId, currentQuestionIndex);
-        },
-        error: function (xhr) {
-            if (xhr.status === 422) {
-                const response = xhr.responseJSON.errors;
-                $.each(response, function (field, messages) {
-                    $(`#error-${field}`).text(messages[0]);
-                });
-            }
-        }
-    });
-});
-
-// Tampilkan pembahasan soal latihan melalaui modal
-function showExplanation(element) {
-    const modal = document.getElementById('my_modal_1');
-    const iframe = document.getElementById('video-frame');
-
-    const videoId = element.getAttribute('data-video-id');
-
-    if (iframe && videoId) {
-        iframe.src = `https://www.youtube.com/embed/${videoId}`;
-    }
-
-    modal.showModal();
-}
-
-function closePembahasanModal() {
-    const iframe = document.getElementById('video-frame');
-    if (iframe) {
-        iframe.src = ''; // remove the video after close modal
-    }
-}

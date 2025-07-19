@@ -12,8 +12,11 @@ use App\Models\SoalPembahasanAnswers;
 use App\Models\SoalPembahasanQuestions;
 use App\Models\SubBab;
 use App\Services\DocxImageExtractor;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpWord\IOFactory;
@@ -447,6 +450,7 @@ class SoalPembahasanController extends Controller
         ));
     }
 
+    // function soal pembahasan preview bab by mapel
     public function soalPembahasanBabView($kelas, $kelas_id, $mata_pelajaran, $mapel_id)
     {
         // Mendapatkan user yang sedang login
@@ -463,6 +467,7 @@ class SoalPembahasanController extends Controller
         ));
     }
 
+    // function soal pembahasan preview sub bab by bab
     public function soalPembahasanSubBabView($kelas, $kelas_id, $mata_pelajaran, $mapel_id, $bab_id)
     {
         // Mendapatkan user yang sedang login
@@ -479,6 +484,7 @@ class SoalPembahasanController extends Controller
         ));
     }
 
+    // function soal pembahasan preview assessment (practice or exam)
     public function soalPembahasanAssessmentView($kelas, $kelas_id, $mata_pelajaran, $mapel_id, $bab_id)
     {
         // Mendapatkan user yang sedang login
@@ -506,80 +512,91 @@ class SoalPembahasanController extends Controller
         ));
     }
 
+    // function untuk menampilkan form soal latihan
     public function practiceQuestionsForm($sub_bab_id)
     {
-        // Mendapatkan tanggal hari ini
+        // Ambil tanggal hari ini hanya dalam format 'Y-m-d'
         $today = now()->format('Y-m-d');
+        // $today = Carbon::parse('2025-07-19')->startOfDay();
 
-        // Buat key unik session berdasarkan user, bab, today
-        $sessionKey = 'soal-pembahasan-practice-questions-' . $today . '-' . Auth::id() .  '_' . $sub_bab_id;
+        // Ambil ID user yang sedang login
+        $userId = Auth::id();
 
-        // Cek apakah data soal sudah ada di session
-        if (session()->has($sessionKey)) {
-            // Jika ada di session, ambil datanya dan ubah ke bentuk collection dalam bentuk nested group
-            $groupedQuestions = collect(session($sessionKey))->map(fn($group) => collect($group))->values();
+        // Ambil ulang soal-soal yang masih `Publish` dari DB
+        $publishedQuestionIds = SoalPembahasanQuestions::where('status_bank_soal', 'Publish')->where('sub_bab_id', $sub_bab_id)
+        ->pluck('id')->implode(',');
+
+        // Buat key cache unik berdasarkan tanggal, user, dan sub bab
+        $cacheKey = "soal-pembahasan-practice-questions-{$today}-{$userId}-{$sub_bab_id}-{$publishedQuestionIds}";
+
+        // Cek apakah soal sudah pernah disimpan di cache hari ini
+        if (Cache::has($cacheKey)) {
+            // Ambil data soal dari cache dan bungkus ulang jadi koleksi Laravel
+            $groupedQuestions = collect(Cache::get($cacheKey))
+                ->map(fn($group) => collect($group)) // pastikan setiap grup tetap berbentuk Collection
+                ->values();
         } else {
-            // Jika tidak ada di session, ambil soal dari database berdasarkan bab, status Publish, dan tipe Latihan
-            $getQuestionsBySubBab = SoalPembahasanQuestions::where('sub_bab_id', $sub_bab_id)
+            // Ambil semua soal latihan yang sudah di-publish berdasarkan sub_bab_id
+            $getQuestions = SoalPembahasanQuestions::where('sub_bab_id', $sub_bab_id)
                 ->where('status_bank_soal', 'Publish')
                 ->where('tipe_soal', 'Latihan')
                 ->get()
-                ->sortBy(fn($item) => $item->status_soal === 'Free' ? 0 : 1)
+                ->sortBy(fn($item) => $item->status_soal === 'Free' ? 0 : 1) // Soal Free ditampilkan lebih dulu
                 ->values();
 
-            // Mengelompokkan data berdasarkan soal
-            $groupedQuestions = $getQuestionsBySubBab->groupBy('questions');
+            // Grouping soal berdasarkan field 'questions'
+            $grouped = $getQuestions->groupBy('questions');
 
-            // Memisahkan group soal menjadi dua bagian: 1. Free dan 2. Premium
-            $sortedGroups = $groupedQuestions->partition(
-                fn($group) => $group[0]->status_soal === 'Free'
-            );
+            // Bagi dua: soal Free dan soal Premium
+            $partitioned = $grouped->partition(fn($g) => $g[0]->status_soal === 'Free');
 
-            // mengacak dan mengambil 3 soal dari group free
-            $shuffledFree = $sortedGroups[0]->values()->shuffle()->take(3);
+            // Ambil 3 soal Free secara acak
+            $free = $partitioned[0]->shuffle()->take(3);
 
-            // mengacak dan mengambil jumlah sisa soal dari group premium
-            $shuffledPremium = $sortedGroups[1]->values()->shuffle();
+            // Acak soal Premium
+            $premium = $partitioned[1]->shuffle();
 
-            // Gabungkan soal Free dan Premium, lalu ambil maksimal 20 soal dari hasil gabungan
-            $selectedGroups = $shuffledFree->concat($shuffledPremium)->take(20);
+            // Gabungkan 3 Free dan Premium, lalu ambil maksimal 20 soal
+            $selected = $free->concat($premium)->take(20);
 
-            // Acak urutan opsi jawaban dalam setiap soal
-            $groupedQuestions = $selectedGroups->map(fn($group) => $group->shuffle()->values())->values();
+            // Setiap grup soal diacak isinya (misalnya pilihan jawabannya)
+            $groupedQuestions = $selected->map(fn($g) => $g->shuffle()->values())->values();
 
-            // Simpan hasil soal ke session agar tidak berubah saat reload
-            session([$sessionKey => $groupedQuestions]);
+            // Simpan hasil akhir ke cache sampai akhir hari (pukul 23:59:59)
+            Cache::put($cacheKey, $groupedQuestions, now()->endOfDay());
         }
 
-        // Mendapatkan jawaban user
-        $questionsAnswer = SoalPembahasanAnswers::where('student_id', Auth::id())->pluck('user_answer_option', 'question_id');
+        // Ambil jawaban user sebelumnya untuk ditampilkan sebagai isian otomatis (per hari)
+        $questionsAnswer = SoalPembahasanAnswers::whereHas('SoalPembahasanQuestions', function ($query) {
+            $query->where('tipe_soal', 'Latihan');
+        })->where('student_id', $userId)->whereDate('created_at', $today)
+            ->pluck('user_answer_option', 'question_id');
 
-        // Inisialisasi array kosong untuk menampung video ID dari YouTube
-        $videoIds = [];
-
-        // Loop untuk mendapatkan ID video dari URL
-        foreach ($groupedQuestions as $item) {
-            $videoId = null;
-
-            // Cari explanation yang mengandung url video menggunakan regex, lalu mengambil 1 data pertama dari masing" array group soal.
-            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $item[0]['explanation'], $matches)) {
-                $videoId = $matches[1] ?? $matches[2];
+        // Ambil ID video YouTube dari penjelasan (explanation) tiap soal (jika ada)
+        $videoIds = $groupedQuestions->map(function ($group) {
+            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $group[0]['explanation'], $matches)) {
+                return $matches[1] ?? $matches[2]; // ambil ID video dari link
             }
+            return null; // jika tidak ditemukan, kembalikan null
+        });
 
-            // Simpan videoId ke array videoIds
-            $videoIds[] = $videoId;
-        }
-
+        // Kembalikan response JSON ke client (misalnya ke JavaScript)
         return response()->json([
-            'data' => $groupedQuestions->values(),
+            'data' => $groupedQuestions,
             'questionsAnswer' => $questionsAnswer,
             'videoIds' => $videoIds, // untuk menampilkan video in iframe
         ]);
     }
 
+    // function untuk menyimpan jawaban latihan
     public function practiceAnswer(Request $request, $id)
     {
+        // Ambil ID user yang sedang login
         $userId = Auth::id();
+
+        // Ambil tanggal hari ini
+        $today = now()->format('Y-m-d');
+        // $tomorrow = Carbon::parse('2025-07-19')->startOfDay();
 
         $validator = Validator::make($request->all(), [
             'user_answer_option' => 'required',
@@ -594,12 +611,19 @@ class SoalPembahasanController extends Controller
             ], 422);
         }
 
-        $answerStore = SoalPembahasanAnswers::create([
-            'student_id' => $userId,
-            'question_id' => $request->question_id,
-            'user_answer_option' => $request->user_answer_option,
-            'status_answer' => 'Saved'
-        ]);
+        // mengambil data soal berdasarkan pada hari ini berdasarkan soal yang dijawab
+        $dataQuestionsAnswer = SoalPembahasanAnswers::where('student_id', $userId)
+            ->where('question_id', $request->question_id)->whereDate('created_at', $today)->first();
+
+        // jika soal belum dijawab, maka simpan jawaban (untuk menghindari duplikasi data ketika user spam simpan jawaban)
+        if (!$dataQuestionsAnswer) {
+            SoalPembahasanAnswers::create([
+                'student_id' => $userId,
+                'question_id' => $request->question_id,
+                'user_answer_option' => $request->user_answer_option,
+                'status_answer' => 'Saved',
+            ]);
+        }
 
         return response()->json([
             'status' => 'success',
@@ -618,16 +642,28 @@ class SoalPembahasanController extends Controller
         ));
     }
 
+    // function untuk menampilkan form soal ujian
     public function examQuestionsForm($bab_id)
     {
-        // Buat key unik session berdasarkan user dan bab
-        $sessionKeys = 'soal-pembahasan-exam-questions-' . Auth::id() . '_' . $bab_id;
+        // Ambil tanggal hari ini hanya dalam format 'Y-m-d'
+        $today = Carbon::now()->format('Y-m-d');
+        // $today = Carbon::parse('2025-07-20')->startOfDay();
 
-        // Cek apakah data soal sudah ada di session
-        if  (session()->has($sessionKeys)) {
-            // Jika ada di session, ambil datanya dan ubah ke bentuk collection dalam bentuk nested group
-            $groupedQuestions = collect(session($sessionKeys))->map(fn($group) => collect($group))->values();
+        // $today = Carbon::createFromFormat('Y-m-d', '2025-07-19')->format('Y-m-d');
 
+        // Ambil ID user yang sedang login
+        $userId = Auth::id();
+
+        // Ambil ulang soal-soal yang masih `Publish` dari DB
+        $publishedQuestionIds = SoalPembahasanQuestions::where('status_bank_soal', 'Publish')->where('bab_id', $bab_id)->pluck('id')->implode(',');
+
+        // Buat key cache unik berdasarkan tanggal, user, dan sub bab
+        $cacheKey = "soal-pembahasan-exam-questions-{$today}-{$userId}-{$bab_id}-{$publishedQuestionIds}";
+
+        // Cek apakah data soal sudah disimpan di cache hari ini
+        if  (Cache::has($cacheKey)) {
+            // Ambil data soal dari cache dan ubah ke bentuk collection dalam bentuk nested group
+            $groupedQuestions = collect(Cache::get($cacheKey))->map(fn($group) => collect($group))->values();
         } else {
             // Jika tidak ada di session, ambil soal dari database berdasarkan bab, status Publish, dan tipe ujian
             $getQuestionsByBab = SoalPembahasanQuestions::where('bab_id', $bab_id)->where('status_bank_soal', 'Publish')
@@ -642,23 +678,24 @@ class SoalPembahasanController extends Controller
             // Acak urutan opsi jawaban dalam setiap soal
             $groupedQuestions = $shuffleQuestions->map(fn($group) => $group->shuffle()->values())->values();
 
-            // Simpan hasil soal ke session agar tidak berubah saat reload
-            session([$sessionKeys => $groupedQuestions]);
+            // Simpan hasil akhir ke cache sampai akhir hari (pukul 23:59:59)
+            Cache::put($cacheKey, $groupedQuestions, now()->endOfDay());
         }
 
         // Ambil semua ID soal (karena groupedQuestions adalah nested collection, gunakan flatten)
         $questionIds = $groupedQuestions->flatten()->pluck('id')->toArray();
 
         // Mendapatkan jawaban user berdasarkan question id
-        $questionsAnswer = SoalPembahasanAnswers::where('student_id', Auth::id())
+        $questionsAnswer = SoalPembahasanAnswers::where('student_id', Auth::id())->whereDate('created_at', $today)
         ->whereIn('question_id', $questionIds)
         ->get()
         // Ubah hasil koleksi menjadi associative array (map)
         // dengan key = question_id dan value = seluruh atribut jawaban
         ->mapWithKeys(fn($item) => [$item->question_id => $item->attributesToArray()]);
 
-        // Ambil jawaban user yang sudah disimpan (status "Saved") lengkap dengan relasi soalnya
-        $answer = SoalPembahasanAnswers::with('soalPembahasanQuestions')->where('student_id', Auth::id())->where('status_answer', 'Saved')->get();
+        // Ambil jawaban user yang sudah disimpan (status "Saved") dengan tanggal hari ini
+        $answer = SoalPembahasanAnswers::with('SoalPembahasanQuestions')->where('student_id', Auth::id())->where('status_answer', 'Saved')
+        ->whereIn('question_id', $questionIds)->whereDate('created_at', $today)->get();
 
         // Hitung skor ujian dengan menjumlahkan skor dari soal-soal yang sudah dijawab
         $scoreExam = $answer->sum('question_score');
@@ -694,12 +731,17 @@ class SoalPembahasanController extends Controller
             'videoIds' => $videoIds,
             'scoreExam' => $scoreExam,
             'examAnswerDuration' => $examAnswerDuration,
-            'scoreEachQuestion' => $scoreEachQuestion
+            'scoreEachQuestion' => $scoreEachQuestion,
+            'today' => $today // Tambahkan tanggal hari ini ke response
         ]);
     }
 
+    // Function untuk menjawab soal ujian
     public function examAnswer(Request $request, $id)
     {
+        $today = now()->format('Y-m-d');
+        // $today = Carbon::parse('2025-07-19')->startOfDay();
+
         $userId = Auth::id();
 
         $validator = Validator::make($request->all(), [
@@ -716,27 +758,163 @@ class SoalPembahasanController extends Controller
             ], 422);
         }
 
+        // ambil soal dari database berdasarkan bab, status Publish, dan tipe ujian
+        $getQuestionsByBab = SoalPembahasanQuestions::where('bab_id', $id)->where('status_bank_soal', 'Publish')
+        ->where('tipe_soal', 'Ujian')->whereDate('created_at', $today)->get();
+
+        // Mengelompokkan data berdasarkan soal
+        $groupedQuestions = $getQuestionsByBab->groupBy('questions');
+
+        // Ambil semua ID soal (karena groupedQuestions adalah nested collection, gunakan flatten)
+        $questionIds = $groupedQuestions->flatten()->pluck('id')->toArray();
+
         // mencari soal berdasarkan request question_id
         $question = SoalPembahasanQuestions::findOrFail($request->question_id);
 
+        // Ambil jawaban user yang sudah disimpan (status "Saved") dengan tanggal hari ini
+        $answer = SoalPembahasanAnswers::where('student_id', $userId)->where('question_id', $request->question_id)
+        ->whereDate('created_at', $today)->first();
+
         // jika jawaban sudah ada maka update, jika belum ada maka create
-        SoalPembahasanAnswers::updateOrCreate(
-            [
-                'student_id' => $userId,
-                'question_id' => $request->question_id,
-            ],
-            [
+        if ($answer) {
+            $answer->update([
                 'user_answer_option' => $request->user_answer_option,
                 'status_answer' => $request->status_answer,
-                'question_score' => [$request->status_answer === 'Saved' || $request->status_answer === 'Draft'] && $request->user_answer_option === $question->answer_key ? $request->question_score : 0,
-                'exam_answer_duration' => $request->exam_answer_duration
-            ],
-        );
+                'question_score' => in_array($request->status_answer, ['Saved', 'Draft']) && $request->user_answer_option === $question->answer_key ? $request->question_score : 0,
+                'exam_answer_duration' => $request->exam_answer_duration,
+            ]);
+        } else {
+            SoalPembahasanAnswers::create([
+                'student_id' => $userId,
+                'question_id' => $request->question_id,
+                'user_answer_option' => $request->user_answer_option,
+                'status_answer' => $request->status_answer,
+                'question_score' => in_array($request->status_answer, ['Saved', 'Draft']) && $request->user_answer_option === $question->answer_key ? $request->question_score : 0,
+                'exam_answer_duration' => $request->exam_answer_duration,
+            ]);
+        }
+
+        // ini untuk testing jika menggunakan beda hari menggunakan carbon lewat $today
+        // if ($answer) {
+        //     DB::table('soal_pembahasan_answers')
+        //         ->where('id', $answer->id) // atau where student_id + question_id
+        //         ->update([
+        //             'user_answer_option' => $request->user_answer_option,
+        //             'status_answer' => $request->status_answer,
+        //             'question_score' => in_array($request->status_answer, ['Saved', 'Draft']) && $request->user_answer_option === $question->answer_key ? $request->question_score : 0,
+        //             'exam_answer_duration' => $request->exam_answer_duration,
+        //             'created_at' => $today,
+        //             'updated_at' => $today,
+        //         ]);
+        // } else {
+        //     DB::table('soal_pembahasan_answers')->insert([
+        //         'student_id' => $userId, // JANGAN LUPA: harus lengkap
+        //         'question_id' => $request->question_id,
+        //         'user_answer_option' => $request->user_answer_option,
+        //         'status_answer' => $request->status_answer,
+        //         'question_score' => in_array($request->status_answer, ['Saved', 'Draft']) && $request->user_answer_option === $question->answer_key ? $request->question_score : 0,
+        //         'exam_answer_duration' => $request->exam_answer_duration,
+        //         'created_at' => $today,
+        //         'updated_at' => $today,
+        //     ]);
+        // }
 
         return response()->json([
             'status' => 'success',
             'message' => $request->status_answer === 'Saved' ? 'Jawaban disimpan' : 'Jawaban ditandai',
         ]);
     }
+
+    // FUNCTION QUESTIONS HISTORY ASSESSMENT (PRACTICE AND EXAM)
+    public function historyAssessmentView($materi_id, $tipe_soal, $date, $kelas, $mata_pelajaran)
+    {
+        // Ambil data user yang sedang login
+        $userId = Auth::id();
+
+        // Jika tipe soal adalah "Latihan"
+        if ($tipe_soal === 'Latihan') {
+            // Ambil data SubBab berdasarkan ID
+            $getSubBabName = SubBab::where('id', $materi_id)->first();
+
+            // Ambil data Bab dari relasi SubBab (karena sub bab adalah relasi dari bab)
+            // $getSubBabName->bab_id didapat dari kolom foreign key
+            $getBabName = $getSubBabName?->bab ?? null;
+
+        // Jika tipe soal adalah "Ujian"
+        } else {
+            // Ambil data Bab langsung dari ID
+            $getBabName = Bab::where('id', $materi_id)->first();
+
+            // Karena ini ujian, tidak ada sub_bab, jadi di-set null
+            $getSubBabName = null;
+        }
+
+        // ambil semua nilai soal user (untuk ujian)
+        $getScoreExam = SoalPembahasanAnswers::where('student_id', $userId)->where('status_answer', 'Saved'
+        )->whereDate('created_at', $date)->get();
+
+        // hitung total nilai setiap soal (untuk ujian)
+        $countScore = $getScoreExam->sum('question_score');
+
+        // ambil durasi ujian user
+        $getDurationExam = SoalPembahasanAnswers::whereHas(
+            'soalPembahasanQuestions',  function ($item) {
+                $item->where('tipe_soal', 'Ujian');
+        })->where('student_id', $userId)->where('status_answer', 'Saved')->whereDate('created_at', $date)->first();
+
+        // Kirim data ke view soal-pembahasan-riwayat-assessment.blade.php
+        return view('Features.soal-pembahasan.assessment.history.soal-pembahasan-riwayat-assessment', compact('materi_id','tipe_soal', 'date', 'kelas',
+            'mata_pelajaran', 'getBabName', 'getSubBabName' , 'countScore' , 'getDurationExam'
+        ));
+    }
+
+    public function historyQuestionsAssessment($materi_id, $tipe_soal, $date, $kelas, $mata_pelajaran)
+    {
+        $userId = Auth::id();
+
+        $savedAnswers = SoalPembahasanAnswers::where('student_id', $userId)->where('status_answer', 'Saved')->whereDate('created_at', $date)
+        ->pluck('question_id');
+
+        // Langkah 1: Ambil semua isi kolom `questions` dari soal yang dijawab
+        $questionTexts = SoalPembahasanQuestions::whereIn('id', $savedAnswers)->pluck('questions');
+
+        // Langkah 2: Ambil semua opsi dari soal-soal tersebut berdasarkan isi `questions`
+        // memeriksa jika tipe soal adalah latihan maka ambil soal berdasarkan sub_bab_id
+        if ($tipe_soal === 'Latihan') {
+            $getQuestions = SoalPembahasanQuestions::whereIn('questions', $questionTexts)->where('tipe_soal', $tipe_soal)
+            ->where('sub_bab_id', $materi_id)->where('status_bank_soal', 'Publish')->get()
+            ->sortBy(fn($item) => $item->status_soal === 'Free' ? 0 : 1)->values();
+        // jika tipe soal adalah ujian maka ambil soal berdasarkan bab_id
+        } else {
+            $getQuestions = SoalPembahasanQuestions::whereIn('questions', $questionTexts)->where('tipe_soal', $tipe_soal)
+            ->where('bab_id', $materi_id)->where('status_bank_soal', 'Publish')->get()
+            ->sortBy(fn($item) => $item->status_soal === 'Free' ? 0 : 1)->values();
+        }
+
+        // Grouping berdasarkan isi `questions`
+        $grouped = $getQuestions->groupBy('questions');
+        $groupedQuestions = $grouped->map(fn($g) => $g)->values();
+        $questionIds = $grouped->flatten()->pluck('id')->toArray();
+
+        // Ambil jawaban user sebelumnya untuk ditampilkan sebagai isian otomatis (per hari)
+        $questionsAnswer = SoalPembahasanAnswers::where('student_id', $userId)->where('status_answer', 'Saved')->whereDate('created_at', $date)
+        ->whereIn('question_id', $questionIds)->pluck('user_answer_option', 'question_id');
+
+        // Ambil ID video YouTube dari penjelasan (explanation) tiap soal (jika ada)
+        $videoIds = $groupedQuestions->map(function ($group) {
+            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $group[0]['explanation'], $matches)) {
+                return $matches[1] ?? $matches[2]; // ambil ID video dari link
+            }
+            return null; // jika tidak ditemukan, kembalikan null
+        });
+
+        // Kembalikan response JSON ke client (misalnya ke JavaScript)
+        return response()->json([
+            'data' => $groupedQuestions,
+            'questionsAnswer' => $questionsAnswer,
+            'videoIds' => $videoIds, // untuk menampilkan video in iframe
+        ]);
+    }
+
 
 }

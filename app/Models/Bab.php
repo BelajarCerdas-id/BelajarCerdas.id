@@ -63,6 +63,6 @@ class Bab extends Model
 
     // SOAL PEMBAHASAN QUESTIONS
     public function SoalPembahasanQuestions() {
-        return $this->hasOne(SoalPembahasanQuestions::class, 'administrator_id');
+        return $this->hasOne(SoalPembahasanQuestions::class, 'bab_id');
     }
 }

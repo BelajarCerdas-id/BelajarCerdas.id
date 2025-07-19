@@ -138,6 +138,7 @@ class PaymentFeaturesController extends Controller
         return response()->json(['message' => 'Callback received.']);
     }
 
+    // FUNCTION TANYA PAYMENT
     // FUNCTION CHECKOUT COIN TANYA (purchase)
     public function checkoutCoinTanya(Request $request)
     {
@@ -254,5 +255,11 @@ class PaymentFeaturesController extends Controller
             Log::error('Midtrans Error: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    // FUNCTION SOAL DAN PEMBAHASAN PAYMENT
+    public function soalDanPembahasanPayment(Request $request, string $id)
+    {
+
     }
 }

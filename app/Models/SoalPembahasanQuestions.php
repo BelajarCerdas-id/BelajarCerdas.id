@@ -50,4 +50,8 @@ class SoalPembahasanQuestions extends Model
     public function SubBab() {
         return $this->belongsTo(SubBab::class, 'sub_bab_id');
     }
+
+    public function SoalPembahasanAnswers() {
+        return $this->hasOne(SoalPembahasanAnswers::class, 'question_id');
+    }
 }

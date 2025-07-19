@@ -20,11 +20,13 @@ use App\Models\Mapel;
 use App\Models\MentorPaymentDetail;
 use App\Models\SubBab;
 use App\Models\MentorPayments;
+use App\Models\SoalPembahasanAnswers;
 use App\Models\SoalPembahasanQuestions;
 use App\Models\TanyaAccess;
 use App\Models\TanyaVerifications;
 use App\Models\Transactions;
 use App\Models\UserAccount;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Midtrans\Transaction;
@@ -479,7 +481,7 @@ class FilterController extends Controller
         ]);
     }
 
-    // PAGINATE & FILTERING BANK SOAL
+    // PAGINATE BANK SOAL (SOAL DAN PEMBAHSAN FEATURE)
     public function paginateBankSoal(Request $request)
     {
         $dataBankSoal = SoalPembahasanQuestions::with(['Kurikulum', 'Kelas', 'Mapel', 'Bab', 'SubBab'])->groupBy('sub_bab_id')->paginate(10);
@@ -491,6 +493,7 @@ class FilterController extends Controller
         ]);
     }
 
+    // PAGINATE BANK SOAL DETAIL (SOAL DAN PEMBAHSAN FEATURE)
     public function paginateBankSoalDetail(Request $request, $subBabId)
     {
         // Ambil semua soal yang memiliki sub_bab_id tertentu, lalu ambil relasi SubBab juga
@@ -512,6 +515,7 @@ class FilterController extends Controller
                 $videoId = $matches[1] ?? $matches[2];
             }
 
+            // Menyiapkan array untuk ID video
             $videoIds[] = $videoId;
         }
 
@@ -558,6 +562,62 @@ class FilterController extends Controller
             'videoIds' => $videoIds, // untuk menampilkan video in iframe
             'editQuestion' => '/soal-pembahasan/bank-soal/:subBabId/:id',
             // 'links' => (string) $grouped->links(), // navigasi pagination (HTML string)
+        ]);
+    }
+
+    // PAGINATE HISTORY ASSESSMENT PRACTICE EXAM (SOAL DAN PEMBAHASAN FEATURE)
+    public function paginateRiwayatAssessmentPracticeExam(Request $request)
+    {
+        // Ambil data user yang sedang login
+        $user = Auth::user();
+
+        // mengambil data jawaban user dengan relasi SoalPembahasanQuestions berikut
+        $riwayatAssessment = SoalPembahasanAnswers::with(['UserAccount.StudentProfiles', 'SoalPembahasanQuestions' => function ($query) {
+            $query->with('Kelas', 'Mapel', 'Bab', 'SubBab');
+        }])
+        ->where('student_id', $user->id)
+        ->where('status_answer', 'Saved')
+        ->get();
+
+        // Grouping data berdasarkan tipe_soal + tanggal (format Y-m-d)
+        $grouped = $riwayatAssessment->groupBy(function ($item) {
+            // Buat key grouping gabungan, contoh: "Ujian|2025-07-15", dst
+            $tipeSoal = $item->SoalPembahasanQuestions->tipe_soal;
+            $date = $item->created_at->format('Y-m-d');
+
+            // memeriksa jika $tipeSoal adalah 'Latihan' maka groupBy tipe_soal, date, sub_bab_id
+            if ($tipeSoal === 'Latihan') {
+                return $item->SoalPembahasanQuestions->tipe_soal . '|' . $item->created_at->format('Y-m-d') . '|' . $item->SoalPembahasanQuestions->sub_bab_id;
+            // memeriksa jika $tipeSoal adalah 'Ujian' maka groupBy tipe_soal, date, bab_id
+            } else {
+                return $item->SoalPembahasanQuestions->tipe_soal . '|' . $item->created_at->format('Y-m-d') . '|' . $item->SoalPembahasanQuestions->bab_id;
+            }
+        })->values(); // values() agar index numerik
+
+        // Manual pagination (dipakai ketika menggunakan groupBy(), karena paginate() hanya bisa dipakai jika di query eloquent bukan collection)
+        $page = $request->get('page', 1); // Ambil parameter page dari request, default ke 1
+        $perPage = 10; // Jumlah item per halaman
+        $offset = ($page - 1) * $perPage; // Hitung offset mulai data
+
+        // Ambil potongan data sesuai page dan perPage
+        $pagedData = $grouped->slice($offset, $perPage)->values();
+
+        // Buat paginator manual dengan LengthAwarePaginator
+        $paginated = new LengthAwarePaginator(
+            $pagedData, // Data yang ditampilkan di halaman ini
+            $grouped->count(), // Total seluruh data sebelum di-slice
+            $perPage, // Jumlah per halaman
+            $page, // Halaman saat ini
+            [
+                'path' => $request->url(), // URL dasar untuk pagination
+                'query' => $request->query() // Tambahkan parameter query lainnya (jika ada)
+            ]
+        );
+
+        return response()->json([
+            'data' => $paginated->items(),
+            'links' => (string) $paginated->links(),
+            'historyQuestionsAssessment' => '/soal-pembahasan/riwayat-assessment/:materi_id/:tipe_soal/:date/:kelas/:mata_pelajaran',
         ]);
     }
 

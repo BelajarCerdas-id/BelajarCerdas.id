@@ -23,7 +23,7 @@ class SoalPembahasanAnswers extends Model
         return $this->belongsTo(UserAccount::class, 'student_id');
     }
 
-    public function soalPembahasanQuestions()
+    public function SoalPembahasanQuestions()
     {
         return $this->belongsTo(SoalPembahasanQuestions::class, 'question_id');
     }

@@ -39,7 +39,7 @@
                                     </div>
                                     <div
                                         class="border border-gray-400 py-[4px] w-full md:w-32 text-xs md:text-sm text-center font-bold opacity-70">
-                                        {{ $mata_pelajaran }}
+                                        {{ $mata_pelajaran ?? '-' }}
                                     </div>
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
                                 Bab
                             </div>
                             <div class="border border-gray-400 py-[4px] w-full text-xs md:text-sm outline-none px-2">
-                                {{ $getBabName->nama_bab }}
+                                {{ $getBabName->nama_bab ?? '-' }}
                             </div>
                         </div>
                     </div>
