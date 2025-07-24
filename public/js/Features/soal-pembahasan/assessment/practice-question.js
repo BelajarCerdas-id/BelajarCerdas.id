@@ -13,6 +13,17 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
             const groupedQuestions = response.data;
             const questionsAnswer = response.questionsAnswer;
 
+            const today = new Date(response.today);
+            const subscription = response.subscription;
+
+            let startDate = null;
+            let endDate = null;
+
+            if (subscription) {
+                startDate = new Date(subscription.start_date);
+                endDate = new Date(subscription.end_date);
+            }
+
             if (groupedQuestions.length === 0) return;
 
             const soalGroup = groupedQuestions[selectedIndex];
@@ -66,23 +77,68 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
 
                     // memeriksa apakah soal sudah dijawab oleh pengguna
                     if (!questionsAnswer[soal.id]) {
-                        // memeriksa apakah options_value terdapat image atau tidak
-                        if (containsImage) {
-                            optionsValue = `
-                                <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}">
-                                <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] cursor-pointer checked-option ${statusClass}">
-                                    <div class="font-bold min-w-[30px]">${newKey}.</div>
-                                    <div class="w-full flex flex-col gap-8">${item.options_value}</div>
-                                </label>
-                            `;
-                        } else {
-                            optionsValue = `
-                                <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}">
-                                <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] cursor-pointer checked-option ${statusClass}">
+                        // memeriksa apakah user berlangganan dan paket langganan nya masih aktif
+                        if (subscription) {
+                            // memeriksa apakah options_value terdapat image atau tidak
+                            if (containsImage) {
+                                optionsValue = `
+                                    <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}">
+                                    <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] cursor-pointer checked-option ${statusClass}">
+                                        <div class="font-bold min-w-[30px]">${newKey}.</div>
+                                        <div class="w-full flex flex-col gap-8">${item.options_value}</div>
+                                    </label>
+                                `;
+                            } else {
+                                optionsValue = `
+                                    <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}">
+                                    <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] cursor-pointer checked-option ${statusClass}">
+                                        ${newKey}. ${item.options_value}
+                                    </label>
+                                `;
+                            }
+                        // memeriksa jika user tidak berlangganan
+                        } else if(!subscription) {
+                            // memeriksa untuk soal premium dan user tidak berlangganan maka soal tidak dapat dijawab
+                            if (soal.status_soal === 'Premium' && !subscription) {
+                                // memeriksa apakah options_value terdapat image atau tidak
+                                if (containsImage) {
+                                    optionsValue = `
+                                        <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}" disabled>
+                                        <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] checked-option ${statusClass}">
+                                            <div class="font-bold min-w-[30px]">${newKey}.</div>
+                                            <div class="w-full flex flex-col gap-8">${item.options_value}</div>
+                                        </label>
+                                    `;
+                                } else {
+                                    optionsValue = `
+                                    <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}" disabled>
+                                    <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] checked-option ${statusClass}">
                                     ${newKey}. ${item.options_value}
-                                </label>
-                            `;
+                                    </label>
+                                    `;
+                                }
+                            // jika soal free maka siapapun dapat jawab
+                            } else {
+                                // memeriksa apakah options_value terdapat image atau tidak
+                                if (containsImage) {
+                                    optionsValue = `
+                                        <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}">
+                                        <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] cursor-pointer checked-option ${statusClass}">
+                                            <div class="font-bold min-w-[30px]">${newKey}.</div>
+                                            <div class="w-full flex flex-col gap-8">${item.options_value}</div>
+                                        </label>
+                                    `;
+                                } else {
+                                    optionsValue = `
+                                        <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}">
+                                        <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] cursor-pointer checked-option ${statusClass}">
+                                            ${newKey}. ${item.options_value}
+                                        </label>
+                                    `;
+                                }
+                            }
                         }
+                    // jika soal sudah dijawab
                     } else {
                         // memeriksa apakah options_value terdapat image atau tidak
                         if (containsImage) {
@@ -111,6 +167,7 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
             // Render Nomor Soal
             const nomorSoalHTML = groupedQuestions.map((group, index) => {
 
+                // variabel kosong untuk memberikan warna benar atau salah pada nomor soal
                 let statusClassNumberQuestions = '';
 
                 // menggunakan group[0] jika ingin membuat dan melihat semua nomor soal benar / salah, jika menggunakan soal.id hanya akan aktif jika soal nya sedang dilihat
@@ -122,11 +179,22 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
                     statusClassNumberQuestions = '!bg-red-200 text-red-600 font-bold';
                 }
 
+                // variabel kosong untuk menandakan soal premium
+                let premiumQuestions = '';
+
+                // memeriksa jika user berlangganan maka soal premium menjadi terbuka
+                if (subscription) {
+                    premiumQuestions = '';
+                // jika user tidak berlangganan maka soal premium menjadi tertutup
+                } else if (!subscription && group[0].status_soal === 'Premium') {
+                    premiumQuestions = `<i class="fas fa-lock text-[--color-default]"></i>`;
+                }
+
                 return `
                     <input type="radio" id="nomor${index}" name="nomorSoal" class="hidden">
                     <label for="nomor${index}" class="nomor-soal border border-gray-400 py-1 hover:bg-gray-200 cursor-pointer text-xs ${statusClassNumberQuestions}" data-index="${index}">
                         <span class="font-bold">${index + 1}</span>
-                        ${group[0].status_soal === 'Premium' ? '<i class="fas fa-lock text-[--color-default]"></i>' : ''}
+                        ${premiumQuestions}
                     </label>
                 `;
             }).join('');
@@ -140,10 +208,27 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
             const isCorrect = questionsAnswer[soal.id] === soal.answer_key;
 
             // show button submit answer
-            // memeriksa apakah soal sudah dijawab oleh pengguna, jika sudah maka button menjadi disabled
-            const buttonSubmitAnswerHTML = isAnswered
-                ? `<button class="border py-[6px] w-full text-xs lg:text-sm text-center bg-gray-200 opacity-70 rounded-md" disabled>Simpan Jawaban</button>`
-                : `<button id="button-submit-practice-answer" class="border py-[6px] w-full text-xs lg:text-sm text-center bg-[--color-default] text-white font-bold rounded-md hover:brightness-90" data-sub-bab-id="${subBabId}">Simpan Jawaban</button>`;
+            // variabel kosong
+            let buttonSubmitAnswerHTML = '';
+
+            // memeriksa jika user berlangganan maka soal premium dan free dapat dijawab
+            if (subscription) {
+                // memeriksa apakah soal sudah dijawab oleh pengguna, jika sudah maka button menjadi disabled
+                buttonSubmitAnswerHTML = isAnswered
+                    ? `<button class="border py-[6px] w-full text-xs lg:text-sm text-center bg-gray-200 opacity-70 rounded-md" disabled>Simpan Jawaban</button>`
+                    : `<button id="button-submit-practice-answer" class="border py-[6px] w-full text-xs lg:text-sm text-center bg-[--color-default] text-white font-bold rounded-md hover:brightness-90" data-sub-bab-id="${subBabId}">Simpan Jawaban</button>`;
+
+            // memeriksa jika tidak berlangganan maka soal premium tidak dapat dijawab
+            } else if (!subscription && soal.status_soal === 'Premium') {
+                buttonSubmitAnswerHTML = `<button class="border py-[6px] w-full text-xs lg:text-sm text-center bg-gray-200 opacity-70 rounded-md" disabled>Simpan Jawaban</button>`
+
+            // memeriksa jika tidak berlangganan maka soal free dapat dijawab
+            } else if (!subscription && soal.status_soal === 'Free') {
+                // memeriksa apakah soal sudah dijawab oleh pengguna, jika sudah maka button menjadi disabled
+                buttonSubmitAnswerHTML = isAnswered
+                    ? `<button class="border py-[6px] w-full text-xs lg:text-sm text-center bg-gray-200 opacity-70 rounded-md" disabled>Simpan Jawaban</button>`
+                    : `<button id="button-submit-practice-answer" class="border py-[6px] w-full text-xs lg:text-sm text-center bg-[--color-default] text-white font-bold rounded-md hover:brightness-90" data-sub-bab-id="${subBabId}">Simpan Jawaban</button>`;
+            }
 
             // show button correct or wrong answer
             // memeriksa apakah soal sudah dijawab oleh pengguna dan apakah jawaban user benar / salah
@@ -217,6 +302,7 @@ function fetchPracticeQuestionsForm(subBabId, selectedIndex = 0) {
 
                                 <input type="hidden" name="question_id" value="${soal.id}">
                                 <input type="hidden" name="user_answer_option" id="userAnswer${soal.id}" value="">
+                                <input type="hidden" name="subscription_id" value="${subscription ? subscription.id : ''}">
                                 <span id="error-user_answer_option" class="text-red-500 font-bold text-xs pt-2"></span>
 
                                 <div>${generateOptions(soalGroup)}</div>

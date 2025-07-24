@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Models\englishZoneSoal;
 use App\Models\Fase;
 use App\Models\FeaturesRoles;
+use App\Models\FeatureSubscriptionHistory;
 use App\Models\Kelas;
 use App\Models\Kurikulum;
 use App\Models\Mapel;
@@ -22,6 +23,7 @@ use App\Models\SubBab;
 use App\Models\MentorPayments;
 use App\Models\SoalPembahasanAnswers;
 use App\Models\SoalPembahasanQuestions;
+use App\Models\StudentProfiles;
 use App\Models\TanyaAccess;
 use App\Models\TanyaVerifications;
 use App\Models\Transactions;
@@ -417,6 +419,36 @@ class FilterController extends Controller
         ]);
     }
 
+    // PAGINATE REFERRAL USER LIST (list siswa yang terdaftar referral)
+    public function paginateReferralUserList(Request $request, $kode_referral)
+    {
+        // ambil data siswa yang mentor_referral_code nya sama dengan $kode_referral
+        $getStudents = StudentProfiles::with(['Fase', 'Kelas'])->where('mentor_referral_code', $kode_referral)->paginate(10);
+
+        return response()->json([
+            'data' => $getStudents->items(),
+            'links' => (string) $getStudents->links(),
+        ]);
+    }
+
+    // PAGINATE STUDENT REFERRAL PURCHASE HISTORY (list pembelian paket siswa yang terdaftar referral)
+    public function paginateStudentReferralPurchaseHistory(Request $request, $kode_referral)
+    {
+        // ambil data pembelian paket siswa yang berelasi dengan transactions
+        // kemudian di transactions ambil data siswa yang mentor_referral_code nya sama dengan $kode_referral
+        $getHistorySubscriptionStudentReferral = FeatureSubscriptionHistory::with(['Transactions.Features', 'Transactions.FeaturePrices', 'UserAccount.StudentProfiles'])
+        ->whereHas('Transactions', function($query) use ($kode_referral) {
+            $query->whereHas('UserAccount.StudentProfiles', function($subQuery) use ($kode_referral) {
+                $subQuery->where('mentor_referral_code', $kode_referral);
+            });
+        })->orderBy('created_at', 'desc')->paginate(10);
+
+        return response()->json([
+            'data' => $getHistorySubscriptionStudentReferral->items(),
+            'links' => (string) $getHistorySubscriptionStudentReferral->links(),
+        ]);
+    }
+
     // LEADERBOARD RANK TANYA STUDENT
     public function leaderboardRankTanya(Request $request)
     {
@@ -620,7 +652,6 @@ class FilterController extends Controller
             'historyQuestionsAssessment' => '/soal-pembahasan/riwayat-assessment/:materi_id/:tipe_soal/:date/:kelas/:mata_pelajaran',
         ]);
     }
-
 
     // FILTERING ENGLISH ZONE QUESTIONS
     public function questionStatus(Request $request)

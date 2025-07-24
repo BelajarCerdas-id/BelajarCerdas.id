@@ -275,3 +275,24 @@ $(document).ready(function () {
 
     historyQuestionsAssessmentAnswered(materiId, tipeSoal, date, kelas, mapel, currentQuestionIndex);
 });
+
+// Tampilkan pembahasan soal latihan melalaui modal
+function showExplanation(element) {
+    const modal = document.getElementById('my_modal_1');
+    const iframe = document.getElementById('video-frame');
+
+    const videoId = element.getAttribute('data-video-id');
+
+    if (iframe && videoId) {
+        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+    }
+
+    modal.showModal();
+}
+
+function closePembahasanModal() {
+    const iframe = document.getElementById('video-frame');
+    if (iframe) {
+        iframe.src = ''; // remove the video after close modal
+    }
+}

@@ -69,7 +69,7 @@
 
                     <div id="emptyMessageSyllabusKelas" class="w-full h-96 hidden">
                         <span class="w-full h-full flex items-center justify-center">
-                            Tidak ada Kelas.
+                            Tidak ada kelas.
                         </span>
                     </div>
 

@@ -40,7 +40,7 @@ class webController extends Controller
             ],
             'Soal dan Pembahasan' => [
                 'image_feature' => asset("image/logo-fitur/logo-englishZone.png"),
-                'textButton' => 'Segera Hadir',
+                'textButton' => 'Lihat Paket',
                 'price' => 'Rp 20.000',
 
                 'descriptions' => [

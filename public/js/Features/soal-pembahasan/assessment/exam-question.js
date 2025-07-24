@@ -670,9 +670,8 @@ function fetchExamQuestionsForm(babId, selectedIndex = 0) {
 
             containerExamForm.empty();
 
-const TODAY_DATE = response.today;
-localStorage.setItem('timer_exam_today', TODAY_DATE); // simpan untuk semua fungsi timer
-
+            const TODAY_DATE = response.today;
+            localStorage.setItem('timer_exam_today', TODAY_DATE); // simpan untuk semua fungsi timer
 
             // Mendapatkan data soal
             const groupedQuestions = response.data;
@@ -714,6 +713,17 @@ localStorage.setItem('timer_exam_today', TODAY_DATE); // simpan untuk semua fung
 
                 $('#score-exam').text(scoreExam); // menampilkan nilai ujian
                 $('#timer-duration').text(examAnswerDuration); // menampilkan durasi pengerjaan ujian
+            }
+
+            const subscription = response.subscription;
+            const now = new Date(response.now);
+
+            let startDate = null;
+            let endDate = null;
+
+            if (subscription) {
+                startDate = new Date(subscription.start_date);
+                endDate = new Date(subscription.end_date);
             }
 
             function addClassToImgTags(html, className) {
@@ -771,22 +781,42 @@ localStorage.setItem('timer_exam_today', TODAY_DATE); // simpan untuk semua fung
 
                     // memeriksa apakah soal sudah dijawab oleh pengguna atau jawaban masih ditandai
                     if (!questionsAnswer[soal.id] || questionsAnswer[soal.id]?.status_answer === 'Draft') {
-                        // memeriksa apakah options_value terdapat image atau tidak
-                        if (containsImage) {
-                            optionsValue = `
-                                <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}">
-                                <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] cursor-pointer checked-option ${statusClass}">
-                                    <div class="font-bold min-w-[30px]">${newKey}.</div>
-                                    <div class="w-full flex flex-col gap-8">${item.options_value}</div>
-                                </label>
-                            `;
+                        // memeriksa apakah user berlangganan dan paket langganan nya masih aktif
+                        if (subscription) {
+                            // memeriksa apakah options_value terdapat image atau tidak
+                            if (containsImage) {
+                                optionsValue = `
+                                    <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}">
+                                    <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] cursor-pointer checked-option ${statusClass}">
+                                        <div class="font-bold min-w-[30px]">${newKey}.</div>
+                                        <div class="w-full flex flex-col gap-8">${item.options_value}</div>
+                                    </label>
+                                `;
+                            } else {
+                                optionsValue = `
+                                    <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}">
+                                    <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] cursor-pointer checked-option ${statusClass}">
+                                        ${newKey}. ${item.options_value}
+                                    </label>
+                                `;
+                            }
                         } else {
-                            optionsValue = `
-                                <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}">
-                                <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] cursor-pointer checked-option ${statusClass}">
-                                    ${newKey}. ${item.options_value}
-                                </label>
-                            `;
+                            if (containsImage) {
+                                optionsValue = `
+                                    <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}" disabled>
+                                    <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] checked-option ${statusClass}">
+                                        <div class="font-bold min-w-[30px]">${newKey}.</div>
+                                        <div class="w-full flex flex-col gap-8">${item.options_value}</div>
+                                    </label>
+                                `;
+                            } else {
+                                optionsValue = `
+                                    <input type="radio" name="options_value_${soal.id}" id="soal${item.options_key}" value="${item.options_key}" class="hidden" data-soal-id="${soal.id}" disabled>
+                                    <label for="soal${item.options_key}" class="border border-gray-300 rounded-md p-2 px-4 mb-4 text-sm my-6 flex gap-[4px] checked-option ${statusClass}">
+                                        ${newKey}. ${item.options_value}
+                                    </label>
+                                `;
+                            }
                         }
                     // memeriksa apakah soal sudah dijawab oleh pengguna dan jawaban sudah disimpan
                     } else if (questionsAnswer[soal.id] && questionsAnswer[soal.id]?.status_answer === 'Saved') {
@@ -845,11 +875,22 @@ localStorage.setItem('timer_exam_today', TODAY_DATE); // simpan untuk semua fung
                     }
                 }
 
+                // variabel kosong untuk menandakan soal premium
+                let premiumQuestions = '';
+
+                // memeriksa jika user berlangganan maka soal premium menjadi terbuka
+                if (subscription) {
+                    premiumQuestions = '';
+                // jika user tidak berlangganan maka soal premium menjadi tertutup
+                } else if (!subscription && group[0].status_soal === 'Premium') {
+                    premiumQuestions = `<i class="fas fa-lock text-[--color-default]"></i>`;
+                }
+
                 return `
                     <input type="radio" id="nomor${index}" name="nomorSoal" class="hidden">
                     <label for="nomor${index}" class="nomor-soal border border-gray-400 py-1 hover:bg-gray-200 cursor-pointer text-xs ${statusClassNumberQuestions}" data-index="${index}">
                         <span class="font-bold">${index + 1}</span>
-                        ${group[0].status_soal === 'Premium' ? '<i class="fas fa-lock text-[--color-default]"></i>' : ''}
+                        ${premiumQuestions}
                     </label>
                 `;
             }).join('');
@@ -861,33 +902,29 @@ localStorage.setItem('timer_exam_today', TODAY_DATE); // simpan untuk semua fung
             // show button submit answer
             // memeriksa apakah soal sudah dijawab oleh pengguna, jika sudah maka button menjadi disabled
             // kalau mau buat sistem waktu pengerjaan user setiap soal tambahkan onclick="stopTimerExam()"
-            const buttonSubmitAnswerHTML = isAnswered
-                ? `<button class="border py-[6px] w-full text-xs lg:text-sm text-center bg-gray-200 opacity-70 rounded-md" disabled>Simpan Jawaban</button>`
-                : `<button id="button-submit-exam-answer" class="border py-[6px] w-full text-xs lg:text-sm text-center bg-[--color-default] text-white font-bold rounded-md hover:brightness-90" data-bab-id="${babId}">Simpan Jawaban</button>`;
+            let buttonSubmitAnswerHTML = '';
+            if (subscription) {
+                buttonSubmitAnswerHTML = isAnswered
+                    ? `<button class="border py-[6px] w-full text-xs lg:text-sm text-center bg-gray-200 opacity-70 rounded-md" disabled>Simpan Jawaban</button>`
+                    : `<button id="button-submit-exam-answer" class="border py-[6px] w-full text-xs lg:text-sm text-center bg-[--color-default] text-white font-bold rounded-md hover:brightness-90" data-bab-id="${babId}">Simpan Jawaban</button>`;
+            } else if (!subscription) {
+                buttonSubmitAnswerHTML = `<button class="border py-[6px] w-full text-xs lg:text-sm text-center bg-gray-200 opacity-70 rounded-md" disabled>Simpan Jawaban</button>`
+            }
 
             // show button correct or wrong answer
             // memeriksa apakah soal sudah dijawab oleh pengguna dan apakah jawaban user benar / salah
             // kalau mau buat sistem waktu pengerjaan user setiap soal tambahkan onclick="stopTimerExam()"
-            const buttonCorrectOrWrongHTML = isAnswered
-                ? `<button class="border py-[6px] w-full text-xs lg:text-sm text-center bg-gray-200 opacity-70 rounded-md" disabled>Tandai jawaban</button>`
-                : `<button id="button-mark-exam-answer" class="border py-[6px] w-full text-xs lg:text-sm text-center bg-[#F79D65] text-white font-bold hover:brightness-90 rounded-md" data-bab-id="${babId}">Tandai jawaban</button>`;
+            let buttonCorrectOrWrongHTML = '';
+            if (subscription) {
+                buttonCorrectOrWrongHTML = isAnswered
+                    ? `<button class="border py-[6px] w-full text-xs lg:text-sm text-center bg-gray-200 opacity-70 rounded-md" disabled>Tandai jawaban</button>`
+                    : `<button id="button-mark-exam-answer" class="border py-[6px] w-full text-xs lg:text-sm text-center bg-[#F79D65] text-white font-bold hover:brightness-90 rounded-md" data-bab-id="${babId}">Tandai jawaban</button>`;
+            } else if (!subscription) {
+                buttonCorrectOrWrongHTML = `<button class="border py-[6px] w-full text-xs lg:text-sm text-center bg-gray-200 opacity-70 rounded-md" disabled>Tandai jawaban</button>`
+            }
 
-                    const videoId = response.videoIds[selectedIndex];
-
-                    const videoExplanation = videoId ? `
-                        <div class="border max-w-7xl h-[500px] flex justify-start">
-                            <div class="w-full h-full">
-                                <iframe id="video-frame" class="w-full h-full"
-                                    src="https://www.youtube.com/embed/${videoId}"
-                                    frameborder="0"
-                                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen>
-                                </iframe>
-                            </div>
-                        </div>
-                    ` : `
-                        <div class="flex flex-col items-start gap-4">${soal.explanation}</div>
-                    `;
+            // SHOW EXPLANATION VIDEO OR TEXT
+            const videoId = response.videoIds[selectedIndex];
 
             // show button pembahasan
             // memeriksa apakah soal sudah dijawab oleh pengguna, jika sudah maka dapat melihat pembahasan
@@ -895,6 +932,22 @@ localStorage.setItem('timer_exam_today', TODAY_DATE); // simpan untuk semua fung
                 ? `<button type="button" onclick="showExplanation(this)" data-video-id="${videoId}"
                     class="border py-[6px] w-full text-xs lg:text-sm text-center bg-[#4189E0] text-white font-bold rounded-md hover:brightness-90">Pembahasan</button>`
                 : `<button class="border py-[6px] w-full text-xs lg:text-sm text-center bg-gray-200 opacity-70 rounded-md" disabled>Pembahasan</button>`;
+
+            const videoExplanation = videoId ? `
+                <div class="border max-w-7xl h-[500px] flex justify-start">
+                    <div class="w-full h-full">
+                        <iframe id="video-frame" class="w-full h-full"
+                            src="https://www.youtube.com/embed/${videoId}"
+                            frameborder="0"
+                            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            ` : `
+                <div class="flex flex-col items-start gap-4">${soal.explanation}</div>
+            `;
+
 
             // QUESTION SPLIT IMAGE
             const splitQuestions = soal.questions.split('<img');
@@ -943,8 +996,9 @@ localStorage.setItem('timer_exam_today', TODAY_DATE); // simpan untuk semua fung
 
                                 <input type="hidden" name="question_id" value="${soal.id}">
                                 <input type="hidden" name="user_answer_option" id="userAnswer${soal.id}" value="${questionsAnswer[soal.id]?.user_answer_option ?? ''}">
-                                <input type="hidden" name="status_answer" id="statusAnswer"  value="">
-                                <input type="hidden" name="question_score" id="question_score"  value="${response.scoreEachQuestion}">
+                                <input type="hidden" name="status_answer" id="statusAnswer" value="">
+                                <input type="hidden" name="question_score" id="question_score" value="${response.scoreEachQuestion}">
+                                <input type="hidden" name="subscription_id" id="subscription_id" value="${subscription ? subscription.id : 0}">
                                 <span id="error-user_answer_option" class="text-red-500 font-bold text-xs pt-2"></span>
 
                                 <div>${generateOptions(soalGroup)}</div>
@@ -1107,6 +1161,7 @@ function autoSubmitUnSavedQuestions() {
             const questionsAnswer = response.questionsAnswer;
             const formData = new FormData();
             const scoreEachQuestion = response.scoreEachQuestion;
+            const subscription = response.subscription;
 
             // Iterasi setiap soal
             groupedQuestions.forEach(group => {
@@ -1114,6 +1169,7 @@ function autoSubmitUnSavedQuestions() {
 
                 // Soal belum dijawab
                 if (!questionsAnswer[soal.id]) {
+                    formData.append('subscription_id', subscription.id);
                     formData.append('question_id', soal.id);
                     formData.append('user_answer_option', '-');
                     formData.append('status_answer', 'Saved');
@@ -1122,6 +1178,7 @@ function autoSubmitUnSavedQuestions() {
                 }
                 // jika soal sudah dijawab tetapi waktu habis duluan sebelum selesai ngerjain semua soal
                 else if (questionsAnswer[soal.id]?.status_answer === 'Saved') {
+                    formData.append('subscription_id', subscription.id);
                     formData.append('question_id', soal.id);
                     formData.append('user_answer_option', questionsAnswer[soal.id]?.user_answer_option);
                     formData.append('status_answer', 'Saved');
@@ -1130,6 +1187,7 @@ function autoSubmitUnSavedQuestions() {
                 }
                 // Soal ditandai (Draft)
                 else if (questionsAnswer[soal.id]?.status_answer === 'Draft') {
+                    formData.append('subscription_id', subscription.id);
                     formData.append('question_id', soal.id);
                     formData.append('user_answer_option', questionsAnswer[soal.id]?.user_answer_option);
                     formData.append('status_answer', 'Saved');
@@ -1289,6 +1347,7 @@ function stopTimerExam() {
             const groupedQuestions = response.data;
             const questionsAnswer = response.questionsAnswer;
             const scoreEachQuestion = response.scoreEachQuestion;
+            const subscription = response.subscription;
 
             groupedQuestions.forEach(group => {
                 const soal = group[0];
@@ -1296,6 +1355,7 @@ function stopTimerExam() {
                 if (!answerData) return;
 
                 const formData = new FormData();
+                formData.append('subscription_id', subscription.id);
                 formData.append('question_id', soal.id);
                 formData.append('user_answer_option', answerData.user_answer_option);
                 formData.append('status_answer', answerData.status_answer);

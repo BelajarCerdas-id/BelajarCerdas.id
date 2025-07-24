@@ -7,6 +7,7 @@ use App\Models\Features;
 use App\Models\Transactions;
 use App\Services\MidtransService;
 use App\Services\PaymentHandlers\CheckoutCoinHandler;
+use App\Services\PaymentHandlers\CheckoutSoalPembahasanSubscriptionHandler;
 use App\Services\PaymentHandlers\RenewCheckoutCoinHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -128,6 +129,7 @@ class PaymentFeaturesController extends Controller
             $midtransHandlers = [
                 'BC-co-tanya' => CheckoutCoinHandler::class,
                 'BC-rnw-tanya' => RenewCheckoutCoinHandler::class,
+                'BC-co-sp' => CheckoutSoalPembahasanSubscriptionHandler::class,
             ];
 
             $handler = $midtransHandlers[$key] ?? null;
@@ -257,9 +259,62 @@ class PaymentFeaturesController extends Controller
         }
     }
 
-    // FUNCTION SOAL DAN PEMBAHASAN PAYMENT
-    public function soalDanPembahasanPayment(Request $request, string $id)
+    // FUNCTION SOAL DAN PEMBAHASAN CHECKOUT
+    public function checkoutSoalPembahasanSubcription(Request $request)
     {
+        $user = Auth::user();
+        $orderId = 'BC-co-sp-' . Str::uuid();
+        $paymentMethod = strtolower($request->payment_method_id);
 
+        $paymentMap = [
+            'bca' => 'bca_va',
+            'bni' => 'bni_va',
+            'bri' => 'bri_va',
+            'mandiri' => 'echannel',
+            'qris' => 'qris',
+            'gopay' => 'gopay',
+            'dana' => 'dana',
+            'ovo' => 'ovo',
+        ];
+
+        if (!array_key_exists($paymentMethod, $paymentMap)) {
+            return response()->json(['error' => 'Metode tidak dikenali.'], 400);
+        }
+
+        $transaction = Transactions::create([
+            'user_id' => $user->id,
+            'order_id' => $orderId,
+            'feature_id' => $request->feature_id ?? null,
+            'payment_method' => $paymentMethod,
+            'feature_variant_id' => $request->feature_variant_id ?? null,
+            'price' => (int)$request->price,
+            'transaction_status' => 'Pending',
+        ]);
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $orderId,
+                'gross_amount' => (int)$request->price,
+            ],
+            'enabled_payments' => [$paymentMap[$paymentMethod]],
+            'customer_details' => [
+                'first_name' => $user->Profile->nama_lengkap ?? 'Customer',
+                'email' => $user->email ?? 'dummy@example.com',
+            ],
+        ];
+
+        try {
+            Log::info('Midtrans Params:', $params);
+            Log::info('Request Data:', $request->all());
+            $snap = MidtransService::createTransaction($params);
+
+            $transaction->snap_token = $snap->token;
+            $transaction->save();
+
+            return response()->json(['snap_token' => $snap->token]);
+        } catch (\Exception $e) {
+            Log::error('Midtrans Error: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

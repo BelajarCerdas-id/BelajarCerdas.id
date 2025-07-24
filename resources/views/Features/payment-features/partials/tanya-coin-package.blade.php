@@ -153,12 +153,20 @@
 
 
 <script>
+    let isProcessing = false;
     document.getElementById('btn-beli').addEventListener('click', function() {
+        if (isProcessing) return; // ❌ Abaikan jika sedang proses
+
+        isProcessing = true; // ✅ Tandai sedang diproses
         const featureId = document.getElementById('input-feature-id').value;
         const featureVariantId = document.getElementById('input-feature-variant-id').value;
         const jumlahKoin = document.getElementById('input-quantity').value;
         const price = document.getElementById('input-price').value;
         const paymentMethodId = document.getElementById('input-payment-method').value;
+
+        const btn = $(this);
+
+        btn.prop('disabled', true); // Disable button UI
 
         fetch("{{ route('checkout') }}", {
                 method: "POST",
@@ -186,20 +194,33 @@
                         onPending: function(result) {
                             // alert("Menunggu pembayaran.");
                             // console.log(result);
+                            isProcessing = false;
+                            btn.prop('disabled', false);
                         },
                         onError: function(result) {
                             // alert("Pembayaran gagal.");
                             // console.log(result);
+                            isProcessing = false;
+                            btn.prop('disabled', false);
                         },
+                        onClose: function() {
+                            // ✅ Izinkan user mencoba lagi jika dia menutup modal tanpa bayar
+                            isProcessing = false;
+                            btn.prop('disabled', false);
+                        }
                     });
                 } else {
                     alert("Gagal mendapatkan snap token.");
-                    console.error(data);
+                    // console.error(data);
+                    isProcessing = false;
+                    btn.prop('disabled', false);
                 }
             })
             .catch(error => {
                 alert("Terjadi kesalahan.");
-                console.error(error);
+                // console.error(error);
+                isProcessing = false;
+                btn.prop('disabled', false);
             });
     });
 </script>
@@ -341,10 +362,6 @@
         document.getElementById('my_modal_2').close();
     }
 </script>
-
-
-
-
 
 <script>
     const paymentContent = document.querySelectorAll(".content-method-payment");

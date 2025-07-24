@@ -41,13 +41,14 @@ function paginateBatchDetailPaymentMentor() {
                         second: '2-digit',
                     });
 
-                    const updatedAt = application.updated_at ? `${formatDate(application.updated_at)}, ${timeFormatter.format(new Date(application.updated_at))}` : 'Tanggal tidak tersedia';
+                    const createdAt = application.created_at ? `${formatDate(application.created_at)}` : 'Tanggal tidak tersedia';
 
                         $('#tbodyBatchDetailPaymentMentor').append(`
                             <tr class="text-xs">
                                 <td class="border border-gray-300 text-center">${index + 1}</td>
                                 <td class="border border-gray-300 text-center">${formatCurrency(application.amount)}</td>
                                 <td class="border border-gray-300 text-center">${application.source_payment_mentor}</td>
+                                <td class="border border-gray-300 text-center">${createdAt}</td>
                             </tr>
                         `);
                     });

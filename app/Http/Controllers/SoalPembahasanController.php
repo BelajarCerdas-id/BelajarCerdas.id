@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\BankSoalEditQuestion;
 use App\Events\BankSoalListener;
 use App\Models\Bab;
+use App\Models\FeatureSubscriptionHistory;
 use App\Models\Kelas;
 use App\Models\Kurikulum;
 use App\Models\Mapel;
@@ -102,7 +103,6 @@ class SoalPembahasanController extends Controller
             'editQuestion' => $editQuestion,
         ]);
     }
-
     // function bankSoal edit question
     public function editQuestion(Request $request, $id)
     {
@@ -517,7 +517,8 @@ class SoalPembahasanController extends Controller
     {
         // Ambil tanggal hari ini hanya dalam format 'Y-m-d'
         $today = now()->format('Y-m-d');
-        // $today = Carbon::parse('2025-07-19')->startOfDay();
+        // $today = Carbon::createFromFormat('Y-m-d', '2025-08-23')->format('Y-m-d');
+        // $today = Carbon::parse('2025-08-23')->startOfDay();
 
         // Ambil ID user yang sedang login
         $userId = Auth::id();
@@ -572,6 +573,11 @@ class SoalPembahasanController extends Controller
         })->where('student_id', $userId)->whereDate('created_at', $today)
             ->pluck('user_answer_option', 'question_id');
 
+        // Ambil informasi user yang berlangganan fitur soal dan pembahasan
+        $subscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
+            $query->where('feature_id', 2); // feature_id 2 menunjukkan fitur soal dan pembahasan
+        })->where('student_id', $userId)->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->first();
+
         // Ambil ID video YouTube dari penjelasan (explanation) tiap soal (jika ada)
         $videoIds = $groupedQuestions->map(function ($group) {
             if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $group[0]['explanation'], $matches)) {
@@ -585,6 +591,8 @@ class SoalPembahasanController extends Controller
             'data' => $groupedQuestions,
             'questionsAnswer' => $questionsAnswer,
             'videoIds' => $videoIds, // untuk menampilkan video in iframe
+            'subscription' => $subscription,
+            'today' => now()->toISOString(),
         ]);
     }
 
@@ -596,7 +604,9 @@ class SoalPembahasanController extends Controller
 
         // Ambil tanggal hari ini
         $today = now()->format('Y-m-d');
-        // $tomorrow = Carbon::parse('2025-07-19')->startOfDay();
+        // $today = Carbon::createFromFormat('Y-m-d', '2025-08-23')->format('Y-m-d');
+        // $today = Carbon::parse('2025-08-23')->startOfDay();
+
 
         $validator = Validator::make($request->all(), [
             'user_answer_option' => 'required',
@@ -619,10 +629,22 @@ class SoalPembahasanController extends Controller
         if (!$dataQuestionsAnswer) {
             SoalPembahasanAnswers::create([
                 'student_id' => $userId,
+                'subscription_id' => $request->subscription_id,
                 'question_id' => $request->question_id,
                 'user_answer_option' => $request->user_answer_option,
                 'status_answer' => 'Saved',
             ]);
+
+            // ini untuk testing created_at dan updated_at jika menggunakan beda hari menggunakan carbon lewat $today
+            // DB::table('soal_pembahasan_answers')->insert([
+            //     'student_id' => $userId,
+            //     'subscription_id' => $request->subscription_id ?? null,
+            //     'question_id' => $request->question_id,
+            //     'user_answer_option' => $request->user_answer_option,
+            //     'status_answer' => 'Saved',
+            //     'created_at' => $today,
+            //     'updated_at' => $today,
+            // ]);
         }
 
         return response()->json([
@@ -647,9 +669,8 @@ class SoalPembahasanController extends Controller
     {
         // Ambil tanggal hari ini hanya dalam format 'Y-m-d'
         $today = Carbon::now()->format('Y-m-d');
-        // $today = Carbon::parse('2025-07-20')->startOfDay();
-
-        // $today = Carbon::createFromFormat('Y-m-d', '2025-07-19')->format('Y-m-d');
+        // $today = Carbon::createFromFormat('Y-m-d', '2026-08-25')->format('Y-m-d');
+        // $today = Carbon::parse('2025-08-24')->startOfDay();
 
         // Ambil ID user yang sedang login
         $userId = Auth::id();
@@ -657,8 +678,13 @@ class SoalPembahasanController extends Controller
         // Ambil ulang soal-soal yang masih `Publish` dari DB
         $publishedQuestionIds = SoalPembahasanQuestions::where('status_bank_soal', 'Publish')->where('bab_id', $bab_id)->pluck('id')->implode(',');
 
-        // Buat key cache unik berdasarkan tanggal, user, dan sub bab
-        $cacheKey = "soal-pembahasan-exam-questions-{$today}-{$userId}-{$bab_id}-{$publishedQuestionIds}";
+        // Ambil informasi user yang berlangganan fitur soal dan pembahasan
+        $subscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
+            $query->where('feature_id', 2); // feature_id 2 menunjukkan fitur soal dan pembahasan
+        })->where('student_id', $userId)->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->first();
+
+        // Buat key cache unik berdasarkan setiap subscription, user, dan sub bab
+        $cacheKey = "soal-pembahasan-exam-questions-{$subscription}-{$userId}-{$bab_id}-{$publishedQuestionIds}";
 
         // Cek apakah data soal sudah disimpan di cache hari ini
         if  (Cache::has($cacheKey)) {
@@ -686,19 +712,21 @@ class SoalPembahasanController extends Controller
         $questionIds = $groupedQuestions->flatten()->pluck('id')->toArray();
 
         // Mendapatkan jawaban user berdasarkan question id
-        $questionsAnswer = SoalPembahasanAnswers::where('student_id', Auth::id())->whereDate('created_at', $today)
-        ->whereIn('question_id', $questionIds)
-        ->get()
-        // Ubah hasil koleksi menjadi associative array (map)
-        // dengan key = question_id dan value = seluruh atribut jawaban
-        ->mapWithKeys(fn($item) => [$item->question_id => $item->attributesToArray()]);
-
-        // Ambil jawaban user yang sudah disimpan (status "Saved") dengan tanggal hari ini
-        $answer = SoalPembahasanAnswers::with('SoalPembahasanQuestions')->where('student_id', Auth::id())->where('status_answer', 'Saved')
-        ->whereIn('question_id', $questionIds)->whereDate('created_at', $today)->get();
+        if ($subscription) {
+             // Ambil jawaban user
+            $questionsAnswer = SoalPembahasanAnswers::where('student_id', Auth::id())
+                ->whereIn('question_id', $questionIds)
+                ->where('subscription_id', $subscription->id)
+                ->get()
+                ->mapWithKeys(fn($item) => [$item->question_id => $item->attributesToArray()]);
+        } else {
+            // Handle ketika user tidak punya subscription aktif
+            // Bisa return kosong atau kasih message bahwa data tidak ditemukan
+            $questionsAnswer = collect(); // kosong, tidak ada jawaban
+        }
 
         // Hitung skor ujian dengan menjumlahkan skor dari soal-soal yang sudah dijawab
-        $scoreExam = $answer->sum('question_score');
+        $scoreExam = $questionsAnswer->sum('question_score');
 
         // menghitung banyaknya soal
         $total = $groupedQuestions->count();
@@ -707,7 +735,7 @@ class SoalPembahasanController extends Controller
         $scoreEachQuestion = $total ? 100 / $total : 0;
 
         // mengambil waktu pengerjaan ujian pertama dari answer
-        $examAnswerDuration = $answer->pluck('exam_answer_duration')->first();
+        $examAnswerDuration = $questionsAnswer->pluck('exam_answer_duration')->first();
 
         // Inisialisasi array kosong untuk menampung video ID dari YouTube
         $videoIds = [];
@@ -732,15 +760,19 @@ class SoalPembahasanController extends Controller
             'scoreExam' => $scoreExam,
             'examAnswerDuration' => $examAnswerDuration,
             'scoreEachQuestion' => $scoreEachQuestion,
-            'today' => $today // Tambahkan tanggal hari ini ke response
+            'today' => $today, // Tambahkan tanggal hari ini ke response
+            'subscription' => $subscription,
+            'now' => now()->toISOString(), // Tambahkan waktu saat ini ke response
         ]);
     }
 
     // Function untuk menjawab soal ujian
     public function examAnswer(Request $request, $id)
     {
-        $today = now()->format('Y-m-d');
-        // $today = Carbon::parse('2025-07-19')->startOfDay();
+        // Ambil tanggal hari ini
+        $today = Carbon::now()->format('Y-m-d');
+        // $today = Carbon::createFromFormat('Y-m-d', '2025-08-24')->format('Y-m-d');
+        // $today = Carbon::parse('2025-08-24')->startOfDay();
 
         $userId = Auth::id();
 
@@ -778,6 +810,7 @@ class SoalPembahasanController extends Controller
         // jika jawaban sudah ada maka update, jika belum ada maka create
         if ($answer) {
             $answer->update([
+                'subscription_id' => $request->subscription_id,
                 'user_answer_option' => $request->user_answer_option,
                 'status_answer' => $request->status_answer,
                 'question_score' => in_array($request->status_answer, ['Saved', 'Draft']) && $request->user_answer_option === $question->answer_key ? $request->question_score : 0,
@@ -786,6 +819,7 @@ class SoalPembahasanController extends Controller
         } else {
             SoalPembahasanAnswers::create([
                 'student_id' => $userId,
+                'subscription_id' => $request->subscription_id,
                 'question_id' => $request->question_id,
                 'user_answer_option' => $request->user_answer_option,
                 'status_answer' => $request->status_answer,
@@ -794,11 +828,12 @@ class SoalPembahasanController extends Controller
             ]);
         }
 
-        // ini untuk testing jika menggunakan beda hari menggunakan carbon lewat $today
+        // ini untuk testing created_at dan updated_at jika menggunakan beda hari menggunakan carbon lewat $today
         // if ($answer) {
         //     DB::table('soal_pembahasan_answers')
         //         ->where('id', $answer->id) // atau where student_id + question_id
         //         ->update([
+        //             'subscription_id' => $request->subscription_id,
         //             'user_answer_option' => $request->user_answer_option,
         //             'status_answer' => $request->status_answer,
         //             'question_score' => in_array($request->status_answer, ['Saved', 'Draft']) && $request->user_answer_option === $question->answer_key ? $request->question_score : 0,
@@ -809,6 +844,7 @@ class SoalPembahasanController extends Controller
         // } else {
         //     DB::table('soal_pembahasan_answers')->insert([
         //         'student_id' => $userId, // JANGAN LUPA: harus lengkap
+        //         'subscription_id' => $request->subscription_id,
         //         'question_id' => $request->question_id,
         //         'user_answer_option' => $request->user_answer_option,
         //         'status_answer' => $request->status_answer,

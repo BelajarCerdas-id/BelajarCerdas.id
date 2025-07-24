@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('fase_id')->constrained('fases');
             $table->foreignId('kelas_id')->constrained('kelas');
             $table->string('mentor_referral_code')->nullable();
-            $table->string('kode_jenjang_murid')->nullable();
+            $table->string('mentor_referral_joined_at')->nullable();
             $table->timestamps();
         });
     }

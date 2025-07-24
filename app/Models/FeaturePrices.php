@@ -22,7 +22,7 @@ class FeaturePrices extends Model
         return $this->belongsTo(Features::class, 'feature_id');
     }
 
-    public function Transcations() {
+    public function Transactions() {
         return $this->hasOne(Transactions::class, 'feature_variant_id');
     }
 

@@ -52,55 +52,57 @@ Route::fallback(function () {
 
 
 
-        // ROUTES AUTH
-        // ROUTES VIEWS REGISTER STUDENT & MENTOR
-        Route::get('/daftar-mentor', [AuthController::class, 'registerMentor'])->name('daftar.mentor');
-        Route::get('/daftar', [AuthController::class, 'indexRegister'])->name('daftar.user');
-        Route::get('/daftar-siswa', [AuthController::class, 'registerStudent'])->name('daftar.siswa');
+    // ROUTES AUTH
+    // ROUTES VIEWS REGISTER STUDENT & MENTOR
+    Route::get('/daftar-mentor', [AuthController::class, 'registerMentor'])->name('daftar.mentor');
+    Route::get('/daftar', [AuthController::class, 'indexRegister'])->name('daftar.user');
+    Route::get('/daftar-siswa', [AuthController::class, 'registerStudent'])->name('daftar.siswa');
 
-        // CRUD STUDENT
-        Route::post('/register/validate-step/student', [AuthController::class, 'validateStepFormStudent'])->name('register.validateStepFormStudent');
-        Route::post('/register/student/store', [AuthController::class, 'registerStudentStore'])->name('registerStudent.store');
+    // CRUD STUDENT
+    Route::post('/register/validate-step/student', [AuthController::class, 'validateStepFormStudent'])->name('register.validateStepFormStudent');
+    Route::post('/register/student/store', [AuthController::class, 'registerStudentStore'])->name('registerStudent.store');
 
-        // CRUD MENTOR
-        Route::post('/register/validate-step/mentor', [AuthController::class, 'validateStepFormMentor'])->name('register.validateStepFormMentor');
-        Route::post('/register/mentor/store', [AuthController::class, 'registerMentorStore'])->name('registerMentor.store');
+    // CRUD MENTOR
+    Route::post('/register/validate-step/mentor', [AuthController::class, 'validateStepFormMentor'])->name('register.validateStepFormMentor');
+    Route::post('/register/mentor/store', [AuthController::class, 'registerMentorStore'])->name('registerMentor.store');
 
-        // ROUTES OTP REGISTER
-        Route::post('/register/send-otp-mail/student', [AuthController::class, 'sendOtpMailStudent'])->name('register.sendOtpMailStudent');
-        Route::post('/register/send-otp-mail/mentor', [AuthController::class, 'sendOtpMailMentor'])->name('register.sendOtpMailMentor');
+    // ROUTES OTP REGISTER
+    Route::post('/register/send-otp-mail/student', [AuthController::class, 'sendOtpMailStudent'])->name('register.sendOtpMailStudent');
+    Route::post('/register/send-otp-mail/mentor', [AuthController::class, 'sendOtpMailMentor'])->name('register.sendOtpMailMentor');
 
-        // ROUTES LOGIN
-        Route::get('/login', fn() => view('Auth.login'))->name('login');
-        Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+    // ROUTES LOGIN
+    Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 
-        // ROUTE LOGOUT
-        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    // ROUTE LOGOUT
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-        // ROUTE PAYMENT FEATURES VIEW
-        Route::get('/pembayaran-fitur/{nama_fitur}', [PaymentFeaturesController::class, 'paymentFeaturesView'])->name('paymentFeaturesView');
+    // ROUTE PAYMENT FEATURES VIEW
+    Route::get('/pembayaran-fitur/{nama_fitur}', [PaymentFeaturesController::class, 'paymentFeaturesView'])->name('paymentFeaturesView');
 
-        // COIN CHECKOUT (TANYA)
-        // Route::get('/tanya-coin', [TanyaController::class, 'coinPackage'])->name('coinPackage');
-        Route::post('/checkout', [PaymentFeaturesController::class, 'checkoutCoinTanya'])->name('checkout');
-        Route::post('/renew-checkout/{id}', [PaymentFeaturesController::class, 'renewCheckoutCoinTanya'])->name('checkout.pending');
+    // ROUTES DROPDOWN FASE, KELAS, MAPEL, BAB (AJAX)
+    Route::get('/kelas/{id}', [MasterAcademicController::class, 'getKelas']); // kelas by fase
+    Route::get('/kurikulum/kelas/{id}', [MasterAcademicController::class, 'getKelasByKurikulum']); // kelas by kurikulum
 
-        // ROUTES DROPDOWN FASE, KELAS, MAPEL, BAB (AJAX)
-        Route::get('/kelas/{id}', [MasterAcademicController::class, 'getKelas']); // kelas by fase
-        Route::get('/kurikulum/kelas/{id}', [MasterAcademicController::class, 'getKelasByKurikulum']); // kelas by kurikulum
+    Route::get('/mapel/{id}', [MasterAcademicController::class, 'getMapel']); // mapel by fase
+    Route::get('/kelas/mapel/{id}', [MasterAcademicController::class, 'getMapelByKelas']); // mapel by kelas
 
-        Route::get('/mapel/{id}', [MasterAcademicController::class, 'getMapel']); // mapel by fase
-        Route::get('/kelas/mapel/{id}', [MasterAcademicController::class, 'getMapelByKelas']); // mapel by kelas
+    Route::get('tanya/bab/{kode_mapel}', [MasterAcademicController::class, 'getBabTanyaFeature']); // mapel by tanya feature
+    Route::get('/soal-pembahasan/bab/{kode_mapel}', [MasterAcademicController::class, 'getBabSoalPembahasanFeature']); // mapel by soal pembahasan feature
 
-        Route::get('tanya/bab/{kode_mapel}', [MasterAcademicController::class, 'getBabTanyaFeature']); // mapel by tanya feature
-        Route::get('/soal-pembahasan/bab/{kode_mapel}', [MasterAcademicController::class, 'getBabSoalPembahasanFeature']); // mapel by soal pembahasan feature
+    Route::get('/sub-bab/{kode_bab}', [MasterAcademicController::class, 'getSubBabSoalPembahasanFeature']); // bab by soal pembahasan feature
 
-        Route::get('/sub-bab/{kode_bab}', [MasterAcademicController::class, 'getSubBabSoalPembahasanFeature']); // bab by soal pembahasan feature
+    // CHART CONTROLLER (BERANDA ADMINISTRATOR)
+    Route::get('/chart-data-tanya-bulanan', [ChartController::class, 'chartTanyaBulanan'])->name('getChartDataTanyaBulanan');
+    Route::get('/chart-data-tanya-tahunan', [ChartController::class, 'chartTanyaTahunan'])->name('getChartDataTanyaTahunan');
+    Route::get('/chart-data-tanya-harian', [ChartController::class, 'chartTanyaHarian'])->name('getChartDataTanyaHarian');
 
-        // CHART CONTROLLER (BERANDA ADMINISTRATOR)
-        Route::get('/chart-data-tanya-bulanan', [ChartController::class, 'chartTanyaBulanan'])->name('getChartDataTanyaBulanan');
-        Route::get('/chart-data-tanya-tahunan', [ChartController::class, 'chartTanyaTahunan'])->name('getChartDataTanyaTahunan');
-        Route::get('/chart-data-tanya-harian', [ChartController::class, 'chartTanyaHarian'])->name('getChartDataTanyaHarian');
+    // ROUTES CHECKOUT FEATURES
+    // Coin checkout tanya
+    Route::post('/checkout', [PaymentFeaturesController::class, 'checkoutCoinTanya'])->name('checkout');
+    Route::post('/renew-checkout/{id}', [PaymentFeaturesController::class, 'renewCheckoutCoinTanya'])->name('checkout.pending');
+
+    // Checkout soal pembahasan subscription
+    Route::post('/checkout-soal-pembahasan', [PaymentFeaturesController::class, 'checkoutSoalPembahasanSubcription'])->name('checkout.soal-pembahasan');
 
     // MIDDLEWARE LOGIN
     Route::middleware([AuthMiddleware::class])->group(function () {
@@ -143,6 +145,21 @@ Route::fallback(function () {
 
         // CRUD REFERRAL CODE MENTOR (student)
         Route::put('/referral-code-student/{id}', [ProfileController::class, 'referralCodeStudent'])->name('referralCodeStudent.update');
+
+        // REFERRAL STUDENT TERDAFTAR (MENTOR)
+        Route::get('/user-terdaftar/referral-code/{kode_referral}', [ProfileController::class, 'referralUserList'])->name('referralUserList.view');
+
+        // PAGINATE REFERRAL USER LIST (list siswa yang terdaftar referral)
+        Route::get('/paginate-user-terdaftar/referral-code/{kode_referral}', [FilterController::class, 'paginateReferralUserList'])->name('referralUserList.paginate');
+
+        // STUDENT REFERRAL PURCHASE HISTORY (MENTOR)
+        Route::get('/riwayat-paket-pembelian-siswa/referral-code/{kode_referral}', [ProfileController::class, 'studentReferralPurchaseHistory'])->name('studentReferralPurchaseHistory.view');
+
+        // PAGINATE STUDENT REFERRAL PURCHASE HISTORY (MENTOR)
+        Route::get('/paginate-riwayat-paket-pembelian-siswa/referral-code/{kode_referral}', [FilterController::class, 'paginateStudentReferralPurchaseHistory'])->name('studentReferralPurchaseHistory.paginate');
+
+        // HISTORY PACKET ACTIVE
+        Route::get('/riwayat-paket-aktif', [ProfileController::class, 'historyPacketActive'])->name('historyPacketActive.view');
 
         // UPDATE COIN USER WHEN QUESTION REJECTED (with pusher)
         Route::get('/update-koin-student', [TanyaController::class, 'getKoinStudent'])->name('tanya.getKoinStudent');

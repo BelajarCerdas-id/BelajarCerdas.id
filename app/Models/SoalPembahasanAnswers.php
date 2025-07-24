@@ -11,6 +11,7 @@ class SoalPembahasanAnswers extends Model
 
     protected $fillable = [
         'student_id',
+        'subscription_id',
         'question_id',
         'user_answer_option',
         'question_score',
@@ -26,5 +27,10 @@ class SoalPembahasanAnswers extends Model
     public function SoalPembahasanQuestions()
     {
         return $this->belongsTo(SoalPembahasanQuestions::class, 'question_id');
+    }
+
+    public function FeatureSubscriptionHistory()
+    {
+        return $this->belongsTo(FeatureSubscriptionHistory::class, 'subscription_id');
     }
 }

@@ -61,10 +61,33 @@
                     </div>
                     <!--- right profil --->
                     <div class="w-full flex flex-col gap-4">
+                        <!--- Pakcet Pembelian Active --->
+                        <div
+                            class="flex justify-between items-center w-full bg-white shadow-lg h-14 border-gray-200 border-[2px] outline-none rounded-md px-2">
+                            <div class="flex flex-col gap-[1px]">
+                                <span class="text-md font-bold opacity-70">Paket Aktif</span>
+                                <span class="text-sm">
+                                    Total:
+                                    {{-- @foreach ($countPacketActive as $feature => $items)
+                                        @foreach ($items as $item)
+                                            {{ $item->start_date }}
+                                        @endforeach
+                                    @endforeach --}}
+                                    {{ $countPacketActive ? $countPacketActive : 0 }}
+                                    paket
+                                </span>
+                            </div>
+                            <a href="{{ route('historyPacketActive.view') }}">
+                                <div class="text-sm text-[#4189e0] font-bold">
+                                    <span>Lihat</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </a>
+                        </div>
                         <!--- Referral Code --->
                         <div class="flex flex-col gap-2 w-full">
                             <div class="flex justify-between items-center">
-                                <label for="">Referral Code</label>
+                                <label for="" class="font-bold opacity-70">Referral Code</label>
                                 <div class="flex gap-2 items-center cursor-pointer text-[#4189e0] font-bold"
                                     onclick="editReferralCodeStudent(this, {{ Auth::user()->id }})"
                                     data-form-edit-referral-code-student="{{ route('referralCodeStudent.update', Auth::user()->id) }}">
@@ -378,9 +401,9 @@
                 <div id="toast-container" class="fixed flex flex-col gap-2 max-h-40 overflow-hidden top-20"></div>
             </div>
             <main>
-                <section class="flex flex-col lg:flex-row gap-14">
+                <section class="flex flex-col xl:flex-row gap-14">
                     <!--- left profil --->
-                    <div class="bg-white w-full lg:w-[500px] h-max lg:h-[820px] shadow-lg rounded-lg py-10">
+                    <div class="bg-white w-full xl:w-[500px] h-max xl:h-[820px] shadow-lg rounded-lg py-10">
                         <!--- image user --->
                         <div class="flex justify-center">
                             <i class="fas fa-user-circle text-6xl pb-4"></i>
@@ -417,14 +440,16 @@
                             <!--- items --->
                             <ul class="lsit-style-none flex flex-col gap-6">
                                 <li class="text-sm pl-8 pr-2">
-                                    <a href="" class="flex justify-between w-full">
+                                    <a href="{{ route('referralUserList.view', Auth::user()->Profile->kode_referral) }}"
+                                        class="flex justify-between w-full">
                                         User Terdaftar
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>
                                 <li class="text-sm pl-8 pr-2">
-                                    <a href="" class="flex justify-between w-full">
-                                        Paket Pembelian User
+                                    <a href="{{ route('studentReferralPurchaseHistory.view', Auth::user()->Profile->kode_referral) }}"
+                                        class="flex justify-between w-full">
+                                        Paket Pembelian Siswa
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>
@@ -443,8 +468,8 @@
                                     data-base-url="{{ url('/daftar-siswa') }}">
 
                                 <button type="button" onclick="copyReferralLink()"
-                                    class="bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg text-sm hover:bg-blue-600">
-                                    Copy
+                                    class="w-32 xl:w-26 bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg text-sm hover:bg-blue-600">
+                                    Copy Link
                                 </button>
                             </div>
                         </div>

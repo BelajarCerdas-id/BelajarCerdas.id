@@ -40,7 +40,7 @@ class TanyaAccess
 
         // // Cek waktu akses tanya (student)
         // if($userTanya->role == 'Siswa' || $userTanya->role == 'Murid') {
-        //     if(!$now->between($startTimeStudent, $endTimeStudent)) {
+        //     if(!$now->between($startTimeStudent, $endeTimeStudent)) {
         //         return redirect()->route('beranda')->with('alertAccess', 'Maaf, halaman ini hanya bisa diakses pada pukul 07:00 - 21:00.');
         //     }
         // }

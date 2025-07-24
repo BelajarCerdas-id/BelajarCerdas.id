@@ -1,7 +1,7 @@
 <x-script></x-script>
 
 <nav class="mb-32">
-    <div class="flex justify-between items-center h-24 px-7 fixed w-full bg-white top-0 z-[9999]">
+    <div class="flex justify-between items-center h-24 px-7 fixed w-full bg-white top-0 z-[20]">
         <!-- navbar elements --->
         @if (request()->routeIs('homePage'))
             <!-- element top left -->

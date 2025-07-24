@@ -35,4 +35,9 @@ class Transactions extends Model
     {
         return $this->belongsTo(FeaturePrices::class, 'feature_variant_id');
     }
+
+    public function FeatureSubscriptionHistory()
+    {
+        return $this->hasOne(FeatureSubscriptionHistory::class, 'transaction_id');
+    }
 }

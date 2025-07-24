@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Fase;
 use App\Models\Features;
+use App\Models\FeatureSubscriptionHistory;
 use App\Models\MentorFeatureStatus;
 use App\Models\MentorProfiles;
 use App\Models\UserAccount;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +19,10 @@ class ProfileController extends Controller
 {
     public function profileUser()
     {
+        // Ambil tanggal hari ini
+        $today = Carbon::now()->format('Y-m-d');
+        // $today = Carbon::createFromFormat('Y-m-d', '2025-08-22')->format('Y-m-d');
+
         // MENTOR
         $userMentor = UserAccount::where('role', 'Mentor')->first();
 
@@ -31,7 +37,16 @@ class ProfileController extends Controller
         // SISWA
         $dataFase = Fase::all();
 
-        return view('Profiles.profile-user', compact('dataMentorAhli', 'dataFase'));
+        // mengambil semua packet yang sedang aktif dan group berdasarkan fitur masing"
+        $getPacketActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->groupBy('feature_id');
+        })->where('student_id', Auth::user()->id)->orderBy('created_at', 'desc')
+        ->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->get();
+
+        // menghitung jumlah packet yang sedang aktif dan ambil 1 saja untuk setiap fitur
+        $countPacketActive = $getPacketActive->count();
+
+        return view('Profiles.profile-user', compact('dataMentorAhli', 'dataFase', 'countPacketActive'));
     }
 
     // FUNCTION ATUR ULANG SANDI
@@ -79,6 +94,22 @@ class ProfileController extends Controller
         ]);
 
         return redirect('/profile')->with('success-update-password', 'Password berhasil diubah!');
+    }
+
+    // FUNCTION HISTORY PACKET ACTIVE STUDENT
+    public function historyPacketActive()
+    {
+        // Ambil tanggal hari ini
+        $today = Carbon::now()->format('Y-m-d');
+        // $today = Carbon::createFromFormat('Y-m-d', '2025-08-22')->format('Y-m-d');
+
+        // mengambil semua packet yang sedang aktif
+        $getPacketActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
+            $query->groupBy('feature_id');
+        })->where('student_id', Auth::user()->id)->orderBy('created_at', 'desc')
+        ->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->get();
+
+        return view('Profiles.history-packet-active.history-packet-active-student', compact('getPacketActive'));
     }
 
     // FUNCTION UPDATE DATA MENTOR
@@ -223,7 +254,7 @@ class ProfileController extends Controller
         $validator = Validator::make($request->all(), [
             'mentor_referral_code' => 'required',
         ], [
-            'mentor_referral_code.required' => 'Referral code tidak boleh kosong!',
+            'mentor_referral_code.required' => 'Kode referral tidak boleh kosong!',
         ]);
 
         if($validator->fails()) {
@@ -234,12 +265,13 @@ class ProfileController extends Controller
 
         $userStudentProfiles->update([
             'mentor_referral_code' => $request->mentor_referral_code,
+            'mentor_referral_joined_at' => now()
         ]);
 
         return redirect()->back()->with('success-update-referral-code-student', 'Referral Code berhasil ditambahkan!');
     }
 
-        // FUNCTION UPDATE DATA MENTOR
+    // FUNCTION UPDATE DATA MENTOR
     public function updatePersonalInformationAdministrator(Request $request, $id)
     {
         $dataOfficeProfiles = UserAccount::with('OfficeProfiles')->findOrFail($id);
@@ -267,5 +299,40 @@ class ProfileController extends Controller
         ]);
 
         return redirect()->back()->with('success-update-data-personal-administrator', 'Data berhasil diubah!');
+    }
+
+    // REFERRAL USER LIST (MENTOR)
+    public function referralUserList($kode_referral)
+    {
+        // ambil id user yang sedang login
+        $user = Auth::id();
+
+        // ambil data mentor yang sedang login
+        $getReferralMentor = MentorProfiles::where('user_id', $user)->first();
+
+        // memerika jika kode referral mentor tidak sama dengan $kode_referral maka (untuk mencegah mentor bisa melihat referral user list mentor lain)
+        if ($getReferralMentor->kode_referral != $kode_referral) {
+            // kembali ke halaman referral user list milik nya
+            return redirect()->route('referralUserList.view', $getReferralMentor->kode_referral);
+        }
+
+        return view('Profiles.Referral.user-terdaftar', compact('kode_referral'));
+    }
+
+    public function studentReferralPurchaseHistory($kode_referral)
+    {
+        // ambil id user yang sedang login
+        $user = Auth::id();
+
+        // ambil data mentor yang sedang login
+        $getReferralMentor = MentorProfiles::where('user_id', $user)->first();
+
+        // memerika jika kode referral mentor tidak sama dengan $kode_referral maka (untuk mencegah mentor bisa melihat referral user list mentor lain)
+        if ($getReferralMentor->kode_referral != $kode_referral) {
+            // kembali ke halaman referral user list milik nya
+            return redirect()->route('studentReferralPurchaseHistory.view', $getReferralMentor->kode_referral);
+        }
+
+        return view('Profiles.Referral.riwayat-pembelian-paket-siswa', compact('kode_referral'));
     }
 }

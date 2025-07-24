@@ -17,7 +17,7 @@ class StudentProfiles extends Model
         'fase_id',
         'kelas_id',
         'mentor_referral_code',
-        'kode_jenjang_murid',
+        'mentor_referral_joined_at',
     ];
 
     public function UserAccount() {

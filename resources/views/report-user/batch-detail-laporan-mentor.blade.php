@@ -25,6 +25,9 @@
                                     <th class="!text-center border border-gray-300">
                                         Sumber Pendapatan
                                     </th>
+                                    <th class="!text-center border border-gray-300">
+                                        Tanggal
+                                    </th>
                                 </tr>
                             </thead>
 
