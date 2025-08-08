@@ -222,20 +222,20 @@ class webController extends Controller
 
     public function reportMentor()
     {
+        // ambil id user yang sedang login
+        $userIds = Auth::id();
+
         // report for mentor
-        $mentors = UserAccount::with('MentorProfiles')->where('role', 'Mentor')->get();
+        $mentor = MentorProfiles::where('user_id', $userIds)->first();
 
-        $mentorIds = $mentors->pluck('id');
+        // hitung data tanya yang dijawab mentor
+        $countDataTanyaMentor = Tanya::onlyTrashed()->where('mentor_id', $userIds)->where('status_soal', 'Diterima')->count();
 
-        $countDataTanyaMentor = Tanya::onlyTrashed()->whereIn('mentor_id', $mentorIds)->where('status_soal', 'Diterima')->count();
-
-        $countPendapatanTanyaMentor = MentorPayments::whereIn('mentor_id', $mentorIds)->where('status_payment',  'Paid')->sum('total_ammount');
-
-        // Ambil semua kode referral mentor
-        $referralCodes = $mentors->pluck('MentorProfiles.kode_referral');
+        // hitung pendapatan
+        $countPendapatanTanyaMentor = MentorPayments::where('mentor_id', $userIds)->where('status_payment',  'Paid')->sum('total_ammount');
 
         // Hitung semua siswa yang memakai referral code mentor
-        $countReferralCodeUserMentor = StudentProfiles::whereIn('mentor_referral_code', $referralCodes)->count();
+        $countReferralCodeUserMentor = StudentProfiles::where('mentor_referral_code', $mentor->kode_referral)->count();
 
         return view('report-user.laporan-mentor', compact('countDataTanyaMentor', 'countPendapatanTanyaMentor', 'countReferralCodeUserMentor'));
     }

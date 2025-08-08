@@ -516,7 +516,7 @@ class FilterController extends Controller
     // PAGINATE BANK SOAL (SOAL DAN PEMBAHSAN FEATURE)
     public function paginateBankSoal(Request $request)
     {
-        $dataBankSoal = SoalPembahasanQuestions::with(['Kurikulum', 'Kelas', 'Mapel', 'Bab', 'SubBab'])->groupBy('sub_bab_id')->paginate(10);
+        $dataBankSoal = SoalPembahasanQuestions::with(['Kurikulum', 'Kelas', 'Mapel', 'Bab', 'SubBab'])->groupBy('sub_bab_id')->orderBy('created_at', 'desc')->paginate(10);
 
         return response()->json([
             'data' => $dataBankSoal->items(),

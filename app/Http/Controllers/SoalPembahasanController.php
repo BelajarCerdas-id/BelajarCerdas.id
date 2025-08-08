@@ -158,13 +158,290 @@ class SoalPembahasanController extends Controller
         ]);
     }
 
-    // Function bulkUpload Bank Soal Store with phpWord(for image), pandoc, mathml(equation word symbols, text styles)
+    // kalo uda clear semua, nanti ini dihapus
+    // public function bankSoalStore(Request $request)
+    // {
+    //     $extractor = new DocxImageExtractor();
+
+    //     $validator = Validator::make($request->all(), [
+    //         'bulkUpload-soal-pembahasan' => 'required|file|mimes:docx|max:10240',
+    //         'kurikulum_id' => 'required',
+    //         'kelas_id' => 'required',
+    //         'mapel_id' => 'required',
+    //         'bab_id' => 'required',
+    //         'sub_bab_id' => 'required',
+    //     ], [
+    //         'bulkUpload-soal-pembahasan.required' => 'Harap upload soal pembahasan!',
+    //         'kurikulum_id.required' => 'Harap pilih kurikulum!',
+    //         'kelas_id.required' => 'Harap pilih kelas!',
+    //         'mapel_id.required' => 'Harap pilih mapel!',
+    //         'bab_id.required' => 'Harap pilih bab!',
+    //         'sub_bab_id.required' => 'Harap pilih sub bab!',
+    //     ]);
+
+    //     $formErrors = $validator->fails() ? $validator->errors()->toArray() : [];
+    //     $allWordValidationErrors = [];
+    //     $userId = Auth::id();
+    //     $uploadedFile = $request->file('bulkUpload-soal-pembahasan');
+
+    //     if ($uploadedFile) {
+    //         $docxPath = storage_path('app/tmp_soal.docx');
+    //         $outputHtmlPath = storage_path('app/converted_soal.html');
+    //         $uploadedFile->move(storage_path('app'), 'tmp_soal.docx');
+
+    //         $process = new Process(['pandoc', $docxPath, '-f', 'docx', '-t', 'html', '--mathml', '-o', $outputHtmlPath]);
+    //         $process->run();
+    //         if (!$process->isSuccessful()) {
+    //             throw new ProcessFailedException($process);
+    //         }
+
+    //         $styledData = [];
+    //         $mediaImages = [];
+    //         $validSoalData = [];
+
+    //         $extractor->extractImagesFromDocxFile($docxPath, $mediaImages);
+
+    //         $forcePandocMode = false;
+    //         if ($extractor->docxHasEquation($docxPath) || $extractor->docxHasList($docxPath)) {
+    //             Log::info('⚠️ Deteksi equation OMML, skip PhpWord dan pakai hasil Pandoc sepenuhnya.');
+    //             Log::info("⚠️ Deteksi " . ($extractor->docxHasEquation($docxPath) ? "equation " : "") . ($extractor->docxHasList($docxPath) ? "list " : "") . "- gunakan Pandoc.");
+    //             $styledData = [];
+    //             $forcePandocMode = true;
+    //         } else {
+    //             try {
+    //                 $phpWord = IOFactory::load($docxPath);
+    //                 $styledData = $extractor->extractStyledTableData($phpWord, $mediaImages);
+    //             } catch (\Throwable $e) {
+    //                 Log::warning('⚠️ Gagal load PhpWord atau extractStyledTableData: ' . $e->getMessage());
+    //                 $styledData = [];
+    //             }
+    //         }
+
+    //         $htmlContent = file_get_contents($outputHtmlPath);
+    //         Log::debug("FULL raw Pandoc HTML content (truncated): " . substr($htmlContent, 0, 2000));
+
+    //         libxml_use_internal_errors(true);
+    //         $dom = new \DOMDocument();
+    //         $htmlForLoad = mb_convert_encoding($htmlContent, 'HTML-ENTITIES', 'UTF-8');
+    //         $dom->loadHTML($htmlForLoad, LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED);
+    //         libxml_clear_errors();
+
+    //         $tables = $dom->getElementsByTagName('table');
+    //         Log::debug("📄 Jumlah tabel hasil Pandoc: " . $tables->length);
+
+    //         $pandocTableValues = [];
+    //         foreach ($tables as $tIndex => $t) {
+    //             $rowsForFallback = $t->getElementsByTagName('tr');
+    //             foreach ($rowsForFallback as $row) {
+    //                 if (!$row instanceof \DOMElement) continue;
+
+    //                 $cells = [];
+    //                 foreach ($row->childNodes as $child) {
+    //                     if ($child instanceof \DOMElement && in_array(strtolower($child->nodeName), ['td', 'th'])) {
+    //                         $cells[] = $child;
+    //                     }
+    //                 }
+    //                 if (count($cells) < 2) continue;
+
+    //                 $keyHtml = '';
+    //                 foreach ($cells[0]->childNodes as $child) {
+    //                     $keyHtml .= $dom->saveHTML($child);
+    //                 }
+    //                 $normalizedKey = strtoupper(trim($extractor->normalizeTextContent($keyHtml)));
+    //                 $key = preg_replace('/[\s\xA0]+/u', '', $normalizedKey);
+    //                 if ($key === '') $key = 'QUESTION';
+
+    //                 $valueHtml = '';
+    //                 foreach ($cells[1]->childNodes as $child) {
+    //                     $valueHtml .= $dom->saveHTML($child);
+    //                 }
+
+    //                 $pandocTableValues[$tIndex][$key] = $valueHtml;
+    //             }
+    //         }
+
+    //         foreach ($tables as $index => $table) {
+    //             if (!$table instanceof \DOMElement) continue;
+
+    //             $rows = $table->getElementsByTagName('tr');
+    //             $dataSoal = [];
+    //             $validationErrors = [];
+    //             $soalNumber = $index + 1;
+
+    //             if (!$forcePandocMode && isset($styledData[$index]) && is_array($styledData[$index]) && count($styledData[$index]) > 0) {
+    //                 $dataSoal = $styledData[$index];
+    //                 Log::info("Soal ke-$soalNumber: memakai styledData + fallback Pandoc untuk key/value.");
+    //                 foreach ($dataSoal as $k => $htmlValue) {
+    //                     $styledHtml = $htmlValue;
+    //                     $pandocHtmlRaw = $pandocTableValues[$index][$k] ?? '';
+    //                     $pandocHtml = $pandocHtmlRaw;
+    //                     $dataSoal[$k] = $extractor->combineStyledAndPandoc($styledHtml, $pandocHtml);
+    //                 }
+    //             } else {
+    //                 foreach ($rows as $row) {
+    //                     if (!$row instanceof \DOMElement) continue;
+
+    //                     $cells = [];
+    //                     foreach ($row->childNodes as $child) {
+    //                         if ($child instanceof \DOMElement && in_array(strtolower($child->nodeName), ['td', 'th'])) {
+    //                             $cells[] = $child;
+    //                         }
+    //                     }
+    //                     if (count($cells) < 2) continue;
+
+    //                     $innerHtml = '';
+    //                     foreach ($cells[0]->childNodes as $child) {
+    //                         $innerHtml .= $dom->saveHTML($child);
+    //                     }
+    //                     $normalizedText = $extractor->normalizeTextContent($innerHtml);
+    //                     $rawHtmlKey = strtoupper(trim($normalizedText));
+    //                     $key = preg_replace('/[\s\xA0]+/u', '', $rawHtmlKey);
+    //                     if (empty($key) && empty($dataSoal['QUESTION'])) $key = 'QUESTION';
+
+    //                     $rawHtmlValue = '';
+    //                     foreach ($cells[1]->childNodes as $child) {
+    //                         $rawHtmlValue .= $dom->saveHTML($child);
+    //                     }
+
+    //                     $pandocValue = $rawHtmlValue;
+
+    //                     $styledValue = $styledData[$index][$key] ?? '';
+    //                     $plainPandoc = $extractor->normalizeTextContent($pandocValue);
+    //                     $plainStyled = $extractor->normalizeTextContent($styledValue);
+
+    //                     if (empty($styledValue)) {
+    //                         $value = $pandocValue;
+    //                     } elseif ($plainPandoc === $plainStyled) {
+    //                         $value = $styledValue;
+    //                     } elseif (str_contains($pandocValue, '<math') || str_contains($pandocValue, '<img') || str_contains($pandocValue, '<ul') || str_contains($pandocValue, '<ol')) {
+    //                         $value = $extractor->mergeStyledAndPandocHtml($pandocValue, $styledValue, $mediaImages);
+    //                     } else {
+    //                         $value = $styledValue;
+    //                     }
+
+    //                     if (!str_contains($value, '<p>') && !str_contains($value, '<div>')) {
+    //                         $value = "<p>$value</p>";
+    //                     }
+    //                     if (!empty($key)) $dataSoal[$key] = $value;
+    //                 }
+    //             }
+
+    //             Log::debug("Final dataSoal for soal #$soalNumber:", $dataSoal);
+
+    //             if (!isset($dataSoal['QUESTION']) || $extractor->isMeaningfullyEmpty($dataSoal['QUESTION'])) {
+    //                 $validationErrors[] = "Soal ke-$soalNumber: QUESTION tidak boleh kosong.";
+    //             }
+
+    //             $answerMap = [
+    //                 'OPTION1' => 'A',
+    //                 'OPTION2' => 'B',
+    //                 'OPTION3' => 'C',
+    //                 'OPTION4' => 'D',
+    //                 'OPTION5' => 'E',
+    //             ];
+    //             $presentOptions = array_filter(array_keys($answerMap), fn($opt) => isset($dataSoal[$opt]) && $extractor->isMeaningfullyEmpty($dataSoal[$opt]));
+    //             $requiredFields = array_merge($presentOptions, ['ANSWER', 'EXPLANATION', 'SKILLTAG', 'DIFFICULTY', 'STATUS', 'TYPE']);
+
+    //             foreach ($requiredFields as $field) {
+    //                 if (!isset($dataSoal[$field]) || $extractor->isMeaningfullyEmpty($dataSoal[$field])) {
+    //                     $validationErrors[] = "Soal ke-$soalNumber: Field '$field' tidak boleh kosong.";
+    //                 }
+    //             }
+
+    //             if (!empty($validationErrors)) {
+    //                 $allWordValidationErrors = array_merge($allWordValidationErrors, $validationErrors);
+    //                 continue;
+    //             }
+
+    //             // Replace image src hanya setelah validasi berhasil
+    //             foreach ($dataSoal as $k => $v) {
+    //                 $dataSoal[$k] = $extractor->replaceImageSrc($v, $mediaImages);
+    //             }
+
+    //             $validSoalData[] = $dataSoal;
+    //         }
+
+    //         if (!empty($formErrors) || !empty($allWordValidationErrors)) {
+    //             foreach ($mediaImages as $img) {
+    //                 if (!empty($img['public_url'] ?? '')) {
+    //                     $imgPath = public_path($img['public_url']);
+    //                     if (file_exists($imgPath)) {
+    //                         unlink($imgPath);
+    //                         Log::info("🗑 Hapus gambar karena validasi gagal: $imgPath");
+    //                     }
+    //                 }
+    //             }
+
+    //             return response()->json([
+    //                 'status' => 'validation-error',
+    //                 'errors' => [
+    //                     'form_errors' => $formErrors,
+    //                     'word_validation_errors' => $allWordValidationErrors,
+    //                 ],
+    //             ], 422);
+    //         }
+
+    //         foreach ($validSoalData as $dataSoal) {
+    //             $answerKeyRaw = $dataSoal['ANSWER'] ?? '';
+    //             $plainAnswerKey = strtoupper(trim(strip_tags($answerKeyRaw)));
+    //             $finalAnswerKey = $answerMap[$plainAnswerKey] ?? null;
+    //             if (!$finalAnswerKey) continue;
+
+    //             $existingQuestion = SoalPembahasanQuestions::where('questions', $dataSoal['QUESTION'])->exists();
+
+    //             $statusBankSoal = SoalPembahasanQuestions::where('sub_bab_id', $request->sub_bab_id)
+    //                 ->where('status_bank_soal', 'Publish')
+    //                 ->exists() ? 'Publish' : 'Unpublish';
+
+    //             foreach ($answerMap as $optionField => $label) {
+    //                 if (!$existingQuestion) {
+    //                     if (!empty($dataSoal[$optionField])) {
+    //                         $createBankSoal = SoalPembahasanQuestions::create([
+    //                             'administrator_id' => $userId,
+    //                             'kurikulum_id' => $request->kurikulum_id,
+    //                             'kelas_id' => $request->kelas_id,
+    //                             'mapel_id' => $request->mapel_id,
+    //                             'bab_id' => $request->bab_id,
+    //                             'sub_bab_id' => $request->sub_bab_id,
+    //                             'questions' => $dataSoal['QUESTION'],
+    //                             'options_key' => $label,
+    //                             'options_value' => $dataSoal[$optionField],
+    //                             'answer_key' => $finalAnswerKey,
+    //                             'skilltag' => trim(strip_tags($dataSoal['SKILLTAG'] ?? '')),
+    //                             'difficulty' => trim(strip_tags($dataSoal['DIFFICULTY'] ?? '')),
+    //                             'explanation' => $dataSoal['EXPLANATION'] ?? '',
+    //                             'status_soal' => trim(strip_tags($dataSoal['STATUS'] ?? '')),
+    //                             'tipe_soal' => trim(strip_tags($dataSoal['TYPE'] ?? '')),
+    //                             'status_bank_soal' => $statusBankSoal,
+    //                         ]);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     if (isset($createBankSoal)) {
+    //         broadcast(new BankSoalListener($createBankSoal))->toOthers();
+    //     }
+
+    //     @unlink($docxPath);
+    //     @unlink($outputHtmlPath);
+
+    //     return response()->json([
+    //         'status' => 'success',
+    //         'message' => 'Bank Soal berhasil diupload.',
+    //     ]);
+    // }
+
+
     public function bankSoalStore(Request $request)
     {
+        // Buat instance dari class DocxImageExtractor yang berfungsi untuk ekstrak gambar + HTML styled dari file Word
         $extractor = new DocxImageExtractor();
 
-        // Validasi form input dari frontend (kurikulum, kelas, mapel, dll)
+        // Validasi input form dari frontend (wajib diisi)
         $validator = Validator::make($request->all(), [
+            // File wajib ada, format .docx, max 10 MB
             'bulkUpload-soal-pembahasan' => 'required|file|mimes:docx|max:10240',
             'kurikulum_id' => 'required',
             'kelas_id' => 'required',
@@ -172,6 +449,7 @@ class SoalPembahasanController extends Controller
             'bab_id' => 'required',
             'sub_bab_id' => 'required',
         ], [
+            // Pesan error custom
             'bulkUpload-soal-pembahasan.required' => 'Harap upload soal pembahasan!',
             'kurikulum_id.required' => 'Harap pilih kurikulum!',
             'kelas_id.required' => 'Harap pilih kelas!',
@@ -180,105 +458,189 @@ class SoalPembahasanController extends Controller
             'sub_bab_id.required' => 'Harap pilih sub bab!',
         ]);
 
-        // Simpan error form (jangan langsung return)
+        // Simpan error validasi form (tidak langsung return, biar bisa digabung dengan error validasi isi file Word)
         $formErrors = $validator->fails() ? $validator->errors()->toArray() : [];
 
-        // Siapkan array untuk validasi dari isi file Word
+        // Array untuk menampung semua error validasi dari isi tabel di file Word
         $allWordValidationErrors = [];
 
-        // Proses upload file docx
+        // Ambil ID user yang sedang login
         $userId = Auth::id();
+
+        // Ambil file .docx yang diupload
         $uploadedFile = $request->file('bulkUpload-soal-pembahasan');
 
-        // mengecek apakah ada file yang diupload
+        // Mengecek apakah ada file yang diupload
         if ($uploadedFile) {
+            // Tentukan path sementara untuk file docx dan file html hasil konversi
             $docxPath = storage_path('app/tmp_soal.docx');
             $outputHtmlPath = storage_path('app/converted_soal.html');
 
+            // Pindahkan file upload ke storage/app sebagai tmp_soal.docx
             $uploadedFile->move(storage_path('app'), 'tmp_soal.docx');
 
-            // Konversi file Word ke HTML menggunakan Pandoc
+            // Konversi file Word ke HTML menggunakan Pandoc (dengan mathml untuk equation)
             $process = new Process(['pandoc', $docxPath, '-f', 'docx', '-t', 'html', '--mathml', '-o', $outputHtmlPath]);
             $process->run();
 
+            // Jika pandoc gagal, lempar exception
             if (!$process->isSuccessful()) {
                 throw new ProcessFailedException($process);
             }
 
-            $styledData = [];
-            $mediaImages = [];
+            // Inisialisasi variabel
+            $styledData = [];    // Hasil ekstrak HTML styled dari PhpWord
+            $mediaImages = [];   // List gambar dari file Word
+            $validSoalData = []; // Soal-soal yang lolos validasi
 
-            // Ekstrak gambar dan teks styled dari file Word dengan PhpWord
-            try {
-                $phpWord = IOFactory::load($docxPath);
-                foreach ($phpWord->getSections() as $section) {
-                    foreach ($section->getElements() as $element) {
-                        try {
-                            $extractor->extractImages($element, $mediaImages);
-                        } catch (\Throwable $e) {
-                            Log::warning('Gagal ekstrak elemen: ' . $e->getMessage());
-                        }
-                    }
-                }
+            // Ekstrak semua gambar dari file .docx → disimpan di $mediaImages
+            $extractor->extractImagesFromDocxFile($docxPath, $mediaImages);
 
-                $styledData = $extractor->extractStyledTableData($phpWord, $mediaImages);
-            } catch (\Throwable $e) {
-                if (!str_contains($e->getMessage(), 'Namespace prefix m on oMath')) {
-                    Log::warning('Gagal parse PhpWord: ' . $e->getMessage());
+            // Deteksi apakah file punya equation atau list
+            $forcePandocMode = false;
+            if ($extractor->docxHasEquation($docxPath) || $extractor->docxHasList($docxPath)) {
+                // Jika iya → skip PhpWord dan pakai hasil Pandoc saja
+                Log::info('⚠️ Deteksi equation OMML, skip PhpWord dan pakai hasil Pandoc sepenuhnya.');
+                Log::info("⚠️ Deteksi " . ($extractor->docxHasEquation($docxPath) ? "equation " : "") . ($extractor->docxHasList($docxPath) ? "list " : "") . "- gunakan Pandoc.");
+                $styledData = [];
+                $forcePandocMode = true;
+            } else {
+                // Jika tidak ada equation/list → coba parsing HTML styled dengan PhpWord
+                try {
+                    $phpWord = IOFactory::load($docxPath);
+                    $styledData = $extractor->extractStyledTableData($phpWord, $mediaImages);
+                } catch (\Throwable $e) {
+                    // Jika gagal → log warning dan kosongkan styledData
+                    Log::warning('⚠️ Gagal load PhpWord atau extractStyledTableData: ' . $e->getMessage());
+                    $styledData = [];
                 }
             }
 
-            // Parse file HTML hasil konversi Pandoc
+            // Parse HTML hasil Pandoc
             $htmlContent = file_get_contents($outputHtmlPath);
             $dom = new \DOMDocument();
-            libxml_use_internal_errors(true);
+            libxml_use_internal_errors(true); // Supaya error parsing HTML tidak mematikan proses
             $dom->loadHTML(mb_convert_encoding($htmlContent, 'HTML-ENTITIES', 'UTF-8'));
             libxml_clear_errors();
 
+            // Ambil semua tabel dari hasil Pandoc
             $tables = $dom->getElementsByTagName('table');
 
+            // Ambil semua key-value dari tabel hasil Pandoc
+            $pandocTableValues = [];
+            foreach ($tables as $tIndex => $t) {
+                if (!$t instanceof \DOMElement) continue;
+                $rowsForFallback = $t->getElementsByTagName('tr');
+                foreach ($rowsForFallback as $row) {
+                    if (!$row instanceof \DOMElement) continue;
+
+                    // Ambil cell per baris
+                    $cells = [];
+                    foreach ($row->childNodes as $child) {
+                        if ($child instanceof \DOMElement && in_array(strtolower($child->nodeName), ['td', 'th'])) {
+                            $cells[] = $child;
+                        }
+                    }
+                    if (count($cells) < 2) continue; // Harus ada minimal 2 kolom (key & value)
+
+                    // Ambil key (kolom 1)
+                    $keyHtml = '';
+                    foreach ($cells[0]->childNodes as $child) {
+                        $keyHtml .= $dom->saveHTML($child);
+                    }
+                    $normalizedKey = strtoupper(trim($extractor->normalizeTextContent($keyHtml)));
+                    $key = preg_replace('/[\s\xA0]+/u', '', $normalizedKey);
+                    if ($key === '') $key = 'QUESTION'; // Default key kalau kosong
+
+                    // Ambil value (kolom 2)
+                    $valueHtml = '';
+                    foreach ($cells[1]->childNodes as $child) {
+                        $valueHtml .= $dom->saveHTML($child);
+                    }
+
+                    // Simpan ke array berdasarkan index tabel
+                    $pandocTableValues[$tIndex][$key] = $valueHtml;
+                }
+            }
+
+            // Proses setiap tabel (setiap tabel = 1 soal)
             foreach ($tables as $index => $table) {
+                if (!$table instanceof \DOMElement) continue;
                 $rows = $table->getElementsByTagName('tr');
                 $dataSoal = [];
                 $validationErrors = [];
                 $soalNumber = $index + 1;
 
-                foreach ($rows as $row) {
-                    $cells = $row->getElementsByTagName('td');
-                    if ($cells->length < 2) continue;
-
-                    // Ambil key dan isi HTML value-nya
-                    $key = strtoupper(trim(strip_tags($cells->item(0)?->textContent ?? '')));
-                    $rawHtml = '';
-                    foreach ($cells->item(1)->childNodes as $child) {
-                        $rawHtml .= $dom->saveHTML($child);
+                // Kalau styledData tersedia → gabungkan dengan hasil Pandoc
+                if (!$forcePandocMode && isset($styledData[$index]) && is_array($styledData[$index]) && count($styledData[$index]) > 0) {
+                    $dataSoal = $styledData[$index];
+                    Log::info("Soal ke-$soalNumber: memakai styledData + fallback Pandoc untuk key/value.");
+                    foreach ($dataSoal as $k => $htmlValue) {
+                        $styledHtml = $htmlValue;
+                        $pandocHtmlRaw = $pandocTableValues[$index][$k] ?? '';
+                        $pandocHtml = $pandocHtmlRaw;
+                        // Gabungkan styled HTML dan Pandoc HTML
+                        $dataSoal[$k] = $extractor->combineStyledAndPandoc($styledHtml, $pandocHtml);
                     }
+                } else {
+                    // Kalau styledData kosong → ambil dari Pandoc + merge styled kalau ada
+                    foreach ($rows as $row) {
+                        if (!$row instanceof \DOMElement) continue;
 
-                    // Gunakan styled value jika tersedia, atau fallback ke hasil Pandoc
-                    $pandocValue = $extractor->replaceImageSrc($rawHtml, $mediaImages);
-                    $styledValue = $styledData[$key] ?? '';
-                    $plainPandoc = trim(str_replace('&nbsp;', ' ', $pandocValue));
-                    $plainStyled = trim(str_replace('&nbsp;', ' ', $styledValue));
+                        $cells = [];
+                        foreach ($row->childNodes as $child) {
+                            if ($child instanceof \DOMElement && in_array(strtolower($child->nodeName), ['td', 'th'])) {
+                                $cells[] = $child;
+                            }
+                        }
+                        if (count($cells) < 2) continue;
 
-                    $value = empty($styledValue)
-                        ? $pandocValue
-                        : (($plainPandoc === $plainStyled || str_contains($pandocValue, '<math')) ? $pandocValue : $styledValue);
+                        // Ambil key (kolom 1)
+                        $innerHtml = '';
+                        foreach ($cells[0]->childNodes as $child) {
+                            $innerHtml .= $dom->saveHTML($child);
+                        }
+                        $normalizedText = $extractor->normalizeTextContent($innerHtml);
+                        $rawHtmlKey = strtoupper(trim($normalizedText));
+                        $key = preg_replace('/[\s\xA0]+/u', '', $rawHtmlKey);
+                        if (empty($key) && empty($dataSoal['QUESTION'])) $key = 'QUESTION';
 
-                    if (!str_contains($value, '<p>') && !str_contains($value, '<div>')) {
-                        $value = "<p>$value</p>";
-                    }
+                        // Ambil value (kolom 2)
+                        $rawHtmlValue = '';
+                        foreach ($cells[1]->childNodes as $child) {
+                            $rawHtmlValue .= $dom->saveHTML($child);
+                        }
+                        $pandocValue = $rawHtmlValue;
 
-                    if (!empty($key)) {
-                        $dataSoal[$key] = $value;
+                        // Coba ambil styled value jika ada
+                        $styledValue = $styledData[$index][$key] ?? '';
+                        $plainPandoc = $extractor->normalizeTextContent($pandocValue);
+                        $plainStyled = $extractor->normalizeTextContent($styledValue);
+
+                        // Tentukan value akhir
+                        if (empty($styledValue)) {
+                            $value = $pandocValue;
+                        } elseif ($plainPandoc === $plainStyled) {
+                            $value = $styledValue;
+                        } elseif (str_contains($pandocValue, '<math') || str_contains($pandocValue, '<img') || str_contains($pandocValue, '<ul') || str_contains($pandocValue, '<ol')) {
+                            $value = $extractor->mergeStyledAndPandocHtml($pandocValue, $styledValue, $mediaImages);
+                        } else {
+                            $value = $styledValue;
+                        }
+
+                        // Pastikan value dibungkus <p>
+                        if (!str_contains($value, '<p>') && !str_contains($value, '<div>')) {
+                            $value = "<p>$value</p>";
+                        }
+                        if (!empty($key)) $dataSoal[$key] = $value;
                     }
                 }
 
-                // Validasi wajib untuk field tertentu
-                if (!isset($dataSoal['QUESTION']) || $extractor->isHtmlEmpty($dataSoal['QUESTION'])) {
+                // Validasi field wajib
+                if (!isset($dataSoal['QUESTION']) || $extractor->isMeaningfullyEmpty($dataSoal['QUESTION'])) {
                     $validationErrors[] = "Soal ke-$soalNumber: QUESTION tidak boleh kosong.";
                 }
 
-                // Simpan ke database
                 $answerMap = [
                     'OPTION1' => 'A',
                     'OPTION2' => 'B',
@@ -286,70 +648,90 @@ class SoalPembahasanController extends Controller
                     'OPTION4' => 'D',
                     'OPTION5' => 'E',
                 ];
+                // Pastikan semua OPTION yang ada terisi, plus field wajib lain
+                $presentOptions = array_filter(array_keys($answerMap), fn($opt) => isset($dataSoal[$opt]) && $extractor->isMeaningfullyEmpty($dataSoal[$opt]));
+                $requiredFields = array_merge($presentOptions, ['ANSWER', 'EXPLANATION', 'SKILLTAG', 'DIFFICULTY', 'STATUS', 'TYPE']);
 
-                $availableOptions = array_filter(array_keys($answerMap), fn($key) => isset($dataSoal[$key]) && $extractor->isHtmlEmpty($dataSoal[$key]));
-
-                $requiredFields = array_merge($availableOptions, ['ANSWER', 'EXPLANATION', 'SKILLTAG', 'DIFFICULTY', 'STATUS', 'TYPE']);
                 foreach ($requiredFields as $field) {
-                    if (!isset($dataSoal[$field]) || $extractor->isHtmlEmpty($dataSoal[$field])) {
+                    if (!isset($dataSoal[$field]) || $extractor->isMeaningfullyEmpty($dataSoal[$field])) {
                         $validationErrors[] = "Soal ke-$soalNumber: Field '$field' tidak boleh kosong.";
                     }
                 }
 
-                // Jika ada error validasi Word, simpan dulu dan lanjut soal berikutnya
+                // Jika validasi gagal → simpan error & lanjut ke soal berikutnya
                 if (!empty($validationErrors)) {
                     $allWordValidationErrors = array_merge($allWordValidationErrors, $validationErrors);
                     continue;
                 }
 
-                if (empty($formErrors)) {
-                    // Loop semua data gambar yang diekstrak dari Word
-                    foreach ($mediaImages as $key => &$imgData) {
-                        // Jika gambar belum disimpan (path masih null) dan data binernya tersedia
-                        if (is_null($imgData['path']) && !is_null($imgData['binary'])) {
-                            // Simpan gambar ke folder publik dan ambil path-nya
-                            $imgData['path'] = $extractor->saveImage($imgData['binary'], $imgData['mime']);
-                        }
-                    }
+                // Kalau validasi lolos → baru ganti placeholder gambar & bersihkan HTML
+                foreach ($dataSoal as $k => $v) {
+                    $v = $extractor->replaceImageSrc($v, $mediaImages);
+                    $v = $extractor->cleanHtml($v); // Hilangkan tag sampah
+                    $dataSoal[$k] = $v;
+                }
+                $validSoalData[] = $dataSoal;
+            }
 
-                    // Gantikan semua placeholder gambar (src="PLACEHOLDER:<key>") dengan path sebenarnya
-                    foreach ($dataSoal as $key => $html) {
-                        $dataSoal[$key] = $extractor->replaceAllPlaceholdersWithPath($html, $mediaImages);
+            // Kalau ada error form atau word → hapus semua gambar yang sudah tersimpan
+            if (!empty($formErrors) || !empty($allWordValidationErrors)) {
+                foreach ($mediaImages as $img) {
+                    if (!empty($img['public_url'] ?? '')) {
+                        $imgPath = public_path($img['public_url']);
+                        if (file_exists($imgPath)) {
+                            unlink($imgPath);
+                            Log::info("🗑 Hapus gambar karena validasi gagal: $imgPath");
+                        }
                     }
                 }
 
-                $answerKey = strtoupper(trim(strip_tags($dataSoal['ANSWER'] ?? '')));
-                $finalAnswerKey = $answerMap[$answerKey] ?? null;
+                // Return respon error validasi
+                return response()->json([
+                    'status' => 'validation-error',
+                    'errors' => [
+                        'form_errors' => $formErrors,
+                        'word_validation_errors' => $allWordValidationErrors,
+                    ],
+                ], 422);
+            }
 
-                if (empty($formErrors)) {
-                    // Cek apakah soal dengan pertanyaan yang sama sudah ada
-                    $existingQuestion = SoalPembahasanQuestions::where('questions', $dataSoal['QUESTION'])->first();
+            // Simpan soal ke database
+            foreach ($validSoalData as $dataSoal) {
+                $answerKeyRaw = $dataSoal['ANSWER'] ?? '';
+                $plainAnswerKey = strtoupper(trim(strip_tags($answerKeyRaw)));
+                $finalAnswerKey = $answerMap[$plainAnswerKey] ?? null;
+                if (!$finalAnswerKey) continue;
 
-                    // Insert hanya akan dijalankan jika soal belum ada
+                // Cek duplikasi soal
+                $existingQuestion = SoalPembahasanQuestions::where('questions', $dataSoal['QUESTION'])->exists();
+                if ($existingQuestion) continue;
+
+                // Tentukan status bank soal (Publish kalau sudah ada soal publish sebelumnya di sub_bab_id yang sama)
+                $statusBankSoal = SoalPembahasanQuestions::where('sub_bab_id', $request->sub_bab_id)
+                    ->where('status_bank_soal', 'Publish')
+                    ->exists() ? 'Publish' : 'Unpublish';
+
+                // Simpan setiap opsi jawaban ke DB
+                if (!$allWordValidationErrors) {
                     if (!$existingQuestion) {
-                        // mengecek Jika ada soal dengan sub_bab yang sama dan status_bank_soal = 'Publish', jika tidak maka Unpublish
-                        $statusBankSoal = SoalPembahasanQuestions::where('sub_bab_id', $request->sub_bab_id)
-                            ->where('status_bank_soal', 'Publish')
-                            ->exists() ? 'Publish' : 'Unpublish';
-
                         foreach ($answerMap as $optionField => $label) {
                             if (!empty($dataSoal[$optionField])) {
                                 $createBankSoal = SoalPembahasanQuestions::create([
                                     'administrator_id' => $userId,
-                                    'kurikulum_id'     => $request->kurikulum_id,
-                                    'kelas_id'         => $request->kelas_id,
-                                    'mapel_id'         => $request->mapel_id,
-                                    'bab_id'           => $request->bab_id,
-                                    'sub_bab_id'       => $request->sub_bab_id,
-                                    'questions'        => $dataSoal['QUESTION'],
-                                    'options_key'      => $label,
-                                    'options_value'    => $dataSoal[$optionField],
-                                    'answer_key'       => $finalAnswerKey,
-                                    'skilltag'         => trim(strip_tags($dataSoal['SKILLTAG'] ?? '')),
-                                    'difficulty'       => trim(strip_tags($dataSoal['DIFFICULTY'] ?? '')),
-                                    'explanation'      => $dataSoal['EXPLANATION'] ?? '',
-                                    'status_soal'      => trim(strip_tags($dataSoal['STATUS'] ?? '')),
-                                    'tipe_soal'        => trim(strip_tags($dataSoal['TYPE'] ?? '')),
+                                    'kurikulum_id' => $request->kurikulum_id,
+                                    'kelas_id' => $request->kelas_id,
+                                    'mapel_id' => $request->mapel_id,
+                                    'bab_id' => $request->bab_id,
+                                    'sub_bab_id' => $request->sub_bab_id,
+                                    'questions' => $dataSoal['QUESTION'],
+                                    'options_key' => $label,
+                                    'options_value' => $dataSoal[$optionField],
+                                    'answer_key' => $finalAnswerKey,
+                                    'skilltag' => trim(strip_tags($dataSoal['SKILLTAG'] ?? '')),
+                                    'difficulty' => trim(strip_tags($dataSoal['DIFFICULTY'] ?? '')),
+                                    'explanation' => $dataSoal['EXPLANATION'] ?? '',
+                                    'status_soal' => trim(strip_tags($dataSoal['STATUS'] ?? '')),
+                                    'tipe_soal' => trim(strip_tags($dataSoal['TYPE'] ?? '')),
                                     'status_bank_soal' => $statusBankSoal,
                                 ]);
                             }
@@ -358,33 +740,24 @@ class SoalPembahasanController extends Controller
                 }
             }
 
-            // Kirim event jika soal berhasil ditambahkan
+            // Kirim event broadcast kalau soal berhasil ditambahkan
             if (isset($createBankSoal)) {
                 broadcast(new BankSoalListener($createBankSoal))->toOthers();
             }
-        }
-
-        // Tampilkan error jika ada dari form atau dari Word
-        if (!empty($formErrors) || !empty($allWordValidationErrors)) {
-            return response()->json([
-                'status' => 'validation-error',
-                'errors' => [
-                    'form_errors' => $formErrors,
-                    'word_validation_errors' => $allWordValidationErrors,
-                ],
-            ], 422);
         }
 
         // Bersihkan file sementara
         @unlink($docxPath);
         @unlink($outputHtmlPath);
 
-        // Jika tidak ada error, kirim respons sukses
+        // Return sukses
         return response()->json([
             'status' => 'success',
             'message' => 'Bank Soal berhasil diupload.',
         ]);
     }
+
+
 
     // FUNCTION EDIT DELETE IMAGE BANKSOAL CKEDITOR
     // controller upload & delete image edit image in question with ckeditor
@@ -951,6 +1324,4 @@ class SoalPembahasanController extends Controller
             'videoIds' => $videoIds, // untuk menampilkan video in iframe
         ]);
     }
-
-
 }

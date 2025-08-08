@@ -16,7 +16,7 @@
                     </div>
                     <div class="border bg-white shadow-lg rounded-md h-50 p-4">
                         <i class="fa-solid fa-money-bills text-green-500"></i>
-                        <span class="text-sm font-bold opacity-70">Pendapatan Tanya</span>
+                        <span class="text-sm font-bold opacity-70">Pendapatan</span>
                         <div class="border-b-[3px] border-green-300 w-20"></div>
 
                         <div class="flex flex-col items-center justify-center h-full">

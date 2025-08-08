@@ -141,7 +141,7 @@ function paginateBankSoalDetail() {
 
                                 <div class="content-accordion">
                                     <div class="max-w-7xl text-sm mt-6">
-                                        <div class="">${questionHTML}</div>
+                                        <div>${questionHTML}</div>
                                         <div>${optionsHTML}</div>
                                         <div class="flex flex-col gap-6 mb-8 mt-6">
                                             <div>
