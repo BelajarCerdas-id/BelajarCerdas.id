@@ -10,10 +10,11 @@ use App\Models\StudentProfiles;
 use App\Models\Transactions;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
-class CheckoutSoalPembahasanSubscriptionHandler
+class RenewCheckoutSoalPembahasanSubscriptionHandler
 {
-    public static function handle(Transactions $transaction)
+public static function handle(Transactions $transaction)
     {
         // ambil tanggal hari ini
         $date = Carbon::now()->format('Y-m-d');

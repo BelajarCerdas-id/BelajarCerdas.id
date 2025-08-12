@@ -1,6 +1,9 @@
 <x-navbar></x-navbar>
 
 <main>
+    <!--- alert ketika berhasil melakukan pembayaran yang sebelumnya berstatus menunggu --->
+    <div id="alert-payment-success"></div>
+
     <section class="mx-4 lg:mx-10">
         <!--- left side --->
         <div class="flex flex-col lg:flex-row justify-center lg:gap-20 w-full">
@@ -89,6 +92,12 @@
                                 disabled>
                                 Beli Sekarang
                             </button>
+                        @elseif ($getPacketSoalPembahasanActive)
+                            <button type="button" onclick="alertPacketActive()"
+                                class="pay-button bg-gray-300 text-white rounded-full py-2 font-semibold text-sm w-full mt-4"
+                                disabled>
+                                Beli Sekarang
+                            </button>
                         @else
                             <button id="btn-beli" type="button"
                                 class="pay-button bg-gray-300 text-white rounded-full py-2 font-semibold text-sm w-full mt-4"
@@ -155,6 +164,16 @@
             icon: "error",
             title: "Oops...",
             text: "Harap login terlebih dahulu untuk membeli paket ini!",
+        });
+    }
+</script>
+
+<script>
+    function alertPacketActive() {
+        swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Maaf, kamu tidak bisa membeli paket ini, karena kamu masih memiliki paket Soal dan Pembahasan yang aktif.",
         });
     }
 </script>

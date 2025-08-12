@@ -28,6 +28,7 @@ use App\Models\TanyaAccess;
 use App\Models\TanyaVerifications;
 use App\Models\Transactions;
 use App\Models\UserAccount;
+use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -57,7 +58,7 @@ class FilterController extends Controller
 
         return response()->json([
             'data' => $data->items(),
-            'links' => (string) $data->links()->render(), // Convert pagination links to string
+            'links' => (string) $data->links(), // Convert pagination links to string
             'restoreUrl' => route('getRestore.edit', ':id')
         ]);
     }
@@ -153,25 +154,79 @@ class FilterController extends Controller
 
         return response()->json([
             'data' => $transactions->items(),
-            'links' => (string) $transactions->links()->render(),
+            'links' => (string) $transactions->links(),
         ]);
     }
 
     public function paginateHistoryPurchaseWaiting(Request $request)
     {
+        // ambil waktu hari ini
+        $today = now();
+
+        // $today = Carbon::createFromFormat('Y-m-d', '2025-08-23')->startOfDay();
+
+        // ambil data user yang sedang login
         $user = Auth::user();
 
+        // mengambil data transaksi
         $transactions = Transactions::with(['UserAccount.StudentProfiles','Features', 'FeaturePrices'])->where('user_id', $user->id)
         ->where('transaction_status', 'Pending')->orderBy('created_at', 'desc')->paginate(6);
 
-        $data = $transactions->getCollection()->map(function ($item) {
+        // menambahkan link checkout
+        $data = $transactions->getCollection()->map(function ($item) use ($today) {
+            // membuat link checkout
             $item->renewCheckout = route('checkout.pending', ['id' => $item->id]);
+            // expired time
+            $item->expiredTime = $item->created_at->addDays(1) < $today;
+
+            // Cek hanya jika fitur dari transaksi ini adalah fitur soal & pembahasan (id = 2)
+            if ($item->feature_id == 2) { // kalo uda ada fitur lain, bukan 2 lagi tapi != 1 (sesuai dengan id fitur tanya)
+                // Ambil tanggal hari ini
+                $date = Carbon::now()->format('Y-m-d');
+
+                // ambil user yang sedang login
+                $user = Auth::user();
+
+                // mengambil packet yang sedang aktif pada suatu fitur
+                $item->getPacketSoalPembahasanActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+                    $query->where('feature_id', 2); // kalo uda ada fitur lain, bukan 2 lagi tapi != 1 (sesuai dengan id fitur tanya)
+                })->whereDate('start_date', '<=', $date)->whereDate('end_date', '>=', $date)->where('student_id', $user->id)->orderBy('created_at', 'desc')->exists();
+            } else {
+                $item->getPacketSoalPembahasanActive = false;
+            }
+
             return $item;
         });
 
         return response()->json([
-            'data' => $transactions->items(),
-            'links' => (string) $transactions->links()->render(),
+            'data' => $data,
+            'links' => (string) $transactions->links(),
+            'today' => $today,
+        ]);
+    }
+
+    // function untuk mengubah status transaksi pending => kadaluarsa di histori pembelian menunggu
+    public function expireTransaction(Request $request)
+    {
+        // ambil waktu hari ini
+        $today = now();
+
+        // $today = Carbon::createFromFormat('Y-m-d', '2025-08-23')->startOfDay();
+
+        $user = Auth::user();
+
+        $expiredTransaction = Transactions::where('transaction_status', 'Pending')->where('user_id', $user->id)->get();
+
+        foreach ($expiredTransaction as $transaction) {
+            if ($transaction->created_at->addDays(1) < $today) {
+                $transaction->update([
+                    'transaction_status' => 'Kadaluarsa'
+                ]);
+            }
+        }
+
+        return response()->json([
+            'data' => $expiredTransaction,
         ]);
     }
 
@@ -184,7 +239,7 @@ class FilterController extends Controller
 
         return response()->json([
             'data' => $transactions->items(),
-            'links' => (string) $transactions->links()->render(),
+            'links' => (string) $transactions->links(),
         ]);
     }
 
@@ -198,7 +253,7 @@ class FilterController extends Controller
 
         return response()->json([
             'data' => $historyCoinIn->items(),
-            'links' => (string) $historyCoinIn->links()->render(),
+            'links' => (string) $historyCoinIn->links(),
         ]);
     }
 
@@ -214,7 +269,7 @@ class FilterController extends Controller
 
         return response()->json([
             'data' => $historyCoinIn->items(),
-            'links' => (string) $historyCoinIn->links()->render(),
+            'links' => (string) $historyCoinIn->links(),
         ]);
     }
 
@@ -414,7 +469,7 @@ class FilterController extends Controller
 
         return response()->json([
             'data' => $dataBatchDetailPaymentMentor->items(),
-            'links' => (string) $dataBatchDetailPaymentMentor->links()->render(),
+            'links' => (string) $dataBatchDetailPaymentMentor->links(),
             'batchDetailPaymentMentor' => '/batch-detail-pembayaran-mentor/:id',
         ]);
     }

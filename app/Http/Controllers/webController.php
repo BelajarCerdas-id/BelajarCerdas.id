@@ -192,25 +192,26 @@ class webController extends Controller
 
         $transactionUserFailed = Transactions::where('user_id', Auth::user()->id)->whereIn('transaction_status', ['Gagal', 'Kadaluarsa', 'Dibatalkan'])->orderBy('created_at', 'desc')->get();
 
-        //         $today = now();
+        $today = now();
 
-        // // expired status
-        // $pendingStatus = Transactions::where('transaction_status', 'Pending')->get();
+        // expired status
+        $pendingStatus = Transactions::where('transaction_status', 'Pending')->get();
 
-        // // $expiredStatus = $pendingStatus->filter(function ($transaction) use ($today) {
-        // //     return $transaction->created_at->addDays(3) < $today;
-        // // });
+        $expiredStatus = $pendingStatus->filter(function ($transaction) use ($today) {
+            return $transaction->created_at->addDays(1) < $today;
+        });
 
         // $expiredStatus = $pendingStatus->filter(function ($transaction) use ($today) {
         //     return $transaction->created_at->diffInMinutes($today) >= 1;
         // });
 
 
-        // foreach ($expiredStatus as $transaction) {
-        //     $transaction->update([
-        //         'transaction_status' => 'Kadaluarsa'
-        //     ]);
-        // }
+        foreach ($expiredStatus as $transaction) {
+            $transaction->update([
+                'transaction_status' => 'Kadaluarsa'
+            ]);
+        }
+
 
         return view('history.histori-pembelian', compact('transactionUserSuccess', 'transactionUserWaiting', 'transactionUserFailed'));
     }

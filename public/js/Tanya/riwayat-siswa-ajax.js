@@ -44,12 +44,12 @@ function fetchFilteredDataRiwayatStudent(status_soal, page = 1) {
         <tr>
             <td class="td-table !text-black !text-center">${index + 1}</td>
             <td class="td-table !text-black">${limitString(application.pertanyaan, 45) || '-'}</td>
-            <td class="td-table !text-black !text-center">${application.mapel?.mata_pelajaran || ''}</td>
-            <td class="td-table !text-black !text-center">${application.bab?.nama_bab || ''}</td>
+            <td class="td-table !text-black !text-center">${application.mapel?.mata_pelajaran || '-'}</td>
+            <td class="td-table !text-black !text-center">${application.bab?.nama_bab || '-'}</td>
             <td class="td-table !text-black !text-center">${createdAt}</td>
             <td class="td-table !text-black !text-center">${updatedAt}</td>
-            <td class="td-table !text-black !text-center">${application.status_soal || ''}</td>
-            <td class="td-table !text-black">${limitString(application.jawaban, 45) || ''}</td>
+            <td class="td-table !text-black !text-center">${application.status_soal || '-'}</td>
+            <td class="td-table !text-black">${limitString(application.jawaban, 45) || '-'}</td>
             <td class="td-table !text-black">${limitString(application.alasan_ditolak) || '-'}</td>
             <td class="td-table !text-[#4189e0] font-bold !text-center"><a href="${restoreUrl}">Lihat</a></td>
         </tr>

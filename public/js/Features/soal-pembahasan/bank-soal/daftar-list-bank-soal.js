@@ -37,7 +37,7 @@ function paginateBankSoal(page = 1) {
                         </label>
                     </td>
                     <td class="td-table !text-center font-bold text-[#4189e0] text-xs">
-                        <a href="${bankSoalDetail}" class="btn-bank-soal-detail" data-sub_bab="${application.sub_bab?.sub_bab}" data-sub_bab_id="${application.sub_bab_id}">
+                        <a href="${bankSoalDetail}" class="btn-bank-soal-detail" data-sub_bab_id="${application.sub_bab_id}">
                             Lihat Detail
                         </a>
                     </td>

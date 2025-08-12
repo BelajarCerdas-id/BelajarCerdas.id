@@ -3,16 +3,15 @@ function paginateBankSoalEditQuestion() {
     const container = document.getElementById('editor-container');
     if (!container) return;
 
-    const subBab = container.dataset.subBab;
     const subBabId = container.dataset.subBabId;
     const questionId = container.dataset.questionId;
 
-    if (!subBab || !subBabId || !questionId) return;
+    if (!subBabId || !questionId) return;
 
-    // fetchFilteredDataBankSoalEditQuestion(subBab, subBabId, questionId);
+    // fetchFilteredDataBankSoalEditQuestion(subBabId, questionId);
 
     $.ajax({
-        url: `/soal-pembahasan/bank-soal/form/${subBab}/${subBabId}/${questionId}`,
+        url: `/soal-pembahasan/bank-soal/form/${subBabId}/${questionId}`,
         method: 'GET',
         success: function (response) {
             const grouped = response.data;
@@ -40,7 +39,7 @@ function paginateBankSoalEditQuestion() {
                 .join('');
 
             const formHtml = `
-                <form id="bank-soal-edit-question-form" data-sub-bab="${subBab}" data-sub-bab-id="${subBabId}" data-question-id="${questionId}"
+                <form id="bank-soal-edit-question-form" data-sub-bab-id="${subBabId}" data-question-id="${questionId}"
                     enctype="multipart/form-data">
 
                         <!-- Question -->

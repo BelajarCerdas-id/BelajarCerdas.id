@@ -34,6 +34,7 @@ document.getElementById('btn-beli').addEventListener('click', function () {
             window.snap.pay(data.snap_token, {
                 onSuccess: function (result) {
                     location.reload();
+                    alertPaymentSuccess();
                 },
                 onPending: function (result) {
                     // Bisa diarahkan ke halaman riwayat pembayaran

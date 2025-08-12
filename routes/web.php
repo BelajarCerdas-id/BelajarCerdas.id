@@ -54,10 +54,12 @@ Route::fallback(function () {
 
     // ROUTES AUTH
     // ROUTES VIEWS REGISTER STUDENT & MENTOR
+
+Route::middleware([AuthMiddleware::class])->group(function () {
     Route::get('/daftar-mentor', [AuthController::class, 'registerMentor'])->name('daftar.mentor');
     Route::get('/daftar', [AuthController::class, 'indexRegister'])->name('daftar.user');
     Route::get('/daftar-siswa', [AuthController::class, 'registerStudent'])->name('daftar.siswa');
-
+});
     // CRUD STUDENT
     Route::post('/register/validate-step/student', [AuthController::class, 'validateStepFormStudent'])->name('register.validateStepFormStudent');
     Route::post('/register/student/store', [AuthController::class, 'registerStudentStore'])->name('registerStudent.store');
@@ -99,10 +101,14 @@ Route::fallback(function () {
     // ROUTES CHECKOUT FEATURES
     // Coin checkout tanya
     Route::post('/checkout', [PaymentFeaturesController::class, 'checkoutCoinTanya'])->name('checkout');
-    Route::post('/renew-checkout/{id}', [PaymentFeaturesController::class, 'renewCheckoutCoinTanya'])->name('checkout.pending');
 
     // Checkout soal pembahasan subscription
     Route::post('/checkout-soal-pembahasan', [PaymentFeaturesController::class, 'checkoutSoalPembahasanSubcription'])->name('checkout.soal-pembahasan');
+
+    //ROUTE RENEW CHECKOUT PENDING
+    Route::post('/renew-checkout/{id}', [PaymentFeaturesController::class, 'renewCheckoutPacketFeatures'])->name('checkout.pending');
+
+    Route::post('/check-transaction-status/{id}', [PaymentFeaturesController::class, 'checkTransactionStatus'])->name('checkTransactionStatus');
 
     // MIDDLEWARE LOGIN
     Route::middleware([AuthMiddleware::class])->group(function () {
@@ -118,6 +124,9 @@ Route::fallback(function () {
         Route::get('/paginate-histori-pembelian-success', [FilterController::class, 'paginateHistoryPurchaseSuccess'])->name('historiPembelianSuccess.paginate');
         Route::get('/paginate-histori-pembelian-waiting', [FilterController::class, 'paginateHistoryPurchaseWaiting'])->name('historiPembelianWaiting.paginate');
         Route::get('/paginate-histori-pembelian-failed', [FilterController::class, 'paginateHistoryPurchaseFailed'])->name('historiPembelianFailed.paginate');
+
+        // expire transaction
+        Route::post('/expire-checkout-transaction', [filterController::class, 'expireTransaction'])->name('expireTransaction');
 
         // paginate history koin
         Route::get('/paginate-histori-koin-masuk', [FilterController::class, 'paginateHistoryCoinIn'])->name('historiKoinMasuk.paginate');

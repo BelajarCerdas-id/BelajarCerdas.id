@@ -65,13 +65,13 @@ class SoalPembahasanController extends Controller
     }
 
     // function bankSoal edit question view
-    public function editQuestionView($subBab, $subBabId, $id)
+    public function editQuestionView($subBabId, $id)
     {
         // Mengambil data soal berdasarkan ID
         $editQuestion = SoalPembahasanQuestions::find($id);
 
         if (!$editQuestion) {
-            return redirect()->route('bankSoal.detail.view', [$subBab, $subBabId]);
+            return redirect()->route('bankSoal.detail.view', [$subBabId]);
         }
 
         // Mengambil data soal yang punya pertanyaan (questions) yang sama, lalu dikelompokkan berdasarkan isi questions-nya
@@ -80,15 +80,15 @@ class SoalPembahasanController extends Controller
         // Simpan hasil pengelompokan ke variabel baru
         $groupedSoal = $dataSoal;
 
-        return view('Features.soal-pembahasan.bank-soal.bank-soal-edit-question', compact('subBab', 'subBabId', 'id', 'editQuestion', 'groupedSoal'));
+        return view('Features.soal-pembahasan.bank-soal.bank-soal-edit-question', compact('subBabId', 'id', 'editQuestion', 'groupedSoal'));
     }
 
-    public function formEditQuestion(Request $request, $subBab, $subBabId, $id)
+    public function formEditQuestion(Request $request, $subBabId, $id)
     {
         $editQuestion = SoalPembahasanQuestions::find($id);
 
         if (!$editQuestion) {
-            return redirect()->route('bankSoal.detail.view', [$subBab, $subBabId]);
+            return redirect()->route('bankSoal.detail.view', [$subBabId]);
         }
 
         // Mengambil data soal yang punya pertanyaan (questions) yang sama, lalu dikelompokkan berdasarkan isi questions-nya
@@ -442,7 +442,7 @@ class SoalPembahasanController extends Controller
         // Validasi input form dari frontend (wajib diisi)
         $validator = Validator::make($request->all(), [
             // File wajib ada, format .docx, max 10 MB
-            'bulkUpload-soal-pembahasan' => 'required|file|mimes:docx|max:10240',
+            'bulkUpload-soal-pembahasan' => 'required|file|mimes:docx|max:10000',
             'kurikulum_id' => 'required',
             'kelas_id' => 'required',
             'mapel_id' => 'required',
@@ -451,6 +451,7 @@ class SoalPembahasanController extends Controller
         ], [
             // Pesan error custom
             'bulkUpload-soal-pembahasan.required' => 'Harap upload soal pembahasan!',
+            'bulkUpload-soal-pembahasan.max' => 'Ukuran file melebihi kapasitas yang ditentukan.',
             'kurikulum_id.required' => 'Harap pilih kurikulum!',
             'kelas_id.required' => 'Harap pilih kelas!',
             'mapel_id.required' => 'Harap pilih mapel!',
@@ -684,66 +685,68 @@ class SoalPembahasanController extends Controller
                         }
                     }
                 }
-
-                // Return respon error validasi
-                return response()->json([
-                    'status' => 'validation-error',
-                    'errors' => [
-                        'form_errors' => $formErrors,
-                        'word_validation_errors' => $allWordValidationErrors,
-                    ],
-                ], 422);
             }
+        }
 
-            // Simpan soal ke database
-            foreach ($validSoalData as $dataSoal) {
-                $answerKeyRaw = $dataSoal['ANSWER'] ?? '';
-                $plainAnswerKey = strtoupper(trim(strip_tags($answerKeyRaw)));
-                $finalAnswerKey = $answerMap[$plainAnswerKey] ?? null;
-                if (!$finalAnswerKey) continue;
+        // Return respon error validasi
+        if (!empty($formErrors) || !empty($allWordValidationErrors)) {
+            return response()->json([
+                'status' => 'validation-error',
+                'errors' => [
+                    'form_errors' => $formErrors,
+                    'word_validation_errors' => $allWordValidationErrors,
+                ],
+            ], 422);
+        }
 
-                // Cek duplikasi soal
-                $existingQuestion = SoalPembahasanQuestions::where('questions', $dataSoal['QUESTION'])->exists();
-                if ($existingQuestion) continue;
+        $validSoalData[] = $dataSoal;
+        // Simpan soal ke database
+        foreach ($validSoalData as $dataSoal) {
+            $answerKeyRaw = $dataSoal['ANSWER'] ?? '';
+            $plainAnswerKey = strtoupper(trim(strip_tags($answerKeyRaw)));
+            $finalAnswerKey = $answerMap[$plainAnswerKey] ?? null;
+            if (!$finalAnswerKey) continue;
 
-                // Tentukan status bank soal (Publish kalau sudah ada soal publish sebelumnya di sub_bab_id yang sama)
-                $statusBankSoal = SoalPembahasanQuestions::where('sub_bab_id', $request->sub_bab_id)
-                    ->where('status_bank_soal', 'Publish')
-                    ->exists() ? 'Publish' : 'Unpublish';
+            // Cek duplikasi soal
+            $existingQuestion = SoalPembahasanQuestions::where('questions', $dataSoal['QUESTION'])->exists();
 
-                // Simpan setiap opsi jawaban ke DB
-                if (!$allWordValidationErrors) {
-                    if (!$existingQuestion) {
-                        foreach ($answerMap as $optionField => $label) {
-                            if (!empty($dataSoal[$optionField])) {
-                                $createBankSoal = SoalPembahasanQuestions::create([
-                                    'administrator_id' => $userId,
-                                    'kurikulum_id' => $request->kurikulum_id,
-                                    'kelas_id' => $request->kelas_id,
-                                    'mapel_id' => $request->mapel_id,
-                                    'bab_id' => $request->bab_id,
-                                    'sub_bab_id' => $request->sub_bab_id,
-                                    'questions' => $dataSoal['QUESTION'],
-                                    'options_key' => $label,
-                                    'options_value' => $dataSoal[$optionField],
-                                    'answer_key' => $finalAnswerKey,
-                                    'skilltag' => trim(strip_tags($dataSoal['SKILLTAG'] ?? '')),
-                                    'difficulty' => trim(strip_tags($dataSoal['DIFFICULTY'] ?? '')),
-                                    'explanation' => $dataSoal['EXPLANATION'] ?? '',
-                                    'status_soal' => trim(strip_tags($dataSoal['STATUS'] ?? '')),
-                                    'tipe_soal' => trim(strip_tags($dataSoal['TYPE'] ?? '')),
-                                    'status_bank_soal' => $statusBankSoal,
-                                ]);
-                            }
+            // Tentukan status bank soal (Publish kalau sudah ada soal publish sebelumnya di sub_bab_id yang sama)
+            $statusBankSoal = SoalPembahasanQuestions::where('sub_bab_id', $request->sub_bab_id)
+                ->where('status_bank_soal', 'Publish')
+                ->exists() ? 'Publish' : 'Unpublish';
+
+            // Simpan setiap opsi jawaban ke DB
+            if (!$allWordValidationErrors) {
+                if (!$existingQuestion) {
+                    foreach ($answerMap as $optionField => $label) {
+                        if (!empty($dataSoal[$optionField])) {
+                            $createBankSoal = SoalPembahasanQuestions::create([
+                                'administrator_id' => $userId,
+                                'kurikulum_id' => $request->kurikulum_id,
+                                'kelas_id' => $request->kelas_id,
+                                'mapel_id' => $request->mapel_id,
+                                'bab_id' => $request->bab_id,
+                                'sub_bab_id' => $request->sub_bab_id,
+                                'questions' => $dataSoal['QUESTION'],
+                                'options_key' => $label,
+                                'options_value' => $dataSoal[$optionField],
+                                'answer_key' => $finalAnswerKey,
+                                'skilltag' => trim(strip_tags($dataSoal['SKILLTAG'] ?? '')),
+                                'difficulty' => trim(strip_tags($dataSoal['DIFFICULTY'] ?? '')),
+                                'explanation' => $dataSoal['EXPLANATION'] ?? '',
+                                'status_soal' => trim(strip_tags($dataSoal['STATUS'] ?? '')),
+                                'tipe_soal' => trim(strip_tags($dataSoal['TYPE'] ?? '')),
+                                'status_bank_soal' => $statusBankSoal,
+                            ]);
                         }
                     }
                 }
             }
+        }
 
-            // Kirim event broadcast kalau soal berhasil ditambahkan
-            if (isset($createBankSoal)) {
-                broadcast(new BankSoalListener($createBankSoal))->toOthers();
-            }
+        // Kirim event broadcast kalau soal berhasil ditambahkan
+        if (isset($createBankSoal)) {
+            broadcast(new BankSoalListener($createBankSoal))->toOthers();
         }
 
         // Bersihkan file sementara
@@ -756,8 +759,6 @@ class SoalPembahasanController extends Controller
             'message' => 'Bank Soal berhasil diupload.',
         ]);
     }
-
-
 
     // FUNCTION EDIT DELETE IMAGE BANKSOAL CKEDITOR
     // controller upload & delete image edit image in question with ckeditor

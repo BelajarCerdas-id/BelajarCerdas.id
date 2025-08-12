@@ -1,5 +1,5 @@
 @include('components/sidebar_beranda', [
-    'linkBackButton' => route('bankSoal.detail.view', [$subBab, $subBabId, $id]),
+    'linkBackButton' => route('bankSoal.detail.view', [$subBabId, $id]),
     'backButton' => "<i class='fa-solid fa-chevron-left'></i>",
     'headerSideNav' => 'Edit Question',
 ]);
@@ -13,8 +13,7 @@
 
             <main>
                 <section class="bg-white shadow-lg rounded-lg p-8 border border-gray-200">
-                    <div id="editor-container" data-sub-bab="{{ $subBab }}" data-sub-bab-id="{{ $subBabId }}"
-                        data-question-id="{{ $id }}"
+                    <div id="editor-container" data-sub-bab-id="{{ $subBabId }}" data-question-id="{{ $id }}"
                         data-upload-url="{{ route('soalPembahasan.editImage', ['_token' => csrf_token()]) }}"
                         data-delete-url="{{ route('soalPembahasan.deleteImage') }}">
                         <!---- form in ajax ---->

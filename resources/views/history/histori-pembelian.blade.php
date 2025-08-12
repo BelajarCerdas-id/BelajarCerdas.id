@@ -3,6 +3,10 @@
 @if (Auth::user()->role === 'Siswa')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
         <div class="content-beranda">
+
+            <!--- alert ketika berhasil melakukan pembayaran yang sebelumnya berstatus menunggu --->
+            <div id="alert-payment-success"></div>
+
             <div class="w-full h-26 bg-[#153569] rounded-lg flex items-center">
                 <div class="bg-[#FFE588] w-20 h-full flex items-center justify-center rounded-r-full">
                     <i class="fa-solid fa-clock-rotate-left text-xl"></i>
@@ -56,6 +60,16 @@
 
             <!----- content pembelian menunggu ------->
             <div id="menunggu" class="hidden">
+                <div id="attention" class="border bg-white shadow-lg rounded-md p-4 flex items-center gap-4">
+                    <i class="fa-solid fa-triangle-exclamation text-3xl text-red-400"></i>
+                    <div>
+                        <span class="text-md text-red-500 font-bold">PERHATIAN</span>
+                        <p>Riwayat pembelian yang berstatus menunggu akan menjadi kadaluarsa setelah lewat dari 24 jam
+                            dari
+                            waktu pembelian paket tersebut.
+                        </p>
+                    </div>
+                </div>
                 <div id="grid-transaction-waiting-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
                     {{-- cards akan di-append via AJAX --}}
                 </div>
@@ -229,7 +243,6 @@
             });
     });
 </script>
-
 
 
 <script>

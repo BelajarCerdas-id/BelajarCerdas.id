@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\FeaturePrices;
 use App\Models\Features;
+use App\Models\FeatureSubscriptionHistory;
 use App\Models\Transactions;
 use App\Services\MidtransService;
 use App\Services\PaymentHandlers\CheckoutCoinHandler;
 use App\Services\PaymentHandlers\CheckoutSoalPembahasanSubscriptionHandler;
 use App\Services\PaymentHandlers\RenewCheckoutCoinHandler;
+use App\Services\PaymentHandlers\RenewCheckoutSoalPembahasanSubscriptionHandler;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -74,6 +77,11 @@ class PaymentFeaturesController extends Controller
 
     public function paymentFeaturesView($nama_fitur)
     {
+        // Ambil tanggal hari ini
+        $today = Carbon::now()->format('Y-m-d');
+
+        $userId = Auth::id();
+
         $features = Features::all();
         $paymentMethods = $this->getPaymentMethods(); // ✅ ini return array
         $groupedPaymentMethods = collect($paymentMethods)->groupBy('tipe_payment');
@@ -83,9 +91,14 @@ class PaymentFeaturesController extends Controller
             $data->where('nama_fitur', $nama_fitur);
         })->get();
 
+        // mengambil packet soal pembahasan student yang sedang aktif
+        $getPacketSoalPembahasanActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('feature_id', 2);
+        })->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)
+        ->where('student_id', $userId)->orderBy('created_at', 'desc')->first();
 
         return view('Features.payment-features.pembayaran-fitur', compact(
-            'nama_fitur', 'features', 'paymentMethods', 'groupedPaymentMethods', 'dataFeaturesPrices'
+            'nama_fitur', 'features', 'paymentMethods', 'groupedPaymentMethods', 'dataFeaturesPrices', 'getPacketSoalPembahasanActive'
         ));
     }
 
@@ -130,6 +143,7 @@ class PaymentFeaturesController extends Controller
                 'BC-co-tanya' => CheckoutCoinHandler::class,
                 'BC-rnw-tanya' => RenewCheckoutCoinHandler::class,
                 'BC-co-sp' => CheckoutSoalPembahasanSubscriptionHandler::class,
+                'BC-rnw-sp' => RenewCheckoutSoalPembahasanSubscriptionHandler::class
             ];
 
             $handler = $midtransHandlers[$key] ?? null;
@@ -202,62 +216,113 @@ class PaymentFeaturesController extends Controller
     }
 
     // FUNCTION RENEW CHECKOUT PENDING COIN TANYA
-    public function renewCheckoutCoinTanya(Request $request, String $id)
+    public function renewCheckoutPacketFeatures(Request $request, String $id)
     {
-        $getDataTransactions = Transactions::find($id);
-        $orderId = 'BC-rnw-tanya-' . Str::uuid(); // Generate new order_id
+        // Ambil transaksi dan pastikan milik user yang login
+        $getDataTransactions = Transactions::with(['UserAccount', 'UserAccount.StudentProfiles'])->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$getDataTransactions) {
+            return response()->json(['error' => 'Transaksi tidak ditemukan atau tidak sesuai user.'], 404);
+        }
+
+        // Ambil payment_method & feature_id dari transaksi pending
         $paymentMethod = $getDataTransactions->payment_method;
+        $getFeatureId = $getDataTransactions->feature_id;
+
+        // Map feature_id ke prefix order_id
+        $prefixMap = [
+            1 => 'BC-rnw-tanya-',
+            2 => 'BC-rnw-sp-',
+            // tambahkan fitur lain di sini
+        ];
+
+        if (!isset($prefixMap[$getFeatureId])) {
+            return response()->json(['error' => 'Feature tidak dikenali.'], 400);
+        }
 
         // Payment method mapping
         $paymentMap = [
-            'bca' => 'bca_va',
-            'bni' => 'bni_va',
-            'bri' => 'bri_va',
+            'bca'     => 'bca_va',
+            'bni'     => 'bni_va',
+            'bri'     => 'bri_va',
             'mandiri' => 'echannel',
-            'qris' => 'qris',
-            'gopay' => 'gopay',
-            'dana' => 'dana',
-            'ovo' => 'ovo',
+            'qris'    => 'qris',
+            'gopay'   => 'gopay',
+            'dana'    => 'dana',
+            'ovo'     => 'ovo',
         ];
 
-        $getDataTransactions->update([
-            'order_id' => $orderId,
-        ]);
-
-        // Ensure the payment method is valid
         if (!array_key_exists($paymentMethod, $paymentMap)) {
             return response()->json(['error' => 'Metode pembayaran tidak dikenali.'], 400);
         }
 
-        // Create transaction params
+        // Generate order_id baru
+        $orderId = $prefixMap[$getFeatureId] . Str::uuid();
+
+        // Update order_id di transaksi
+        $getDataTransactions->update([
+            'order_id' => $orderId,
+        ]);
+
+        // Parameter untuk Midtrans
         $params = [
             'transaction_details' => [
-                'order_id' => $orderId,
-                'gross_amount' => (int)$getDataTransactions->price,
+                'order_id'     => $orderId,
+                'gross_amount' => (int) $getDataTransactions->price,
             ],
             'enabled_payments' => [$paymentMap[$paymentMethod]],
             'customer_details' => [
-                'first_name' => $getDataTransactions->Profile->nama_lengkap ?? 'Customer',
-                'email' => $getDataTransactions->email ?? 'dummy@example.com',
+                'first_name' => $getDataTransactions->UserAccount->StudentProfiles->nama_lengkap ?? 'Customer',
+                'email'      => $getDataTransactions->UserAccount->email ?? 'dummy@example.com',
             ],
         ];
 
         try {
+            $today = now();
+            // $today = Carbon::createFromFormat('Y-m-d', '2025-08-23')->startOfDay();
+
+            if ($getDataTransactions->created_at->addDays(1) < $today) {
+                return response()->json([
+                    'status' => 'expired'
+                ], 400);
+            }
+
             // Generate Midtrans snap token
             $snap = MidtransService::createTransaction($params);
 
-            // Update the transaction with the new snap_token
+            // Update snap_token di transaksi
             $getDataTransactions->snap_token = $snap->token;
-
             $getDataTransactions->save();
 
-            // Return snap_token to frontend
-            return response()->json(['snap_token' => $snap->token]);
+            return response()->json([
+                'snap_token' => $snap->token
+            ]);
         } catch (\Exception $e) {
             Log::error('Midtrans Error: ' . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json([
+                'error' => 'Gagal membuat transaksi pembayaran.'
+            ], 500);
         }
     }
+
+    // FUNCTION CHECK TRANSACTION STATUS
+    public function checkTransactionStatus(Request $request, String $id)
+    {
+        $getDataTransaction = Transactions::with(['UserAccount', 'UserAccount.StudentProfiles'])->where('id', $id)
+            ->where('user_id', Auth::id())->where('transaction_status', 'Berhasil')->first();
+
+        if (!$getDataTransaction) {
+            return response()->json(['error' => 'Transaksi tidak ditemukan atau tidak sesuai user.'], 404);
+        } else {
+            return response()->json([
+                'data' => $getDataTransaction,
+                'status' => 'success',
+            ]);
+        }
+    }
+
 
     // FUNCTION SOAL DAN PEMBAHASAN CHECKOUT
     public function checkoutSoalPembahasanSubcription(Request $request)

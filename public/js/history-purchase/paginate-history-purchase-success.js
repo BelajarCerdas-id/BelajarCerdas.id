@@ -13,7 +13,7 @@ function fetchPaginateHistoryTransactionSuccess(page = 1) {
             if (response.data.length > 0) {
                 response.data.forEach((item) => {
                     const formatCurrency = (number) =>
-                        'Rp.' + new Intl.NumberFormat('id-ID').format(number);
+                        'Rp. ' + new Intl.NumberFormat('id-ID').format(number);
 
                     const formatDate = (dateString) => {
                         const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
