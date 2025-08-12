@@ -1,12 +1,9 @@
 <?php
 
-use App\Models\Web;
-use App\Models\Post;
 use Illuminate\Support\Arr;
 use App\Http\Controllers\User;
 use App\Http\Middleware\TanyaAccess;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\OtpController;
 use App\Http\Controllers\PksController;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Controllers\ChartController;
@@ -26,6 +23,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PaymentFeaturesController;
 use App\Http\Controllers\SoalPembahasanController;
 use App\Http\Controllers\webController; // data biasa seperti foreach (tidak dari database) dan lain lain (jika ada selain foreach)
+use App\Http\Middleware\RedirectIfAuthenticated;
 
 Route::get('/', [webController::class, 'index'])->name('homePage');
 Route::get('/mitra-cerdas', [webController::class, 'mitraCerdas'])->name('mitraCerdas');
@@ -52,14 +50,14 @@ Route::fallback(function () {
 
 
 
-    // ROUTES AUTH
-    // ROUTES VIEWS REGISTER STUDENT & MENTOR
+    // ROUTES REGISTER
+    Route::middleware([RedirectIfAuthenticated::class])->group(function () {
+        // ROUTES VIEWS REGISTER STUDENT & MENTOR
+        Route::get('/daftar-mentor', [AuthController::class, 'registerMentor'])->name('daftar.mentor');
+        Route::get('/daftar', [AuthController::class, 'indexRegister'])->name('daftar.user');
+        Route::get('/daftar-siswa', [AuthController::class, 'registerStudent'])->name('daftar.siswa');
+    });
 
-Route::middleware([AuthMiddleware::class])->group(function () {
-    Route::get('/daftar-mentor', [AuthController::class, 'registerMentor'])->name('daftar.mentor');
-    Route::get('/daftar', [AuthController::class, 'indexRegister'])->name('daftar.user');
-    Route::get('/daftar-siswa', [AuthController::class, 'registerStudent'])->name('daftar.siswa');
-});
     // CRUD STUDENT
     Route::post('/register/validate-step/student', [AuthController::class, 'validateStepFormStudent'])->name('register.validateStepFormStudent');
     Route::post('/register/student/store', [AuthController::class, 'registerStudentStore'])->name('registerStudent.store');
