@@ -36,7 +36,7 @@ function fetchPaginateHistoryCoinOut(page = 1) {
 
                     const card = `
                     <div class="list-item">
-                        <div class="bg-white shadow-lg rounded-md p-4">
+                        <div class="bg-white shadow-lg rounded-md p-4 border">
                             <div class="flex justify-between items-center mb-4">
                                 <span class="bg-red-200 text-red-600 rounded-full flex items-center justify-center py-1 px-4 text-sm font-bold opacity-70">
                                     ${item.tipe_koin}
@@ -45,12 +45,12 @@ function fetchPaginateHistoryCoinOut(page = 1) {
                                     ${'-' + item.jumlah_koin + ' Koin' }
                                 </span>
                             </div>
-                                <span class="text-md font-bold opacity-60">${item.sumber_koin}</span>
+                                <span class="text-sm font-bold opacity-60">${item.sumber_koin}</span>
                             <div class="flex justify-between w-full mt-4">
                                 <span class="text-sm font-bold opacity-60">
                                     tanggal : ${createdAt}
                                 </span>
-                                    <button class="button-detail-history-coin-out text-[#4189FF] font-bold">Lihat Detail</button>
+                                    <button class="button-detail-history-coin-out text-[#4189FF] font-bold text-sm">Lihat Detail</button>
                             </div>
 
                             <div class="content-dropdown-history-coin-out">

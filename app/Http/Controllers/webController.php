@@ -137,13 +137,13 @@ class webController extends Controller
                 ],
                 [
                     'image' => 'image/logo-fitur/logo-englishZone.png',
-                    'text' => 'Sesi Boot Camp for Conversation Only.',
-                    'url' => '',
-                    'button' => 'Segera Hadir'
+                    'text' => '[Soal dan Pembahasan].',
+                    'url' => '/soal-pembahasan/kelas',
+                    'button' => 'Soal dan Pembahasan'
                 ],
                 [
                     'image' => 'image/logo-fitur/logo-englishZone.png',
-                    'text' => '[Soal dan Pembahasan].',
+                    'text' => 'Sesi Boot Camp for Conversation Only.',
                     'url' => '',
                     'button' => 'Segera Hadir'
                 ],

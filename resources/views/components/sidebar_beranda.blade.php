@@ -23,9 +23,18 @@
                 </a>
                 <span class="tooltip">Presensi Harian</span>
             </li> --}}
+
+            <li class="list-menu">
+                <a href="{{ route('featuresStore') }}">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="link_name">Pembelian</span>
+                </a>
+                <span class="tooltip">Pembelian</span>
+            </li>
+
             <li class="list-menu">
                 <a href="{{ route('historiPembelian.index') }}">
-                    <i class="fa-solid fa-cart-shopping"></i>
+                    <i class="fa-solid fa-clock-rotate-left"></i>
                     <span class="link_name">Riwayat Pembelian</span>
                 </a>
                 <span class="tooltip">Riwayat Pembelian</span>

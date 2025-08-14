@@ -593,13 +593,13 @@
                 @endif
 
                 <div class="px-6">
-                    <form action="{{ route('auth.login') }}" method="POST" autocomplete="OFF">
+                    <form action="{{ route('auth.login') }}" method="POST" autocomplete="off">
                         @csrf
                         <div class="w-full mb-6">
                             <label class="text-sm">Email</label>
                             <input type="text" name="email" id="email" placeholder="Masukkan Email"
                                 class="w-full bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md text-sm px-2 mt-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] {{ $errors->has('email') ? 'border-[1px] border-red-500' : '' }}"
-                                value="{{ @old('email') }}">
+                                value="{{ @old('email') }}" autocomplete="off">
                             @error('email')
                                 <span
                                     class="text-red-500 font-bold text-xs pt-2 flex flex-start">{{ $message }}</span>
@@ -609,7 +609,7 @@
                             <label class="text-sm">Password</label>
                             <input type="password" name="password" placeholder="Masukkan Password"
                                 class="w-full bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md text-sm px-2 mt-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] {{ $errors->has('password') ? 'border-[1px] border-red-500' : '' }}"
-                                value="{{ @old('password') }}">
+                                value="{{ @old('password') }}" autocomplete="off">
                             @error('password')
                                 <span
                                     class="text-red-500 font-bold text-xs pt-2 flex flex-start">{{ $message }}</span>

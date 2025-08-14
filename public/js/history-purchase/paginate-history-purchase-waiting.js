@@ -66,7 +66,7 @@ function fetchPaginateHistoryTransactionWaiting(page = 1) {
 
                     const card = `
                     <div class="list-item">
-                        <div class="bg-white shadow-lg rounded-md p-4">
+                        <div class="bg-white shadow-lg rounded-md p-4 border">
                             <div class="flex justify-between">
                                 <span class="text-md font-bold opacity-60">${item.features.nama_fitur}</span>
                                 <span class="text-sm px-4 py-1 bg-[#f9d3ba] text-[#f77a2c] font-bold rounded-xl">

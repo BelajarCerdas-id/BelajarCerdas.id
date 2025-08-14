@@ -79,6 +79,21 @@ Route::fallback(function () {
     // ROUTE PAYMENT FEATURES VIEW
     Route::get('/pembayaran-fitur/{nama_fitur}', [PaymentFeaturesController::class, 'paymentFeaturesView'])->name('paymentFeaturesView');
 
+    // ROUTE FEATURES STORE
+    Route::get('/pembelian-fitur', [PaymentFeaturesController::class, 'featuresStore'])->name('featuresStore');
+
+    // ROUTES CHECKOUT FEATURES
+    // Coin checkout tanya
+    Route::post('/checkout', [PaymentFeaturesController::class, 'checkoutCoinTanya'])->name('checkout');
+
+    // Checkout soal pembahasan subscription
+    Route::post('/checkout-soal-pembahasan', [PaymentFeaturesController::class, 'checkoutSoalPembahasanSubcription'])->name('checkout.soal-pembahasan');
+
+    //ROUTE RENEW CHECKOUT PENDING
+    Route::post('/renew-checkout/{id}', [PaymentFeaturesController::class, 'renewCheckoutPacketFeatures'])->name('checkout.pending');
+
+    Route::post('/check-transaction-status/{id}', [PaymentFeaturesController::class, 'checkTransactionStatus'])->name('checkTransactionStatus');
+
     // ROUTES DROPDOWN FASE, KELAS, MAPEL, BAB (AJAX)
     Route::get('/kelas/{id}', [MasterAcademicController::class, 'getKelas']); // kelas by fase
     Route::get('/kurikulum/kelas/{id}', [MasterAcademicController::class, 'getKelasByKurikulum']); // kelas by kurikulum
@@ -95,18 +110,6 @@ Route::fallback(function () {
     Route::get('/chart-data-tanya-bulanan', [ChartController::class, 'chartTanyaBulanan'])->name('getChartDataTanyaBulanan');
     Route::get('/chart-data-tanya-tahunan', [ChartController::class, 'chartTanyaTahunan'])->name('getChartDataTanyaTahunan');
     Route::get('/chart-data-tanya-harian', [ChartController::class, 'chartTanyaHarian'])->name('getChartDataTanyaHarian');
-
-    // ROUTES CHECKOUT FEATURES
-    // Coin checkout tanya
-    Route::post('/checkout', [PaymentFeaturesController::class, 'checkoutCoinTanya'])->name('checkout');
-
-    // Checkout soal pembahasan subscription
-    Route::post('/checkout-soal-pembahasan', [PaymentFeaturesController::class, 'checkoutSoalPembahasanSubcription'])->name('checkout.soal-pembahasan');
-
-    //ROUTE RENEW CHECKOUT PENDING
-    Route::post('/renew-checkout/{id}', [PaymentFeaturesController::class, 'renewCheckoutPacketFeatures'])->name('checkout.pending');
-
-    Route::post('/check-transaction-status/{id}', [PaymentFeaturesController::class, 'checkTransactionStatus'])->name('checkTransactionStatus');
 
     // MIDDLEWARE LOGIN
     Route::middleware([AuthMiddleware::class])->group(function () {

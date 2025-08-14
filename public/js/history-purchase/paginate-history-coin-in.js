@@ -35,18 +35,18 @@ function fetchPaginateHistoryCoinIn(page = 1) {
                     const createdAt = item.created_at ? `${formatDate(item.created_at)}` : 'Tanggal tidak tersedia';
                     const card = `
                     <div class="list-item">
-                        <div class="bg-white shadow-lg rounded-md p-4 flex justify-between items-center">
+                        <div class="bg-white shadow-lg rounded-md p-4 flex justify-between items-center border">
                             <div class="flex flex-col gap-4">
                                 <span class="text-sm px-4 py-1 bg-green-200 text-green-600 font-bold rounded-xl w-max h-7 opacity-70">
                                     ${item.tipe_koin}
                                 </span>
-                                <span class="text-md font-bold opacity-60">${item.sumber_koin}</span>
+                                <span class="text-sm font-bold opacity-60">${item.sumber_koin}</span>
                                 <span class="text-sm font-bold opacity-60">
                                     tanggal : ${createdAt}
                                 </span>
                             </div>
                             <div class="bg-green-200 text-green-600 rounded-full flex items-center justify-center py-1 px-4">
-                                <span class="text-md lg:text-sm font-bold opacity-70 block">
+                                <span class="text-xs lg:text-sm font-bold opacity-70 block">
                                     ${'+' + item.jumlah_koin + ' Koin' }
                                 </span>
                             </div>

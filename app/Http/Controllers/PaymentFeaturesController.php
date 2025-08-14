@@ -102,6 +102,70 @@ class PaymentFeaturesController extends Controller
         ));
     }
 
+    // FUNCTION SHOW FEATURES STORE (student)
+    public function featuresStore()
+    {
+        $features = Features::all();
+
+        $descriptionsFeatures = [
+            'TANYA' => [
+                'image_feature' => asset("image/logo-fitur/logo-tanya.png"),
+                'textButton' => 'Lihat Paket',
+                'price' => 'Rp 2.000 / Koin',
+
+                'descriptions' => [
+                    "Jam berTANYA 7.00 - 21.00",
+                    "Jenjang TANYA SD (Kelas 1 - 6) Mapel: B. Indonesia, English, IPAS, Matematika",
+                    "Jenjang TANYA SMP (Kelas 7 - 9) Mapel: B. Indonesia, English, IPA Terpadu, Matematika",
+                    "Jenjang TANYA SMA (Kelas 10 - 12) Mapel: B. Indonesia, English, Biologi, Fisika, Kimia, Matematika",
+                    "Gratis 10 koin TANYA setiap hari",
+                    "Cashback 1 koin per 1 perTANYAan terjawab",
+                    "5 koin untuk 1 berTANYA",
+                    "Koin akan dikembalikan jika perTANYAan ditolak",
+                    "Leaderboard TANYA Nasional",
+                    "Respons cepat kurang dari 5 menit",
+                    "Dijawab langsung oleh Tutor Expert",
+                ]
+            ],
+            'Soal dan Pembahasan' => [
+                'image_feature' => asset("image/logo-fitur/logo-englishZone.png"),
+                'textButton' => 'Lihat Paket',
+                'price' => 'Rp 20.000',
+
+                'descriptions' => [
+                    "Bank Soal per Sub-bab",
+                    "Soal Latihan dan Video Pembahasan",
+                    "Soal Ujian dan Pembahasan",
+                    "Laporan Perkembangan Hasil Latihan",
+                    "Laporan Perkembangan Hasil Ujian untuk orang tua",
+                    "Jenjang SOAL SD (Kelas 1 - 6) Mapel: B. Indonesia, English, IPAS, Matematika",
+                    "Jenjang SOAL SMP (Kelas 7 - 9) Mapel: B. Indonesia, English, IPA Terpadu, Matematika",
+                    "Jenjang SOAL SMA (Kelas 10 - 12) Mapel: B. Indonesia, English, Biologi, Fisika, Kimia, Matematika",
+                    "Bonus 100 Koin TANYA",
+                ]
+            ],
+            'English Zone' => [
+                'image_feature' => asset("image/logo-fitur/logo-englishZone.png"),
+                'textButton' => 'Segera Hadir',
+                'price' => 'Rp 500.000',
+
+                'descriptions' => [
+                    "Kurikulum berstandar internasional (CEFR Level)",
+                    "Jenjang Belajar Per Level Selama 3 Bulan",
+                    "24x Sesi Interaktif Bersama Tutor Expert Selama 3 Bulan",
+                    "2x Sesi Interaktif per Minggu Selama 3 Bulan",
+                    "Belajar Bersama Tutor Expert Berpengalaman",
+                    "Metode Belajar Interaktif dan Praktis",
+                    "Tersedia Self-Assessment Test",
+                    "Laporan Belajar Setiap Bulan",
+                    "Materi dan Sertifikat Digital",
+                    "Rp.500.000/Bulan",
+                ]
+            ],
+        ];
+        return view('Features.payment-features.features-store', compact('features', 'descriptionsFeatures'));
+    }
+
     // FUNCTION CALLBACK MIDTRANS AFTER CHECKOUT (callback midtrans hanya ada 1 untuk semua fitur)
     public function callback(Request $request)
     {

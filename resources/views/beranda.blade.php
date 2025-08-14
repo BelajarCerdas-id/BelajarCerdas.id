@@ -26,7 +26,7 @@
             <div class="max-w-full">
                 <div class="grid grid-cols-5 gap-12">
                     <div
-                        class="relative lg:col-span-3 col-span-5 h-[440px] md:h-[480px] lg:h-[440px] bg-white shadow-lg rounded-lg border">
+                        class="relative xl:col-span-3 col-span-5 h-[440px] md:h-[480px] lg:h-[440px] bg-white shadow-lg rounded-lg border">
                         <!-- TABLE -->
                         <div class="overflow-x-auto max-h-[310px] p-4 mt-4">
                             <span class="text-lg font-bold opacity-70">Pengguna Tanya Terbanyak</span>
@@ -68,15 +68,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="lg:col-span-2 col-span-5 mt-8">
+                    <div class="xl:col-span-2 col-span-5 mt-8">
                         <span class="text-lg"> Hari Ini : </span>
                         <div
                             class="lg:col-span-2 col-span-5 p-10 rounded-xl flex justify-center items-center bg-white shadow-lg border mt-2">
                             <div id="timestamp" class="text-center text-lg font-bold"></div>
                         </div>
                     </div>
-                    <div class="lg:col-span-3 md:col-span-5 col-span-5">
-                        <div class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <div class="xl:col-span-3 md:col-span-5 col-span-5">
+                        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             @foreach ($packetSiswa as $packet)
                                 <div class="w-full h-full relative ... border-[1px] border-gray-200 rounded-lg">
                                     <header>
@@ -92,7 +92,7 @@
                                         <a href="{{ $packet['url'] }}">
                                             <footer class="flex justify-center pb-6 mt-4">
                                                 <button
-                                                    class="border-none outline-none bg-gray-700 w-[93%] h-8 rounded-lg text-white font-bold text-sm">{{ $packet['button'] }}</button>
+                                                    class="border-none outline-none bg-[--color-second] w-[93%] h-8 rounded-lg text-white font-bold text-sm">{{ $packet['button'] }}</button>
                                             </footer>
                                         </a>
                                     </header>
@@ -137,7 +137,7 @@
                                         <a href="{{ $packet['url'] }}">
                                             <footer class="flex justify-center pb-6 mt-4">
                                                 <button
-                                                    class="border-none outline-none bg-gray-700 w-[93%] h-8 rounded-lg text-white font-bold text-sm">{{ $packet['button'] }}</button>
+                                                    class="border-none outline-none bg-[--color-second] w-[93%] h-8 rounded-lg text-white font-bold text-sm">{{ $packet['button'] }}</button>
                                             </footer>
                                         </a>
                                     </header>
