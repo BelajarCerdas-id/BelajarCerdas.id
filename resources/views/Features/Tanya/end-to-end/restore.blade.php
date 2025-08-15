@@ -10,19 +10,19 @@
                         <div class="col-span-6">
                             <div class="">
                                 <span class="text-gray-900 font-medium">Nama Siswa :</span>
-                                <span>{{ $getRestore->Student->StudentProfiles->nama_lengkap }}</span>
+                                <span>{{ $getRestore->Student->StudentProfiles->nama_lengkap ?? '-' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Sekolah :</span>
-                                <span>{{ $getRestore->Student->StudentProfiles->sekolah }}</span>
+                                <span>{{ $getRestore->Student->StudentProfiles->sekolah ?? '-' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Kelas :</span>
-                                <span>{{ $getRestore->Kelas->kelas }}</span>
+                                <span>{{ $getRestore->Kelas->kelas ?? '-' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Jam berTANYA :</span>
-                                <span>{{ $getRestore->created_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') }}</span>
+                                <span>{{ $getRestore->created_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') ?? '-' }}</span>
                             </div>
                         </div>
                     </div>
@@ -33,11 +33,11 @@
                     <div class="mx-4 my-8 leading-8">
                         <div class="">
                             <span>Mata Pelajaran :</span>
-                            {{ $getRestore->Mapel->mata_pelajaran }}
+                            {{ $getRestore->Mapel->mata_pelajaran ?? '-' }}
                         </div>
                         <div class="">
                             <span>Bab :</span>
-                            {{ $getRestore->Bab->nama_bab }}
+                            {{ $getRestore->Bab->nama_bab ?? '-' }}
                         </div>
                     </div>
 
@@ -47,7 +47,7 @@
                         <span>Pertanyaan</span>
                         <div class="max-h-40 h-40 my-2 p-2 bg-white shadow-xl border-[1px] border-gray-200 rounded-md overflow-y-auto text-sm resize-none"
                             disabled>
-                            {{ $getRestore->pertanyaan }}
+                            {{ $getRestore->pertanyaan ?? '-' }}
                         </div>
                     </div>
                     <!---- image ----->
@@ -92,15 +92,15 @@
                         <div class="col-span-6">
                             <div class="">
                                 <span class="text-gray-900 font-medium">Mentor :</span>
-                                <span>{{ $getRestore->Mentor->MentorProfiles->nama_lengkap }}</span>
+                                <span>{{ $getRestore->Mentor->MentorProfiles->nama_lengkap ?? '-' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Asal Mengajar :</span>
-                                <span>{{ $getRestore->Mentor->MentorProfiles->sekolah_mengajar }}</span>
+                                <span>{{ $getRestore->Mentor->MentorProfiles->sekolah_mengajar ?? '-' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Jam Terjawab :</span>
-                                <span>{{ $getRestore->updated_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') }}</span>
+                                <span>{{ $getRestore->updated_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') ?? '-' }}</span>
                             </div>
                         </div>
                     </div>
@@ -178,19 +178,19 @@
                         <div class="col-span-6">
                             <div class="">
                                 <span class="text-gray-900 font-medium">Nama Siswa :</span>
-                                <span>{{ $getRestore->Student->StudentProfiles->nama_lengkap }}</span>
+                                <span>{{ $getRestore->Student->StudentProfiles->nama_lengkap ?? '-' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Sekolah :</span>
-                                <span>{{ $getRestore->Student->StudentProfiles->sekolah }}</span>
+                                <span>{{ $getRestore->Student->StudentProfiles->sekolah ?? '-' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Kelas :</span>
-                                <span>{{ $getRestore->Kelas->kelas }}</span>
+                                <span>{{ $getRestore->Kelas->kelas ?? '-' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Jam berTANYA :</span>
-                                <span>{{ $getRestore->created_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') }}</span>
+                                <span>{{ $getRestore->created_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') ?? '-' }}</span>
                             </div>
                         </div>
                     </div>
@@ -201,11 +201,11 @@
                     <div class="mx-4 my-8 leading-8">
                         <div class="">
                             <span>Mata Pelajaran :</span>
-                            {{ $getRestore->Mapel->mata_pelajaran }}
+                            {{ $getRestore->Mapel->mata_pelajaran ?? '-' }}
                         </div>
                         <div class="">
                             <span>Bab :</span>
-                            {{ $getRestore->Bab->nama_bab }}
+                            {{ $getRestore->Bab->nama_bab ?? '-' }}
                         </div>
                     </div>
 
@@ -215,7 +215,7 @@
                         <span>Pertanyaan</span>
                         <div class="max-h-40 h-40 my-2 p-2 bg-white shadow-xl border-[1px] border-gray-200 rounded-md overflow-y-auto text-sm resize-none"
                             disabled>
-                            {{ $getRestore->pertanyaan }}
+                            {{ $getRestore->pertanyaan ?? '-' }}
                         </div>
                     </div>
                     <!---- image ----->
@@ -260,15 +260,15 @@
                         <div class="col-span-6">
                             <div class="">
                                 <span class="text-gray-900 font-medium">Mentor :</span>
-                                <span>{{ $getRestore->Mentor->MentorProfiles->nama_lengkap }}</span>
+                                <span>{{ $getRestore->Mentor->MentorProfiles->nama_lengkap ?? '-' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Asal Mengajar :</span>
-                                <span>{{ $getRestore->Mentor->MentorProfiles->sekolah_mengajar }}</span>
+                                <span>{{ $getRestore->Mentor->MentorProfiles->sekolah_mengajar ?? '-' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Jam Terjawab :</span>
-                                <span>{{ $getRestore->updated_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') }}</span>
+                                <span>{{ $getRestore->updated_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') ?? '-' }}</span>
                             </div>
                         </div>
                     </div>

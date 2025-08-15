@@ -5,29 +5,29 @@
             <header class="grid border-b-[1px] border-gray-200 pb-2">
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Nama Siswa :</span>
-                    <span>{{ $getTanya->Student->StudentProfiles->nama_lengkap ?? '' }}</span>
+                    <span>{{ $getTanya->Student->StudentProfiles->nama_lengkap ?? '-' }}</span>
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Sekolah :</span>
-                    <span>{{ $getTanya->Student->StudentProfiles->sekolah ?? '' }}</span>
+                    <span>{{ $getTanya->Student->StudentProfiles->sekolah ?? '-' }}</span>
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Kelas :</span>
-                    <span>{{ $getTanya->Kelas->kelas ?? '' }}</span>
+                    <span>{{ $getTanya->Kelas->kelas ?? '-' }}</span>
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Jam Tanya :</span>
-                    <span>{{ $getTanya->created_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') ?? '' }}</span>
+                    <span>{{ $getTanya->created_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') ?? '-' }}</span>
                 </div>
             </header>
             <div class="w-full mt-2 mx-2">
                 <div class="flex gap-2 text-lg mb-1">
                     <span class="text-gray-900 font-medium">Mata Pelajaran :</span>
-                    <span>{{ $getTanya->Mapel->mata_pelajaran ?? '' }}</span>
+                    <span>{{ $getTanya->Mapel->mata_pelajaran ?? '-' }}</span>
                 </div>
                 <div class="flex gap-2 text-lg">
                     <span class="text-gray-900 font-medium">Bab :</span>
-                    <span>{{ $getTanya->Bab->nama_bab ?? '' }}</span>
+                    <span>{{ $getTanya->Bab->nama_bab ?? '-' }}</span>
                 </div>
             </div>
             <div class="flex mx-6 my-6 gap-12">
@@ -35,7 +35,7 @@
                     <span class="text-gray-900 font-medium text-lg">Pertanyaan</span>
                     <div
                         class="h-[150px] bg-white shadow-xl shadow-gray-200 drop-shadow-xl rounded-xl overflow-y-auto text-sm p-4 mb-14 mt-4">
-                        <span>{{ $getTanya->pertanyaan ?? '' }}</span>
+                        <span>{{ $getTanya->pertanyaan ?? '-' }}</span>
                     </div>
                 </div>
                 <div class="w-3/4 mx-2">
@@ -73,11 +73,11 @@
             <header class="grid border-b-[1px] border-gray-200 pb-2">
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Mentor :</span>
-                    <span>{{ $getTanya->mentor ?? '' }}</span>
+                    <span>{{ $getTanya->mentor ?? '-' }}</span>
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Asal Sekolah :</span>
-                    <span>{{ $getTanya->asal_mengajar ?? '' }}</span>
+                    <span>{{ $getTanya->asal_mengajar ?? '-' }}</span>
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Kelas :</span>
@@ -85,7 +85,7 @@
                 </div>
                 <div class="text-md mb-1 px-2">
                     <span class="text-gray-900 font-medium">Jam Jawab :</span>
-                    <span>{{ $getTanya->updated_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') ?? '' }}</span>
+                    <span>{{ $getTanya->updated_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') ?? '-' }}</span>
                 </div>
             </header>
             <div class="flex mx-6 my-6 gap-12">
@@ -93,7 +93,7 @@
                     <span class="text-gray-900 font-medium text-lg">Jawaban</span>
                     <div
                         class="h-[150px] bg-white shadow-xl shadow-gray-200 drop-shadow-xl rounded-xl overflow-y-auto text-sm p-6 mt-4">
-                        <span>{{ $getTanya->jawaban ?? '' }}</span>
+                        <span>{{ $getTanya->jawaban ?? '-' }}</span>
                     </div>
                 </div>
                 <div class="w-3/4 mx-2 mt-16">
@@ -142,19 +142,19 @@
                         <div class="col-span-6">
                             <div class="">
                                 <span class="text-gray-900 font-medium">Nama Siswa :</span>
-                                <span>{{ $getRestore->Student->StudentProfiles->nama_lengkap ?? '' }}</span>
+                                <span>{{ $getRestore->Student->StudentProfiles->nama_lengkap ?? '-' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Sekolah :</span>
-                                <span>{{ $getRestore->Student->StudentProfiles->sekolah ?? '' }}</span>
+                                <span>{{ $getRestore->Student->StudentProfiles->sekolah ?? '-' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Kelas :</span>
-                                <span>{{ $getRestore->Kelas->kelas ?? '' }}</span>
+                                <span>{{ $getRestore->Kelas->kelas ?? '-' }}</span>
                             </div>
                             <div class="">
                                 <span class="text-gray-900 font-medium">Jam berTANYA :</span>
-                                <span>{{ $getRestore->created_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') ?? '' }}</span>
+                                <span>{{ $getRestore->created_at->locale('id')->translatedFormat('l d-M-Y, H:i:s') ?? '-' }}</span>
                             </div>
                         </div>
                     </div>
@@ -165,11 +165,11 @@
                     <div class="mx-4 my-8 leading-8">
                         <div class="">
                             <span>Mata Pelajaran :</span>
-                            {{ $getTanya->Mapel->mata_pelajaran ?? '' }}
+                            {{ $getTanya->Mapel->mata_pelajaran ?? '-' }}
                         </div>
                         <div class="">
                             <span>Bab :</span>
-                            {{ $getTanya->Bab->nama_bab ?? '' }}
+                            {{ $getTanya->Bab->nama_bab ?? '-' }}
                         </div>
                     </div>
 
@@ -179,7 +179,7 @@
                         <span>Pertanyaan</span>
                         <div class="max-h-40 h-40 my-2 p-2 bg-white shadow-xl border-[1px] border-gray-200 rounded-md overflow-y-auto text-sm resize-none"
                             disabled>
-                            {!! nl2br(e($getRestore->pertanyaan)) ?? '' !!}
+                            {!! nl2br(e($getRestore->pertanyaan)) ?? '-' !!}
                         </div>
                     </div>
 
@@ -368,10 +368,11 @@
     <p>You do not have access to this dashboard.</p>
 @endif
 
-<script src="{{ asset('js/upload-image.js') }}"></script> <!--- show image tanya ---->
-
 <!--- untuk tracker pertanyaan jika ada mentor sedang melihat soal dan lalu kembali menggunakan back button chrome maka status soal berubah ---->
 <script src="{{ asset('js/Tanya/end-to-end/view-questions-tracker.js') }}"></script>
+
+<!-- COMPONENTS --->
+<script src="{{ asset('js/components/preview/image-tanya-preview.js') }}"></script> <!--- show image tanya ---->
 
 <!--- untuk membuka modal kembali jika ada validasi error pada form modal ---->
 <script>

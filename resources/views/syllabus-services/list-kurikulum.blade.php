@@ -240,11 +240,11 @@
 
 
 <script src="{{ asset('js/syllabus-services/paginate-syllabus-kurikulum-ajax.js') }}"></script> <!--- paginate kurikulum ---->
-<script src="{{ asset('js/upload-excel.js') }}"></script> <!--- show excel ---->
 <script src="{{ asset('js/syllabus-services/form-action-bulkUpload-syllabus.js') }}"></script> <!--- form action bulkUpload syllabus ---->
 
 <!--- COMPONENTS ---->
 <script src="{{ asset('js/components/clear-error-on-input.js') }}"></script> <!--- clear error on input ---->
+<script src="{{ asset('js/components/preview/excel-upload-preview.js') }}"></script> <!--- show excel ---->
 
 <!--- PUSHER LISTENER ---->
 <script src="{{ asset('js/pusher-listener/syllabus-services/list-kurikulum-listener.js') }}"></script> <!--- pusher listener list kurikulum ---->

@@ -10,6 +10,9 @@ use App\Models\Mapel;
 use App\Models\SubBab;
 use App\Models\SubBabFeatureStatus;
 use Illuminate\Http\Request;
+use App\Models\Tanya;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class MasterAcademicController extends Controller
 {
@@ -37,8 +40,26 @@ class MasterAcademicController extends Controller
     // GET MAPEL BY FASE
     public function getMapel($id)
     {
+        $user = Auth::user();
+
+        $date = Carbon::now()->format('Y-m-d');
+
         $mata_pelajaran = Mapel::where('fase_id', $id)->get()->where('status_mata_pelajaran', 'publish');
-        return response()->json($mata_pelajaran);
+
+        // menghitung jumlah tanya harian siswa
+        $countTanyaDaily = Tanya::where('user_id', $user->id)->whereDate('created_at', $date)->count();
+
+        // menentukan batas tanya harian
+        $maxTanyaDaily = 3;
+
+        // menghitung sisa tanya harian (max 0 untuk mencegah pengurangan minus)
+        $remainingTanyaDaily = max(0,$maxTanyaDaily - $countTanyaDaily);
+
+        return response()->json([
+            'mata_pelajaran' => $mata_pelajaran,
+            'countTanyaDaily' => $countTanyaDaily,
+            'remainingTanyaDaily' => $remainingTanyaDaily
+        ]);
     }
 
     // GET MAPEL BY KELAS

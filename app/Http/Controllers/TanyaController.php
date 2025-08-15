@@ -6,36 +6,25 @@ use App\Events\CountMentorQuestionsAwaitVerification;
 use App\Events\EventTanyaAccess;
 use App\Events\PaymentTanyaMentor;
 use App\Events\QuestionRejected;
-use App\Events\RollbackQuestion;
-use Midtrans\Snap;
 use App\Models\Fase;
-use App\Models\Star;
 use App\Models\Tanya;
-use App\Models\testing;
 use App\Models\TanyaAccess;
 use App\Models\UserAccount;
-use Illuminate\Support\Str;
-use App\Models\Transactions;
 use Illuminate\Http\Request;
 use App\Events\QuestionAsked;
-use App\Models\FeaturePrices;
 use App\Models\TanyaUserCoin;
 use App\Events\QuestionAnswered;
 use App\Events\TanyaCoinRefunded;
 use App\Events\TanyaMentorVerifications;
-use App\Events\UpdateLihatDetailTanyaMentor;
 use App\Models\CoinHistory;
 use App\Models\MentorPaymentDetail;
 use App\Models\MentorPayments;
 use App\Models\TanyaRankMentor;
 use App\Models\TanyaRankMentorProgress;
 use App\Models\TanyaVerifications;
-use App\Services\MidtransService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use App\Services\PaymentHandlers\CheckoutCoinHandler;
-use App\Services\PaymentHandlers\RenewCheckoutCoinHandler;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -95,6 +84,8 @@ class TanyaController extends Controller
     {
         $user = Auth::user();
 
+        $date = Carbon::now()->format('Y-m-d');
+
         $validator = Validator::make($request->all(), [
             'fase_id' => 'required',
             'kelas_id' => 'required',
@@ -125,35 +116,67 @@ class TanyaController extends Controller
             $image = $filename;
         }
 
-        if(TanyaUserCoin::where('user_id', $user->id)->first()->jumlah_koin < $request->harga_koin) {
-            return redirect()->back()->with('not-enough-coin-tanya', 'Maaf, Koin anda tidak cukup untuk mata pelajaran ini, silahkan pilih mata pelajaran lain atau isi ulang koin anda.');
+        // menghitung jumlah tanya harian siswa
+        $countTanyaDaily = Tanya::where('user_id', $user->id)->whereDate('created_at', $date)->count();
+
+        // mengambil jumlah koin siswa yang sedang login
+        $tanyaUserCoin = TanyaUserCoin::where('user_id', $user->id)->first();
+
+        // mengecek jika jumlah tanya harian siswa >= 3
+        if ($countTanyaDaily >= 3) {
+            // mengecek jika siswa tidak memiliki koin / koin siswa tidak mencukupi maka tampilkan alert
+            if (!$tanyaUserCoin || $tanyaUserCoin->jumlah_koin < $request->harga_koin) {
+                return response()->json([
+                    'status' => 'error-not-enough-coin-tanya',
+                    'message' => 'Maaf, Koin kamu tidak cukup untuk mata pelajaran ini, silahkan pilih mata pelajaran lain atau isi ulang koin kamu.'
+                ], 422);
+            }
         }
 
-        $questionCreate = Tanya::create([
-            'user_id' => $user->id,
-            'fase_id' => $request->fase_id,
-            'kelas_id' => $request->kelas_id,
-            'mapel_id' => $request->mapel_id,
-            'bab_id' => $request->bab_id,
-            'harga_koin' => $request->harga_koin,
-            'pertanyaan' => $request->pertanyaan,
-            'image_tanya' => $image,
-        ]);
+        // jika jumlah tanya harian siswa lebih dari 3, maka gunakan koin
+        if ($countTanyaDaily >= 3) {
+            $questionCreate = Tanya::create([
+                'user_id' => $user->id,
+                'fase_id' => $request->fase_id,
+                'kelas_id' => $request->kelas_id,
+                'mapel_id' => $request->mapel_id,
+                'bab_id' => $request->bab_id,
+                'harga_koin' => $request->harga_koin ?? 0,
+                'pertanyaan' => $request->pertanyaan,
+                'image_tanya' => $image,
+            ]);
+        // jika jumlah tanya harian siswa belum lebih dari 3, maka free
+        } else {
+            $questionCreate = Tanya::create([
+                'user_id' => $user->id,
+                'fase_id' => $request->fase_id,
+                'kelas_id' => $request->kelas_id,
+                'mapel_id' => $request->mapel_id,
+                'bab_id' => $request->bab_id,
+                'harga_koin' => 0,
+                'pertanyaan' => $request->pertanyaan,
+                'image_tanya' => $image,
+            ]);
+        }
 
-        TanyaUserCoin::where('user_id', $user->id)->decrement('jumlah_koin', $request->harga_koin);
+        if ($countTanyaDaily >= 3) {
+            TanyaUserCoin::where('user_id', $user->id)->decrement('jumlah_koin', $request->harga_koin);
+        }
 
         broadcast(new QuestionAsked($questionCreate))->toOthers();
 
         // masukkan pertanyaan sebagai histori koin keluar
         $coinHistoryUser = CoinHistory::where('user_id', $user->id)->first();
 
-        CoinHistory::create([
-            'user_id' => $user->id,
-            'jumlah_koin' => $request->harga_koin,
-            'tipe_koin' => 'Keluar',
-            'sumber_koin' => 'berTANYA',
-            'tanya_id' => $questionCreate->id // Menyimpan ID pertanyaan sebagai tanya_id
-        ]);
+        if ($countTanyaDaily >= 3) {
+            CoinHistory::create([
+                'user_id' => $user->id,
+                'jumlah_koin' => $request->harga_koin,
+                'tipe_koin' => 'Keluar',
+                'sumber_koin' => 'berTANYA',
+                'tanya_id' => $questionCreate->id // Menyimpan ID pertanyaan sebagai tanya_id
+            ]);
+        }
 
         return response()->json([
             'status' => 'success',

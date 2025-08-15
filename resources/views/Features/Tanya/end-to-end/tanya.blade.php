@@ -10,11 +10,10 @@
                     'message' => session('success-reject-tanya'),
                 ])
             @endif
-            @if (session('not-enough-coin-tanya'))
-                @include('components.alert.failed-insert-data', [
-                    'message' => session('not-enough-coin-tanya'),
-                ])
-            @endif
+
+            <!--- alert tidak cukup koin --->
+            <div id="not-enough-coin-tanya"></div>
+
             <div class="bg-[--color-second] w-full h-20 shadow-lg rounded-t-xl flex items-center pl-10 mb-4">
                 <div class="text-white font-bold flex items-center gap-3">
                     <i class="fas fa-question text-2xl"></i>
@@ -141,7 +140,8 @@
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 my-8">
                             <!--- Kolom Pertanyaan ----->
                             <div class="flex flex-col h-44 relative">
-                                <label class="mb-2 text-sm">Pertanyaan<sup class="text-red-500 pl-1">&#42;</sup></label>
+                                <label class="mb-2 text-sm">Pertanyaan<sup
+                                        class="text-red-500 pl-1">&#42;</sup></label>
                                 <textarea name="pertanyaan"
                                     class="p-4 resize-none bg-white shadow-lg h-32 border-gray-200 border outline-none rounded-md px-4 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]"
                                     placeholder="Masukkan Pertanyaan....">{{ @old('pertanyaan') }}</textarea>
@@ -473,7 +473,6 @@
 
 <!--- end to end  ---->
 <script src="{{ asset('js/Tanya/end-to-end/students-submit-questions-ajax.js') }}"></script> <!--- submit pertanyaan siswa ---->
-<script src="{{ asset('js/upload-image.js') }}"></script> <!--- show image tanya ---->
 <script src="{{ asset('js/Tanya/dependent-dropdown/fase-kelas-mapel-bab-dropdown.js') }}"></script> <!--- dependent dropdown ---->
 
 <!--- riwayat tanya user ---->
@@ -489,25 +488,12 @@
 <!--- components ---->
 <script src="{{ asset('js/components/clear-error-on-input.js') }}"></script> <!--- clear error on input ---->
 <script src="{{ asset('js/components/question-answer-page-section/content-tanya-riwayat-toggle.js') }}"></script> <!--- content riwayat tanya ---->
-<script src="{{ asset('js/components/dropdown-mapel.js') }}"></script> <!--- dropdown mapel ---->
+{{-- <script src="{{ asset('js/components/dropdown-mapel.js') }}"></script> <!--- dropdown mapel ----> --}}
 <script src="{{ asset('js/components/btn-close-alert-success.js') }}"></script> <!--- btn close alert success ---->
+<script src="{{ asset('js/components/preview/image-tanya-preview.js') }}"></script> <!--- show image tanya ---->
 <script src="{{ asset('js/components/question-answer-page-section/restore-tanya-riwayat-radio-on-back.js') }}">
 </script> <!--- untuk mengembalikan radio header content tanya riwayat  ---->
 
 <!--- PUSHER LISTENER TANYA ---->
 <script src="{{ asset('js/pusher-listener/tanya/notif-badge-answered-rejected.js') }}"></script> <!--- pusher listener notif badge answer, rejected ---->
-{{-- <script src="{{ asset('js/pusher-listener/tanya/end-to-end-tanya.js') }}"></script> <!--- pusher listener mengirim dan menjawab pertanyaan ----> --}}
-
-<script>
-    // Script untuk mendengarkan event broadcast pada saat student bertanya ke mentor
-    let currentStatusTanyaMentor = 'semua';
-    document.addEventListener("DOMContentLoaded", () => {
-        window.Echo.channel('tanya')
-            .listen('.question.created', (e) => {
-                // console.log('✅ Komentar diterima dari broadcast:', e);
-                // Saat ada data baru, ambil ulang semua data dengan AJAX
-                console.log('✅ Broadcast diterima:', e); // <- Harusnya muncul
-                fetchFilteredDataTanyaMentor(currentStatusTanyaMentor);
-            });
-    });
-</script>
+<script src="{{ asset('js/pusher-listener/tanya/end-to-end-tanya.js') }}"></script> <!--- pusher listener mengirim dan menjawab pertanyaan ---->

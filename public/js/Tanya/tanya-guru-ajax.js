@@ -7,14 +7,12 @@ function fetchFilteredDataTanyaMentor(status, page = 1) {
         page: page // Include the page parameter
     },
         success: function (data) {
-                    console.log('📦 Data baru masuk:', data);
         $('#tableListTeacher').empty(); // Clear previous entries
         $('.pagination-container-tanya').empty(); // Clear previous pagination links
 
         if (data.data.length > 0) {
 
         $.each(data.data, function (index, application) {
-        console.log('📌 Data baris:', application);
         const formatDate = (dateString) => {
         const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
         const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];

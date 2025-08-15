@@ -108,6 +108,20 @@ $(document).ready(function () {
                             $('#dropdownWrapper').removeClass('border-gray-200').addClass('border-red-400');
                         }
                     })
+
+                    const notEnoughCoin = xhr.responseJSON.status;
+
+                    if (notEnoughCoin === 'error-not-enough-coin-tanya') {
+                        function showAlert() {
+                            swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: `${xhr.responseJSON.message}`,
+                            });
+                        }
+
+                        $('#not-enough-coin-tanya').show(showAlert);
+                    }
                 } else if (xhr.status === 419) {
                     alert('CSRF token mismatch. Coba refresh halaman.');
                 } else {

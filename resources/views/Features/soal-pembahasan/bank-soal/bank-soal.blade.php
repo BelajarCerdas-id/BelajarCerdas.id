@@ -199,12 +199,12 @@
 <script
     src="{{ asset('js/Features/soal-pembahasan/dependent-dropdown/kurikulum-kelas-mapel-bab-sub_bab-dropdown.js') }}">
 </script>
-<script src="{{ asset('js/upload-word.js') }}"></script> <!--- show word ---->
 <script src="{{ asset('js/Features/soal-pembahasan/bank-soal/form-action-bank-soal.js') }}"></script> <!--- form action upload bank soal ---->
 <script src="{{ asset('js/Features/soal-pembahasan/bank-soal/daftar-list-bank-soal.js') }}"></script> <!--- daftar list bank soal ---->
 
 <!--- COMPONENTS ---->
 <script src="{{ asset('js/components/clear-error-on-input.js') }}"></script> <!--- clear error on input ---->
+<script src="{{ asset('js/components/preview/word-upload-preview.js') }}"></script> <!--- show word ---->
 
 
 <!--- PUSHER LISTENER ---->
