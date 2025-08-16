@@ -70,21 +70,7 @@
 @endif
 
 
-
-<script>
-    function togglePassword(inputId, button) {
-        const input = document.getElementById(inputId);
-        const icon = button.querySelector('i');
-
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.classList.replace('fa-eye-slash', 'fa-eye');
-        } else {
-            input.type = 'password';
-            icon.classList.replace('fa-eye', 'fa-eye-slash');
-        }
-    }
-</script>
+<script src="{{ asset('js/components/show-password-input.js') }}"></script> <!--- show password input ---->
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

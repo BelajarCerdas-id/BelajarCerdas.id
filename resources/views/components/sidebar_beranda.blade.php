@@ -506,6 +506,18 @@
             <li class="list-item">
                 <div class="dropdown-menu">
                     <div class="toggle-menu-sidebar">
+                        <i class="icon-menu fa-solid fa-people-roof"></i>
+                        <span class="">Managements</span>
+                        <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
+                    </div>
+                    <div class="content-dropdown">
+                        <a href="{{ route('officeAccounts.view') }}" class="link-href">Office Accounts</a>
+                    </div>
+                </div>
+            </li>
+            <li class="list-item">
+                <div class="dropdown-menu">
+                    <div class="toggle-menu-sidebar">
                         <i class="icon-menu fa-solid fa-user-graduate !text-md"></i>
                         <span class="">Mentor</span>
                         <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>

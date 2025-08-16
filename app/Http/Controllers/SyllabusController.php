@@ -334,6 +334,7 @@ class SyllabusController extends Controller
             'user_id' => $user->id,
             'mata_pelajaran' => $request->mata_pelajaran,
             'kode' => $request->mata_pelajaran,
+            'harga_koin' => 5,
             'kelas_id' => $kelas_id,
             'fase_id' => $fase_id,
             'kurikulum_id' => $kurikulum_id,

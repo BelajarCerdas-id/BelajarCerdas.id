@@ -23,14 +23,15 @@ class MitraCerdasController extends Controller
         $dataMentor = MentorProfiles::with('UserAccount')->findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:user_accounts,email',
+            'email' => 'required|email|unique:user_accounts,email|regex:/^[a-zA-z0-9._%+-]+@belajarcerdas\.id$/',
             'password' => 'required|min:8',
         ], [
-            'email.required' => 'Harap masukkan email!',
-            'email.email' => 'Format email tidak valid!',
-            'email.unique' => 'Email telah terdaftar!',
-            'password.required' => 'Harap masukkan password!',
-            'password.min' => 'Minimal 8 karakter!',
+            'email.required' => 'Email tidak boleh kosong.',
+            'email.email' => 'Format email harus @belajarcerdas.id.',
+            'email.regex' => 'Format email harus @belajarcerdas.id.',
+            'email.unique' => 'Email telah terdaftar.',
+            'password.required' => 'Password tidak boleh kosong.',
+            'password.min' => 'Password minimal 8 karakter.',
         ]);
 
         if ($validator->fails()) {

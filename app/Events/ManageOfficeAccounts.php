@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\Tanya;
+use App\Models\UserAccount;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -12,18 +12,19 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class QuestionAsked implements ShouldBroadcast
+class ManageOfficeAccounts implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public $questionCreate;
+    public $officeAccounts;
 
-    public function __construct(Tanya $questionCreate)
+
+    public function __construct(UserAccount $officeAccounts)
     {
-        $this->questionCreate = $questionCreate;
+        $this->officeAccounts = $officeAccounts;
     }
 
     /**
@@ -33,11 +34,11 @@ class QuestionAsked implements ShouldBroadcast
      */
     public function broadcastOn(): Channel
     {
-        return new Channel('tanya');
+        return new Channel('officeAccounts');
     }
 
     public function broadcastAs(): string
     {
-        return 'question.created';
+        return 'office.accounts';
     }
 }

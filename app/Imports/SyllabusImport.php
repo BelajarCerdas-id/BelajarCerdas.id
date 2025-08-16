@@ -108,6 +108,7 @@ class SyllabusImport implements ToCollection, WithHeadingRow, SkipsEmptyRows, Wi
             $mapel = Mapel::firstOrCreate([
                 'user_id' => $this->userId,
                 'mata_pelajaran' => $row['mata_pelajaran'],
+                'harga_koin' => 5,
                 'kelas_id' => $kelas->id,
                 'fase_id' => $fase->id,
                 'kurikulum_id' => $kurikulum->id,

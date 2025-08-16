@@ -110,8 +110,10 @@ class webController extends Controller
 
         $getSiswa = UserAccount::where('role', 'Siswa')->orWhere('role', 'Murid')->get(); /// mendapatkan user siswa dan murid
 
+
+        // FOR BERANDA STUDENTS
         // Ambil jumlah Tanya untuk semua user_id dalam satu kali loop
-        $countSiswaTanya = Tanya::withTrashed()
+        $countSiswaTanya = Tanya::withTrashed()->where('harga_koin', '!=', 0)
             ->whereIn('user_id', $getSiswa->pluck('id'))
             ->get()
             ->groupBy('user_id')

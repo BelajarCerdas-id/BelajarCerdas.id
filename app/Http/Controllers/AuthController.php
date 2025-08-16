@@ -295,6 +295,7 @@ class AuthController extends Controller
             ];
             $messages = [
                 'nama_lengkap.required' => 'Nama tidak boleh kosong!',
+                'nama_lengkap.max' => 'Nama tidak boleh lebih dari 255 karakter!',
                 'no_hp.required' => 'No.HP tidak boleh kosong!',
                 'no_hp.unique' => 'No.HP telah terdaftar!',
                 'no_hp.regex' => 'No.HP tidak valid!',
@@ -343,6 +344,7 @@ class AuthController extends Controller
             ];
             $messages = [
                 'nama_lengkap.required' => 'Nama tidak boleh kosong!',
+                'nama_lengkap.max' => 'Nama tidak boleh lebih dari 255 karakter!',
                 'no_hp.required' => 'No.HP tidak boleh kosong!',
                 'no_hp.unique' => 'No.HP telah terdaftar!',
                 'no_hp.regex' => 'No.HP tidak valid!',

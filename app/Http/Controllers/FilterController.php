@@ -3,13 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Events\CountMentorQuestionsAwaitVerification;
-use App\Events\TanyaMentorVerifications;
-use App\Events\UpdateLihatDetailTanyaMentor;
 use App\Models\Bab;
 use App\Models\CoinHistory;
-use App\Models\Star;
 use App\Models\Tanya;
-use App\Models\Keynote;
 use Illuminate\Http\Request;
 use App\Models\englishZoneSoal;
 use App\Models\Fase;
@@ -31,17 +27,9 @@ use App\Models\UserAccount;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Midtrans\Transaction;
 
 class FilterController extends Controller
 {
-    // PAGINATE LIST MENTOR APPLY & ACTIVE
-    public function paginateListMentorActive(Request $request)
-    {
-
-    }
-
     // FILTERING & PAGINATION TANYA STUDENT, MENTOR, ADMINISTRATOR
     public function filterHistoryStudent(Request $request)
     {
@@ -513,8 +501,10 @@ class FilterController extends Controller
         $getSiswa = UserAccount::with(['StudentProfiles.Kelas'])->where('role', 'Siswa')->orWhere('role', 'Murid')->get();
 
         // FOR BERANDA STUDENT
+        // Ambil jumlah Tanya untuk semua user_id dalam satu kali loop
         $countTanyaStudent = Tanya::with('CoinHistory')->withTrashed()->whereIn('user_id', $getSiswa->pluck('id'))->whereIn('status_soal', ['Diterima', 'Menunggu'])
-        ->get()->groupBy('user_id')->map(fn($items) => $items->count()); // Hitung jumlah Tanya per user
+        ->where('harga_koin', '!=', 0)->get()->groupBy('user_id')
+        ->map(fn($items) => $items->count()); // Hitung jumlah Tanya per user
 
         // menghitung jumlah koin yang keluar untuk seluruh student
         $countKoinStudent = Tanya::with(['CoinHistory' => function ($query) {

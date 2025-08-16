@@ -80,8 +80,6 @@ $(document).ready(function () {
             success: function (response) {
                 // inisialisasi update data terbaru setelah berhasil insert data
                 paginateBankSoal();
-
-                console.log(response.message); // Kalau berhasil, tampilkan pesan ke console
             },
             // error: function(xhr) {
                 //     alert('Gagal mengubah status.');

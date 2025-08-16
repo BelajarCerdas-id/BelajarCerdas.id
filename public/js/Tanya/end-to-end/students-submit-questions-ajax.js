@@ -81,7 +81,6 @@ $(document).ready(function () {
 
                 $btn.prop('disabled', false); // undisable tombol
 
-
                 // inisialisasi pertanyaan student (pada halaman tanya mentor)
                 fetchFilteredDataTanyaMentor();
             },

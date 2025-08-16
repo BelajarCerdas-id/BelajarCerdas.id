@@ -20,6 +20,7 @@ use App\Http\Controllers\EnglishZoneController;
 use App\Http\Controllers\MitraCerdasController;
 use App\Http\Controllers\VisitasiDataController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OfficeAccountController;
 use App\Http\Controllers\PaymentFeaturesController;
 use App\Http\Controllers\SoalPembahasanController;
 use App\Http\Controllers\webController; // data biasa seperti foreach (tidak dari database) dan lain lain (jika ada selain foreach)
@@ -177,6 +178,17 @@ Route::fallback(function () {
         // FILTER LEADERBOARD RANK TANYA STUDENT
         Route::get('/leaderboard-rank-tanya-student', [FilterController::class, 'leaderboardRankTanya'])->name('filterLeaderboardRankTanyaStudent');
 
+        // ROUTES MANAGEMENTS (ADMINISTRATOR)
+        // routes office accounts CRUD
+        Route::get('/office-accounts-management', [OfficeAccountController::class, 'officeAccountsView'])->name('officeAccounts.view');
+        Route::post('/office-accounts-management/store', [OfficeAccountController::class, 'officeAccountsStore'])->name('officeAccounts.store');
+
+        // paginate list office accounts
+        Route::get('/paginate-list-office-accounts', [OfficeAccountController::class, 'paginateListOfficeAccounts'])->name('listOfficeAccounts.paginate');
+
+        // office account activate
+        Route::put('/office-accounts-management/activate/{accountId}', [OfficeAccountController::class, 'officeAccountActivate'])->name('officeAccounts.activate');
+
     // TANYA ACCESS MIDDLEWARE
     Route::middleware([TanyaAccess::class])->group(function () {
         // VIEWS
@@ -319,7 +331,6 @@ Route::fallback(function () {
 
     // HISTORY QUESTIONS ASSESSMENT (PRACTICE AND EXAM, untuk menampilkan soal yang sudah dijawab)
     Route::get('/soal-pembahasan/riwayat-assessment/{materi_id}/{tipe_soal}/{date}/{kelas}/{mata_pelajaran}/questions', [SoalPembahasanController::class, 'historyQuestionsAssessment'])->name('historyQuestionSoalPembahasanAssessment');
-
 
     //ROUTES SYLLABUS-SERVICES
     // VIEWS
