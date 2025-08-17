@@ -65,7 +65,7 @@
                             <div class="flex items-center w-full h-full mt-2">
                                 <button
                                     class="w-full h-max bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all outline-none">
-                                    Kirim
+                                    Tambah
                                 </button>
                             </div>
                         </div>

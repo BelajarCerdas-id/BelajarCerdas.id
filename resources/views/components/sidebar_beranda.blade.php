@@ -512,6 +512,7 @@
                     </div>
                     <div class="content-dropdown">
                         <a href="{{ route('officeAccounts.view') }}" class="link-href">Office Accounts</a>
+                        <a href="{{ route('featuresManagement.view') }}" class="link-href">Features Management</a>
                     </div>
                 </div>
             </li>

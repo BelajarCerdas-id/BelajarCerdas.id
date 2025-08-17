@@ -20,6 +20,7 @@ use App\Http\Controllers\EnglishZoneController;
 use App\Http\Controllers\MitraCerdasController;
 use App\Http\Controllers\VisitasiDataController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FeatureManagementController;
 use App\Http\Controllers\OfficeAccountController;
 use App\Http\Controllers\PaymentFeaturesController;
 use App\Http\Controllers\SoalPembahasanController;
@@ -188,6 +189,14 @@ Route::fallback(function () {
 
         // office account activate
         Route::put('/office-accounts-management/activate/{accountId}', [OfficeAccountController::class, 'officeAccountActivate'])->name('officeAccounts.activate');
+
+        // routes features management (CRUD)
+        Route::get('/features-management', [FeatureManagementController::class, 'featuresManagementView'])->name('featuresManagement.view');
+        Route::post('/features-list-management/store', [FeatureManagementController::class, 'featuresManagementStore'])->name('featuresManagement.store');
+        Route::post('/features-list-management/update/{featureId}', [FeatureManagementController::class, 'featuresManagementUpdate'])->name('featuresManagement.update');
+
+        // paginate features list
+        Route::get('/paginate-features-list', [FeatureManagementController::class, 'paginateFeaturesList'])->name('featuresManagement.paginate');
 
     // TANYA ACCESS MIDDLEWARE
     Route::middleware([TanyaAccess::class])->group(function () {
