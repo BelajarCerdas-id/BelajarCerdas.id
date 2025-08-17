@@ -108,12 +108,20 @@
                         placeholder="Masukkan Email">
                 </div>
 
+                <div class="mt-8">
+                    {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display([
+                        'data-callback' => 'onCaptchaSuccess',
+                        'data-expired-callback' => 'onCaptchaExpired',
+                    ]) !!}
+                </div>
+
                 <!-- Navigasi -->
                 <div class="flex justify-between mt-6">
                     <button type="button" disabled
                         class="bg-gray-300 text-gray-600 px-4 py-2 rounded-md cursor-not-allowed">Kembali</button>
-                    <button type="button" onclick="nextStep(1)"
-                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Lanjut</button>
+                    <button type="button" onclick="nextStep(1)" id="next-step-btn"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 cursor-default"
+                        disabled>Lanjut</button>
                 </div>
             </div>
 
@@ -359,6 +367,23 @@
 
     showStep(currentStep);
 </script> --}}
+
+    <!-- NoCaptcha render js -->
+    {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJs() !!}
+
+    <script>
+        function onCaptchaSuccess() {
+            document.getElementById("next-step-btn").disabled = false;
+            document.getElementById("next-step-btn").classList.remove("bg-gray-400", "cursor-default");
+            document.getElementById("next-step-btn").classList.add("bg-blue-600", "hover:bg-blue-700");
+        }
+
+        function onCaptchaExpired() {
+            document.getElementById("next-step-btn").disabled = true;
+            document.getElementById("next-step-btn").classList.remove("bg-blue-600", "hover:bg-blue-700");
+            document.getElementById("next-step-btn").classList.add("bg-gray-400", "cursor-default");
+        }
+    </script>
 
     @if (session('success-register-mentor'))
         <script>
