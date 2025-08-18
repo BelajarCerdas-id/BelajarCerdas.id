@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Log;
 
-class TanyaAccess
+class TanyaHolidayAccess
 {
     /**
      * Handle an incoming request.
@@ -40,7 +40,7 @@ class TanyaAccess
 
         // // Cek waktu akses tanya (student)
         // if($userTanya->role == 'Siswa' || $userTanya->role == 'Murid') {
-        //     if(!$now->between($startTimeStudent, $endeTimeStudent)) {
+        //     if(!$now->between($startTimeStudent, $endTimeStudent)) {
         //         return redirect()->route('beranda')->with('alertAccess', 'Maaf, halaman ini hanya bisa diakses pada pukul 07:00 - 21:00.');
         //     }
         // }

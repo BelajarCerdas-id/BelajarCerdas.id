@@ -23,18 +23,19 @@ class ProfileController extends Controller
         $today = Carbon::now()->format('Y-m-d');
         // $today = Carbon::createFromFormat('Y-m-d', '2025-08-22')->format('Y-m-d');
 
-        // MENTOR
-        $userMentor = UserAccount::where('role', 'Mentor')->first();
+        // ambil data user yang sedang login
+        $user = Auth::user();
 
-        $mentorProfiles = MentorProfiles::where('user_id', $userMentor->id)->first();
+        // MENTOR
         // Ambil semua fitur mentor
-        $mentorFeaturesStatus = MentorFeatureStatus::where('mentor_id', $mentorProfiles->id)->get();
+        $mentorFeaturesStatus = MentorFeatureStatus::where('mentor_id', $user->id)->where('status_mentor', 'aktif')->get();
         // Ambil semua feature_id yang ada
         $featureIds = $mentorFeaturesStatus->pluck('feature_id');
         // Ambil semua fitur berdasarkan feature_id
         $dataMentorAhli = Features::whereIn('id', $featureIds)->get();
 
         // SISWA
+        // Ambil semua fase
         $dataFase = Fase::all();
 
         // mengambil semua packet yang sedang aktif dan group berdasarkan fitur masing"

@@ -61,14 +61,15 @@ class MitraCerdasController extends Controller
 
     public function mentorAktifView()
     {
-        $dataMentorAktif = MentorProfiles::with('UserAccount')->with('MentorFeatureStatus')->where('status_mentor', 'Diterima')->orderBy('created_at', 'desc')->get();
+        $dataMentorAktif = MentorProfiles::with('UserAccount')->where('status_mentor', 'Diterima')->orderBy('created_at', 'desc')->get();
 
         $dataFeaturesRoles = FeaturesRoles::with('Features')->where('feature_role', 'mentor')->get();
 
         $statusMentorFeature = [];
 
         foreach($dataMentorAktif as $mentor) {
-            foreach($mentor->MentorFeatureStatus as $featureStatus) {
+            // ambil relasi dari MentorProfiles → UserAccount → MentorFeatureStatuses.
+            foreach($mentor->UserAccount->MentorFeatureStatus as $featureStatus) {
                 $statusMentorFeature[$mentor->id][$featureStatus->feature_id] = $featureStatus->status_mentor;
             }
         }

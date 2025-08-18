@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('mentor_feature_statuses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('mentor_id')->constrained('mentor_profiles')->onDelete('cascade');
+            $table->foreignId('mentor_id')->constrained('user_accounts')->onDelete('cascade');
             $table->foreignId('feature_id')->constrained('features')->onDelete('cascade');
             $table->enum('status_mentor', ['aktif', 'tidak aktif'])->default('tidak aktif');
             $table->timestamps();

@@ -20,8 +20,8 @@ class MentorFeatureStatus extends Model
         return $this->belongsTo(Features::class, 'feature_id');
     }
 
-    public function MentorProfiles()
+    public function UserAccount()
     {
-        return $this->belongsTo(MentorProfiles::class, 'mentor_id');
+        return $this->belongsTo(UserAccount::class, 'mentor_id');
     }
 }

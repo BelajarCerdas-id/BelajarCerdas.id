@@ -1,8 +1,6 @@
 <?php
 
-use Illuminate\Support\Arr;
-use App\Http\Controllers\User;
-use App\Http\Middleware\TanyaAccess;
+use App\Http\Middleware\TanyaHolidayAccess;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PksController;
 use App\Http\Middleware\AuthMiddleware;
@@ -26,6 +24,7 @@ use App\Http\Controllers\PaymentFeaturesController;
 use App\Http\Controllers\SoalPembahasanController;
 use App\Http\Controllers\webController; // data biasa seperti foreach (tidak dari database) dan lain lain (jika ada selain foreach)
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\TanyaMentorAccess;
 
 Route::get('/', [webController::class, 'index'])->name('homePage');
 Route::get('/mitra-cerdas', [webController::class, 'mitraCerdas'])->name('mitraCerdas');
@@ -198,45 +197,48 @@ Route::fallback(function () {
         // paginate features list
         Route::get('/paginate-features-list', [FeatureManagementController::class, 'paginateFeaturesList'])->name('featuresManagement.paginate');
 
-    // TANYA ACCESS MIDDLEWARE
-    Route::middleware([TanyaAccess::class])->group(function () {
-        // VIEWS
-        Route::get('/tanya', [TanyaController::class, 'index'])->name('tanya.index'); // page tanya (siswa & murid & mentor)
-        Route::get('/view/{id}', [TanyaController::class, 'edit'])->name('tanya.edit'); // page jawab soal siswa (mentor)
-        Route::get('/history/restore/{id}', [TanyaController::class, 'viewRestore'])->name('getRestore.edit'); // page riwayat tanya siswa (siswa & murid)
-        Route::get('/restore/{id}', [TanyaController::class, 'updateStatusSoalRestore'])->name('tanya.updateStatusSoalRestore');
+    // TANYA HOLIDAY ACCESS MIDDLEWARE (untuk mencegah akses user pada fitur tanya di hari libur)
+    Route::middleware([TanyaHolidayAccess::class])->group(function () {
+        // TANYA MENTOR ACCESS MIDDLEWARE (untuk membatasi mentor yang tidak aktif pada fitur tanya)
+        Route::middleware([TanyaMentorAccess::class])->group(function () {
+            // VIEWS
+            Route::get('/tanya', [TanyaController::class, 'index'])->name('tanya.index'); // page tanya (siswa & murid & mentor)
+            Route::get('/view/{id}', [TanyaController::class, 'edit'])->name('tanya.edit'); // page jawab soal siswa (mentor)
+            Route::get('/history/restore/{id}', [TanyaController::class, 'viewRestore'])->name('getRestore.edit'); // page riwayat tanya siswa (siswa & murid)
+            Route::get('/restore/{id}', [TanyaController::class, 'updateStatusSoalRestore'])->name('tanya.updateStatusSoalRestore');
 
-        // CRUD TANYA
-        // Siswa
-        Route::post('/tanya/store', [TanyaController::class, 'store'])->name('tanya.store');
-        // Mentor
-        Route::put('/updateAnswer/{id}', [TanyaController::class, 'update'])->name('tanya.update'); // page update jawab soal siswa (mentor)
-        Route::put('/updateReject/{id}', [TanyaController::class, 'updateReject'])->name('tanya.reject'); // page update tolak soal siswa (mentor)
-        Route::post('/history/{id}/restore', [TanyaController::class, 'restore'])->name('tanya.restore');
+            // CRUD TANYA
+            // Siswa
+            Route::post('/tanya/store', [TanyaController::class, 'store'])->name('tanya.store');
 
-        // UPDATE STATUS SOAL ANSWERED & REJECTED
-        Route::put('updateStatusSoalAnswered/{id}', [TanyaController::class, 'markQuestionAsReadById'])->name('tanya.updateStatusSoalById');
-        Route::put('updateAllStatusSoalAnswered/{id}', [TanyaController::class, 'markAllQuestionsAsReadById'])->name('tanya.updateAllStatusSoalById');
-        Route::put('updateAllStatusSoalRejected/{email}', [TanyaController::class, 'markAllQuestionsRejectedAsReadById'])->name('tanya.updateAllStatusSoalRejectedById');
+            // Mentor
+            Route::put('/updateAnswer/{id}', [TanyaController::class, 'update'])->name('tanya.update'); // page update jawab soal siswa (mentor)
+            Route::put('/updateReject/{id}', [TanyaController::class, 'updateReject'])->name('tanya.reject'); // page update tolak soal siswa (mentor)
+            Route::post('/history/{id}/restore', [TanyaController::class, 'restore'])->name('tanya.restore');
 
-        // FILTERING & PAGINATE HISTORY TANYA (student)
-        Route::get('/filter', [FilterController::class, 'filterHistoryStudent'])->name('filter.index');
-        Route::get('/filterTeacher', [FilterController::class, 'filterHistoryTeacher'])->name('filter.fill');
-        Route::get('/paginateTanyaTeacher', [FilterController::class, 'filterTanyaTeacher'])->name('tanya.teacher');
-        Route::get('/paginateTanyaTL', [FilterController::class, 'filterTanyaTL'])->name('tanya.TL');
+            // UPDATE STATUS SOAL ANSWERED & REJECTED
+            Route::put('updateStatusSoalAnswered/{id}', [TanyaController::class, 'markQuestionAsReadById'])->name('tanya.updateStatusSoalById');
+            Route::put('updateAllStatusSoalAnswered/{id}', [TanyaController::class, 'markAllQuestionsAsReadById'])->name('tanya.updateAllStatusSoalById');
+            Route::put('updateAllStatusSoalRejected/{email}', [TanyaController::class, 'markAllQuestionsRejectedAsReadById'])->name('tanya.updateAllStatusSoalRejectedById');
 
-        // HISTORY CONTENT DAILY TANYA ANSWERED & REJECTED (student)
-        Route::get('/student/history-unanswered', [TanyaController::class, 'getHistoryUnansweredTanya'])->name('tanya.historyUnAnswered');
-        Route::get('/student/history-answered', [TanyaController::class, 'getHistoryAnsweredTanya'])->name('tanya.historyAnswered');
-        Route::get('/student/history-rejected', [TanyaController::class, 'getHistoryRejectedTanya'])->name('tanya.historyRejected');
+            // FILTERING & PAGINATE HISTORY TANYA (student)
+            Route::get('/filter', [FilterController::class, 'filterHistoryStudent'])->name('filter.index');
+            Route::get('/filterTeacher', [FilterController::class, 'filterHistoryTeacher'])->name('filter.fill');
+            Route::get('/paginateTanyaTeacher', [FilterController::class, 'filterTanyaTeacher'])->name('tanya.teacher');
+            Route::get('/paginateTanyaTL', [FilterController::class, 'filterTanyaTL'])->name('tanya.TL');
 
-        Route::post('/tanya/{id}/mark-viewed', [TanyaController::class, 'markViewed'])->name('tanya.markViewed');
-        Route::put('/tanya/{id}/mark-viewed-back-button', [TanyaController::class, 'markViewedBackButton'])->name('tanya.markViewedBackButton');
-        Route::post('/tanya/{id}/mark-viewed-back-button', [TanyaController::class, 'markViewedBackButton'])->name('tanya.markViewedBackButton');
+            // HISTORY CONTENT DAILY TANYA ANSWERED & REJECTED (student)
+            Route::get('/student/history-unanswered', [TanyaController::class, 'getHistoryUnansweredTanya'])->name('tanya.historyUnAnswered');
+            Route::get('/student/history-answered', [TanyaController::class, 'getHistoryAnsweredTanya'])->name('tanya.historyAnswered');
+            Route::get('/student/history-rejected', [TanyaController::class, 'getHistoryRejectedTanya'])->name('tanya.historyRejected');
 
-        // CLAIM COIN DAILY (student)
-        Route::post('/tanya/claim-coin', [TanyaController::class, 'claimCoinDaily'])->name('tanya.claimCoinDaily');
+            Route::post('/tanya/{id}/mark-viewed', [TanyaController::class, 'markViewed'])->name('tanya.markViewed');
+            Route::put('/tanya/{id}/mark-viewed-back-button', [TanyaController::class, 'markViewedBackButton'])->name('tanya.markViewedBackButton');
+            Route::post('/tanya/{id}/mark-viewed-back-button', [TanyaController::class, 'markViewedBackButton'])->name('tanya.markViewedBackButton');
 
+            // CLAIM COIN DAILY (student)
+            Route::post('/tanya/claim-coin', [TanyaController::class, 'claimCoinDaily'])->name('tanya.claimCoinDaily');
+        });
     });
 
     // TANYA ACCESS CRUD (ADMINISTRATOR)
@@ -255,7 +257,6 @@ Route::fallback(function () {
 
     // CRUD
     Route::post('/paginateTanyaRollback/update/{id}', [TanyaController::class, 'rollbackQuestion'])->name('rollbackQuestion.update');
-
 
     // TANYA RANK (MENTOR)
     Route::get('/rank', [TanyaController::class, 'tanyaRank'])->name('tanya.rank');

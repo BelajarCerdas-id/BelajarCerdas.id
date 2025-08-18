@@ -111,6 +111,11 @@ class UserAccount extends Authenticatable
         return $this->hasOne(SoalPembahasanQuestions::class, 'administrator_id');
     }
 
+    // MENTOR FEATURE STATUS
+    public function MentorFeatureStatus() {
+        return $this->hasMany(MentorFeatureStatus::class, 'mentor_id');
+    }
+
     public function getProfileAttribute() {
         return match ($this->role) {
             'Siswa' => $this->StudentProfiles,

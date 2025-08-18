@@ -48,7 +48,7 @@
                                                 <td class="!text-center border border-gray-300">
                                                     <label class="relative inline-flex items-center cursor-pointer">
                                                         <input type="checkbox" class="hidden peer toggle-mentor"
-                                                            data-id-mentor="{{ $item->id }}"
+                                                            data-id-mentor="{{ $item->UserAccount->id }}"
                                                             data-feature-id="{{ $featureItem->feature_id }}"
                                                             @if (isset($statusMentorFeature[$item->id][$featureItem->feature_id]) &&
                                                                     $statusMentorFeature[$item->id][$featureItem->feature_id] === 'aktif') checked @endif>

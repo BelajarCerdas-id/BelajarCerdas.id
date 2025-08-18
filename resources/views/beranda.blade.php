@@ -20,6 +20,18 @@
         });
     </script>
 @endif
+
+<!-- ALERT TANYA ACCESS UNTUK MENTOR -->
+@if (session('error-tanya-access-mentor'))
+    <script>
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "{{ session('error-tanya-access-mentor') }}",
+        });
+    </script>
+@endif
+
 @if (Auth::user()->role === 'Siswa')
     <div class="home-beranda z-[-1] md:z-0 mt-[80px] md:mt-0">
         <div class="content-beranda">

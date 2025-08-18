@@ -584,7 +584,7 @@
                                 <div
                                     class="bg-white h-max shadow-lg rounded-lg px-6 py-4 w-full mt-2                                                                                                                                                                                                                                                                                        ">
                                     <div class="flex flex-wrap gap-4">
-                                        @if ($dataMentorAhli)
+                                        @if ($dataMentorAhli->isNotEmpty())
                                             @foreach ($dataMentorAhli as $item)
                                                 <div
                                                     class="min-w-32 h-8 px-4 flex items-center justify-center bg-[#4189e0] text-white text-sm rounded-md">
@@ -592,7 +592,7 @@
                                                 </div>
                                             @endforeach
                                         @else
-                                            <span>Belum ada keahlian</span>
+                                            <span class="text-sm font-bold opacity-70">Belum ada keahlian</span>
                                         @endif
                                     </div>
                                 </div>

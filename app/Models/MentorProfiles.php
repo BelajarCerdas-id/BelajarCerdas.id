@@ -25,8 +25,4 @@ class MentorProfiles extends Model
     public function UserAccount() {
         return $this->belongsTo(UserAccount::class, 'user_id');
     }
-
-    public function MentorFeatureStatus() {
-        return $this->hasMany(MentorFeatureStatus::class, 'mentor_id');
-    }
 }

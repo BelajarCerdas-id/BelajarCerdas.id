@@ -55,11 +55,11 @@ function fetchFilteredDataTanyaMentor(status, page = 1) {
     $('#tableListTeacher').append(`
         <tr class="text-xs">
             <td class="td-table !text-black !text-center">${index + 1}</td>
-            <td class="td-table !text-black !text-center">${(application.student?.student_profiles?.nama_lengkap || '')}</td>
-            <td class="td-table !text-black !text-center">${application.kelas?.kelas || ''}</td>{!! nl2br(e($tanya->pertanyaan)) !!}
-            <td class="td-table !text-black">${nl2br(escapeHtml(application.pertanyaan))}</td>
-            <td class="td-table !text-black !text-center">${application.mapel?.mata_pelajaran}</td>
-            <td class="td-table !text-black !text-center">${application.bab?.nama_bab}</td>
+            <td class="td-table !text-black !text-center">${(application.student?.student_profiles?.nama_lengkap || '-')}</td>
+            <td class="td-table !text-black !text-center">${application.kelas?.kelas || '-'}</td>{!! nl2br(e($tanya->pertanyaan)) !!}
+            <td class="td-table !text-black">${nl2br(escapeHtml(application.pertanyaan)) || '-'}</td>
+            <td class="td-table !text-black !text-center">${application.mapel?.mata_pelajaran || '-'}</td>
+            <td class="td-table !text-black !text-center">${application.bab?.nama_bab || '-'}</td>
             <td class="td-table !text-black !text-center">${createdAt}</td>
             <td class="td-table !text-black !text-center">
                 ${
