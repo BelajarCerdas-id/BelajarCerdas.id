@@ -32,13 +32,21 @@ class AuthController extends Controller
         // Use a raw SQL query to fetch the user
         $user = UserAccount::where('email', $request->email)->first();
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
 
+        // memeriksa jika email dan pasword benar
+        if (Auth::attempt($credentials)) {
+            // memeriksa jika $user ada dan status_akun pada $user tidak aktif, maka berikan alert
+            if ($user && $user->status_akun !== 'aktif') {
+                Auth::logout(); // pastikan logout kalau sempat login
+                return redirect()->back()->with('alert-error-login', 'Akun kamu telah di nonaktifkan.');
+            }
+
+            // jika akun terdaftar dan status_akun aktif, maka redirect ke beranda
+            $request->session()->regenerate(); // bikin session ID baru setiap kali login
             return redirect()->intended('/beranda');
         }
 
-        return redirect()->back()->with('alert-error-login', 'Akun tidak terdaftar, silahkan masukkan data yang valid!.');
+        return redirect()->back()->with('alert-error-login', 'Akun tidak terdaftar, silahkan masukkan data yang valid.');
     }
 
     public function indexRegister()
