@@ -221,7 +221,10 @@ class ProfileController extends Controller
         $dataStudentProfiles = UserAccount::with('StudentProfiles')->findOrFail($id);
         $validator = Validator::make($request->all(), [
             'sekolah' => 'required',
-            'fase_id' => 'required|unique:student_profiles,fase_id',
+            'fase_id' => [
+                'required',
+                Rule::unique('student_profiles', 'fase_id')->where('fase_id', Auth::user()->Profile->fase_id)
+            ],
             'kelas_id' => [
                 'required',
                 Rule::unique('student_profiles', 'kelas_id')->where('kelas_id', Auth::user()->Profile->kelas_id)
