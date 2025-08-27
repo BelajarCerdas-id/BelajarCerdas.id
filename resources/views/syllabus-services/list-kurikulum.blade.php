@@ -188,7 +188,7 @@
                                                     <div id="excelPreviewContainer-bulkUpload-excel"
                                                         class="bg-white shadow-lg rounded-lg w-max py-2 pr-4 border-[1px] border-gray-200 hidden">
                                                         <div class="flex items-center">
-                                                            <img id="pdfLogo-bulkUpload-excel" class="w-[56px] h-max">
+                                                            <img id="logo-bulkUpload-excel" class="w-[56px] h-max">
                                                             <div class="mt-2 leading-5">
                                                                 <span id="textPreview-bulkUpload-excel"
                                                                     class="font-bold text-sm"></span><br>

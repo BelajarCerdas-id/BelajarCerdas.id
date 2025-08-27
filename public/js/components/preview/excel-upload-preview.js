@@ -5,7 +5,7 @@ function previewExcel(event, target) {
     var textPages = document.getElementById('textPages-' + target);
     var textCircle = document.getElementById('textCircle-' + target);
     var excelPreviewContainer = document.getElementById('excelPreviewContainer-' + target);
-    var excelLogo = document.getElementById('pdfLogo-' + target);
+    var excelLogo = document.getElementById('logo-' + target);
 
     // Jika tidak ada file (user cancel), reset preview
     if (!file) {

@@ -19,6 +19,7 @@ class Transactions extends Model
         'transaction_status',
         'jumlah_koin',
         'price',
+        'transaction_source',
     ];
 
     public function UserAccount()

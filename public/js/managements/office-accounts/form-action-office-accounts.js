@@ -91,8 +91,8 @@ $(document).ready(function () {
     paginateListOfficeAccounts();
 
     $(document).on('change', '.toggle-active-office-accounts', function () {
-        let accountId = $(this).data('account-id'); // Ambil sub bab id dari atribut data-id di checkbox
-        let status = $(this).is(':checked') ? 'aktif' : 'non-aktif'; // Jika toggle ON maka publish, kalau OFF maka unpublish
+        let accountId = $(this).data('account-id'); // Ambil account id dari atribut data-id di checkbox
+        let status = $(this).is(':checked') ? 'aktif' : 'non-aktif'; // Jika toggle ON maka aktif, kalau OFF maka non-aktif
 
         $.ajax({
             url: '/office-accounts-management/activate/' + accountId, // Endpoint ke server
@@ -114,7 +114,6 @@ $(document).ready(function () {
         });
     });
 });
-
 
 $(document).ready(function () {
     $('#form-office-accounts').on('submit', function (e) {

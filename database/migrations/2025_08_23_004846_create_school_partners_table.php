@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('feature_subscription_histories', function (Blueprint $table) {
+        Schema::create('school_partners', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained('user_accounts');
-            $table->foreignId('transaction_id')->constrained('transactions');
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->string('nama_sekolah');
+            $table->string('npsn');
+            $table->string('nama_kepsek');
+            $table->string('nik_kepsek');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('feature_subscription_histories');
+        Schema::dropIfExists('school_partners');
     }
 };

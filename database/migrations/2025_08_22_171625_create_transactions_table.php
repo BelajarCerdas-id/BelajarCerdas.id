@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->enum('transaction_status', ['Berhasil', 'Pending', 'Gagal', 'Kadaluarsa'])->default('Pending');
             $table->integer('jumlah_koin')->nullable();
             $table->integer('price');
+            $table->string('transaction_source')->nullable();
             $table->timestamps();
         });
     }

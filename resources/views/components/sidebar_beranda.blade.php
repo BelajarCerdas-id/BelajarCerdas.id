@@ -518,7 +518,7 @@
             </li>
             <li class="list-item">
                 <div class="dropdown-menu">
-                    <div class="toggle-menu-sidebar">
+                    <div class="toggle-menu-sidebar pl-1">
                         <i class="icon-menu fa-solid fa-user-graduate !text-md"></i>
                         <span class="">Mentor</span>
                         <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
@@ -526,6 +526,18 @@
                     <div class="content-dropdown">
                         <a href="{{ route('list.mentor') }}" class="link-href">List Mentor Apply</a>
                         <a href="{{ route('list.mentor.aktif') }}" class="link-href">List Mentor Aktif</a>
+                    </div>
+                </div>
+            </li>
+            <li class="list-item">
+                <div class="dropdown-menu">
+                    <div class="toggle-menu-sidebar">
+                        <i class="fa-solid fa-school-flag !text-md"></i>
+                        <span>School Partner</span>
+                        <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
+                    </div>
+                    <div class="content-dropdown">
+                        <a href="{{ route('schoolSubscription.view') }}" class="link-href">School Subscription</a>
                     </div>
                 </div>
             </li>
@@ -767,6 +779,23 @@
                                 <li class="list-item">
                                     <div class="dropdown-menu">
                                         <div class="toggle-menu-sidebar">
+                                            <i class="fa-solid fa-people-roof"></i>
+                                            <span class="">Managements</span>
+                                            <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
+                                        </div>
+                                        <div class="content-dropdown">
+                                            <a href="{{ route('officeAccounts.view') }}" class="link-href">
+                                                Office Accounts
+                                            </a>
+                                            <a href="{{ route('featuresManagement.view') }}" class="link-href">
+                                                Features Management
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-item">
+                                    <div class="dropdown-menu">
+                                        <div class="toggle-menu-sidebar">
                                             <i class="fa-solid fa-user-graduate !text-md"></i>
                                             <span class="">Mentor</span>
                                             <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
@@ -777,6 +806,20 @@
                                             </a>
                                             <a href="{{ route('list.mentor.aktif') }}" class="link-href">
                                                 List Mentor Aktif
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-item">
+                                    <div class="dropdown-menu">
+                                        <div class="toggle-menu-sidebar">
+                                            <i class="fa-solid fa-school-flag !text-md"></i>
+                                            <span class="">School Partner</span>
+                                            <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
+                                        </div>
+                                        <div class="content-dropdown">
+                                            <a href="{{ route('schoolSubscription.view') }}" class="link-href">
+                                                School Subscription
                                             </a>
                                         </div>
                                     </div>

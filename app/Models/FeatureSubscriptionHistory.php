@@ -14,6 +14,7 @@ class FeatureSubscriptionHistory extends Model
         'transaction_id',
         'start_date',
         'end_date',
+        'subscription_status',
     ];
 
     public function UserAccount()

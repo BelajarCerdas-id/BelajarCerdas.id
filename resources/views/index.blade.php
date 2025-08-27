@@ -1,4 +1,5 @@
 <x-navbar></x-navbar>
+
 <main>
     <!---- jumbotron dekstop ----->
     <section class="hidden lg:grid grid-cols-12 relative">

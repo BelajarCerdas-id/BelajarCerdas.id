@@ -12,7 +12,6 @@ $(document).ready(function () {
 
         $btn.prop('disabled', true); // disable tombol
 
-
         const formData = new FormData(this);
 
         $.ajax({
@@ -79,7 +78,7 @@ $(document).ready(function () {
                 $('#selectedIconKoin').html('');
                 $('#selectedKoin').text('');
 
-                $btn.prop('disabled', false); // undisable tombol
+                $btn.prop('disabled', false); // enable tombol
 
                 // inisialisasi pertanyaan student (pada halaman tanya mentor)
                 fetchFilteredDataTanyaMentor();
@@ -88,7 +87,7 @@ $(document).ready(function () {
                 if (xhr.status === 422) {
                     const errors = xhr.responseJSON.errors;
 
-                    $btn.prop('disabled', false); // undisable tombol
+                    $btn.prop('disabled', false); // enable tombol
 
                     // Bersihkan semua error sebelumnya
                     // $('.text-error').text('');

@@ -875,6 +875,24 @@ class SoalPembahasanController extends Controller
     // FUNCTION PRACTICE
     public function practice($kelas, $kelas_id, $mata_pelajaran, $mapel_id, $bab_id, $sub_bab_id)
     {
+        // Ambil tanggal hari ini hanya dalam format 'Y-m-d'
+        $today = now()->format('Y-m-d');
+
+        // Mendapatkan user yang sedang login
+        $user = Auth::user();
+
+        // Mendapatkan history subscription
+        $getHistorySubscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('feature_id', 2);
+        })->where('student_id', $user->id)->whereDate('end_date', '<', $today)->first();
+
+        // jika history subscription ada, maka update
+        if ($getHistorySubscription) {
+            $getHistorySubscription->update([
+                'subscription_status' => 'tidak_aktif'
+            ]);
+        }
+
         // mendapatkan bab name
         $getBabName = Bab::where('id', $bab_id)->first();
 
@@ -891,15 +909,13 @@ class SoalPembahasanController extends Controller
     {
         // Ambil tanggal hari ini hanya dalam format 'Y-m-d'
         $today = now()->format('Y-m-d');
-        // $today = Carbon::createFromFormat('Y-m-d', '2025-08-23')->format('Y-m-d');
-        // $today = Carbon::parse('2025-08-23')->startOfDay();
 
         // Ambil ID user yang sedang login
         $userId = Auth::id();
 
         // Ambil ulang soal-soal yang masih `Publish` dari DB
-        $publishedQuestionIds = SoalPembahasanQuestions::where('status_bank_soal', 'Publish')->where('sub_bab_id', $sub_bab_id)
-        ->pluck('id')->implode(',');
+        $publishedQuestionIds = SoalPembahasanQuestions::where('tipe_soal', 'Latihan')->where('status_bank_soal', 'Publish')
+        ->where('sub_bab_id', $sub_bab_id)->pluck('id')->implode(',');
 
         // Buat key cache unik berdasarkan tanggal, user, dan sub bab
         $cacheKey = "soal-pembahasan-practice-questions-{$today}-{$userId}-{$sub_bab_id}-{$publishedQuestionIds}";
@@ -950,7 +966,7 @@ class SoalPembahasanController extends Controller
         // Ambil informasi user yang berlangganan fitur soal dan pembahasan
         $subscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
             $query->where('feature_id', 2); // feature_id 2 menunjukkan fitur soal dan pembahasan
-        })->where('student_id', $userId)->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->first();
+        })->where('student_id', $userId)->where('subscription_status', 'aktif')->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->first();
 
         // Ambil ID video YouTube dari penjelasan (explanation) tiap soal (jika ada)
         $videoIds = $groupedQuestions->map(function ($group) {
@@ -978,9 +994,6 @@ class SoalPembahasanController extends Controller
 
         // Ambil tanggal hari ini
         $today = now()->format('Y-m-d');
-        // $today = Carbon::createFromFormat('Y-m-d', '2025-08-23')->format('Y-m-d');
-        // $today = Carbon::parse('2025-08-23')->startOfDay();
-
 
         $validator = Validator::make($request->all(), [
             'user_answer_option' => 'required',
@@ -1030,6 +1043,23 @@ class SoalPembahasanController extends Controller
     // FUNCTION EXAM
     public function exam($kelas, $kelas_id, $mata_pelajaran, $mapel_id, $bab_id)
     {
+        // Ambil tanggal hari ini hanya dalam format 'Y-m-d'
+        $today = now()->format('Y-m-d');
+
+        // Mendapatkan user yang sedang login
+        $user = Auth::user();
+
+        // Mendapatkan history subscription
+        $getHistorySubscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('feature_id', 2);
+        })->where('student_id', $user->id)->whereDate('end_date', '<', $today)->first();
+
+        // jika history subscription ada, maka update
+        if ($getHistorySubscription) {
+            $getHistorySubscription->update([
+                'subscription_status' => 'tidak_aktif'
+            ]);
+        }
         // mendapatkan bab name
         $getBabName = Bab::where('id', $bab_id)->first();
 
@@ -1043,19 +1073,19 @@ class SoalPembahasanController extends Controller
     {
         // Ambil tanggal hari ini hanya dalam format 'Y-m-d'
         $today = Carbon::now()->format('Y-m-d');
-        // $today = Carbon::createFromFormat('Y-m-d', '2026-08-25')->format('Y-m-d');
-        // $today = Carbon::parse('2025-08-24')->startOfDay();
 
         // Ambil ID user yang sedang login
         $userId = Auth::id();
 
-        // Ambil ulang soal-soal yang masih `Publish` dari DB
-        $publishedQuestionIds = SoalPembahasanQuestions::where('status_bank_soal', 'Publish')->where('bab_id', $bab_id)->pluck('id')->implode(',');
+        // Ambil ulang soal-soal yang masih `Publish` dari DB dan status soal adalah `Premium` dan tipe soal adalah `Ujian`
+        $publishedQuestionIds = SoalPembahasanQuestions::where('status_soal', 'Premium')->where('tipe_soal', 'Ujian')
+        ->where('status_bank_soal', 'Publish')->where('bab_id', $bab_id)->pluck('id')->implode(',');
 
         // Ambil informasi user yang berlangganan fitur soal dan pembahasan
         $subscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
             $query->where('feature_id', 2); // feature_id 2 menunjukkan fitur soal dan pembahasan
-        })->where('student_id', $userId)->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->first();
+        })->where('student_id', $userId)->where('subscription_status', 'aktif')->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)
+        ->first();
 
         // Buat key cache unik berdasarkan setiap subscription, user, dan sub bab
         $cacheKey = "soal-pembahasan-exam-questions-{$subscription}-{$userId}-{$bab_id}-{$publishedQuestionIds}";
@@ -1145,8 +1175,6 @@ class SoalPembahasanController extends Controller
     {
         // Ambil tanggal hari ini
         $today = Carbon::now()->format('Y-m-d');
-        // $today = Carbon::createFromFormat('Y-m-d', '2025-08-24')->format('Y-m-d');
-        // $today = Carbon::parse('2025-08-24')->startOfDay();
 
         $userId = Auth::id();
 

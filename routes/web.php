@@ -21,6 +21,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FeatureManagementController;
 use App\Http\Controllers\OfficeAccountController;
 use App\Http\Controllers\PaymentFeaturesController;
+use App\Http\Controllers\SchoolPartnerController;
 use App\Http\Controllers\SoalPembahasanController;
 use App\Http\Controllers\webController; // data biasa seperti foreach (tidak dari database) dan lain lain (jika ada selain foreach)
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -287,7 +288,7 @@ Route::fallback(function () {
     Route::get('/paginate/report-mentor', [FilterController::class, 'paginateReportPaymentMentor'])->name('paginate.reportPaymentMentor');
     Route::get('/paginate/batch-detail-payment-mentor/{id}', [FilterController::class, 'paginateBatchDetailPaymentMentor'])->name('paginate.batchDetailPaymentMentor');
 
-    // ROUTES SOAL DAN PEMBAHASAN
+    // ROUTES FITUR SOAL DAN PEMBAHASAN
     // BANK SOAL VIEWS (ADMINISTRATOR)
     Route::get('/soal-pembahasan/bank-soal', [SoalPembahasanController::class, 'bankSoalView'])->name('bankSoal.view');
     Route::get('/soal-pembahasan/bank-soal/{subBabId}/detail', [SoalPembahasanController::class, 'bankSoalDetail'])->name('bankSoal.detail.view');
@@ -341,6 +342,24 @@ Route::fallback(function () {
 
     // HISTORY QUESTIONS ASSESSMENT (PRACTICE AND EXAM, untuk menampilkan soal yang sudah dijawab)
     Route::get('/soal-pembahasan/riwayat-assessment/{materi_id}/{tipe_soal}/{date}/{kelas}/{mata_pelajaran}/questions', [SoalPembahasanController::class, 'historyQuestionsAssessment'])->name('historyQuestionSoalPembahasanAssessment');
+
+    // ROUTES SCHOOL PARTNER
+    // school subscription
+    Route::get('/school-subscription', [SchoolPartnerController::class, 'schoolSubscriptionView'])->name('schoolSubscription.view');
+    Route::post('/school-subcsription/store', [SchoolPartnerController::class, 'bulkUploadSchoolPartner'])->name('bulkUploadSchoolPartner.store');
+
+    // user school subscription
+    Route::get('/school-subscription/{schoolId}/user', [SchoolPartnerController::class, 'userSchoolSubscriptionView'])->name('userSchoolSubscription.view');
+    // activate by student
+    Route::put('/school-subscription/activate/{id}/user', [SchoolPartnerController::class, 'activateFeatureByStudent'])->name('activateFeatureByStudent');
+    // activate all student by school
+    Route::put('/school-subscription/activate/{schoolId}/{featureId}', [SchoolPartnerController::class, 'activateFeatureForAllStudents'])->name('activateFeatureForAllStudents');
+
+    // paginate list school partner
+    Route::get('/list-school-partner/paginate', [SchoolPartnerController::class, 'paginateListSchoolPartner'])->name('listSchoolPartner.paginate');
+
+    // paginate list user school subscription
+    Route::get('/list-user-school-subscription/paginate/{schoolId}', [SchoolPartnerController::class, 'paginateListUserSchoolSubscription'])->name('listUserSchoolSubscription.paginate');
 
     //ROUTES SYLLABUS-SERVICES
     // VIEWS

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Events\SyllabusCrud;
-use App\Imports\SyllabusImport;
 use App\Imports\SyllabusSheetImport;
 use App\Models\Bab;
 use App\Models\BabFeatureStatus;

@@ -36,6 +36,15 @@ $('#bulkUpload-syllabus-form').on('submit', function (e) {
                 `);
             }
 
+            // Reset form
+            $('#bulkUpload-syllabus-form')[0].reset();
+            $('#excelPreviewContainer-bulkUpload-excel').addClass('hidden');
+            $('#textPreview-bulkUpload-excel').text('');
+            $('#textSize-bulkUpload-excel').text('');
+            $('#textPages-bulkUpload-excel').text('');
+            $('#textCircle-bulkUpload-excel').html('');
+            $('#logo-bulkUpload-excel img').attr('src', '').hide();
+
             setTimeout(function() {
                 $('#alertSuccess').remove();
             }, 3000);

@@ -249,7 +249,8 @@ class PaymentFeaturesController extends Controller
             'feature_variant_id' => $request->feature_variant_id ?? null,
             'price' => (int)$request->price,
             'transaction_status' => 'Pending',
-            'jumlah_koin' => $request->jumlah_koin ?? 0
+            'jumlah_koin' => $request->jumlah_koin ?? 0,
+            'transaction_source' => 'non_school_partner',
         ]);
 
         $params = [
@@ -418,6 +419,7 @@ class PaymentFeaturesController extends Controller
             'feature_variant_id' => $request->feature_variant_id ?? null,
             'price' => (int)$request->price,
             'transaction_status' => 'Pending',
+            'transaction_source' => 'non_school_partner',
         ]);
 
         $params = [
