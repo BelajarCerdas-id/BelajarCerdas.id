@@ -1,4 +1,8 @@
-@include('components/sidebar_beranda', ['headerSideNav' => 'Soal Pembahasan'])
+@include('components/sidebar_beranda', [
+    'headerSideNav' => 'Soal Pembahasan',
+    'linkBackButton' => route('soalPembahasanBab.view', [$kelas, $kelas_id, $mata_pelajaran, $mapel_id]),
+    'backButton' => "<i class='fa-solid fa-chevron-left'></i>",
+])
 
 @if (Auth::user()->role === 'Siswa')
     <div class="home-beranda z-[-1] md:z-0 mt-[40px] md:mt-0">

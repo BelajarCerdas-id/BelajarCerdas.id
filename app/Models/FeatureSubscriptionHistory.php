@@ -12,6 +12,7 @@ class FeatureSubscriptionHistory extends Model
     protected $fillable = [
         'student_id',
         'transaction_id',
+        'fase_id',
         'start_date',
         'end_date',
         'subscription_status',
@@ -30,5 +31,10 @@ class FeatureSubscriptionHistory extends Model
     public function SoalPembahasanAnswers()
     {
         return $this->hasOne(SoalPembahasanAnswers::class, 'subscription_id');
+    }
+
+    public function Fase()
+    {
+        return $this->belongsTo(Fase::class, 'fase_id');
     }
 }

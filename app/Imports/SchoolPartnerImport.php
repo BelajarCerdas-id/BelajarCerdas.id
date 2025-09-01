@@ -138,7 +138,7 @@ class SchoolPartnerImport implements ToCollection, WithHeadingRow, WithStartRow,
                 continue;
             }
 
-            $createStudentProfiles = StudentProfiles::firstOrCreate([
+            $createStudentProfiles = StudentProfiles::updateOrCreate([
                 'personal_email' => $row['email_siswa'],
             ],
             [
@@ -168,12 +168,22 @@ class SchoolPartnerImport implements ToCollection, WithHeadingRow, WithStartRow,
             $endDate = $startDate->copy()->addMonths($month);
 
             // aktifkan fitur yang telah dibeli
-            $featureSubscriptionHistory = FeatureSubscriptionHistory::create([
-                'student_id' => $user->id,
-                'transaction_id' => $transaction->id,
-                'start_date' => $startDate,
-                'end_date' => $endDate
-            ]);
+            if ($feature->id == 2) {
+                $featureSubscriptionHistory = FeatureSubscriptionHistory::create([
+                    'student_id' => $user->id,
+                    'transaction_id' => $transaction->id,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'fase_id' => $getFase->id
+                ]);
+            } else {
+                $featureSubscriptionHistory = FeatureSubscriptionHistory::create([
+                    'student_id' => $user->id,
+                    'transaction_id' => $transaction->id,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate
+                ]);
+            }
 
             // insert school partner
             $schoolPartner = SchoolPartner::updateOrCreate([

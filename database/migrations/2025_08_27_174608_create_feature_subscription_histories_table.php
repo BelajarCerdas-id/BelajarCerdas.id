@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('student_id')->constrained('user_accounts');
             $table->foreignId('transaction_id')->constrained('transactions');
+            $table->foreignId('fase_id')->nullable()->constrained('fases');
             $table->date('start_date');
             $table->date('end_date');
             $table->enum('subscription_status', ['aktif', 'tidak_aktif'])->default('aktif');

@@ -388,7 +388,6 @@ class PaymentFeaturesController extends Controller
         }
     }
 
-
     // FUNCTION SOAL DAN PEMBAHASAN CHECKOUT
     public function checkoutSoalPembahasanSubcription(Request $request)
     {

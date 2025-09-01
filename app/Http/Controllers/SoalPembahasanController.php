@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\BankSoalEditQuestion;
 use App\Events\BankSoalListener;
 use App\Models\Bab;
+use App\Models\Fase;
 use App\Models\FeatureSubscriptionHistory;
 use App\Models\Kelas;
 use App\Models\Kurikulum;
@@ -798,23 +799,51 @@ class SoalPembahasanController extends Controller
     // function soal pembahasan preview kelas by fase student
     public function soalPembahasanKelasView()
     {
+        // Mendapatkan tanggal hari ini
+        $today = now()->format('Y-m-d');
+
         // Mendapatkan user yang sedang login
         $user = Auth::user();
 
-        // Mendapatkan kelas berdasarkan fase user
-        $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::with('Fase')->whereHas('Transactions', function ($query) {
+            $query->where('feature_id', 2);
+        })->where('student_id', $user->id)->where('subscription_status', 'aktif')
+        ->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->first();
 
-        return view('Features.soal-pembahasan.soal-pembahasan-kelas', compact('getKelasByFase'));
+        // Mendapatkan kelas berdasarkan fase user
+        if ($featureSubscriptionHistory) {
+            // mendapatkan kelas berdasarkan fase pada saat pembelian paket soal dan pembahasan
+            $getKelasByFase = Kelas::where('fase_id', $featureSubscriptionHistory->fase_id)->get();
+        } else {
+            // mendapatkan kelas berdasarkan fase ketika user tidak memiliki paket soal dan pembahasan aktif
+            $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+        }
+
+        return view('Features.soal-pembahasan.soal-pembahasan-kelas', compact('featureSubscriptionHistory', 'getKelasByFase'));
     }
 
     // function soal pembahasan preview mapel by kelas
     public function soalPembahasanMapelView($kelas, $kelas_id)
     {
+        // Mendapatkan tanggal hari ini
+        $today = now()->format('Y-m-d');
+
         // Mendapatkan user yang sedang login
         $user = Auth::user();
 
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::with('Fase')->whereHas('Transactions', function ($query) {
+            $query->where('feature_id', 2);
+        })->where('student_id', $user->id)->where('subscription_status', 'aktif')
+        ->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->first();
+
         // Mendapatkan kelas berdasarkan fase user
-        $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+        if ($featureSubscriptionHistory) {
+            // mendapatkan kelas berdasarkan fase pada saat pembelian paket soal dan pembahasan
+            $getKelasByFase = Kelas::where('fase_id', $featureSubscriptionHistory->fase_id)->get();
+        } else {
+            // mendapatkan kelas berdasarkan fase ketika user tidak memiliki paket soal dan pembahasan aktif
+            $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+        }
 
         // Mendapatkan mapel berdasarkan kelas yang dipilih user
         $getMapelByKelas = Mapel::where('kelas_id', $kelas_id)->get();
@@ -827,11 +856,25 @@ class SoalPembahasanController extends Controller
     // function soal pembahasan preview bab by mapel
     public function soalPembahasanBabView($kelas, $kelas_id, $mata_pelajaran, $mapel_id)
     {
+        // Mendapatkan tanggal hari ini
+        $today = now()->format('Y-m-d');
+
         // Mendapatkan user yang sedang login
         $user = Auth::user();
 
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::with('Fase')->whereHas('Transactions', function ($query) {
+            $query->where('feature_id', 2);
+        })->where('student_id', $user->id)->where('subscription_status', 'aktif')
+        ->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->first();
+
         // Mendapatkan kelas berdasarkan fase user
-        $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+        if ($featureSubscriptionHistory) {
+            // mendapatkan kelas berdasarkan fase pada saat pembelian paket soal dan pembahasan
+            $getKelasByFase = Kelas::where('fase_id', $featureSubscriptionHistory->fase_id)->get();
+        } else {
+            // mendapatkan kelas berdasarkan fase ketika user tidak memiliki paket soal dan pembahasan aktif
+            $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+        }
 
         // Mendapatkan bab berdasarkan mapel yang dipilih user
         $getBabByMapel = Bab::where('mapel_id', $mapel_id)->get();
@@ -844,11 +887,25 @@ class SoalPembahasanController extends Controller
     // function soal pembahasan preview sub bab by bab
     public function soalPembahasanSubBabView($kelas, $kelas_id, $mata_pelajaran, $mapel_id, $bab_id)
     {
+        // Mendapatkan tanggal hari ini
+        $today = now()->format('Y-m-d');
+
         // Mendapatkan user yang sedang login
         $user = Auth::user();
 
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::with('Fase')->whereHas('Transactions', function ($query) {
+            $query->where('feature_id', 2);
+        })->where('student_id', $user->id)->where('subscription_status', 'aktif')
+        ->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->first();
+
         // Mendapatkan kelas berdasarkan fase user
-        $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+        if ($featureSubscriptionHistory) {
+            // mendapatkan kelas berdasarkan fase pada saat pembelian paket soal dan pembahasan
+            $getKelasByFase = Kelas::where('fase_id', $featureSubscriptionHistory->fase_id)->get();
+        } else {
+            // mendapatkan kelas berdasarkan fase ketika user tidak memiliki paket soal dan pembahasan aktif
+            $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+        }
 
         // Mendapatkan sub bab berdasarkan mapel yang dipilih user
         $getSubBabByBab = SubBab::where('bab_id', $bab_id)->get();
@@ -861,11 +918,25 @@ class SoalPembahasanController extends Controller
     // function soal pembahasan preview assessment (practice or exam)
     public function soalPembahasanAssessmentView($kelas, $kelas_id, $mata_pelajaran, $mapel_id, $bab_id)
     {
+        // Mendapatkan tanggal hari ini
+        $today = now()->format('Y-m-d');
+
         // Mendapatkan user yang sedang login
         $user = Auth::user();
 
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::with('Fase')->whereHas('Transactions', function ($query) {
+            $query->where('feature_id', 2);
+        })->where('student_id', $user->id)->where('subscription_status', 'aktif')
+        ->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->first();
+
         // Mendapatkan kelas berdasarkan fase user
-        $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+        if ($featureSubscriptionHistory) {
+            // mendapatkan kelas berdasarkan fase pada saat pembelian paket soal dan pembahasan
+            $getKelasByFase = Kelas::where('fase_id', $featureSubscriptionHistory->fase_id)->get();
+        } else {
+            // mendapatkan kelas berdasarkan fase ketika user tidak memiliki paket soal dan pembahasan aktif
+            $getKelasByFase = Kelas::where('fase_id', $user->Profile->fase_id)->get();
+        }
 
         return view('Features.soal-pembahasan.soal-pembahasan-list-assessment', compact(
             'kelas', 'kelas_id', 'mata_pelajaran', 'mapel_id', 'bab_id', 'getKelasByFase',

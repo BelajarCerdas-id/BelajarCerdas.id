@@ -44,8 +44,9 @@ class CheckoutSoalPembahasanSubscriptionHandler
             FeatureSubscriptionHistory::create([
                 'student_id' => $transaction->user_id,
                 'transaction_id' => $transaction->id,
+                'fase_id' => $transaction->UserAccount->StudentProfiles->fase_id,
                 'start_date' => $startDate,
-                'end_date' => $endDate
+                'end_date' => $endDate,
             ]);
         }
 

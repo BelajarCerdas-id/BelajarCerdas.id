@@ -54,5 +54,9 @@ class Fase extends Model
         return $this->hasOne(StudentProfiles::class, 'fase_id');
     }
 
+    public function FeatureSubscriptionHistory()
+    {
+        return $this->hasOne(FeatureSubscriptionHistory::class, 'fase_id');
+    }
 
 }

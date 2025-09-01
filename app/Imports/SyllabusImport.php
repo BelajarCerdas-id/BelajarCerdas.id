@@ -11,14 +11,13 @@ use App\Models\Mapel;
 use App\Models\SubBab;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\WithTitle;
 
-class SyllabusImport implements ToCollection, WithHeadingRow, SkipsEmptyRows, WithStartRow, WithTitle
+class SyllabusImport implements ToCollection, WithHeadingRow, WithStartRow, WithTitle
 {
     /**
     * @param Collection $collection
@@ -141,18 +140,17 @@ class SyllabusImport implements ToCollection, WithHeadingRow, SkipsEmptyRows, Wi
             ], [
                 'kode' => $row['sub_bab'],
             ]);
+
+            // Broadcast event
+            if (isset($subBab)) {
+                broadcast(new SyllabusCrud('subBab', 'import', [$subBab]))->toOthers();
+            }
         }
 
         // Handle error
         if (!empty($errors)) {
             throw ValidationException::withMessages(['import' => $errors]);
         }
-
-        // Broadcast event
-        if (isset($subBab)) {
-            broadcast(new SyllabusCrud('subBab', 'import', [$subBab]))->toOthers();
-        }
-
     }
 
 }

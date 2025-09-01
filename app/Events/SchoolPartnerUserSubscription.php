@@ -20,9 +20,12 @@ class SchoolPartnerUserSubscription implements ShouldBroadcast
      */
     public $schoolPartnerUserSubscription;
 
-    public function __construct(Collection $schoolPartnerUserSubscription)
+    public function __construct($schoolPartnerUserSubscription)
     {
-        $this->schoolPartnerUserSubscription = $schoolPartnerUserSubscription;
+        // kalau model tunggal, bungkus jadi collection (untuk broadcast tunggal dan berupa collection)
+        $this->schoolPartnerUserSubscription = $schoolPartnerUserSubscription instanceof Collection
+            ? $schoolPartnerUserSubscription
+            : collect([$schoolPartnerUserSubscription]);
     }
 
     /**
