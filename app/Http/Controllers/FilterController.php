@@ -697,35 +697,4 @@ class FilterController extends Controller
             'historyQuestionsAssessment' => '/soal-pembahasan/riwayat-assessment/:materi_id/:tipe_soal/:date/:kelas/:mata_pelajaran',
         ]);
     }
-
-    // FILTERING ENGLISH ZONE QUESTIONS
-    public function questionStatus(Request $request)
-    {
-        $user = session('user');
-
-        $query = englishZoneSoal::query()->groupBy('soal');
-
-        // filtering by status_soal
-        if ($request->filled('status_soal') && $request->status_soal !== 'semua') {
-        $query->where('status_soal', $request->status_soal);
-        }
-
-        // filtering by modul
-        if ($request->filled('modul_soal') && $request->modul_soal !== 'semua') {
-            $query->where('modul_soal', $request->modul_soal);
-        }
-
-        // filtering by jenjang
-        if($request->filled('jenjang') && $request->jenjang !== 'semua') {
-            $query->where('jenjang', $request->jenjang);
-        }
-
-        // Paginate the filtered results
-        $data = $query->orderBy('created_at', 'desc')->paginate(20);
-
-        return response()->json([
-            'data' => $data->items(),
-            'links' => (string) $data->links()
-        ]);
-    }
 }

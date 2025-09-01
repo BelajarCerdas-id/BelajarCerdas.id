@@ -414,40 +414,6 @@ Route::fallback(function () {
     // BULKUPLOAD SYLLABUS
     Route::post('/syllabus/bulkupload/syllabus', [SyllabusController::class, 'bulkUploadSyllabus'])->name('syllabus.bulkupload');
 
-    // ENGLISH ZONE ACCESS MIDDLEWARE
-    Route::middleware([CheckEnglishZone::class])->group(function () {
-
-    });
-    Route::get('/english-zone', [EnglishZoneController::class, 'index'])->name('englishZone.index');
-
-    // ROUTES ENGLISH ZONE
-    // Routes View
-    Route::get('upload-materi', [EnglishZoneController::class, 'uploadMateri'])->name('englisHone.uploadMateri');
-    Route::get('/upload-soal', [EnglishZoneController::class, 'uploadSoal'])->name('englishZone.uploadSoal');
-    // lalu route akan mendapatkan parameter yang dikirim oleh href tadi yang akan di proses oleh controller
-    Route::get('/pengayaan/{modul}/{id}', [EnglishZoneController::class, 'pengayaan'])->name('pengayaan');
-    Route::get('question-for-release', [EnglishZoneController::class, 'questionForRelease'])->name('englishZone.questionForRelease');
-
-    // Routes CRUD
-    Route::post('/upload-materi', [EnglishZoneController::class, 'uploadMateriStore'])->name('englishZone.uploadMateri');
-    Route::post('/upload-soal', [EnglishZoneController::class, 'uploadSoalStore'])->name('englishZone.uploadSoal');
-    Route::get('/englishZone-view/{id}', [EnglishZoneController::class, 'show'])->name('englishZone.show');
-
-    Route::post('/laporana', [EnglishZoneController::class, 'uploadImage'])->name('englishZone.uploadImage');
-    Route::post('/delete-image-endpoint', [EnglishZoneController::class, 'deleteImage'])->name('englishZone.deleteImage');
-
-    Route::post('/pengayaan/{id}', [EnglishZoneController::class, 'uploadJawaban'])->name('englishZoneJawaban.store');
-
-    Route::put('question-for-release/update', [englishZoneController::class, 'update'])->name('questionForRelease.update');
-
-    Route::get('/filter-questions', [filterController::class, 'questionStatus'])->name('filter.questions');
-
-    Route::get('video/{modul}', [EnglishZoneController::class, 'video'])->name('englishZone.video');
-
-    Route::get('/getCertificate', [CertificateController::class, 'generateCertificate'])->name('generateCertificate');
-    Route::post('/certificate', [EnglishZoneController::class, 'certificateStore'])->name('certificate.store');
-
-
     // ROUTES PKS (data sekolah & data murid pks)
     // VIEWS input data
     Route::get('/input-murid', [PksController::class, 'inputDataMurid'])->name('input-murid');
