@@ -578,10 +578,7 @@
                         <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
                     </div>
                     <div class="content-dropdown">
-                        <a href="{{ route('englisHone.uploadMateri') }}" class="link-href">Upload Materi</a>
-                        <a href="{{ route('englishZone.uploadSoal') }}" class="link-href">Upload Soal</a>
-                        <a href="{{ route('englishZone.questionForRelease') }}" class="link-href">Question For
-                            Release</a>
+                        <a href="" class="link-href">Bank Soal</a>
                     </div>
                 </div>
             </li>
@@ -865,15 +862,8 @@
                                             <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
                                         </div>
                                         <div class="content-dropdown">
-                                            <a href="{{ route('englisHone.uploadMateri') }}" class="link-href">
-                                                Upload Materi
-                                            </a>
-                                            <a href="{{ route('englishZone.uploadSoal') }}" class="link-href">
-                                                Upload Soal
-                                            </a>
-                                            <a href="{{ route('englishZone.questionForRelease') }}"
-                                                class="link-href">
-                                                Question For Release
+                                            <a href="" class="link-href">
+                                                Bank Soal
                                             </a>
                                         </div>
                                     </div>

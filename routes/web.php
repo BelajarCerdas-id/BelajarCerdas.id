@@ -350,8 +350,10 @@ Route::fallback(function () {
 
     // user school subscription
     Route::get('/school-subscription/{schoolId}/user', [SchoolPartnerController::class, 'userSchoolSubscriptionView'])->name('userSchoolSubscription.view');
+
     // activate by student
     Route::put('/school-subscription/activate/{id}/user', [SchoolPartnerController::class, 'activateFeatureByStudent'])->name('activateFeatureByStudent');
+
     // activate all student by school
     Route::put('/school-subscription/activate/{schoolId}/{featureId}', [SchoolPartnerController::class, 'activateFeatureForAllStudents'])->name('activateFeatureForAllStudents');
 
@@ -414,31 +416,6 @@ Route::fallback(function () {
     // BULKUPLOAD SYLLABUS
     Route::post('/syllabus/bulkupload/syllabus', [SyllabusController::class, 'bulkUploadSyllabus'])->name('syllabus.bulkupload');
 
-    // ROUTES PKS (data sekolah & data murid pks)
-    // VIEWS input data
-    Route::get('/input-murid', [PksController::class, 'inputDataMurid'])->name('input-murid');
-    // VIEWS management data
-    Route::get('/data-sekolah', [PksController::class, 'managementDataSekolah'])->name('data-sekolah');
-    Route::get('/data-sekolah-pks', [PksController::class, 'managementDaftarSekolah'])->name('data-sekolah-pks');
-    Route::get('/data-civitas-sekolah/{sekolah}', [PksController::class, 'managementCivitasSekolah'])->name('data-civitas-sekolah');
-
-
-    Route::get('/input-surat-pks', [PksController::class, 'inputSuratPks'])->name('input-surat-pks');
-    Route::post('/data-surat-pks', [PksController::class, 'inputSuratPksStore'])->name('input-surat-pks.store');
-    Route::post('/tambah-paket-pks', [PksController::class, 'tambahPaketPKS'])->name('tambahPaketPks.store');
-
-    Route::get('/data-pks-sekolah', [PksController::class, 'dataPksSekolah'])->name('data-pks-sekolah');
-    Route::get('/data-pks-sekolah/view/{sekolah}', [PksController::class, 'viewDataPksSekolah'])->name('data-pks-sekolah.edit');
-    Route::get('/upload-bulk-upload', [PksController::class, 'bulkUploadCivitasSekolah'])->name('bulk-upload-civitas-sekolah');
-    Route::post('/upload-bulk-upload-store', [PksController::class, 'bulkUploadCivitasSekolahStore'])->name('bulk-upload-civitas-sekolah.store');
-    Route::put('/data-pks-sekolah/update/{id}', [PksController::class, 'updateDataPksSekolah'])->name('dataPksSekolah.update');
-
-    //ROUTES IMPORT EXCEL
-    Route::post('/import-data-murid', [ImportController::class, 'importDataMurid'])->name('import-data-murid');
-
-    // ROUTES EXPORT TEMPLATE BULK UPLOAD EXCEL
-    Route::get('/export-template-excel', [PKSController::class, 'generateTemplateExcel'])->name('BulkUpload-excel');
-
     // ROUTES LIST MENTOR
     // VIEWS
     Route::get('/mentor', [MitraCerdasController::class, 'mentorView'])->name('list.mentor');
@@ -452,23 +429,4 @@ Route::fallback(function () {
     // ROUTES TEMPLATE SIDEBAR
     Route::get('/sidebar', [WebController::class, 'sidebarBeranda']);
     Route::get('/sidebar-beranda-mobile', [WebController::class, 'sidebarBerandaMobile']);
-
-    // ROUTES MASTERDATA(KERJASAMA SEKOLAH B2B & B2G)
-    // VIEW
-    Route::get('/upload-surat-pks', [SuratPKSController::class, 'index'])->name('suratPKS');
-    // CRUD
-    Route::post('/suratPKS', [suratPKSController::class, 'uploadSuratPKS'])->name('suratPKS.store');
-    Route::post('/inputDataSekolah', [PksController::class, 'inputDataSekolahStore'])->name('inputDataSekolah.store');
-    // SHOW PDF
-    Route::get('/surat-pks-english-zone/{id}/{sekolah}', [SuratPKSController::class, 'generateSuratPKSEnglishZone'])->name('generateSuratPKSEnglishZone');
-
-    // ROUTES VISITASIDATA (KERJASAMA SEKOLAH B2B & B2G) (Sales)
-    // VIEW
-    Route::get('/visitasi/jadwal-kunjungan', [VisitasiDataController::class, 'jadwalKunjungan'])->name('jadwalKunjungan');
-    Route::get('/visitasi/data-kunjungan', [VisitasiDataController::class, 'dataKunjungan'])->name('dataKunjungan');
-    Route::get('/visitasi/cetak-pks', [VisitasiDataController::class, 'cetakPKS'])->name('cetakPKS');
-    Route::put('/status-cetak-pks/{id}', [PksController::class, 'updateStatusCetakPKS'])->name('statusCetakPKS.update');
-    // CRUD
-    Route::post('/visitasiData', [VisitasiDataController::class, 'visitasiDataStore'])->name('visitasiData.store');
-    Route::put('/visitasiData/{id}', [VisitasiDataController::class, 'updateStatusKunjungan'])->name('visitasiData.update');
 });
