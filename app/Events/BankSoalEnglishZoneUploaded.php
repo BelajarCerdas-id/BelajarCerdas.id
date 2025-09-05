@@ -2,8 +2,7 @@
 
 namespace App\Events;
 
-use Illuminate\Support\Collection;
-use App\Models\SoalPembahasanQuestions;
+use App\Models\EnglishZoneQuestions;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -12,18 +11,19 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class BankSoalEditQuestion implements ShouldBroadcast
+class BankSoalEnglishZoneUploaded implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public $bankSoalEditQuestion;
-    public function __construct(Collection $bankSoalEditQuestion)
+
+    public $bankSoal;
+    public function __construct(EnglishZoneQuestions $bankSoal)
     {
         // jika yang di broadcast adalah sebuah collection
-        $this->bankSoalEditQuestion = $bankSoalEditQuestion->pluck('sub_bab_id');
+        $this->bankSoal = $bankSoal;
     }
 
     /**
@@ -33,11 +33,11 @@ class BankSoalEditQuestion implements ShouldBroadcast
      */
     public function broadcastOn(): Channel
     {
-        return new Channel('bankSoalEditQuestion');
+        return new Channel('bankSoal');
     }
 
     public function broadcastAs(): string
     {
-        return 'bank.soal.edit.question';
+        return 'bank.soal';
     }
 }

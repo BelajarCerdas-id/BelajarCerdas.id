@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\BankSoalEditQuestion;
-use App\Events\BankSoalListener;
+use App\Events\BankSoalPembahasanEditQuestion;
+use App\Events\BankSoalPembahasanUploaded;
 use App\Models\Bab;
-use App\Models\Fase;
 use App\Models\FeatureSubscriptionHistory;
 use App\Models\Kelas;
 use App\Models\Kurikulum;
@@ -51,7 +50,7 @@ class SoalPembahasanController extends Controller
             ]);
         }
 
-        broadcast(new BankSoalEditQuestion($dataBankSoal))->toOthers();
+        broadcast(new BankSoalPembahasanEditQuestion($dataBankSoal))->toOthers();
 
         return response()->json([
             'status' => 'success',
@@ -72,7 +71,7 @@ class SoalPembahasanController extends Controller
         $editQuestion = SoalPembahasanQuestions::find($id);
 
         if (!$editQuestion) {
-            return redirect()->route('bankSoal.detail.view', [$subBabId]);
+            return redirect()->route('SP.bankSoal.detail.view', [$subBabId]);
         }
 
         // Mengambil data soal yang punya pertanyaan (questions) yang sama, lalu dikelompokkan berdasarkan isi questions-nya
@@ -89,7 +88,7 @@ class SoalPembahasanController extends Controller
         $editQuestion = SoalPembahasanQuestions::find($id);
 
         if (!$editQuestion) {
-            return redirect()->route('bankSoal.detail.view', [$subBabId]);
+            return redirect()->route('SP.bankSoal.detail.view', [$subBabId]);
         }
 
         // Mengambil data soal yang punya pertanyaan (questions) yang sama, lalu dikelompokkan berdasarkan isi questions-nya
@@ -150,7 +149,7 @@ class SoalPembahasanController extends Controller
             }
         }
 
-        broadcast(new BankSoalEditQuestion($groupedSoal))->toOthers();
+        broadcast(new BankSoalPembahasanEditQuestion($groupedSoal))->toOthers();
 
         return response()->json([
             'status' => 'success',
@@ -747,7 +746,7 @@ class SoalPembahasanController extends Controller
 
         // Kirim event broadcast kalau soal berhasil ditambahkan
         if (isset($createBankSoal)) {
-            broadcast(new BankSoalListener($createBankSoal))->toOthers();
+            broadcast(new BankSoalPembahasanUploaded($createBankSoal))->toOthers();
         }
 
         // Bersihkan file sementara

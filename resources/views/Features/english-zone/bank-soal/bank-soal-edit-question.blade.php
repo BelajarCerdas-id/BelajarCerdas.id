@@ -1,5 +1,5 @@
 @include('components/sidebar_beranda', [
-    'linkBackButton' => route('SP.bankSoal.detail.view', [$subBabId]),
+    'linkBackButton' => route('EZ.bankSoal.detail.view', [$levelId]),
     'backButton' => "<i class='fa-solid fa-chevron-left'></i>",
     'headerSideNav' => 'Edit Question',
 ]);
@@ -13,9 +13,9 @@
 
             <main>
                 <section class="bg-white shadow-lg rounded-lg p-8 border border-gray-200">
-                    <div id="editor-container" data-sub-bab-id="{{ $subBabId }}" data-question-id="{{ $id }}"
-                        data-upload-url="{{ route('soalPembahasan.editImage', ['_token' => csrf_token()]) }}"
-                        data-delete-url="{{ route('soalPembahasan.deleteImage') }}">
+                    <div id="editor-container" data-level-id="{{ $levelId }}" data-question-id="{{ $id }}"
+                        data-upload-url="{{ route('englishZone.editImage', ['_token' => csrf_token()]) }}"
+                        data-delete-url="{{ route('englishZone.deleteImage') }}">
                         <!---- form in ajax ---->
                     </div>
                 </section>
@@ -29,9 +29,7 @@
     </div>
 @endif
 
-<script src="{{ asset('js/Features/soal-pembahasan/bank-soal/form-action-edit-question.js') }}"></script> <!--- form action edit question ---->
-<!-- script ckeditor untuk menampilkan dan mendelete gambar diserver setelah user menghapus gambar di editor --->
-{{-- <script src="{{ asset('js/Features/soal-pembahasan/bank-soal/edit-question-ckeditor.js') }}"></script> --}}
+<script src="{{ asset('js/Features/english-zone/bank-soal/form-action-edit-question.js') }}"></script> <!--- form action edit question ---->
 
 <!--- PUSHER LISTENER ---->
 <script src="{{ asset('js/pusher-listener/soal-pembahasan/bank-soal-edit-question.js') }}"></script> <!--- pusher listener update soal ---->

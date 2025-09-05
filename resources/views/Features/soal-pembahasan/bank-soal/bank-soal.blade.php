@@ -164,7 +164,7 @@
                                     <th class="th-table text-black opacity-70">Mata pelajaran</th>
                                     <th class="th-table text-black opacity-70">Bab</th>
                                     <th class="th-table text-black opacity-70">Sub Bab</th>
-                                    <th class="th-table text-black opacity-70">Status Soal</th>
+                                    <th class="th-table text-black opacity-70">Status Bank Soal</th>
                                     <th class="th-table text-black opacity-70">Action</th>
                                     <th class="th-table text-black opacity-70">Detail</th>
                                 </tr>

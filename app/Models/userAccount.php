@@ -36,22 +36,6 @@ class UserAccount extends Authenticatable
         return $this->hasOne(Transactions::class, 'user_id');
     }
 
-    // ENGLISH ZONE
-    public function EnglishZoneUser() {
-        return $this->hasOne(EnglishZoneUser::class, 'user_id');
-    }
-    public function EnglishZoneMateri() {
-        return $this->hasOne(englishZoneMateri::class, 'user_id');
-    }
-
-    public function EnglishZoneSoal() {
-        return $this->hasOne(englishZoneMateri::class, 'user_id');
-    }
-
-    public function EnglishZoneJawaban() {
-        return $this->hasOne(englishZoneMateri::class, 'user_id');
-    }
-
     // TANYA COIN
     public function TanyaUserCoin() {
         return $this->hasOne(TanyaUserCoin::class, 'user_id');
@@ -109,6 +93,11 @@ class UserAccount extends Authenticatable
     // SOAL PEMBAHASAN QUESTIONS
     public function SoalPembahasanQuestions() {
         return $this->hasOne(SoalPembahasanQuestions::class, 'administrator_id');
+    }
+
+    // ENGLISH ZONE
+    public function EnglishZoneQuestions() {
+        return $this->hasOne(EnglishZoneQuestions::class, 'administrator_id');
     }
 
     // MENTOR FEATURE STATUS

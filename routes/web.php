@@ -2,21 +2,15 @@
 
 use App\Http\Middleware\TanyaHolidayAccess;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PksController;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Controllers\ChartController;
 use App\Http\Controllers\MasterAcademicController;
 use App\Http\Controllers\TanyaController;
-use App\Http\Middleware\CheckEnglishZone;
 use App\Http\Controllers\FilterController;
-use App\Http\Controllers\ImportController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SuratPKSController;
 use App\Http\Controllers\SyllabusController;
-use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\EnglishZoneController;
 use App\Http\Controllers\MitraCerdasController;
-use App\Http\Controllers\VisitasiDataController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FeatureManagementController;
 use App\Http\Controllers\OfficeAccountController;
@@ -290,19 +284,19 @@ Route::fallback(function () {
 
     // ROUTES FITUR SOAL DAN PEMBAHASAN
     // BANK SOAL VIEWS (ADMINISTRATOR)
-    Route::get('/soal-pembahasan/bank-soal', [SoalPembahasanController::class, 'bankSoalView'])->name('bankSoal.view');
-    Route::get('/soal-pembahasan/bank-soal/{subBabId}/detail', [SoalPembahasanController::class, 'bankSoalDetail'])->name('bankSoal.detail.view');
-    Route::get('/soal-pembahasan/bank-soal/{subBabId}/{id}', [SoalPembahasanController::class, 'editQuestionView'])->name('bankSoal.edit.question.view');
-    Route::get('/soal-pembahasan/bank-soal/form/{subBabId}/{id}', [SoalPembahasanController::class, 'formEditQuestion'])->name('bankSoal.form.edit.question');
-    Route::post('/soal-pembahasan/bank-soal/update/{id}', [SoalPembahasanController::class, 'editQuestion'])->name('bankSoal.edit.question.update');
+    Route::get('/soal-pembahasan/bank-soal', [SoalPembahasanController::class, 'bankSoalView'])->name('SP.bankSoal.view');
+    Route::get('/soal-pembahasan/bank-soal/{subBabId}/detail', [SoalPembahasanController::class, 'bankSoalDetail'])->name('SP.bankSoal.detail.view');
+    Route::get('/soal-pembahasan/bank-soal/{subBabId}/{id}', [SoalPembahasanController::class, 'editQuestionView'])->name('SP.bankSoal.edit.question.view');
+    Route::get('/soal-pembahasan/bank-soal/form/{subBabId}/{id}', [SoalPembahasanController::class, 'formEditQuestion'])->name('SP.bankSoal.form.edit.question');
 
     // CRUD BANK SOAL (ADMINISTRATOR)
-    Route::post('/soal-pembahasan/bank-soal-store', [SoalPembahasanController::class, 'bankSoalStore'])->name('bankSoal.store');
-    Route::put('/soal-pembahasan/bank-soal/activate/{subBabId}', [SoalPembahasanController::class, 'bankSoalActivate'])->name('bankSoal.activate');
+    Route::post('/soal-pembahasan/bank-soal-store', [SoalPembahasanController::class, 'bankSoalStore'])->name('SP.bankSoal.store');
+    Route::put('/soal-pembahasan/bank-soal/activate/{subBabId}', [SoalPembahasanController::class, 'bankSoalActivate'])->name('SP.bankSoal.activate');
+    Route::post('/soal-pembahasan/bank-soal/update/{id}', [SoalPembahasanController::class, 'editQuestion'])->name('SP.bankSoal.edit.question.update');
 
     // PAGINATE BANK SOAL (ADMINISTRATOR)
-    Route::get('/soal-pembahasan/paginate/bank-soal', [FilterController::class, 'paginateBankSoal'])->name('bankSoal.paginate');
-    Route::get('/soal-pembahasan/paginate/bank-soal/{subBab}/{subBabId}', [FilterController::class, 'paginateBankSoalDetail'])->name('bankSoalDetail.paginate');
+    Route::get('/soal-pembahasan/paginate/bank-soal', [FilterController::class, 'paginateBankSoal'])->name('SP.bankSoal.paginate');
+    Route::get('/soal-pembahasan/paginate/bank-soal/{subBab}/{subBabId}', [FilterController::class, 'paginateBankSoalDetail'])->name('SP.bankSoalDetail.paginate');
 
     // UPLOAD & DELETE IMAGE BANK SOAL WITH CKEDITOR
     Route::post('/bank-soal/edit-image', [SoalPembahasanController::class, 'editImageBankSoal'])->name('soalPembahasan.editImage');
@@ -342,6 +336,27 @@ Route::fallback(function () {
 
     // HISTORY QUESTIONS ASSESSMENT (PRACTICE AND EXAM, untuk menampilkan soal yang sudah dijawab)
     Route::get('/soal-pembahasan/riwayat-assessment/{materi_id}/{tipe_soal}/{date}/{kelas}/{mata_pelajaran}/questions', [SoalPembahasanController::class, 'historyQuestionsAssessment'])->name('historyQuestionSoalPembahasanAssessment');
+
+    // ROUTES FITUR ENGLISH ZONE
+    // bank soal views(ADMINISTRATOR)
+    Route::get('/english-zone/bank-soal', [EnglishZoneController::class, 'bankSoalView'])->name('EZ.bankSoal.view');
+    Route::get('/english-zone/bank-soal/{levelId}/detail', [EnglishZoneController::class, 'bankSoalDetail'])->name('EZ.bankSoal.detail.view');
+    Route::get('/english-zone/bank-soal/{levelId}/{id}', [EnglishZoneController::class, 'editQuestionView'])->name('EZ.bankSoal.edit.question.view');
+    Route::get('/english-zone/bank-soal/form/{levelId}/{id}', [EnglishZoneController::class, 'formEditQuestion'])->name('EZ.bankSoal.form.edit.question');
+
+    // CRUD bank soal (ADMINISTRATOR)
+    Route::post('/english-zone/bank-soal-store', [EnglishZoneController::class, 'bankSoalStore'])->name('EZ.bankSoal.store');
+    Route::put('/english-zone/bank-soal/activate/{levelId}', [EnglishZoneController::class, 'bankSoalActivate'])->name('EZ.bankSoal.activate');
+    Route::post('/english-zone/bank-soal/update/{id}', [EnglishZoneController::class, 'editQuestion'])->name('EZ.bankSoal.edit.question.update');
+    Route::put('/english-zone/bank-soal/edit-level/{levelId}', [EnglishZoneController::class, 'editLevelName'])->name('EZ.bankSoal.edit.level');
+
+    // PAGINATE bank soal (ADMINISTRATOR)
+    Route::get('/english-zone/paginate/bank-soal', [EnglishZoneController::class, 'paginateBankSoal'])->name('EZ.bankSoal.paginate');
+    Route::get('/english-zone/paginate/bank-soal/{levelId}', [EnglishZoneController::class, 'paginateBankSoalDetail'])->name('EZ.bankSoalDetail.paginate');
+
+    // UPLOAD & DELETE IMAGE BANK SOAL WITH CKEDITOR
+    Route::post('english-zone/bank-soal/edit-image', [EnglishZoneController::class, 'editImageBankSoal'])->name('englishZone.editImage');
+    Route::post('english-zone/bank-soal/delete-image/endpoint', [EnglishZoneController::class, 'deleteImageBankSoal'])->name('englishZone.deleteImage');
 
     // ROUTES SCHOOL PARTNER
     // school subscription

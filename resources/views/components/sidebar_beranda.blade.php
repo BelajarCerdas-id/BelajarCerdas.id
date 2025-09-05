@@ -573,24 +573,24 @@
             <li class="list-item">
                 <div class="dropdown-menu">
                     <div class="toggle-menu-sidebar">
-                        <i class="fas fa-house"></i>
-                        <span>English Zone</span>
+                        <i class="fa-solid fa-book-open-reader !text-md"></i>
+                        <span>Soal & Pembahasan</span>
                         <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
                     </div>
                     <div class="content-dropdown">
-                        <a href="" class="link-href">Bank Soal</a>
+                        <a href="{{ route('SP.bankSoal.view') }}" class="link-href">Bank Soal</a>
                     </div>
                 </div>
             </li>
             <li class="list-item">
                 <div class="dropdown-menu">
                     <div class="toggle-menu-sidebar">
-                        <i class="fa-solid fa-book-open-reader !text-md"></i>
-                        <span>Soal & Pembahasan</span>
+                        <i class="fas fa-house"></i>
+                        <span>English Zone</span>
                         <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
                     </div>
                     <div class="content-dropdown">
-                        <a href="{{ route('bankSoal.view') }}" class="link-href">Bank Soal</a>
+                        <a href="{{ route('EZ.bankSoal.view') }}" class="link-href">Bank Soal</a>
                     </div>
                 </div>
             </li>
@@ -857,26 +857,27 @@
                                 <li class="list-item">
                                     <div class="dropdown-menu">
                                         <div class="toggle-menu-sidebar">
-                                            <i class="fas fa-house"></i>
-                                            <span>English Zone</span>
+                                            <i class="fa-solid fa-book-open-reader !text-md"></i>
+                                            <span>Soal & Pembahasan</span>
                                             <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
                                         </div>
                                         <div class="content-dropdown">
-                                            <a href="" class="link-href">
-                                                Bank Soal
-                                            </a>
+                                            <a href="{{ route('SP.bankSoal.view') }}" class="link-href">Bank
+                                                Soal</a>
                                         </div>
                                     </div>
                                 </li>
                                 <li class="list-item">
                                     <div class="dropdown-menu">
                                         <div class="toggle-menu-sidebar">
-                                            <i class="fa-solid fa-book-open-reader !text-md"></i>
-                                            <span>Soal & Pembahasan</span>
+                                            <i class="fas fa-house"></i>
+                                            <span>English Zone</span>
                                             <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
                                         </div>
                                         <div class="content-dropdown">
-                                            <a href="{{ route('bankSoal.view') }}" class="link-href">Bank Soal</a>
+                                            <a href="{{ route('EZ.bankSoal.view') }}" class="link-href">
+                                                Bank Soal
+                                            </a>
                                         </div>
                                     </div>
                                 </li>

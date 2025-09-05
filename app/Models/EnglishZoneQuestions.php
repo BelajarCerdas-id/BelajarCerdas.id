@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class EnglishZoneQuestions extends Model
+{
+    use HasFactory;
+    protected $fillable = [
+        'administrator_id',
+        'questions',
+        'options_key',
+        'options_value',
+        'answer_key',
+        'difficulty',
+        'explanation',
+        'level',
+        'unit',
+        'status_soal',
+        'status_bank_soal',
+    ];
+
+    public function UserAccount() {
+        return $this->belongsTo(UserAccount::class, 'administrator_id');
+    }
+}
