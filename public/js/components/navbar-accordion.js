@@ -17,26 +17,26 @@ function hideNavbar() {
 
 // open accordion navbar
 let items = document.querySelectorAll('#accordion .item .header');
-    let lastClickedItem = null; // Variabel untuk melacak item terakhir yang diklik
+let lastClickedItem = null; // Variabel untuk melacak item terakhir yang diklik
 
-    items.forEach((item) => {
-        item.addEventListener("click", (e) => {
-            const clickedItem = e.currentTarget.closest(".item");
+items.forEach((item) => {
+    item.addEventListener("click", (e) => {
+        const clickedItem = e.currentTarget.closest(".item");
 
-            // Jika item yang diklik adalah item terakhir yang diklik, maka toggle class active
-            if (lastClickedItem === clickedItem) {
-                // Hapus active class dari item terakhir yang diklik
-                clickedItem.classList.remove('active');
-                lastClickedItem = null; // Reset variabel item terakhir yang diklik
-            } else {
-                // Hapus active class dari semua item
-                items.forEach((header) => {
-                    header.closest('.item').classList.remove('active');
-                });
+        // Jika item yang diklik adalah item terakhir yang diklik, maka toggle class active
+        if (lastClickedItem === clickedItem) {
+            // Hapus active class dari item terakhir yang diklik
+            clickedItem.classList.remove('active');
+            lastClickedItem = null; // Reset variabel item terakhir yang diklik
+        } else {
+            // Hapus active class dari semua item
+            items.forEach((header) => {
+                header.closest('.item').classList.remove('active');
+            });
 
-                // Tambahkan active class ke item yang diklik
-                clickedItem.classList.add('active');
-                lastClickedItem = clickedItem; // Update variabel item terakhir yang diklik
-            }
+            // Tambahkan active class ke item yang diklik
+            clickedItem.classList.add('active');
+            lastClickedItem = clickedItem; // Update variabel item terakhir yang diklik
+        }
     });
 });

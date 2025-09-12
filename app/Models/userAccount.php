@@ -100,6 +100,14 @@ class UserAccount extends Authenticatable
         return $this->hasOne(EnglishZoneQuestions::class, 'administrator_id');
     }
 
+    public function EnglishZoneBatch() {
+        return $this->hasOne(EnglishZoneBatch::class, 'administrator_id');
+    }
+
+    public function EnglishZoneBatchSchedule() {
+        return $this->hasOne(EnglishZoneBatchSchedule::class, 'administrator_id');
+    }
+
     // MENTOR FEATURE STATUS
     public function MentorFeatureStatus() {
         return $this->hasMany(MentorFeatureStatus::class, 'mentor_id');

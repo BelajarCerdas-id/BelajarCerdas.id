@@ -338,25 +338,49 @@ Route::fallback(function () {
     Route::get('/soal-pembahasan/riwayat-assessment/{materi_id}/{tipe_soal}/{date}/{kelas}/{mata_pelajaran}/questions', [SoalPembahasanController::class, 'historyQuestionsAssessment'])->name('historyQuestionSoalPembahasanAssessment');
 
     // ROUTES FITUR ENGLISH ZONE
-    // bank soal views(ADMINISTRATOR)
+    // BANK SOAL
+    // views(ADMINISTRATOR)
     Route::get('/english-zone/bank-soal', [EnglishZoneController::class, 'bankSoalView'])->name('EZ.bankSoal.view');
     Route::get('/english-zone/bank-soal/{levelId}/detail', [EnglishZoneController::class, 'bankSoalDetail'])->name('EZ.bankSoal.detail.view');
     Route::get('/english-zone/bank-soal/{levelId}/{id}', [EnglishZoneController::class, 'editQuestionView'])->name('EZ.bankSoal.edit.question.view');
     Route::get('/english-zone/bank-soal/form/{levelId}/{id}', [EnglishZoneController::class, 'formEditQuestion'])->name('EZ.bankSoal.form.edit.question');
 
-    // CRUD bank soal (ADMINISTRATOR)
+    // CRUD (ADMINISTRATOR)
     Route::post('/english-zone/bank-soal-store', [EnglishZoneController::class, 'bankSoalStore'])->name('EZ.bankSoal.store');
     Route::put('/english-zone/bank-soal/activate/{levelId}', [EnglishZoneController::class, 'bankSoalActivate'])->name('EZ.bankSoal.activate');
     Route::post('/english-zone/bank-soal/update/{id}', [EnglishZoneController::class, 'editQuestion'])->name('EZ.bankSoal.edit.question.update');
     Route::put('/english-zone/bank-soal/edit-level/{levelId}', [EnglishZoneController::class, 'editLevelName'])->name('EZ.bankSoal.edit.level');
 
-    // PAGINATE bank soal (ADMINISTRATOR)
+    // PAGINATE (ADMINISTRATOR)
     Route::get('/english-zone/paginate/bank-soal', [EnglishZoneController::class, 'paginateBankSoal'])->name('EZ.bankSoal.paginate');
     Route::get('/english-zone/paginate/bank-soal/{levelId}', [EnglishZoneController::class, 'paginateBankSoalDetail'])->name('EZ.bankSoalDetail.paginate');
 
-    // UPLOAD & DELETE IMAGE BANK SOAL WITH CKEDITOR
-    Route::post('english-zone/bank-soal/edit-image', [EnglishZoneController::class, 'editImageBankSoal'])->name('englishZone.editImage');
-    Route::post('english-zone/bank-soal/delete-image/endpoint', [EnglishZoneController::class, 'deleteImageBankSoal'])->name('englishZone.deleteImage');
+    // UPLOAD & DELETE IMAGE WITH CKEDITOR
+    Route::post('/english-zone/bank-soal/edit-image', [EnglishZoneController::class, 'editImageBankSoal'])->name('englishZone.editImage');
+    Route::post('/english-zone/bank-soal/delete-image/endpoint', [EnglishZoneController::class, 'deleteImageBankSoal'])->name('englishZone.deleteImage');
+
+    // MANAGEMENT BATCHES
+    // views (ADMINISTRATOR)
+    Route::get('/english-zone/management-batches', [EnglishZoneController::class, 'managementBatchesView'])->name('EZ.managementBatches.view');
+    
+    // CRUD
+    Route::post('/english-zone/management-batches/store', [EnglishZoneController::class, 'managementBatchesStore'])->name('EZ.managementBatches.store');
+    Route::put('/english-zone/management-batches/{id}', [EnglishZoneController::class, 'managementBatchEdit'])->name('EZ.managementBatch.edit');
+    
+    // PAGINATE
+    Route::get('/english-zone/management-batches/paginate', [EnglishZoneController::class, 'paginateManagementBatches'])->name('EZ.managementBatches.paginate');
+    
+    // MANAGEMENT BATCHES SCHEDULE
+    // views (ADMINISTRATOR)
+    Route::get('/english-zone/management-batches/schedule/{batch_name}/{batch_id}', [EnglishZoneController::class, 'managementBatchScheduleView'])->name('EZ.managementBatchSchedule.view');
+
+    // CRUD
+    Route::post('/english-zone/management-batches/schedule/store/{batch_name}/{batch_id}', [EnglishZoneController::class, 'managementBatchScheduleStore'])->name('EZ.managementBatchSchedule.store');
+    Route::put('/english-zone/management-batches/schedule/edit/{batch_id}/{batch_schedule_id}', [EnglishZoneController::class, 'managementBatchScheduleEdit'])->name('EZ.managementBatchSchedule.edit');
+    Route::delete('/english-zone/management-batches/schedule/delete/{batch_schedule_id}', [EnglishZoneController::class, 'managementBatchScheduleDelete'])->name('EZ.managementBatchSchedule.delete');
+
+    // PAGINATE
+    Route::get('/english-zone/management-batches/schedule/paginate/{batch_name}/{batch_id}', [EnglishZoneController::class, 'paginateManagementBatchSchedule'])->name('EZ.managementBatchSchedule.paginate');
 
     // ROUTES SCHOOL PARTNER
     // school subscription

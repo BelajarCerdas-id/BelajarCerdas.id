@@ -4,11 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Events\BankSoalEnglishZoneEditQuestion;
 use App\Events\BankSoalEnglishZoneUploaded;
+use App\Events\EnglishZoneBatchScheduleListener;
+use App\Events\EventEnglishZoneBatch;
+use App\Models\EnglishZoneBatch;
+use App\Models\EnglishZoneBatchSchedule;
 use App\Models\EnglishZoneQuestions;
 use App\Models\Kurikulum;
 use Illuminate\Http\Request;
 use App\Services\DocxImageExtractor;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpWord\IOFactory;
@@ -19,6 +24,9 @@ use Illuminate\Validation\Rule;
 
 class EnglishZoneController extends Controller
 {
+    // ADMINISTRATOR
+    // BANK SOAL
+    // function bankSoal view
     public function bankSoalView()
     {
         $getCuriculum = Kurikulum::all();
@@ -26,7 +34,7 @@ class EnglishZoneController extends Controller
         return view('Features.english-zone.bank-soal.bank-soal', compact('getCuriculum'));
     }
 
-    // PAGINATE BANK SOAL (SOAL DAN PEMBAHSAN FEATURE)
+    // function paginate bankSoal
     public function paginateBankSoal(Request $request)
     {
         $dataBankSoal = EnglishZoneQuestions::with('UserAccount')->groupBy('level')->orderBy('created_at', 'desc')->paginate(10);
@@ -104,6 +112,7 @@ class EnglishZoneController extends Controller
         return view('Features.english-zone.bank-soal.bank-soal-detail', compact('levelId'));
     }
 
+    // function paginate bankSoal detail
     public function paginateBankSoalDetail(Request $request, $levelId)
     {
         // Ambil semua soal yang memiliki sub_bab_id tertentu, lalu ambil relasi SubBab juga
@@ -260,7 +269,7 @@ class EnglishZoneController extends Controller
         }
     }
 
-    // controller delete image ckeditor
+    // function delete image ckeditor
     public function deleteImageBankSoal(Request $request) {
         $request->validate([
             'imageUrl' => 'required|url',
@@ -277,6 +286,7 @@ class EnglishZoneController extends Controller
         return response()->json(['message' => 'Gambar tidak ditemukan'], 404);
     }
 
+    // function bankSoal store
     public function bankSoalStore(Request $request)
     {
         // Buat instance dari class DocxImageExtractor yang berfungsi untuk ekstrak gambar + HTML styled dari file Word
@@ -585,6 +595,286 @@ class EnglishZoneController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Bank Soal berhasil diupload.',
+        ]);
+    }
+
+    // MANAGEMENT BATCHES
+    // function management batches view
+    public function managementBatchesView() 
+    {
+        return view('Features.english-zone.batch.management-batch');
+    }
+
+    // function management batches store
+    public function managementBatchesStore(Request $request)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make(request()->all(), [
+            'batch_name' => 'required|unique:english_zone_batches,batch_name',
+            'start_day' => 'required',
+            'start_month' => 'required',
+            'max_capacity' => 'required',
+        ], [
+            'batch_name.required' => 'Harap pilih batch.',
+            'batch_name.unique' => 'Batch telah terdaftar.',
+            'start_day.required' => 'Harap pilih hari.',
+            'start_month.required' => 'Harap pilih bulan.',
+            'max_capacity.required' => 'Harap pilih kapasitas.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'validation-error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $batch = EnglishZoneBatch::create([
+            'administrator_id' => $user->id,
+            'batch_name' => $request->batch_name,
+            'start_day' => $request->start_day,
+            'start_month' => $request->start_month,
+            'max_capacity' => $request->max_capacity,
+        ]);
+
+        broadcast(new EventEnglishZoneBatch($batch))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Batch berhasil ditambahkan.',
+            'batch' => $batch,
+        ]);
+    }
+
+    // function paginate management batches
+    public function paginateManagementBatches(Request $request)
+    {
+        $batches = EnglishZoneBatch::all();
+
+        return response()->json([
+            'data' => $batches,
+            'batchSchedule' => '/english-zone/management-batches/schedule/:batch_name/:batch_id',
+        ]);
+    }
+
+    // function edit batch
+    public function managementBatchEdit(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'batch_name' => [
+                'required',
+                Rule::unique('english_zone_batches', 'batch_name')
+            ],
+            'start_day' => 'required',
+            'start_month' => 'required',
+            'max_capacity' => 'required',
+        ], [
+            'batch_name.required' => 'Harap pilih batch.',
+            'batch_name.unique' => 'Batch telah terdaftar.',
+            'start_day.required' => 'Harap pilih hari.',
+            'start_month.required' => 'Harap pilih bulan.',
+            'max_capacity.required' => 'Harap pilih kapasitas.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'validation-error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+        
+        $batch = EnglishZoneBatch::find($id);
+
+        $batch->update([
+            'batch_name' => $request->batch_name,
+            'start_day' => $request->start_day,
+            'start_month' => $request->start_month,
+            'max_capacity' => $request->max_capacity,
+        ]);
+
+        broadcast(new EventEnglishZoneBatch($batch))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Batch berhasil diubah.',
+            'batch' => $batch,
+        ]);
+    }
+
+    // MANAGEMENT BATCH SCHEDULE
+    // function management batch schedule view
+    public function managementBatchScheduleView($batch_name, $batch_id) 
+    {
+        $getBatch = EnglishZoneBatch::where('batch_name', $batch_name)->first();
+
+        return view('Features.english-zone.batch.management-batch-schedule', compact('getBatch', 'batch_name', 'batch_id'));
+    }
+
+    // function management batch schedule store
+    public function managementBatchScheduleStore(Request $request, $batch_name, $batch_id)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make(request()->all(), [
+            'day_of_week.*' => 'required',
+            'start_time.*' => 'required',
+            'end_time.*' => 'required',
+        ], [
+            'day_of_week.*.required' => 'Harap pilih hari.',
+            'start_time.*.required' => 'Harap pilih waktu mulai.',
+            'end_time.*.required' => 'Harap pilih waktu berakhir.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'validation-error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $getBatch = EnglishZoneBatch::where('id', $batch_id)->first();
+
+        $lastGroup = EnglishZoneBatchSchedule::where('batch_id', $getBatch->id)->max('batch_schedule_group');
+        
+        if ($request->filled('batch_schedule_group')) {
+            // form mengirimkan nilai batch_schedule_group
+            // -> Tambah jadwal ke group lama
+            $batchScheduleGroup = $request->batch_schedule_group;
+        } elseif ($lastGroup) {
+            // form tidak mengirim batch_schedule_group tapi di DB sudah ada group
+            // -> Tambah group baru
+            $batchScheduleGroup = $lastGroup + 1;
+        } else {
+            // belum ada group sama sekali
+            // -> buat group pertama
+            $batchScheduleGroup = 1;
+        }
+
+        $dayOfWeek = $request->input('day_of_week');
+        $startTime = $request->input('start_time');
+        $endTime = $request->input('end_time');
+
+        $unique = EnglishZoneBatchSchedule::where('batch_id', $batch_id)->where('day_of_week', $request->day_of_week)
+        ->where('start_time', $request->start_time)->where('end_time', $request->end_time)->first();
+
+        if ($unique) {
+            return response()->json([
+                'status' => 'validation-error',
+                'errors' => [
+                    'day_of_week' => ['Hari dan jam tersebut sudah terdaftar.'],
+                    'start_time'  => ['Hari dan jam tersebut sudah terdaftar.'],
+                    'end_time'    => ['Hari dan jam tersebut sudah terdaftar.'],
+                ],
+            ], 422);
+        }
+
+        foreach ($dayOfWeek as $index => $day) {
+            $batchSchedule = EnglishZoneBatchSchedule::create([
+                'administrator_id' => $user->id,
+                'batch_id' => $getBatch->id,
+                'batch_schedule_group' => $batchScheduleGroup,
+                'schedule_time_group' => $request->schedule_time_group ?? 1,
+                'day_of_week' => $day,
+                'start_time' => $startTime[$index],
+                'end_time' => $endTime[$index],
+            ]);            
+        }
+
+        broadcast(new EnglishZoneBatchScheduleListener('batchSchedule', 'create', $batchSchedule))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Batch Group berhasil ditambahkan.',
+            'batchSchedule' => $batchSchedule,
+        ]);
+    }
+
+    // function paginate management batch schedule
+    public function paginateManagementBatchSchedule(Request $request, $batch_name, $batch_id)
+    {
+        $batchSchedules = EnglishZoneBatchSchedule::where('batch_id', $batch_id)->get();
+
+        $grouped = $batchSchedules->groupBy('batch_schedule_group')->map(function ($group) {
+            return $group->groupBy('schedule_time_group');
+        });
+
+        // ambil data dari $batchSchedules lalu group by batch_schedule_group, setelah itu iterasi setiap group lalu ambil max schedule_time_group
+        $lastScheduleTimeGroup = $batchSchedules->groupBy('batch_schedule_group')
+        ->map(fn($group) => $group->max('schedule_time_group'));
+
+        return response()->json([
+            'data' => $grouped->values(),
+            'lastScheduleTimeGroup' => $lastScheduleTimeGroup
+        ]);
+    }
+
+    // function edit batch schedule
+    public function managementBatchScheduleEdit(Request $request, $batch_id, $batch_schedule_id)
+    {
+        $validator = Validator::make($request->all(), [
+            'day_of_week' => 'required',
+            'start_time' => 'required',
+            'end_time' => 'required',
+        ], [
+            'day_of_week.required' => 'Harap pilih hari.',
+            'start_time.required' => 'Harap pilih waktu mulai.',
+            'end_time.required' => 'Harap pilih waktu berakhir.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'validation-error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $unique = EnglishZoneBatchSchedule::where('batch_id', $batch_id)->where('day_of_week', $request->day_of_week)
+        ->where('start_time', $request->start_time)->where('end_time', $request->end_time)->first();
+
+        if ($unique) {
+            return response()->json([
+                'status' => 'validation-error',
+                'errors' => [
+                    'day_of_week' => ['Hari dan jam tersebut sudah terdaftar.'],
+                    'start_time'  => ['Hari dan jam tersebut sudah terdaftar.'],
+                    'end_time'    => ['Hari dan jam tersebut sudah terdaftar.'],
+                ],
+            ], 422);
+        }
+
+        $batchSchedule = EnglishZoneBatchSchedule::find($batch_schedule_id);
+
+        $batchSchedule->update([
+            'day_of_week' => $request->day_of_week,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+        ]);
+
+        broadcast(new EnglishZoneBatchScheduleListener('batchSchedule', 'update', $batchSchedule))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Batch Group berhasil diubah.',
+            'batchSchedule' => $batchSchedule,
+        ]);
+    }
+    
+    // function delete batch schedule
+    public function managementBatchScheduleDelete($batch_schedule_id)
+    {
+        $batchSchedule = EnglishZoneBatchSchedule::findOrFail($batch_schedule_id);
+
+        $deletedData = $batchSchedule->toArray();
+
+        broadcast(new EnglishZoneBatchScheduleListener('batchSchedule', 'delete', $deletedData))->toOthers();
+        
+        $batchSchedule->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Batch schedule berhasil dihapus.',
+            'batchSchedule' => $batchSchedule,
         ]);
     }
 }
