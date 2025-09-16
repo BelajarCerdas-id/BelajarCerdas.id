@@ -592,6 +592,8 @@
                     <div class="content-dropdown">
                         <a href="{{ route('EZ.bankSoal.view') }}" class="link-href">Bank Soal</a>
                         <a href="{{ route('EZ.managementBatches.view') }}" class="link-href">Management Batches</a>
+                        <a href="{{ route('EZ.managementMentorSchedule.view') }}" class="link-href">Mentor
+                            Schedule</a>
                     </div>
                 </div>
             </li>
@@ -881,6 +883,10 @@
                                             </a>
                                             <a href="{{ route('EZ.managementBatches.view') }}" class="link-href">
                                                 Management Batches
+                                            </a>
+                                            <a href="{{ route('EZ.managementMentorSchedule.view') }}"
+                                                class="link-href">
+                                                Mentor Schedule
                                             </a>
                                         </div>
                                     </div>

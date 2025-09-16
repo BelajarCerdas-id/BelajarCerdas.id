@@ -382,6 +382,16 @@ Route::fallback(function () {
     // PAGINATE
     Route::get('/english-zone/management-batches/schedule/paginate/{batch_name}/{batch_id}', [EnglishZoneController::class, 'paginateManagementBatchSchedule'])->name('EZ.managementBatchSchedule.paginate');
 
+    // MANAGEMENT MENTOR SCHEDULE
+    // views (ADMINISTRATOR)
+    Route::get('/english-zone/management-mentor/schedule', [EnglishZoneController::class, 'managementMentorScheduleView'])->name('EZ.managementMentorSchedule.view');
+
+    // PAGINATE
+    Route::get('/english-zone/management-mentor/schedule/paginate', [EnglishZoneController::class, 'paginateManagementMentorSchedule'])->name('EZ.managementMentorSchedule.paginate');
+
+    // ACTIVATE
+    Route::post('/english-zone/management-mentor/schedule/activate', [EnglishZoneController::class, 'managementMentorScheduleActivate'])->name('EZ.managementMentorSchedule.activate');
+
     // ROUTES SCHOOL PARTNER
     // school subscription
     Route::get('/school-subscription', [SchoolPartnerController::class, 'schoolSubscriptionView'])->name('schoolSubscription.view');

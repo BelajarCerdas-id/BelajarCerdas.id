@@ -33,6 +33,7 @@ function paginateManagementBatchesSchedule() {
                                                 <a href="#" class="btn-edit-batch-schedule text-blue-600 text-sm"
                                                 data-batch-id="${batchId}"
                                                 data-batch-schedule-id="${item.id}"
+                                                data-batch-schedule-group="${item.batch_schedule_group}"
                                                 data-batch-schedule='${JSON.stringify(item)}'>
                                                     Edit
                                                 </a>
@@ -377,6 +378,7 @@ $(document).off('click', '.btn-edit-batch-schedule').on('click', '.btn-edit-batc
 
     const batchSchedule = $(this).data('batch-schedule'); // ← ambil object batch lengkap
     const batchScheduleId = batchSchedule.id;
+    const batchScheduleGroup = batchSchedule.batch_schedule_group;
 
     const batchId = $(this).data('batch-id');
 
@@ -392,6 +394,7 @@ $(document).off('click', '.btn-edit-batch-schedule').on('click', '.btn-edit-batc
     $('#day_of_week_id').val(batchSchedule.day_of_week);
     $('#start_time_id').val(batchSchedule.start_time);
     $('#end_time_id').val(batchSchedule.end_time);
+    $('#batch_schedule_group_id').val(batchSchedule.batch_schedule_group);
 
     // buka modal
     const modal = document.getElementById('my_modal_1');
@@ -404,6 +407,7 @@ $('#edit-batch-schedule-form').on('submit', function (e) {
     e.preventDefault();
 
     const batchScheduleId = $(this).data('batch-schedule-id');
+    const batchScheduleGroup = $(this).data('batch-schedule-group');
     const formData = $(this).serialize(); // otomatis ambil semua field input/select di form
 
     const batchId = $(this).data('batch-id');

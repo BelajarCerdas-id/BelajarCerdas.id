@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Events\BankSoalEnglishZoneEditQuestion;
 use App\Events\BankSoalEnglishZoneUploaded;
 use App\Events\EnglishZoneBatchScheduleListener;
+use App\Events\EnglishZoneMentorScheduleListener;
 use App\Events\EventEnglishZoneBatch;
 use App\Models\EnglishZoneBatch;
 use App\Models\EnglishZoneBatchSchedule;
+use App\Models\EnglishZoneMentorSchedule;
 use App\Models\EnglishZoneQuestions;
 use App\Models\Kurikulum;
+use App\Models\MentorFeatureStatus;
+use App\Models\UserAccount;
 use Illuminate\Http\Request;
 use App\Services\DocxImageExtractor;
 use Illuminate\Support\Facades\Auth;
@@ -755,8 +759,9 @@ class EnglishZoneController extends Controller
         $startTime = $request->input('start_time');
         $endTime = $request->input('end_time');
 
-        $unique = EnglishZoneBatchSchedule::where('batch_id', $batch_id)->where('day_of_week', $request->day_of_week)
-        ->where('start_time', $request->start_time)->where('end_time', $request->end_time)->first();
+        $unique = EnglishZoneBatchSchedule::where('batch_id', $batch_id)->where('batch_schedule_group', $batchScheduleGroup)
+        ->where('day_of_week', $request->day_of_week)->where('start_time', $request->start_time)
+        ->where('end_time', $request->end_time)->first();
 
         if ($unique) {
             return response()->json([
@@ -829,8 +834,9 @@ class EnglishZoneController extends Controller
             ], 422);
         }
 
-        $unique = EnglishZoneBatchSchedule::where('batch_id', $batch_id)->where('day_of_week', $request->day_of_week)
-        ->where('start_time', $request->start_time)->where('end_time', $request->end_time)->first();
+        $unique = EnglishZoneBatchSchedule::where('batch_id', $batch_id)->where('batch_schedule_group', $request->batch_schedule_group)
+        ->where('day_of_week', $request->day_of_week)->where('start_time', $request->start_time)
+        ->where('end_time', $request->end_time)->exists();
 
         if ($unique) {
             return response()->json([
@@ -876,5 +882,112 @@ class EnglishZoneController extends Controller
             'message' => 'Batch schedule berhasil dihapus.',
             'batchSchedule' => $batchSchedule,
         ]);
+    }
+
+    public function managementMentorScheduleView()
+    {
+        $getBatch = EnglishZoneBatch::all();
+
+        $batchMap = [
+            "Batch 1" => "Januari",
+            "Batch 2" => "Februari",
+            "Batch 3" => "Maret",
+            "Batch 4" => "April",
+            "Batch 5" => "Mei",
+            "Batch 6" => "Juni",
+            "Batch 7" => "Juli",
+            "Batch 8" => "Agustus",
+            "Batch 9" => "September",
+            "Batch 10" => "Oktober",
+            "Batch 11" => "November",
+            "Batch 12" => "Desember"
+        ];
+
+        foreach ($getBatch as $batch) {
+            if (isset($batchMap[$batch->batch_name])) {
+                $batch->display_name = $batch->batch_name . ' - ' . $batchMap[$batch->batch_name];
+            } else {
+                $batch->display_name = $batch->batch_name; // fallback
+            }
+        }
+
+        $scheduleTimeGroup = EnglishZoneBatchSchedule::get()->groupBy('batch_id')->map(function ($group) {
+            return $group->groupBy('schedule_time_group')->map(function ($group) {
+                return $group->groupBy('batch_schedule_group');
+            });
+        });
+
+        // hitung total kolom jadwal
+        $countScheduleTimeGroup = $scheduleTimeGroup->sum(function ($group) {
+            return $group->count();
+        });
+        
+        return view('Features.english-zone.mentor-schedule.management-mentor-schedule', compact('getBatch', 'scheduleTimeGroup', 'countScheduleTimeGroup'));
+    }
+
+    public function paginateManagementMentorSchedule(Request $request)
+    {
+        $batch = $request->query('batch', "Batch 1"); // default batch 1
+
+        $schedules = EnglishZoneBatchSchedule::whereHas('EnglishZoneBatch', function ($query) use ($batch) {
+            $query->where('batch_name', $batch);
+        })->get();
+
+        $scheduleTimeGroup = $schedules->groupBy(function ($item) {
+            return $item->EnglishZoneBatch->batch_name; // gunakan batch_name sebagai key
+        })->map(function ($group) {
+            return $group->groupBy('schedule_time_group')->map(function ($group) {
+                return $group->groupBy('batch_schedule_group');
+            });
+        });
+
+        $mentorFeatureStatus = MentorFeatureStatus::where('status_mentor', 'aktif')
+            ->where('feature_id', 3)
+            ->pluck('mentor_id');
+
+        $getMentorQuery = UserAccount::with(['MentorProfiles', 'EnglishZoneMentorSchedule'])
+            ->where('role', 'Mentor')
+            ->whereIn('id', $mentorFeatureStatus);
+
+        // filter search_mentor
+        if ($request->filled('search_mentor')) {
+            $getMentorQuery->whereHas('MentorProfiles', function ($query) use ($request) {
+                $query->where('nama_lengkap', 'like', '%' . $request->search_mentor . '%');
+            });
+        }
+
+        // baru ambil data
+        $getMentor = $getMentorQuery->get();
+
+        return response()->json([
+            'data' => $getMentor,
+            'scheduleTimeGroup' => $scheduleTimeGroup
+        ]);
+    }
+
+    public function managementMentorScheduleActivate(Request $request)
+    {
+        $request->validate([
+            'status_schedule' => 'required|in:aktif,tidak_aktif',
+        ]);
+
+        // Ubah string "34,35" jadi [34, 35]
+        $ids = $request->batch_schedule_ids; // sudah array ["34","35"]
+        
+        foreach ($ids as $id) {
+            EnglishZoneMentorSchedule::updateOrCreate(
+                [
+                    'mentor_id' => $request->mentor_id,
+                    'batch_schedule_id' => $id,
+                ],
+                [
+                    'status_schedule' => $request->status_schedule
+                ]
+            );
+        }
+
+        broadcast(new EnglishZoneMentorScheduleListener($ids))->toOthers();
+
+        return response()->json(['success' => true]);
     }
 }

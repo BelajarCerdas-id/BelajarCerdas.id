@@ -52,6 +52,8 @@
                         <form id="edit-batch-schedule-form">
                             <span class="text-xl font-bold flex justify-center">Edit Schedule</span>
 
+                            <input type="hidden" id="batch_schedule_group_id" name="batch_schedule_group"
+                                value="">
                             <div class="mt-8 w-80">
                                 <!-- Day Of Week -->
                                 <div class="flex flex-col mt-8">
