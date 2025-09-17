@@ -102,9 +102,6 @@
                                     <th class="th-table text-black opacity-70">Status Bank Soal</th>
                                     <th class="th-table text-black opacity-70">Action</th>
                                     <th class="th-table text-black opacity-70">Detail</th>
-                                    <th class="th-table text-black opacity-70">
-                                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="table-list-bank-soal">
@@ -121,35 +118,6 @@
                         </div>
                     </div>
                 </section>
-
-                <!---- modal edit kurikulum  ---->
-                <dialog id="my_modal_2" class="modal">
-                    <div class="modal-box bg-white w-max">
-                        <form id="edit-level-form">
-                            <span class="text-xl font-bold flex justify-center">Edit Level</span>
-
-                            <div class="mt-4 w-80">
-                                <label class="text-sm">Nama Level</label>
-                                <input type="text" id="level" name="level"
-                                    class="w-full bg-white shadow-lg h-11 border-gray-200 border-[1px] outline-none rounded-full text-xs px-2 mt-2"
-                                    value="" placeholder="Masukkan Nama Level">
-                                <span id="error-level" class="text-red-500 text-xs mt-1 font-bold"></span>
-                            </div>
-
-                            <div class="flex justify-end mt-8">
-                                <button
-                                    class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all">
-                                    Simpan
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <form method="dialog" class="modal-backdrop">
-                        <button>Close</button>
-                    </form>
-                </dialog>
-
             </main>
         </div>
     </div>

@@ -16,13 +16,18 @@ class EnglishZoneQuestions extends Model
         'answer_key',
         'difficulty',
         'explanation',
-        'level',
+        'level_id',
         'unit',
+        'session',
         'status_soal',
         'status_bank_soal',
     ];
 
     public function UserAccount() {
         return $this->belongsTo(UserAccount::class, 'administrator_id');
+    }
+
+    public function EnglishZoneLevel() {
+        return $this->belongsTo(EnglishZoneLevel::class, 'level_id');
     }
 }

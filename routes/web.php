@@ -338,6 +338,18 @@ Route::fallback(function () {
     Route::get('/soal-pembahasan/riwayat-assessment/{materi_id}/{tipe_soal}/{date}/{kelas}/{mata_pelajaran}/questions', [SoalPembahasanController::class, 'historyQuestionsAssessment'])->name('historyQuestionSoalPembahasanAssessment');
 
     // ROUTES FITUR ENGLISH ZONE
+    // MANAGEMENT LEVELS
+    // views(ADMINISTRATOR)
+    Route::get('/english-zone/management-levels', [EnglishZoneController::class, 'managementLevelView'])->name('EZ.managementLevel.view');
+
+    // CRUD (ADMINISTRATOR)
+    Route::post('/english-zone/management-levels/store', [EnglishZoneController::class, 'managementLevelStore'])->name('EZ.managementLevel.store');
+    Route::put('/english-zone/management-levels/edit/{id}', [EnglishZoneController::class, 'managementLevelEdit'])->name('EZ.managementLevel.edit');
+    Route::delete('/english-zone/management-levels/delete/{id}', [EnglishZoneController::class, 'managementLevelDelete'])->name('EZ.managementLevel.delete');
+
+    // PAGINATE
+    Route::get('/english-zone/management-levels/paginate', [EnglishZoneController::class, 'paginateManagementLevel'])->name('EZ.managementLevel.paginate');
+    
     // BANK SOAL
     // views(ADMINISTRATOR)
     Route::get('/english-zone/bank-soal', [EnglishZoneController::class, 'bankSoalView'])->name('EZ.bankSoal.view');
@@ -349,7 +361,6 @@ Route::fallback(function () {
     Route::post('/english-zone/bank-soal-store', [EnglishZoneController::class, 'bankSoalStore'])->name('EZ.bankSoal.store');
     Route::put('/english-zone/bank-soal/activate/{levelId}', [EnglishZoneController::class, 'bankSoalActivate'])->name('EZ.bankSoal.activate');
     Route::post('/english-zone/bank-soal/update/{id}', [EnglishZoneController::class, 'editQuestion'])->name('EZ.bankSoal.edit.question.update');
-    Route::put('/english-zone/bank-soal/edit-level/{levelId}', [EnglishZoneController::class, 'editLevelName'])->name('EZ.bankSoal.edit.level');
 
     // PAGINATE (ADMINISTRATOR)
     Route::get('/english-zone/paginate/bank-soal', [EnglishZoneController::class, 'paginateBankSoal'])->name('EZ.bankSoal.paginate');

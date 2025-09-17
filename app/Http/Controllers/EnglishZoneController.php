@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Events\BankSoalEnglishZoneEditQuestion;
 use App\Events\BankSoalEnglishZoneUploaded;
 use App\Events\EnglishZoneBatchScheduleListener;
+use App\Events\EnglishZoneLevelsListener;
 use App\Events\EnglishZoneMentorScheduleListener;
 use App\Events\EventEnglishZoneBatch;
 use App\Models\EnglishZoneBatch;
 use App\Models\EnglishZoneBatchSchedule;
+use App\Models\EnglishZoneLevel;
 use App\Models\EnglishZoneMentorSchedule;
 use App\Models\EnglishZoneQuestions;
 use App\Models\Kurikulum;
@@ -29,6 +31,110 @@ use Illuminate\Validation\Rule;
 class EnglishZoneController extends Controller
 {
     // ADMINISTRATOR
+    // MANAGEMENT LEVELS
+    // function management level view
+    public function managementLevelView()
+    {
+        return view('Features.english-zone.management-level.management-level');
+    }
+
+    // function management level store
+    public function managementLevelStore(Request $request)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), ([
+            'level_name' => [
+                'required',
+                Rule::unique('english_zone_levels', 'level_name')
+            ],
+        ]), [
+            'level_name.required' => 'Harap isi nama level.',
+            'level_name.unique' => 'Nama level telah terdaftar.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $createLevel = EnglishZoneLevel::create([
+            'administrator_id' => $user->id,
+            'level_name' => $request->level_name
+        ]);
+
+        broadcast(new EnglishZoneLevelsListener('EnglishZoneLevel', 'create', $createLevel))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Level berhasil ditambahkan.',
+        ], 200);
+    }
+
+    // function paginate management level
+    public function paginateManagementLevel()
+    {
+        $dataManagementLevel = EnglishZoneLevel::paginate(10);
+
+        return response()->json([
+            'data' => $dataManagementLevel->items(),
+            'links' => (string) $dataManagementLevel->links(),
+        ]);
+    }
+
+    // function management level edit
+    public function managementLevelEdit(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'level_name' => [
+                'required',
+                Rule::unique('english_zone_levels', 'level_name')
+            ],
+        ], [
+            'level_name.required' => 'Harap isi nama level.',
+            'level_name.unique' => 'Nama level telah terdaftar.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $dataManagementLevel = EnglishZoneLevel::findOrFail($id);
+
+        $dataManagementLevel->update([
+            'level_name' => $request->level_name
+        ]);
+
+        broadcast(new EnglishZoneLevelsListener('EnglishZoneLevel', 'update', $dataManagementLevel))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Level berhasil diubah.',
+        ]);
+    }
+
+    // function management level delete
+    public function managementLevelDelete($id)
+    {
+        $dataManagementLevel = EnglishZoneLevel::findOrFail($id);
+
+        $deletedData = $dataManagementLevel->toArray();
+
+        broadcast(new EnglishZoneLevelsListener('EnglishZoneLevel', 'delete', $deletedData))->toOthers();
+
+        $dataManagementLevel->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Level berhasil dihapus.',
+        ]);
+    }
+
     // BANK SOAL
     // function bankSoal view
     public function bankSoalView()
@@ -41,7 +147,8 @@ class EnglishZoneController extends Controller
     // function paginate bankSoal
     public function paginateBankSoal(Request $request)
     {
-        $dataBankSoal = EnglishZoneQuestions::with('UserAccount')->groupBy('level')->orderBy('created_at', 'desc')->paginate(10);
+        $dataBankSoal = EnglishZoneQuestions::with(['UserAccount', 'EnglishZoneLevel'])->groupBy('level_id')
+        ->orderBy('created_at', 'desc')->paginate(10);
 
         return response()->json([
             'data' => $dataBankSoal->items(),
@@ -57,7 +164,7 @@ class EnglishZoneController extends Controller
             'status_bank_soal' => 'required|in:Publish,Unpublish'
         ]);
 
-        $dataBankSoal = EnglishZoneQuestions::where('level', $levelId)->get();
+        $dataBankSoal = EnglishZoneQuestions::where('level_id', $levelId)->get();
 
         foreach ($dataBankSoal as $soal) {
             $soal->update([
@@ -73,43 +180,6 @@ class EnglishZoneController extends Controller
         ]);
     }
 
-    // function edit level name
-    public function editLevelName(Request $request, $levelId)
-    {
-        $validator = Validator::make($request->all(), ([
-            'level' => [
-                'required',
-                Rule::unique('english_zone_questions', 'level')
-            ],
-        ]), [
-            'level.required' => 'Harap isi nama level.',
-            'level.unique' => 'Nama level telah terdaftar.',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        $getQuestions = EnglishZoneQuestions::where('level', $levelId)->get();
-
-        foreach ($getQuestions as $question) {
-            $question->update([
-                'level' => $request->level
-            ]);
-        }
-
-        broadcast(new BankSoalEnglishZoneEditQuestion($getQuestions))->toOthers();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Nama level berhasil diubah.',
-            'data' => $getQuestions
-        ]);
-    }
-
     // function bankSoal detail view
     public function bankSoalDetail($levelId)
     {
@@ -120,7 +190,7 @@ class EnglishZoneController extends Controller
     public function paginateBankSoalDetail(Request $request, $levelId)
     {
         // Ambil semua soal yang memiliki sub_bab_id tertentu, lalu ambil relasi SubBab juga
-        $allQuestions = EnglishZoneQuestions::where('level', $levelId)->orderBy('created_at', 'desc')->get(); // hasilnya Collection, bukan query builder lagi
+        $allQuestions = EnglishZoneQuestions::where('level_id', $levelId)->orderBy('created_at', 'desc')->get(); // hasilnya Collection, bukan query builder lagi
 
         // Group by column 'questions'
         $grouped = $allQuestions->groupBy('questions');
@@ -498,12 +568,18 @@ class EnglishZoneController extends Controller
                 ];
                 // Pastikan semua OPTION yang ada terisi, plus field wajib lain
                 $presentOptions = array_filter(array_keys($answerMap), fn($opt) => isset($dataSoal[$opt]) && $extractor->isMeaningfullyEmpty($dataSoal[$opt]));
-                $requiredFields = array_merge($presentOptions, ['ANSWER', 'EXPLANATION', 'LEVEL', 'UNIT', 'STATUS', 'DIFFICULTY']);
+                $requiredFields = array_merge($presentOptions, ['ANSWER', 'EXPLANATION', 'LEVEL', 'UNIT', 'SESI', 'STATUS', 'DIFFICULTY']);
 
                 foreach ($requiredFields as $field) {
                     if (!isset($dataSoal[$field]) || $extractor->isMeaningfullyEmpty($dataSoal[$field])) {
                         $validationErrors[] = "Soal ke-$soalNumber: Field '$field' tidak boleh kosong.";
                     }
+                }
+
+                $getLevel = EnglishZoneLevel::where('level_name', trim(strip_tags($dataSoal['LEVEL'] ?? '')))->first();
+
+                if (!$getLevel) {
+                    $validationErrors[] = "Soal ke-$soalNumber: Level '".($dataSoal['LEVEL'] ?? '')."' tidak ditemukan.";
                 }
 
                 // Jika validasi gagal → simpan error & lanjut ke soal berikutnya
@@ -518,7 +594,9 @@ class EnglishZoneController extends Controller
                     $v = $extractor->cleanHtml($v); // Hilangkan tag sampah
                     $dataSoal[$k] = $v;
                 }
-                $validSoalData[] = $dataSoal;
+
+                $dataSoal['LEVEL'] = $getLevel->id; // simpan instance Level untuk dipakai nanti
+                $validSoalData[] = $dataSoal; // masukkan ke kumpulan soal valid
             }
 
             // Kalau ada error form atau word → hapus semua gambar yang sudah tersimpan
@@ -546,9 +624,9 @@ class EnglishZoneController extends Controller
             ], 422);
         }
 
-        $validSoalData[] = $dataSoal;
+        // $validSoalData[] = $dataSoal;
         // Simpan soal ke database
-        foreach ($validSoalData as $dataSoal) {
+        foreach ($validSoalData as $index => $dataSoal) {
             $answerKeyRaw = $dataSoal['ANSWER'] ?? '';
             $plainAnswerKey = strtoupper(trim(strip_tags($answerKeyRaw)));
             $finalAnswerKey = $answerMap[$plainAnswerKey] ?? null;
@@ -575,8 +653,9 @@ class EnglishZoneController extends Controller
                                 'answer_key' => $finalAnswerKey,
                                 'difficulty' => trim(strip_tags($dataSoal['DIFFICULTY'] ?? '')),
                                 'explanation' => $dataSoal['EXPLANATION'] ?? '',
-                                'level' => trim(strip_tags($dataSoal['LEVEL'] ?? '')),
+                                'level_id' => $dataSoal['LEVEL'], // ambil dari luar scope  foreach $table as $index
                                 'unit' => trim(strip_tags($dataSoal['UNIT'] ?? '')),
+                                'session' => trim(strip_tags($dataSoal['SESI'] ?? '')),
                                 'status_soal' => trim(strip_tags($dataSoal['STATUS'] ?? '')),
                                 'status_bank_soal' => $statusBankSoal,
                             ]);

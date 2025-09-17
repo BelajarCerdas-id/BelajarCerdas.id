@@ -1,28 +1,28 @@
 function paginateBankSoalEZ(page = 1) {
     $.ajax({
-    url: '/english-zone/paginate/bank-soal',
-    method: 'GET',
-    data: {
-        page: page // Include the page parameter
-    },
+        url: '/english-zone/paginate/bank-soal',
+        method: 'GET',
+        data: {
+            page: page // Include the page parameter
+        },
         success: function (data) {
-        $('#table-list-bank-soal').empty(); // Clear previous entries
-        $('.pagination-container-bank-soal').empty(); // Clear previous pagination links
+            $('#table-list-bank-soal').empty(); // Clear previous entries
+            $('.pagination-container-bank-soal').empty(); // Clear previous pagination links
 
             if (data.data.length > 0) {
                 $.each(data.data, function (index, item) {
 
-                    let bankSoalDetail = data.bankSoalDetail.replace(':levelId', item.level);
+                    let bankSoalDetail = data.bankSoalDetail.replace(':levelId', item.level_id);
 
                     $('#table-list-bank-soal').append(`
                 <tr class="text-xs">
                     <td class="td-table !text-black !text-center">${index + 1}</td>
-                    <td class="td-table !text-black !text-center">${item.level}</td>
+                    <td class="td-table !text-black !text-center">${item.english_zone_level?.level_name}</td>
                     <td class="td-table !text-black !text-center">${item.status_bank_soal === 'Publish' ? 'Publish' : 'Unpublish'}</td>
                     <td class="border text-center border-gray-300">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" class="hidden peer toggle-active-bank-soal"
-                                data-level-id="${item.level}"
+                                data-level-id="${item.level_id}"
                                 ${item.status_bank_soal === 'Publish' ? 'checked' : ''} />
                             <div
                                 class="w-11 h-6 bg-gray-300 peer-checked:bg-green-500 rounded-full transition-colors duration-300 ease-in-out">
@@ -33,130 +33,27 @@ function paginateBankSoalEZ(page = 1) {
                         </label>
                     </td>
                     <td class="td-table !text-center font-bold text-[#4189e0] text-xs">
-                        <a href="${bankSoalDetail}" class="btn-bank-soal-detail" data-level-id="${item.level}">
+                        <a href="${bankSoalDetail}" class="btn-bank-soal-detail" data-level-id="${item.level_id}">
                             Lihat Detail
                         </a>
                     </td>
-                    <td class="border text-center border-gray-300">
-                        <div class="dropdown dropdown-left">
-                            <div tabindex="0" role="button">
-                                <i class="fa-solid fa-ellipsis-vertical cursor-pointer"></i>
-                            </div>
-                            <ul tabindex="0"
-                                class="dropdown-content menu bg-base-100 rounded-box z-1 w-max p-2 shadow-sm z-[9999]">
-                                <li class="text-xs">
-                                    <a href="#" class="btn-edit-level" data-level-id="${item.level}">
-                                        <i class="fa-solid fa-pen text-[#4189e0]"></i>
-                                        Edit Level
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </td>
                 </tr>
             `);
-        });
-
-        // Append pagination links
-        $('.pagination-container-bank-soal').html(data.links);
-        bindPaginationLinks();
-        $('#empty-message-bank-soal').hide(); // sembunyikan pesan kosong
-        $('.thead-table-bank-soal').show(); // Tampilkan tabel thead
-    } else {
-        $('#table-list-bank-soal').empty(); // Clear existing rows
-        $('#empty-message-bank-soal').show(); // Tampilkan pesan kosong
-        $('.thead-table-bank-soal').hide(); // sembunyikan tabel thead
-    }
-}
-    });
-}
-
-// Event listener tombol "edit level" (open modal)
-$(document).off('click', '.btn-edit-level').on('click', '.btn-edit-level', function(e) {
-    e.preventDefault();
-
-    const levelId = $(this).data('level-id');
-
-    // (Optional) set id ke form untuk submit
-    $('#edit-level-form').data('level-id', levelId);
-
-    // Reset text error
-    $('#error-level').text('');
-
-    // Tampilkan modal
-    const modal = document.getElementById('my_modal_2');
-    if (modal) {
-        $('#level').val(levelId);
-        modal.showModal();
-    }
-});
-
-// edit level
-$('#edit-level-form').on('submit', function (e) {
-    e.preventDefault();
-
-    const levelId = $(this).data('level-id');
-    const levelName = $('#level').val();
-
-    // Kosongkan error sebelumnya
-    $('#error-level').text('');
-
-    $.ajax({
-        url: `/english-zone/bank-soal/edit-level/${levelId}`,
-        method: 'PUT',
-        data: {
-            level: levelName,
-            _token: $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function (response) {
-            // Menutup modal
-            const modal = document.getElementById('my_modal_2');
-            if (modal) {
-                modal.close();
-
-                $('#alert-success-update-level').html(
-                    `
-                    <div class=" w-full flex justify-center">
-                        <div class="fixed z-[9999]">
-                            <div id="alertSuccess"
-                                class="relative top-[-45px] opacity-100 scale-90 bg-green-200 w-max p-3 flex items-center space-x-2 rounded-lg shadow-lg transition-all duration-300 ease-out">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current text-green-600" fill="none"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span class="text-green-600 text-sm">${response.message}</span>
-                                <i class="fas fa-times cursor-pointer text-green-600" id="btnClose"></i>
-                            </div>
-                        </div>
-                    </div>
-                    `
-                );
-
-                setTimeout(function() {
-                    document.getElementById('alertSuccess').remove();
-                }, 3000);
-
-                document.getElementById('btnClose').addEventListener('click', function () {
-                    document.getElementById('alertSuccess').remove();
                 });
 
-                // Memanggil fungsi untuk memuat ulang data
-                paginateBankSoalEZ();
-            }
-        },
-        error: function(xhr) {
-            if (xhr.status === 422) {
-                const errors = xhr.responseJSON.errors;
-                if (errors && errors.level) {
-                    $('#error-level').text(errors.level[0]);
-                    $('#level').addClass('border border-red-400');
-                }
+                // Append pagination links
+                $('.pagination-container-bank-soal').html(data.links);
+                bindPaginationLinks();
+                $('#empty-message-bank-soal').hide(); // sembunyikan pesan kosong
+                $('.thead-table-bank-soal').show(); // Tampilkan tabel thead
+            } else {
+                $('#table-list-bank-soal').empty(); // Clear existing rows
+                $('#empty-message-bank-soal').show(); // Tampilkan pesan kosong
+                $('.thead-table-bank-soal').hide(); // sembunyikan tabel thead
             }
         }
     });
-});
-
+}
 
 // action Unpublish dan Publish bank soal
 $(document).ready(function () {
@@ -191,7 +88,7 @@ $(document).ready(function () {
 
 
 function bindPaginationLinks() {
-    $('.pagination-container-bank-soal').off('click', 'a').on('click', 'a', function(event) {
+    $('.pagination-container-bank-soal').off('click', 'a').on('click', 'a', function (event) {
         event.preventDefault(); // Cegah perilaku default link
         const page = new URL(this.href).searchParams.get('page'); // Dapatkan nomor halaman dari link
         paginateBankSoalEZ(page); // Ambil data yang difilter untuk halaman yang ditentukan
