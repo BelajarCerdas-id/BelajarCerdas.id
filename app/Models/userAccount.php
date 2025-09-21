@@ -99,8 +99,17 @@ class UserAccount extends Authenticatable
     public function EnglishZoneLevel() {
         return $this->hasOne(EnglishZoneLevel::class, 'administrator_id');
     }
+
+    public function EnglishZoneUnit() {
+        return $this->hasOne(EnglishZoneUnit::class, 'administrator_id');
+    }
+    
     public function EnglishZoneQuestions() {
         return $this->hasOne(EnglishZoneQuestions::class, 'administrator_id');
+    }
+
+    public function EnglishZoneMateri() {
+        return $this->hasOne(EnglishZoneMateri::class, 'administrator_id');
     }
 
     public function EnglishZoneBatch() {

@@ -5,13 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EnglishZoneLevel extends Model
+class EnglishZoneMateri extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'administrator_id',
-        'level_name',
+        'materi_vocabulary',
+        'materi_grammar',
+        'video_materi',
+        'lesson_plan',
+        'level_id',
+        'unit_id',
+        'session',
     ];
 
     public function UserAccount()
@@ -19,18 +25,13 @@ class EnglishZoneLevel extends Model
         return $this->belongsTo(UserAccount::class, 'administrator_id');
     }
 
-    public function EnglishZoneQuestions()
+    public function EnglishZoneLevel()
     {
-        return $this->hasOne(EnglishZoneQuestions::class, 'level_id');
-    }
-
-    public function EnglishZoneMateri()
-    {
-        return $this->hasOne(EnglishZoneMateri::class, 'level_id');
+        return $this->belongsTo(EnglishZoneLevel::class, 'level_id');
     }
 
     public function EnglishZoneUnit()
     {
-        return $this->hasOne(EnglishZoneUnit::class, 'level_id');
+        return $this->belongsTo(EnglishZoneUnit::class, 'unit_id');
     }
 }

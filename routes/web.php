@@ -341,14 +341,25 @@ Route::fallback(function () {
     // MANAGEMENT LEVELS
     // views(ADMINISTRATOR)
     Route::get('/english-zone/management-levels', [EnglishZoneController::class, 'managementLevelView'])->name('EZ.managementLevel.view');
+    Route::get('/english-zone/management-levels/unit/{id}', [EnglishZoneController::class, 'managementUnitView'])->name('EZ.managementUnit.view');
 
     // CRUD (ADMINISTRATOR)
+    // management level
     Route::post('/english-zone/management-levels/store', [EnglishZoneController::class, 'managementLevelStore'])->name('EZ.managementLevel.store');
     Route::put('/english-zone/management-levels/edit/{id}', [EnglishZoneController::class, 'managementLevelEdit'])->name('EZ.managementLevel.edit');
     Route::delete('/english-zone/management-levels/delete/{id}', [EnglishZoneController::class, 'managementLevelDelete'])->name('EZ.managementLevel.delete');
 
+    // management unit
+    Route::post('/english-zone/management-levels/unit/store/{levelId}', [EnglishZoneController::class, 'managementUnitStore'])->name('EZ.managementUnit.store');
+    Route::put('/english-zone/management-levels/unit/edit/{id}', [EnglishZoneController::class, 'managementUnitEdit'])->name('EZ.managementUnit.edit');
+    Route::delete('/english-zone/management-levels/unit/delete/{id}', [EnglishZoneController::class, 'managementUnitDelete'])->name('EZ.managementUnit.delete');
+
     // PAGINATE
     Route::get('/english-zone/management-levels/paginate', [EnglishZoneController::class, 'paginateManagementLevel'])->name('EZ.managementLevel.paginate');
+    Route::get('/english-zone/management-levels/unit/paginate/{levelId}', [EnglishZoneController::class, 'paginateManagementUnit'])->name('EZ.managementUnit.paginate');
+
+    // DROPDOWN BERTINGKAT UNIT BY LEVEL
+    Route::get('/english-zone/dropdown-bertingkat-unit/{levelId}', [EnglishZoneController::class, 'getUnitByLevel'])->name('EZ.getUnitByLevel.dropdown');
     
     // BANK SOAL
     // views(ADMINISTRATOR)
@@ -369,6 +380,20 @@ Route::fallback(function () {
     // UPLOAD & DELETE IMAGE WITH CKEDITOR
     Route::post('/english-zone/bank-soal/edit-image', [EnglishZoneController::class, 'editImageBankSoal'])->name('englishZone.editImage');
     Route::post('/english-zone/bank-soal/delete-image/endpoint', [EnglishZoneController::class, 'deleteImageBankSoal'])->name('englishZone.deleteImage');
+
+    // MANAGEMENT MATERI
+    // views (ADMINISTRATOR)
+    Route::get('/english-zone/management-materi', [EnglishZoneController::class, 'managementMateriView'])->name('EZ.managementMateri.view');
+    Route::get('/english-zone/management-materi/detail/{id}', [EnglishZoneController::class, 'managementMateriDetail'])->name('EZ.managementDetail.view');
+
+    // CRUD
+    Route::post('/english-zone/management-materi/store', [EnglishZoneController::class, 'managementMateriStore'])->name('EZ.managementMateri.store');
+    Route::post('/english-zone/management-materi/edit/{id}', [EnglishZoneController::class, 'managementMateriEdit'])->name('EZ.managementMateri.edit');
+    Route::delete('/english-zone/management-materi/delete/{id}', [EnglishZoneController::class, 'managementMateriDelete'])->name('EZ.managementMateri.delete');
+    
+    // PAGINATE
+    Route::get('/english-zone/management-materi/paginate', [EnglishZoneController::class, 'paginateManagementMateri'])->name('EZ.managementMateri.paginate');
+    Route::get('/english-zone/management-materi/detail/paginate/{id}', [EnglishZoneController::class, 'paginateManagementMateriDetail'])->name('EZ.managementMateriDetail.paginate');
 
     // MANAGEMENT BATCHES
     // views (ADMINISTRATOR)

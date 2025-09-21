@@ -1,89 +1,99 @@
-function paginateManagementLevel(page = 1) {
-    $.ajax({
-        url: '/english-zone/management-levels/paginate',
-        method: 'GET',
-        data: {
-            page: page
-        },
-        success: function (data) {
-            $('#table-list-management-level').empty(); // Clear previous entries
-            $('.pagination-container-management-level').empty(); // Clear previous pagination links
+function paginateManagementUnit() {
+    const container = document.getElementById('container-management-unit');
+    if (!container) return;
 
-            if (data.data.length > 0) {
-                $.each(data.data, function (index, item) {
+    const levelId = container.dataset.levelId;
+    if (!levelId) return;
 
-                    const managementUnit = data.managementUnit.replace(':id', item.id);
+    fetcFilteredDataManagementUnit(levelId);
 
-                    $('#table-list-management-level').append(`
-                    <tr class="text-xs">
-                        <td class="td-table !text-black !text-center">${index + 1}</td>
-                        <td class="td-table !text-black !text-center">${item.level_name}</td>
-                        <td class="td-table !text-black !text-center">
-                            <a href="${managementUnit}" class="font-bold text-[#4189e0] text-xs">
-                                Lihat Detail
-                            </a>
-                        </td>
-                        <td class="border text-center border-gray-300">
-                            <div class="dropdown dropdown-left">
-                                <div tabindex="0" role="button">
-                                    <i class="fa-solid fa-ellipsis-vertical cursor-pointer"></i>
-                                </div>
-                                <ul tabindex="0"
-                                    class="dropdown-content menu bg-base-100 rounded-box z-1 w-max p-2 shadow-sm z-[9999]">
-                                    <li class="text-xs">
-                                        <a href="#" class="btn-edit-level" data-level-id="${item.id}" data-level='${JSON.stringify(item)}'>
-                                            <i class="fa-solid fa-pen text-[#4189e0]"></i>
-                                            Edit Level
-                                        </a>
-                                    </li>
-                                    <li class="text-xs">
-                                        <a href="#" class="btn-delete-level text-red-600" data-level-id="${item.id}">
-                                            <i class="fa-solid fa-trash text-red-600"></i>
-                                            Delete Level
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                `);
-                });
+    function fetcFilteredDataManagementUnit(page = 1) {
+        $.ajax({
+            url: `/english-zone/management-levels/unit/paginate/${levelId}`,
+            method: 'GET',
+            data: {
+                page: page
+            },
+            success: function (response) {
+                $('#table-list-management-unit').empty(); // Clear previous entries
+                $('.pagination-container-management-unit').empty(); // Clear previous pagination links
 
-                // Append pagination links
-                $('.pagination-container-management-level').html(data.links);
-                bindPaginationLinks(); // Bind click event ke link pagination yang baru
-                $('#empty-message-management-level').hide(); // sembunyikan pesan kosong
-                $('.thead-table-management-level').show(); // Tampilkan tabel thead
-            } else {
-                $('#table-list-management-level').empty(); // Clear existing rows
-                $('#empty-message-management-level').show(); // Tampilkan pesan kosong
-                $('.thead-table-management-level').hide(); // sembunyikan tabel thead
+                if (response.data.length > 0) {
+                    $.each(response.data, function (index, item) {
+                        $('#table-list-management-unit').append(`
+                        <tr class="text-xs">
+                            <td class="td-table !text-black !text-center">${index + 1}</td>
+                            <td class="td-table !text-black">${item.unit_name}</td>
+                                <td class="border text-center border-gray-300">
+                                    <div class="dropdown dropdown-left">
+                                        <div tabindex="0" role="button">
+                                            <i class="fa-solid fa-ellipsis-vertical cursor-pointer"></i>
+                                        </div>
+                                        <ul tabindex="0"
+                                            class="dropdown-content menu bg-base-100 rounded-box z-1 w-max p-2 shadow-sm z-[9999]">
+                                            <li class="text-xs">
+                                                <a href="#" class="btn-edit-unit" data-unit-id="${item.id}" data-unit='${JSON.stringify(item)}'>
+                                                    <i class="fa-solid fa-pen text-[#4189e0]"></i>
+                                                    Edit Unit
+                                                </a>
+                                            </li>
+                                            <li class="text-xs">
+                                                <a href="#" class="btn-delete-unit" data-unit-id="${item.id}">
+                                                    <i class="fa-solid fa-trash text-red-600"></i>
+                                                    Delete unit
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                        </tr>
+                        `);
+                    });
+
+                    // Append pagination links
+                    $('.pagination-container-management-unit').html(response.links);
+                    bindPaginationLinks(); // Bind click event ke link pagination yang baru
+                    $('#empty-message-management-unit').hide(); // sembunyikan pesan kosong
+                    $('.thead-table-management-unit').show(); // Tampilkan tabel thead
+                } else {
+                    $('#table-list-management-unit').empty(); // Clear existing rows
+                    $('#empty-message-management-unit').show(); // Tampilkan pesan kosong
+                    $('.thead-table-management-unit').hide(); // sembunyikan tabel thead
+                }
             }
-        }
-    });
+        });
+    }
 }
 
 $(document).ready(function () {
-    paginateManagementLevel();
+    paginateManagementUnit();
 });
 
 function bindPaginationLinks() {
-    $('.pagination-container-management-level').off('click', 'a').on('click', 'a', function (event) {
+    $('.pagination-container-management-unit').off('click', 'a').on('click', 'a', function (event) {
         event.preventDefault(); // Cegah perilaku default link
         const page = new URL(this.href).searchParams.get('page'); // Dapatkan nomor halaman dari link
-        paginateManagementLevel(page); // Ambil data yang difilter untuk halaman yang ditentukan
+        paginateManagementUnit(page); // Ambil response yang difilter untuk halaman yang ditentukan
     });
 }
 
-// Form Action Insert level
+// Form Action Insert unit
+let isProcessing = false;
 $('#submit-button').on('click', function (e) {
     e.preventDefault();
 
-    const form = $('#management-level-form')[0]; // ambil DOM Form-nya
+    if (isProcessing) return; // ❌ Abaikan jika sedang proses
+
+    isProcessing = true; // ✅ Tandai sedang diproses
+
+    const form = $(this).closest('form')[0]; // ambil DOM Form-nya
+    const levelId = $(form).data('level-id');
     const formData = new FormData(form); // buat FormData dari form, BUKAN dari tombol
+    const btn = $(this);
+    btn.prop('disabled', true); // Disable button UI
 
     $.ajax({
-        url: '/english-zone/management-levels/store',
+        url: `/english-zone/management-levels/unit/store/${levelId}`,
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -92,7 +102,7 @@ $('#submit-button').on('click', function (e) {
         processData: false,
         contentType: false,
         success: function (response) {
-            $('#alert-success-insert-level').html(`
+            $('#alert-success-insert-unit').html(`
                     <div class=" w-full flex justify-center">
                         <div class="fixed z-[9999]">
                             <div id="alertSuccess"
@@ -117,9 +127,12 @@ $('#submit-button').on('click', function (e) {
                 $('#alertSuccess').remove();
             });
 
-            $('#management-level-form')[0].reset();
+            $('#management-unit-form')[0].reset();
 
-            paginateManagementLevel();
+            paginateManagementUnit();
+
+            isProcessing = false;
+            btn.prop('disabled', false);
         },
         error: function (xhr) {
             if (xhr.status === 422) {
@@ -127,64 +140,68 @@ $('#submit-button').on('click', function (e) {
 
                 $.each(errors, function (field, messages) {
                     // Tampilkan pesan error
-                    $('#management-level-form').find(`#error-${field}`).text(messages[0]);
+                    $(`#error-${field}`).text(messages[0]);
 
                     // Tambahkan style error ke input (jika ada)
-                    $('#management-level-form').find(`[name="${field}"]`).addClass('border-red-400 border');
+                    $('#management-unit-form').find(`[name="${field}"]`).addClass('border-red-400 border');
                 });
+                isProcessing = false;
+                btn.prop('disabled', false);
             } else {
                 alert('Terjadi kesalahan saat mengirim data.');
+                isProcessing = false;
+                btn.prop('disabled', false);
             }
         }
     });
 });
 
-// Event listener tombol "edit level" (open modal)
-$(document).off('click', '.btn-edit-level').on('click', '.btn-edit-level', function (e) {
+// Event listener tombol "edit unit" (open modal)
+$(document).off('click', '.btn-edit-unit').on('click', '.btn-edit-unit', function (e) {
     e.preventDefault();
 
-    const level = $(this).data('level'); // ← ambil object level lengkap
-    const levelId = level.id;
+    const unit = $(this).data('unit'); // ← ambil object level lengkap
+    const unitId = unit.id;
 
     // set id ke form
-    $('#edit-level-form').data('level-id', levelId);
+    $('#edit-unit-form').data('unit-id', unitId);
 
     // Reset error
-    $('#edit-level-form .text-red-500').text('');
-    $('#edit-level-form input, #edit-level-form select').removeClass('border-red-400 border');
+    $('#edit-unit-form .text-red-500').text('');
+    $('#edit-unit-form input').removeClass('border-red-400 border');
 
     // isi semua field otomatis
-    $('#level_name_id').val(level.level_name);
+    $('#unit_name_id').val(unit.unit_name);
 
     // buka modal
-    const modal = document.getElementById('my_modal_1');
+    const modal = document.getElementById('my_modal_2');
     if (modal) modal.showModal();
 });
 
 
-// edit level
-$('#edit-level-form').on('submit', function (e) {
+// edit unit
+$('#edit-unit-form').on('submit', function (e) {
     e.preventDefault();
 
-    const levelId = $(this).data('level-id');
+    const unitId = $(this).data('unit-id');
     const formData = $(this).serialize(); // otomatis ambil semua field input/select di form
 
     // kosongkan error
-    $('#edit-level-form .text-red-500').text('');
-    $('#edit-level-form input').removeClass('border-red-400 border');
+    $('#edit-unit-form .text-red-500').text('');
+    $('#edit-unit-form input').removeClass('border-red-400 border');
 
     $.ajax({
-        url: `/english-zone/management-levels/edit/${levelId}`,
+        url: `/english-zone/management-levels/unit/edit/${unitId}`,
         method: 'PUT',
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         data: formData,
         success: function (response) {
-            document.getElementById('my_modal_1').close();
+            document.getElementById('my_modal_2').close();
 
             // alert sukses
-            $('#alert-success-update-level').html(`
+            $('#alert-success-update-unit').html(`
                 <div class="w-full flex justify-center">
                     <div class="fixed z-[9999]">
                         <div id="alertSuccess"
@@ -204,7 +221,7 @@ $('#edit-level-form').on('submit', function (e) {
             setTimeout(() => $('#alertSuccess').remove(), 3000);
             $('#btnClose').on('click', () => $('#alertSuccess').remove());
 
-            paginateManagementLevel();
+            paginateManagementUnit();
         },
         error: function (xhr) {
             if (xhr.status === 422) {
@@ -212,57 +229,57 @@ $('#edit-level-form').on('submit', function (e) {
 
                 $.each(errors, function (field, messages) {
                     // Tampilkan pesan error
-                    $('#edit-level-form').find(`#error-${field}`).text(messages[0]);
+                    $('#edit-unit-form').find(`#error-${field}`).text(messages[0]);
 
                     // Tambahkan style error ke input (jika ada)
-                    $('#edit-level-form').find(`[name="${field}"]`).addClass('border-red-400 border');
+                    $('#edit-unit-form').find(`[name="${field}"]`).addClass('border-red-400 border');
                 })
             }
         }
     });
 });
 
-// function close modal delete level
+// function close modal delete unit
 function closeModal() {
-    const closeModal = document.getElementById('my_modal_2');
+    const closeModal = document.getElementById('my_modal_3');
     closeModal.close();
 }
 
 // Event listener tombol "delete level" (open modal)
-$(document).off('click', '.btn-delete-level').on('click', '.btn-delete-level', function (e) {
+$(document).off('click', '.btn-delete-unit').on('click', '.btn-delete-unit', function (e) {
     e.preventDefault();
 
-    const levelId = $(this).data('level-id');
+    const unitId = $(this).data('unit-id');
 
     // (Optional) set id ke form untuk submit
-    $('#delete-level-form').data('level-id', levelId);
+    $('#delete-unit-form').data('unit-id', unitId);
 
     // Tampilkan modal
-    const modal = document.getElementById('my_modal_2');
+    const modal = document.getElementById('my_modal_3');
     if (modal) {
         modal.showModal();
     }
 });
 
 // delete level
-$('#delete-level-form').on('submit', function (e) {
+$('#delete-unit-form').on('submit', function (e) {
     e.preventDefault();
 
-    const levelId = $(this).data('level-id');
+    const unitId = $(this).data('unit-id');
 
     $.ajax({
-        url: `/english-zone/management-levels/delete/${levelId}`,
+        url: `/english-zone/management-levels/unit/delete/${unitId}`,
         method: 'DELETE',
         data: {
             _token: $('meta[name="csrf-token"]').attr('content')
         },
         success: function (response) {
             // Menutup modal
-            const modal = document.getElementById('my_modal_2');
+            const modal = document.getElementById('my_modal_3');
             if (modal) {
                 modal.close();
 
-                $('#alert-success-delete-level').html(
+                $('#alert-success-delete-unit').html(
                     `
                     <div class=" w-full flex justify-center">
                         <div class="fixed z-[9999]">
@@ -290,7 +307,7 @@ $('#delete-level-form').on('submit', function (e) {
                 });
 
                 // Memanggil fungsi untuk memuat ulang data
-                paginateManagementLevel();
+                paginateManagementUnit();
             }
         },
     });

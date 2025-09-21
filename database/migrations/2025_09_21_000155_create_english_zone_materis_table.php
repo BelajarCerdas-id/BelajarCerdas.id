@@ -11,20 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('english_zone_questions', function (Blueprint $table) {
+        Schema::create('english_zone_materis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('administrator_id')->constrained('user_accounts');
-            $table->text('questions');
-            $table->string('options_key');
-            $table->text('options_value');
-            $table->string('answer_key');
-            $table->enum('difficulty', ['Mudah', 'Sedang', 'Sukar']);
-            $table->text('explanation');
+            $table->string('materi_vocabulary');
+            $table->string('materi_grammar');
+            $table->string('video_materi');
+            $table->string('lesson_plan');
             $table->foreignId('level_id')->constrained('english_zone_levels');
-            $table->string('unit');
+            $table->foreignId('unit_id')->constrained('english_zone_units');
             $table->string('session');
-            $table->string('status_soal');
-            $table->enum('status_bank_soal', ['Unpublish', 'Publish'])->default('Unpublish');
             $table->timestamps();
         });
     }
@@ -34,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('english_zone_questions');
+        Schema::dropIfExists('english_zone_materis');
     }
 };

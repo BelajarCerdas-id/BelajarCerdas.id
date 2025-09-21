@@ -592,6 +592,7 @@
                     <div class="content-dropdown">
                         <a href="{{ route('EZ.managementLevel.view') }}" class="link-href">Management Levels</a>
                         <a href="{{ route('EZ.bankSoal.view') }}" class="link-href">Bank Soal</a>
+                        <a href="{{ route('EZ.managementMateri.view') }}" class="link-href">Management Materi</a>
                         <a href="{{ route('EZ.managementBatches.view') }}" class="link-href">Management Batches</a>
                         <a href="{{ route('EZ.managementMentorSchedule.view') }}" class="link-href">Mentor
                             Schedule</a>
@@ -879,8 +880,14 @@
                                             <i class="fas fa-chevron-down absolute right-0" id="rotate"></i>
                                         </div>
                                         <div class="content-dropdown">
+                                            <a href="{{ route('EZ.managementLevel.view') }}" class="link-href">
+                                                Management Levels
+                                            </a>
                                             <a href="{{ route('EZ.bankSoal.view') }}" class="link-href">
                                                 Bank Soal
+                                            </a>
+                                            <a href="{{ route('EZ.managementMateri.view') }}" class="link-href">
+                                                Management Materi
                                             </a>
                                             <a href="{{ route('EZ.managementBatches.view') }}" class="link-href">
                                                 Management Batches

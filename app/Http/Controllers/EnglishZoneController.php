@@ -6,13 +6,17 @@ use App\Events\BankSoalEnglishZoneEditQuestion;
 use App\Events\BankSoalEnglishZoneUploaded;
 use App\Events\EnglishZoneBatchScheduleListener;
 use App\Events\EnglishZoneLevelsListener;
+use App\Events\EnglishZoneMateriListener;
 use App\Events\EnglishZoneMentorScheduleListener;
+use App\Events\EnglishZoneUnitListener;
 use App\Events\EventEnglishZoneBatch;
 use App\Models\EnglishZoneBatch;
 use App\Models\EnglishZoneBatchSchedule;
 use App\Models\EnglishZoneLevel;
+use App\Models\EnglishZoneMateri;
 use App\Models\EnglishZoneMentorSchedule;
 use App\Models\EnglishZoneQuestions;
+use App\Models\EnglishZoneUnit;
 use App\Models\Kurikulum;
 use App\Models\MentorFeatureStatus;
 use App\Models\UserAccount;
@@ -81,12 +85,15 @@ class EnglishZoneController extends Controller
         return response()->json([
             'data' => $dataManagementLevel->items(),
             'links' => (string) $dataManagementLevel->links(),
+            'managementUnit' => '/english-zone/management-levels/unit/:id',
         ]);
     }
 
     // function management level edit
     public function managementLevelEdit(Request $request, $id)
     {
+        $user = Auth::user();
+
         $validator = Validator::make($request->all(), [
             'level_name' => [
                 'required',
@@ -107,6 +114,7 @@ class EnglishZoneController extends Controller
         $dataManagementLevel = EnglishZoneLevel::findOrFail($id);
 
         $dataManagementLevel->update([
+            'administrator_id' => $user->id,
             'level_name' => $request->level_name
         ]);
 
@@ -132,6 +140,110 @@ class EnglishZoneController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Level berhasil dihapus.',
+        ]);
+    }
+    
+    public function managementUnitView($id)
+    {
+        return view('Features.english-zone.management-unit.management-unit', compact('id'));
+    }
+
+    public function managementUnitStore(Request $request, $levelId)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'unit_name' => [
+                'required',
+                Rule::unique('english_zone_units', 'unit_name')
+            ]
+        ], [
+            'unit_name.required' => 'Harap isi nama unit.',
+            'unit_name.unique' => 'Unit telah terdaftar.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $createUnit = EnglishZoneUnit::create([
+            'administrator_id' => $user->id,
+            'level_id' => $levelId,
+            'unit_name' => $request->unit_name
+        ]);
+
+        broadcast(new EnglishZoneUnitListener('EnglishZoneUnit', 'create', $createUnit))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Unit berhasil ditambahkan.',
+        ], 200);
+    }
+
+    // function paginate management level detail
+    public function paginateManagementUnit($levelId)
+    {
+        $dataManagementUnit = EnglishZoneUnit::where('level_id', $levelId)->paginate(20);
+
+        return response()->json([
+            'data' => $dataManagementUnit->items(),
+            'links' => (string) $dataManagementUnit->links(),
+        ]);
+    }
+
+    public function managementUnitEdit(Request $request, $id)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'unit_name' => [
+                'required',
+                Rule::unique('english_zone_units', 'unit_name')
+            ],
+        ], [
+            'unit_name.required' => 'Harap isi nama unit.',
+            'unit_name.unique' => 'Nama unit telah terdaftar.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $dataManagementUnit = EnglishZoneUnit::findOrFail($id);
+
+        $dataManagementUnit->update([
+            'administrator_id' => $user->id,
+            'unit_name' => $request->unit_name
+        ]);
+
+        broadcast(new EnglishZoneUnitListener('EnglishZoneUnit', 'update', $dataManagementUnit))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Unit berhasil diubah.',
+        ]);
+    }
+
+    // function management level delete
+    public function managementUnitDelete($id)
+    {
+        $dataManagementUnit = EnglishZoneUnit::findOrFail($id);
+
+        $deletedData = $dataManagementUnit->toArray();
+
+        broadcast(new EnglishZoneUnitListener('EnglishZoneUnit', 'delete', $deletedData))->toOthers();
+
+        $dataManagementUnit->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Unit berhasil dihapus.',
         ]);
     }
 
@@ -160,6 +272,8 @@ class EnglishZoneController extends Controller
     // function bankSoal activate
     public function bankSoalActivate(Request $request, $levelId)
     {
+        $user = Auth::user();
+
         $request->validate([
             'status_bank_soal' => 'required|in:Publish,Unpublish'
         ]);
@@ -168,6 +282,7 @@ class EnglishZoneController extends Controller
 
         foreach ($dataBankSoal as $soal) {
             $soal->update([
+                'administrator_id' => $user->id,
                 'status_bank_soal' => $request->status_bank_soal
             ]);
         }
@@ -277,6 +392,8 @@ class EnglishZoneController extends Controller
     // function bankSoal edit question
     public function editQuestion(Request $request, $id)
     {
+        $user = Auth::user();
+
         $validator = Validator::make($request->all(), [
             'questions' => 'required',
             'options_value.*' => 'required',
@@ -308,6 +425,7 @@ class EnglishZoneController extends Controller
         foreach($groupedSoal as $key => $value) {
             foreach($value as $soal) {
                 $soal->update([
+                    'administrator_id' => $user->id,
                     'questions' => $request->questions,
                     'answer_key' => $request->answer_key,
                     'options_value' => $request->options_value[$soal->id], // untuk each option_value masing" options
@@ -744,6 +862,8 @@ class EnglishZoneController extends Controller
     // function edit batch
     public function managementBatchEdit(Request $request, $id)
     {
+        $user = Auth::user();
+
         $validator = Validator::make($request->all(), [
             'batch_name' => [
                 'required',
@@ -770,6 +890,7 @@ class EnglishZoneController extends Controller
         $batch = EnglishZoneBatch::find($id);
 
         $batch->update([
+            'administrator_id' => $user->id,
             'batch_name' => $request->batch_name,
             'start_day' => $request->start_day,
             'start_month' => $request->start_month,
@@ -896,6 +1017,8 @@ class EnglishZoneController extends Controller
     // function edit batch schedule
     public function managementBatchScheduleEdit(Request $request, $batch_id, $batch_schedule_id)
     {
+        $user = Auth::user();
+
         $validator = Validator::make($request->all(), [
             'day_of_week' => 'required',
             'start_time' => 'required',
@@ -931,6 +1054,7 @@ class EnglishZoneController extends Controller
         $batchSchedule = EnglishZoneBatchSchedule::find($batch_schedule_id);
 
         $batchSchedule->update([
+            'administrator_id' => $user->id,
             'day_of_week' => $request->day_of_week,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
@@ -963,6 +1087,7 @@ class EnglishZoneController extends Controller
         ]);
     }
 
+    // function view management mentor schedule
     public function managementMentorScheduleView()
     {
         $getBatch = EnglishZoneBatch::all();
@@ -1004,6 +1129,7 @@ class EnglishZoneController extends Controller
         return view('Features.english-zone.mentor-schedule.management-mentor-schedule', compact('getBatch', 'scheduleTimeGroup', 'countScheduleTimeGroup'));
     }
 
+    // function paginate management mentor schedule
     public function paginateManagementMentorSchedule(Request $request)
     {
         $batch = $request->query('batch', "Batch 1"); // default batch 1
@@ -1044,6 +1170,7 @@ class EnglishZoneController extends Controller
         ]);
     }
 
+    // function management mentor schedule activate
     public function managementMentorScheduleActivate(Request $request)
     {
         $request->validate([
@@ -1068,5 +1195,247 @@ class EnglishZoneController extends Controller
         broadcast(new EnglishZoneMentorScheduleListener($ids))->toOthers();
 
         return response()->json(['success' => true]);
+    }
+
+    public function managementMateriView()
+    {
+        $getLevels = EnglishZoneLevel::all();
+
+        return view('Features.english-zone.management-materi.management-materi', compact('getLevels'));
+    }
+
+    public function managementMateriStore(Request $request)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'materi_vocabulary' => 'required|max:100000',
+            'materi_grammar' => 'required|max:100000',
+            'video_materi' => 'required|url',
+            'lesson_plan' => 'required|max:10000',
+            'level_id' => 'required',
+            'unit_id' => 'required',
+            'session' => [
+                'required',
+                Rule::unique('english_zone_materis', 'session')->where('level_id', $request->level_id)->where('unit_id', $request->unit_id),
+            ],
+        ], [
+            'materi_vocabulary.required' => 'Harap upload materi vocabulary.',
+            'materi_vocabulary.max' => 'Ukuran file melebihi kapasitas yang ditentukan.',
+            'materi_grammar.required' => 'Harap upload materi grammar.',
+            'materi_grammar.max' => 'Ukuran file melebihi kapasitas yang ditentukan.',
+            'video_materi.required' => 'Harap isi video materi.',
+            'video_materi.url' => 'Harap isi link video yang valid.',
+            'lesson_plan.required' => 'Harap upload lesson plan.',
+            'lesson_plan.max' => 'Ukuran file melebihi kapasitas yang ditentukan.',
+            'level_id.required' => 'Harap pilih level.',
+            'unit_id.required' => 'Harap pilih unit.',
+            'session.required' => 'Harap pilih sesi.',
+            'session.unique' => 'Sesi telah terdaftar pada level dan unit tersebut.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+        
+        $materiVocabularyName = null;
+        $materiGrammarName = null;
+        $lessonPlanName = null;
+
+        // 🔹 Helper: simpan file unik berdasarkan hash
+        $saveFileByHash = function ($file, $folder) {
+            $hash = md5_file($file->getRealPath());
+            $ext = $file->getClientOriginalExtension();
+            $newName = $hash . '.' . $ext; // nama file = hash.ext
+            $path = public_path($folder . '/' . $newName);
+
+            if (!file_exists($path)) {
+                $file->move(public_path($folder), $newName);
+            }
+
+            return $newName;
+        };
+
+        // Upload Vocabulary
+        if ($request->hasFile('materi_vocabulary')) {
+            $materiVocabularyName = $saveFileByHash($request->file('materi_vocabulary'), 'english-zone-materi');
+        }
+
+        // Upload Grammar
+        if ($request->hasFile('materi_grammar')) {
+            $materiGrammarName = $saveFileByHash($request->file('materi_grammar'), 'english-zone-materi');
+        }
+
+        // Upload lesson_plan
+        if ($request->hasFile('lesson_plan')) {
+            $lessonPlanName = $saveFileByHash($request->file('lesson_plan'), 'english-zone-materi');
+        }
+
+        $createMateri = EnglishZoneMateri::create([
+            'administrator_id' => $user->id,
+            'materi_vocabulary' => $materiVocabularyName,
+            'materi_grammar' => $materiGrammarName,
+            'video_materi' => $request->video_materi,
+            'link_zoom' => $request->link_zoom,
+            'lesson_plan' => $lessonPlanName,
+            'level_id' => $request->level_id,
+            'unit_id' => $request->unit_id,
+            'session' => $request->input('session'),
+        ]);
+
+        broadcast(new EnglishZoneMateriListener('EnglishZoneMateri', 'create', $createMateri))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Materi berhasil ditambahkan.',
+        ]);
+    }
+
+    public function paginateManagementMateri(Request $request)
+    {
+        $dataMateri = EnglishZoneMateri::with(['EnglishZoneLevel', 'UserAccount'])->orderBy('created_at', 'desc')->get();
+
+        $grouped = $dataMateri->groupBy('level_id');
+
+        return response()->json([
+            'data' => $grouped->values(),
+            'materiDetail' => '/english-zone/management-materi/detail/:id',
+        ]);
+    }
+
+    public function managementMateriDetail($id)
+    {
+        $getLevels = EnglishZoneLevel::all();
+
+        $getMateri = EnglishZoneMateri::with(['EnglishZoneLevel', 'UserAccount'])->find($id);
+
+        return view('Features.english-zone.management-materi.management-materi-detail', compact('id', 'getMateri', 'getLevels'));
+    }
+
+    public function paginateManagementMateriDetail($id)
+    {
+        $dataMateri = EnglishZoneMateri::with(['EnglishZoneLevel', 'EnglishZoneUnit', 'UserAccount'])
+            ->where('level_id', $id)
+            ->get()
+            ->map(function ($item) {
+                if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $item['video_materi'], $matches)) {
+                    $item['video_id'] = $matches[1] ?? $matches[2];
+                } else {
+                    $item['video_id'] = null;
+                }
+                return $item;
+            });
+
+        $dataMateri = $dataMateri->sortBy('session')->sortBy(function ($item) {
+            // Ambil angka dari unit_name: "Unit 1 - ..." → 1
+            if (preg_match('/Unit (\d+)/i', $item->EnglishZoneUnit->unit_name, $matches)) {
+                return (int) $matches[1];
+            }
+            return 999; // Kalau gagal, taruh di akhir
+        });
+
+        return response()->json([
+            'data' => $dataMateri->values(),
+        ]);
+    }
+
+    // dropdown bertingkat unit by level
+    public function getUnitByLevel($levelId)
+    {
+        $unit = EnglishZoneUnit::where('level_id', $levelId)->get();
+        return response()->json($unit);
+    }
+
+    public function managementMateriEdit(Request $request, $id)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'materi_vocabulary' => 'required',
+            'materi_grammar' => 'required',
+            'video_materi' => 'required',
+            'lesson_plan' => 'required',
+        ], [
+            'materi_vocabulary.required' => 'Harap isi materi vocabulary.',
+            'materi_grammar.required' => 'Harap isi materi grammar.',
+            'video_materi.required' => 'Harap isi video materi.',
+            'lesson_plan.required' => 'Harap isi lesson plan.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $dataMateri = EnglishZoneMateri::findOrFail($id);
+
+        $materiVocabularyName = null;
+        $materiGrammarName = null;
+        $lessonPlanName = null;
+
+        // 🔹 Helper: simpan file unik berdasarkan hash
+        $saveFileByHash = function ($file, $folder) {
+            $hash = md5_file($file->getRealPath());
+            $ext = $file->getClientOriginalExtension();
+            $newName = $hash . '.' . $ext; // nama file = hash.ext
+            $path = public_path($folder . '/' . $newName);
+
+            if (!file_exists($path)) {
+                $file->move(public_path($folder), $newName);
+            }
+
+            return $newName;
+        };
+
+        // Upload Vocabulary
+        if ($request->hasFile('materi_vocabulary')) {
+            $materiVocabularyName = $saveFileByHash($request->file('materi_vocabulary'), 'english-zone-materi');
+        }
+
+        // Upload Grammar
+        if ($request->hasFile('materi_grammar')) {
+            $materiGrammarName = $saveFileByHash($request->file('materi_grammar'), 'english-zone-materi');
+        }
+
+        // Upload Lesson Plan
+        if ($request->hasFile('lesson_plan')) {
+            $lessonPlanName = $saveFileByHash($request->file('lesson_plan'), 'english-zone-materi');
+        }
+
+        $dataMateri->update([
+            'administrator_id' => $user->id,
+            'materi_vocabulary' => $materiVocabularyName,
+            'materi_grammar' => $materiGrammarName,
+            'video_materi' => $request->video_materi,
+            'lesson_plan' => $lessonPlanName,
+        ]);
+
+        broadcast(new EnglishZoneMateriListener('EnglishZoneMateri', 'update', $dataMateri))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Materi berhasil diubah.',
+        ]);
+    }
+
+    public function managementMateriDelete($id)
+    {
+        $dataMateri = EnglishZoneMateri::findOrFail($id);
+
+        $deletedData = $dataMateri->toArray();
+
+        broadcast(new EnglishZoneMateriListener('EnglishZoneMateri', 'delete', $deletedData))->toOthers();
+
+        $dataMateri->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Materi berhasil dihapus.',
+        ]);
     }
 }
