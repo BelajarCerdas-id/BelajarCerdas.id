@@ -593,6 +593,7 @@
                         <a href="{{ route('EZ.managementLevel.view') }}" class="link-href">Management Levels</a>
                         <a href="{{ route('EZ.bankSoal.view') }}" class="link-href">Bank Soal</a>
                         <a href="{{ route('EZ.managementMateri.view') }}" class="link-href">Management Materi</a>
+                        <a href="{{ route('EZ.managementZoom.view') }}" class="link-href">Management Zoom</a>
                         <a href="{{ route('EZ.managementBatches.view') }}" class="link-href">Management Batches</a>
                         <a href="{{ route('EZ.managementMentorSchedule.view') }}" class="link-href">Mentor
                             Schedule</a>
@@ -888,6 +889,9 @@
                                             </a>
                                             <a href="{{ route('EZ.managementMateri.view') }}" class="link-href">
                                                 Management Materi
+                                            </a>
+                                            <a href="{{ route('EZ.managementZoom.view') }}" class="link-href">
+                                                Management Zoom
                                             </a>
                                             <a href="{{ route('EZ.managementBatches.view') }}" class="link-href">
                                                 Management Batches

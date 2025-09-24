@@ -9,6 +9,7 @@ use App\Events\EnglishZoneLevelsListener;
 use App\Events\EnglishZoneMateriListener;
 use App\Events\EnglishZoneMentorScheduleListener;
 use App\Events\EnglishZoneUnitListener;
+use App\Events\EnglishZoneZoomListener;
 use App\Events\EventEnglishZoneBatch;
 use App\Models\EnglishZoneBatch;
 use App\Models\EnglishZoneBatchSchedule;
@@ -17,6 +18,7 @@ use App\Models\EnglishZoneMateri;
 use App\Models\EnglishZoneMentorSchedule;
 use App\Models\EnglishZoneQuestions;
 use App\Models\EnglishZoneUnit;
+use App\Models\EnglishZoneZoom;
 use App\Models\Kurikulum;
 use App\Models\MentorFeatureStatus;
 use App\Models\UserAccount;
@@ -1197,6 +1199,8 @@ class EnglishZoneController extends Controller
         return response()->json(['success' => true]);
     }
 
+    // MANAGEMENT MATERI
+    // function management materi view
     public function managementMateriView()
     {
         $getLevels = EnglishZoneLevel::all();
@@ -1204,6 +1208,7 @@ class EnglishZoneController extends Controller
         return view('Features.english-zone.management-materi.management-materi', compact('getLevels'));
     }
 
+    // function management materi store
     public function managementMateriStore(Request $request)
     {
         $user = Auth::user();
@@ -1294,6 +1299,7 @@ class EnglishZoneController extends Controller
         ]);
     }
 
+    // function paginate management materi
     public function paginateManagementMateri(Request $request)
     {
         $dataMateri = EnglishZoneMateri::with(['EnglishZoneLevel', 'UserAccount'])->orderBy('created_at', 'desc')->get();
@@ -1306,6 +1312,7 @@ class EnglishZoneController extends Controller
         ]);
     }
 
+    // function management materi detail
     public function managementMateriDetail($id)
     {
         $getLevels = EnglishZoneLevel::all();
@@ -1315,6 +1322,7 @@ class EnglishZoneController extends Controller
         return view('Features.english-zone.management-materi.management-materi-detail', compact('id', 'getMateri', 'getLevels'));
     }
 
+    // function paginate management materi detail
     public function paginateManagementMateriDetail($id)
     {
         $dataMateri = EnglishZoneMateri::with(['EnglishZoneLevel', 'EnglishZoneUnit', 'UserAccount'])
@@ -1342,13 +1350,14 @@ class EnglishZoneController extends Controller
         ]);
     }
 
-    // dropdown bertingkat unit by level
+    // DROPDOWN BERTINGKAT UNIT BY LEVEL
     public function getUnitByLevel($levelId)
     {
         $unit = EnglishZoneUnit::where('level_id', $levelId)->get();
         return response()->json($unit);
     }
 
+    // function management materi edit
     public function managementMateriEdit(Request $request, $id)
     {
         $user = Auth::user();
@@ -1423,6 +1432,7 @@ class EnglishZoneController extends Controller
         ]);
     }
 
+    // function management materi delete
     public function managementMateriDelete($id)
     {
         $dataMateri = EnglishZoneMateri::findOrFail($id);
@@ -1436,6 +1446,283 @@ class EnglishZoneController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Materi berhasil dihapus.',
+        ]);
+    }
+
+    // MANAGEMENT ZOOM
+    // function management zoom view
+    public function managementZoomView()
+    {
+        $getLevels = EnglishZoneLevel::all();
+
+        $getBatch = EnglishZoneBatch::all();
+
+        $batchMap = [
+            "Batch 1" => "Januari",
+            "Batch 2" => "Februari",
+            "Batch 3" => "Maret",
+            "Batch 4" => "April",
+            "Batch 5" => "Mei",
+            "Batch 6" => "Juni",
+            "Batch 7" => "Juli",
+            "Batch 8" => "Agustus",
+            "Batch 9" => "September",
+            "Batch 10" => "Oktober",
+            "Batch 11" => "November",
+            "Batch 12" => "Desember"
+        ];
+
+        foreach ($getBatch as $batch) {
+            if (isset($batchMap[$batch->batch_name])) {
+                $batch->display_name = $batch->batch_name . ' - ' . $batchMap[$batch->batch_name];
+            } else {
+                $batch->display_name = $batch->batch_name; // fallback
+            }
+        }
+
+        return view('Features.english-zone.management-zoom.management-zoom', compact('getLevels', 'getBatch'));
+    }
+
+    // function dropdown bertingkat batch schedule groups
+    public function dropdownBatchScheduleGroup($batch_id)
+    {
+        $schedules = EnglishZoneBatchSchedule::where('batch_id', $batch_id)->get();
+
+        $batchScheduleGroups = $schedules->groupBy('batch_schedule_group')->map(function ($group) {
+            return [
+                'batch_schedule_group' => $group->pluck('batch_schedule_group')->unique(),
+                'days' => $group->pluck('day_of_week')->unique(),
+            ];
+        })->values();
+
+        return response()->json($batchScheduleGroups);
+    }
+
+    // function dropdown bertingkat days
+    public function dropdownDays($batch_id, $batch_schedule_group)
+    {
+        $schedules = EnglishZoneBatchSchedule::where('batch_id', $batch_id)->where('batch_schedule_group', $batch_schedule_group)->get();
+
+        $days = $schedules->pluck('day_of_week')->unique()->map(function ($day) {
+            return ['day' => $day];
+        })->values();
+
+        return response()->json($days);
+    }
+
+    // function dropdown bertingkat hours
+    public function dropdownHours($batch_id, $batch_schedule_group, $day)
+    {
+        $schedules = EnglishZoneBatchSchedule::where('batch_id', $batch_id)->where('batch_schedule_group', $batch_schedule_group)
+            ->where('day_of_week', $day)
+            ->get();
+
+        // group by jam unik
+        $hours = $schedules->groupBy(function ($item) {
+            return $item->start_time . '-' . $item->end_time;
+        })->map(function ($items) {
+            return [
+                'ids' => $items->pluck('id')->toArray(),
+                'time' => $items->first()->start_time . ' - ' . $items->first()->end_time,
+                'schedule_time_group' => $items->first()->schedule_time_group,
+            ];
+        })->values();
+
+        return response()->json($hours);
+    }
+
+    // function dropdown bertingkat mentors
+    public function dropdownMentors($batch_id, $batch_schedule_group, $day, $schedule_time_group)
+    {
+        $getMentorStatus = MentorFeatureStatus::where('feature_id', 3)->where('status_mentor', 'aktif')->pluck('mentor_id');
+        
+        $mentors = EnglishZoneMentorSchedule::with('UserAccount.MentorProfiles')->where('status_schedule', 'aktif')->whereIn('mentor_id', $getMentorStatus)
+        ->whereHas('EnglishZoneBatchSchedule', function($q) use ($batch_id, $batch_schedule_group, $day, $schedule_time_group) {
+                $q->where('batch_id', $batch_id)->where('batch_schedule_group', $batch_schedule_group)
+                ->where('day_of_week', $day)
+                ->where('schedule_time_group', $schedule_time_group);
+            })
+            ->get();
+
+            $grouped = $mentors->groupBy('mentor_id');
+
+        return response()->json($grouped);
+    }
+
+    // function pagiante management zoom
+    public function paginateManagementZoom(Request $request)
+    {
+        $getZoom = EnglishZoneZoom::with(['Administrator', 'Mentor.MentorProfiles', 'EnglishZoneBatchSchedule', 'EnglishZoneBatchSchedule.EnglishZoneBatch', 
+        'EnglishZoneLevel', 'EnglishZoneUnit']);
+
+        // filter search_mentor
+        if ($request->filled('search_mentor')) {
+            $getZoom->whereHas('Mentor.MentorProfiles', function ($query) use ($request) {
+                $query->where('nama_lengkap', 'like', '%' . $request->search_mentor . '%');
+            });
+        }
+
+        // baru ambil data
+        $data = $getZoom->orderBy('created_at', 'desc')->paginate(20);
+
+        return response()->json([
+            'data' => $data->items(),
+            'links' => (string) $data->links(),
+        ]);
+    }
+
+    // function management zoom store
+    public function managementZoomStore(Request $request)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'batch_id' => 'required',
+            'batch_schedule_group_id' => 'required',
+            'days_id' => 'required',
+            'hours_id' => 'required',
+            'mentor_id' => 'required',
+            'level_id' => 'required',
+            'unit_id' => 'required',
+            'session' => [
+                'required',
+                Rule::unique('english_zone_zooms', 'session')->where('level_id', $request->level_id)->where('unit_id', $request->unit_id)
+                ->where('mentor_id', $request->mentor_id),
+            ],
+            'link_zoom' => [
+                'required',
+                'url',
+                Rule::unique('english_zone_zooms', 'link_zoom'),
+            ],
+            'meeting_id' => [
+                'required',
+                Rule::unique('english_zone_zooms', 'meeting_id'),
+            ],
+            'zoom_passcode' => [
+                'required',
+                Rule::unique('english_zone_zooms', 'zoom_passcode'),
+            ],
+        ], [
+            'batch_id.required' => 'Harap pilih batch.',
+            'batch_schedule_group_id.required' => 'Harap pilih batch schedule group.',
+            'days_id.required' => 'Harap pilih hari.',
+            'hours_id.required' => 'Harap pilih jam.',
+            'hours_id.unique' => 'Jam telah terdaftar pada mentor ini.',
+            'mentor_id.required' => 'Harap pilih mentor.',
+            'level_id.required' => 'Harap pilih level.',
+            'unit_id.required' => 'Harap pilih unit.',
+            'session.required' => 'Harap pilih sesi.',
+            'session.unique' => 'Sesi telah terdaftar pada level, unit, dan mentor tersebut.',
+            'link_zoom.required' => 'Harap isi link zoom.',
+            'link_zoom.url' => 'Format link tidak sesuai.',
+            'link_zoom.unique' => 'Link Zoom telah terdaftar.',
+            'meeting_id.required' => 'Harap isi meeting id.',
+            'meeting_id.unique' => 'Meeting ID telah terdaftar.',
+            'zoom_passcode.required' => 'Harap isi passcode.',
+            'zoom_passcode.unique' => 'Passcode telah terdaftar.',
+        ]);
+
+        // memeriksa apakah schedule tela terdaftar pada mentor yang di request atau belum
+        $check = EnglishZoneZoom::where('batch_schedule_id', $request->batch_schedule_id)->where('mentor_id', $request->mentor_id)->exists();
+
+        if ($validator->fails() || $check) {
+            $errors = $validator->errors()->toArray();
+
+            if ($check) {
+                $errors['batch_schedule_id'] = ['Schedule zoom pada mentor ini telah terdaftar, silahkan pilih mentor atau schedule yang lain.'];
+            }
+
+            return response()->json([
+                'status' => 'error',
+                'errors' => $errors,
+            ], 422);
+        }
+
+        $createZoom = EnglishZoneZoom::create([
+            'administrator_id' => $user->id,
+            'batch_schedule_id' => $request->batch_schedule_id,
+            'mentor_id' => $request->mentor_id,
+            'level_id' => $request->level_id,
+            'unit_id' => $request->unit_id,
+            'session' => $request->input('session'),
+            'link_zoom' => $request->link_zoom,
+            'meeting_id' => $request->meeting_id,
+            'zoom_passcode' => $request->zoom_passcode,
+        ]);
+
+        broadcast(new EnglishZoneZoomListener('EnglishZoneZoom', 'create', $createZoom))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Link Zoom berhasil ditambahkan.',
+        ]);
+    }
+
+    // function management zoom edit
+    public function managementZoomEdit(Request $request, $id)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'link_zoom' => [
+                'required',
+                'url',
+                Rule::unique('english_zone_zooms', 'link_zoom'),
+            ],
+            'meeting_id' => [
+                'required',
+                Rule::unique('english_zone_zooms', 'meeting_id'),
+            ],
+            'zoom_passcode' => [
+                'required',
+                Rule::unique('english_zone_zooms', 'zoom_passcode'),
+            ],
+        ], [
+            'link_zoom.required' => 'Harap isi link zoom.',
+            'link_zoom.url' => 'Format link tidak sesuai.',
+            'link_zoom.unique' => 'Link Zoom telah terdaftar.',
+            'meeting_id.required' => 'Harap isi meeting id.',
+            'meeting_id.unique' => 'Meeting ID telah terdaftar.',
+            'zoom_passcode.required' => 'Harap isi passcode.',
+            'zoom_passcode.unique' => 'Passcode telah terdaftar.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $updateZoom = EnglishZoneZoom::where('id', $id)->update([
+            'administrator_id' => $user->id,
+            'link_zoom' => $request->link_zoom,
+            'meeting_id' => $request->meeting_id,
+            'zoom_passcode' => $request->zoom_passcode,
+        ]);
+
+        broadcast(new EnglishZoneZoomListener('EnglishZoneZoom', 'update', $updateZoom))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Link Zoom berhasil diubah.',
+        ]);
+    }
+
+    // function management zoom delete
+    public function managementZoomDelete($id)
+    {
+        $dataZoom = EnglishZoneZoom::findOrFail($id);
+
+        $deletedData = $dataZoom->toArray();
+
+        broadcast(new EnglishZoneZoomListener('EnglishZoneZoom', 'delete', $deletedData))->toOthers();
+
+        $dataZoom->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Link Zoom berhasil dihapus.',
         ]);
     }
 }

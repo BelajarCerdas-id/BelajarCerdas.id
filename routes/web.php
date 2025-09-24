@@ -395,6 +395,18 @@ Route::fallback(function () {
     Route::get('/english-zone/management-materi/paginate', [EnglishZoneController::class, 'paginateManagementMateri'])->name('EZ.managementMateri.paginate');
     Route::get('/english-zone/management-materi/detail/paginate/{id}', [EnglishZoneController::class, 'paginateManagementMateriDetail'])->name('EZ.managementMateriDetail.paginate');
 
+    // MANAGEMENT ZOOM
+    // views (ADMINISTRATOR)
+    Route::get('/english-zone/management-zoom', [EnglishZoneController::class, 'managementZoomView'])->name('EZ.managementZoom.view');
+
+    // CRUD
+    Route::post('/english-zone/management-zoom/store', [EnglishZoneController::class, 'managementZoomStore'])->name('EZ.managementZoom.store');
+    Route::put('/english-zone/management-zoom/edit/{id}', [EnglishZoneController::class, 'managementZoomEdit'])->name('EZ.managementZoom.edit');
+    Route::delete('/english-zone/management-zoom/delete/{id}', [EnglishZoneController::class, 'managementZoomDelete'])->name('EZ.managementZoom.delete');
+
+    // PAGINATE
+    Route::get('/english-zone/management-zoom/paginate', [EnglishZoneController::class, 'paginateManagementZoom'])->name('EZ.managementZoom.paginate');
+    
     // MANAGEMENT BATCHES
     // views (ADMINISTRATOR)
     Route::get('/english-zone/management-batches', [EnglishZoneController::class, 'managementBatchesView'])->name('EZ.managementBatches.view');
@@ -405,6 +417,12 @@ Route::fallback(function () {
     
     // PAGINATE
     Route::get('/english-zone/management-batches/paginate', [EnglishZoneController::class, 'paginateManagementBatches'])->name('EZ.managementBatches.paginate');
+
+    // DROPDOWN BERTINGKAT (batch -> batch_schedule_groups -> days -> hours -> mentors)
+    Route::get('/batch-schedule-groups/{batch_id}', [EnglishZoneController::class, 'dropdownBatchScheduleGroup'])->name('batchScheduleGroups.dropdown');
+    Route::get('/days/{batch_id}/{batch_schedule_group}', [EnglishZoneController::class, 'dropdownDays'])->name('days.dropdown');
+    Route::get('/hours/{batch_id}/{batch_schedule_group}/{day}', [EnglishZoneController::class, 'dropdownHours'])->name('hours.dropdown');
+    Route::get('/mentors/{batch_id}/{batch_schedule_group}/{day}/{schedule_time_group}', [EnglishZoneController::class, 'dropdownMentors'])->name('mentors.dropdown');
     
     // MANAGEMENT BATCHES SCHEDULE
     // views (ADMINISTRATOR)
