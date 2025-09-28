@@ -33,4 +33,9 @@ class EnglishZoneBatchSchedule extends Model
     {
         return $this->hasOne(EnglishZoneMentorSchedule::class, 'batch_schedule_id');
     }
+
+    public function EnglishZoneStudentBatch()
+    {
+        return $this->hasMany(EnglishZoneStudentBatch::class, 'batch_schedule_id');
+    }
 }

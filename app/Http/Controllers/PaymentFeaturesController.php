@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EnglishZoneBatch;
+use App\Models\EnglishZoneLevel;
+use App\Models\EnglishZoneStudentBatch;
 use App\Models\FeaturePrices;
 use App\Models\Features;
 use App\Models\FeatureSubscriptionHistory;
 use App\Models\Transactions;
 use App\Services\MidtransService;
 use App\Services\PaymentHandlers\CheckoutCoinHandler;
+use App\Services\PaymentHandlers\CheckoutEnglishZoneSubscriptionHandler;
 use App\Services\PaymentHandlers\CheckoutSoalPembahasanSubscriptionHandler;
 use App\Services\PaymentHandlers\RenewCheckoutCoinHandler;
 use App\Services\PaymentHandlers\RenewCheckoutSoalPembahasanSubscriptionHandler;
@@ -93,12 +97,40 @@ class PaymentFeaturesController extends Controller
 
         // mengambil packet soal pembahasan student yang sedang aktif
         $getPacketSoalPembahasanActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
-            $query->where('feature_id', 2);
+            $query->whereIn('feature_id', [2, 3]); // id fitur soal pembahasan, english zone
         })->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)
         ->where('student_id', $userId)->orderBy('created_at', 'desc')->first();
 
+        // FOR ENGLISH ZONE FEATURE
+        $getLevels = EnglishZoneLevel::all();
+
+        $getBatch = EnglishZoneBatch::all();
+
+        $monthMap = [
+            "01" => "Januari",
+            "02" => "Februari",
+            "03" => "Maret",
+            "04" => "April",
+            "05" => "Mei",
+            "06" => "Juni",
+            "07" => "Juli",
+            "08" => "Agustus",
+            "09" => "September",
+            "10" => "Oktober", 
+            "11" => "November",
+            "12" => "Desember"
+        ];
+
+        foreach ($getBatch as $batch) {
+            if(isset($monthMap[$batch->start_month])) {
+                $batch->display_name = $monthMap[$batch->start_month];
+            } else {
+                $batch->display_name = $batch->batch_name;
+            }
+        }
+
         return view('Features.payment-features.pembayaran-fitur', compact(
-            'nama_fitur', 'features', 'paymentMethods', 'groupedPaymentMethods', 'dataFeaturesPrices', 'getPacketSoalPembahasanActive'
+            'nama_fitur', 'features', 'paymentMethods', 'groupedPaymentMethods', 'dataFeaturesPrices', 'getPacketSoalPembahasanActive', 'getLevels', 'getBatch'
         ));
     }
 
@@ -201,13 +233,16 @@ class PaymentFeaturesController extends Controller
         $parts = explode('-', $orderId);
         $key = implode('-', array_slice($parts, 0, 3)); // contoh ['BC', 'co', 'tanya'] -> 'BC-co-tanya'
 
+        Log::info("Handler Key Detected: $key, Mapping to: " . ($midtransHandlers[$key] ?? 'null'));
+
         if ($localStatus === 'Berhasil') {
             // Mapping ke handler berdasarkan feature_id
             $midtransHandlers = [
                 'BC-co-tanya' => CheckoutCoinHandler::class,
                 'BC-rnw-tanya' => RenewCheckoutCoinHandler::class,
                 'BC-co-sp' => CheckoutSoalPembahasanSubscriptionHandler::class,
-                'BC-rnw-sp' => RenewCheckoutSoalPembahasanSubscriptionHandler::class
+                'BC-rnw-sp' => RenewCheckoutSoalPembahasanSubscriptionHandler::class,
+                'BC-co-ez' => CheckoutEnglishZoneSubscriptionHandler::class,
             ];
 
             $handler = $midtransHandlers[$key] ?? null;
@@ -447,4 +482,90 @@ class PaymentFeaturesController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    // FUNCTION ENGLISH ZONE CHECKOUT
+    public function checkoutEnglishZoneSubscription(Request $request)
+    {
+        $user = Auth::user();
+        $orderId = 'BC-co-ez-' . Str::uuid();
+        $paymentMethod = strtolower($request->payment_method_id);
+
+        $paymentMap = [
+            'bca' => 'bca_va',
+            'bni' => 'bni_va',
+            'bri' => 'bri_va',
+            'mandiri' => 'echannel',
+            'qris' => 'qris',
+            'gopay' => 'gopay',
+            'dana' => 'dana',
+            'ovo' => 'ovo',
+        ];
+
+        if (!array_key_exists($paymentMethod, $paymentMap)) {
+            return response()->json(['error' => 'Metode tidak dikenali.'], 400);
+        }
+
+        $batchScheduleIds = explode(',', $request->batch_schedule_id);
+
+        $studentCounts = EnglishZoneStudentBatch::whereHas('EnglishZoneBatchSchedule', function ($q) use ($request, $batchScheduleIds) {
+            $q->where('batch_id', $request->batch_id)->where('batch_schedule_group', $request->batch_schedule_group);
+
+            if ($request->filled('schedule_time_group')) {
+                $q->where('schedule_time_group', $request->schedule_time_group);
+            }
+
+            $q->whereIn('id', $batchScheduleIds);
+        })->where('mentor_id', $request->mentor_id)->pluck('student_id')->unique()->count();
+
+
+        if ($studentCounts >= 2) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Batch pada mentor ini sudah penuh, harap pilih mentor atau jadwal yang lain.',
+            ], 422);
+        }
+        
+        $transaction = Transactions::create([
+            'user_id' => $user->id,
+            'order_id' => $orderId,
+            'feature_id' => $request->feature_id ?? null,
+            'payment_method' => $paymentMethod,
+            'feature_variant_id' => $request->feature_variant_id ?? null,
+            'price' => (int)$request->price,
+            'transaction_status' => 'Pending',
+            'transaction_callback' => [
+                'level_id' => $request->level_id,
+                'batch_schedule_id' => $request->batch_schedule_id,
+                'mentor_id' => $request->mentor_id,
+            ],
+            'transaction_source' => 'non_school_partner',
+        ]);
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $orderId,
+                'gross_amount' => (int)$request->price,
+            ],
+            'enabled_payments' => [$paymentMap[$paymentMethod]],
+            'customer_details' => [
+                'first_name' => $user->Profile->nama_lengkap ?? 'Customer',
+                'email' => $user->email ?? 'dummy@example.com',
+            ],
+        ];
+
+        try {
+            Log::info('Midtrans Params:', $params);
+            Log::info('Request Data:', $request->all());
+            $snap = MidtransService::createTransaction($params);
+
+            $transaction->snap_token = $snap->token;
+            $transaction->save();
+
+            return response()->json(['snap_token' => $snap->token]);
+        } catch (\Exception $e) {
+            Log::error('Midtrans Error: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
 }

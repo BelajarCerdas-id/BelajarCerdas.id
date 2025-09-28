@@ -9,6 +9,10 @@ class Transactions extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'transaction_callback' => 'array',
+    ];
+
     protected $fillable = [
         'user_id',
         'feature_id',
@@ -17,7 +21,7 @@ class Transactions extends Model
         'payment_method',
         'snap_token',
         'transaction_status',
-        'jumlah_koin',
+        'transaction_callback',
         'price',
         'transaction_source',
     ];

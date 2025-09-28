@@ -57,7 +57,7 @@ class webController extends Controller
             ],
             'English Zone' => [
                 'image_feature' => asset("image/logo-fitur/logo-englishZone.png"),
-                'textButton' => 'Segera Hadir',
+                'textButton' => 'Lihat Paket',
                 'price' => 'Rp 500.000',
 
                 'descriptions' => [

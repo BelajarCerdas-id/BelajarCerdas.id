@@ -25,12 +25,4 @@ class FeaturePrices extends Model
     public function Transactions() {
         return $this->hasOne(Transactions::class, 'feature_variant_id');
     }
-
-    public function EnglishZoneUserVariant() {
-        return $this->hasOne(EnglishZoneUser::class, 'feature_variant_id');
-    }
-
-    public function EnglishZoneUserDuration() {
-        return $this->hasOne(EnglishZoneUser::class, 'duration_paket_id');
-    }
 }

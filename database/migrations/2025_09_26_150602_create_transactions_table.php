@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->string('payment_method')->nullable();
             $table->string('snap_token')->nullable();
             $table->enum('transaction_status', ['Berhasil', 'Pending', 'Gagal', 'Kadaluarsa'])->default('Pending');
-            $table->integer('jumlah_koin')->nullable();
+            $table->json('transaction_callback')->nullable();
             $table->integer('price');
             $table->string('transaction_source')->nullable();
             $table->timestamps();

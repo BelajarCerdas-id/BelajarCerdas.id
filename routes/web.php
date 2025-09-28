@@ -85,6 +85,9 @@ Route::fallback(function () {
     // Checkout soal pembahasan subscription
     Route::post('/checkout-soal-pembahasan', [PaymentFeaturesController::class, 'checkoutSoalPembahasanSubcription'])->name('checkout.soal-pembahasan');
 
+    // Checkout english zone subscription
+    Route::post('/checkout-english-zone', [PaymentFeaturesController::class, 'checkoutEnglishZoneSubscription'])->name('checkout.english-zone');
+
     //ROUTE RENEW CHECKOUT PENDING
     Route::post('/renew-checkout/{id}', [PaymentFeaturesController::class, 'renewCheckoutPacketFeatures'])->name('checkout.pending');
 
@@ -106,6 +109,11 @@ Route::fallback(function () {
     Route::get('/chart-data-tanya-bulanan', [ChartController::class, 'chartTanyaBulanan'])->name('getChartDataTanyaBulanan');
     Route::get('/chart-data-tanya-tahunan', [ChartController::class, 'chartTanyaTahunan'])->name('getChartDataTanyaTahunan');
     Route::get('/chart-data-tanya-harian', [ChartController::class, 'chartTanyaHarian'])->name('getChartDataTanyaHarian');
+
+    // (batch -> days -> hours -> mentors in ez purchase dropdown)
+    Route::get('/english-zone/purchase/dropdown-days/{batch_id}', [EnglishZoneController::class, 'dropdownDaysPurchase'])->name('days.dropdown.purchase');
+    Route::get('/english-zone/purchase/dropdown-hours/{batch_id}/{day}', [EnglishZoneController::class, 'dropdownHoursPurchase'])->name('hours.dropdown.purchase');
+    Route::get('/english-zone/purchase/dropdown-mentors/{batch_id}/{day}/{schedule_time_group}', [EnglishZoneController::class, 'dropdownMentorsPurchase'])->name('mentors.dropdown.purchase');
 
     // MIDDLEWARE LOGIN
     Route::middleware([AuthMiddleware::class])->group(function () {
@@ -418,7 +426,7 @@ Route::fallback(function () {
     // PAGINATE
     Route::get('/english-zone/management-batches/paginate', [EnglishZoneController::class, 'paginateManagementBatches'])->name('EZ.managementBatches.paginate');
 
-    // DROPDOWN BERTINGKAT (batch -> batch_schedule_groups -> days -> hours -> mentors)
+    // DROPDOWN BERTINGKAT (batch -> batch_schedule_groups -> days -> hours -> mentors in administrator)
     Route::get('/batch-schedule-groups/{batch_id}', [EnglishZoneController::class, 'dropdownBatchScheduleGroup'])->name('batchScheduleGroups.dropdown');
     Route::get('/days/{batch_id}/{batch_schedule_group}', [EnglishZoneController::class, 'dropdownDays'])->name('days.dropdown');
     Route::get('/hours/{batch_id}/{batch_schedule_group}/{day}', [EnglishZoneController::class, 'dropdownHours'])->name('hours.dropdown');

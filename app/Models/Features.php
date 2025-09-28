@@ -42,9 +42,4 @@ class Features extends Model
     {
         return $this->hasOne(MentorFeatureStatus::class, 'feature_id');
     }
-
-    public function EnglishZoneUser()
-    {
-        return $this->hasOne(EnglishZoneUser::class, 'feature_id');
-    }
 }

@@ -18,6 +18,7 @@ use App\Models\EnglishZoneMateri;
 use App\Models\EnglishZoneMentorSchedule;
 use App\Models\EnglishZoneQuestions;
 use App\Models\EnglishZoneUnit;
+use App\Models\EnglishZoneStudentBatch;
 use App\Models\EnglishZoneZoom;
 use App\Models\Kurikulum;
 use App\Models\MentorFeatureStatus;
@@ -1723,6 +1724,70 @@ class EnglishZoneController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Link Zoom berhasil dihapus.',
+        ]);
+    }
+
+    // dropdown bertingkat days in ez purchase
+    public function dropdownDaysPurchase($batch_id)
+    {
+        $schedules = EnglishZoneBatchSchedule::where('batch_id', $batch_id)->get();
+
+        // Ambil 1 record unik per batch_schedule_group
+        $groups = $schedules->unique('batch_schedule_group')->values()->map(function ($item) use ($schedules) {
+            return [
+                'group_id'   => $item->batch_schedule_group,
+                'days' => $schedules->where('batch_schedule_group', $item->batch_schedule_group)->pluck('day_of_week')->unique()->values(),
+            ];
+        });
+
+        return response()->json($groups);
+    }
+
+    public function dropdownHoursPurchase($batch_id, $group_id)
+    {
+        $schedules = EnglishZoneBatchSchedule::where('batch_id', $batch_id)
+            ->where('batch_schedule_group', $group_id)
+            ->get();
+
+        // Kelompokkan berdasarkan jam
+        $hours = $schedules->groupBy(function ($item) {
+            return $item->start_time . '-' . $item->end_time;
+        })->map(function ($items) {
+            return [
+                'ids' => $items->pluck('id')->toArray(),
+                'time' => $items->first()->start_time . ' - ' . $items->first()->end_time,
+                'schedule_time_group' => $items->first()->schedule_time_group,
+            ];
+        })->values();
+
+        return response()->json($hours);
+    }
+
+    public function dropdownMentorsPurchase($batch_id, $group_id, $schedule_time_group)
+    {
+        $getMentorStatus = MentorFeatureStatus::where('feature_id', 3)->where('status_mentor', 'aktif')->pluck('mentor_id');
+        
+        $mentors = EnglishZoneMentorSchedule::with('UserAccount.MentorProfiles')->where('status_schedule', 'aktif')->whereIn('mentor_id', $getMentorStatus)
+        ->whereHas('EnglishZoneBatchSchedule', function($q) use ($batch_id, $group_id, $schedule_time_group) {
+            $q->where('batch_id', $batch_id)
+            ->where('batch_schedule_group', $group_id)
+            ->where('schedule_time_group', $schedule_time_group);
+        })->get();
+
+        $grouped = $mentors->groupBy('mentor_id');
+
+        // ambil count student per mentor sesuai schedule
+        $studentCounts = EnglishZoneStudentBatch::whereHas('EnglishZoneBatchSchedule', function($q) use ($batch_id, $group_id, $schedule_time_group) {
+                $q->where('batch_id', $batch_id)
+                ->where('batch_schedule_group', $group_id)
+                ->where('schedule_time_group', $schedule_time_group);
+        })->get()->groupBy('mentor_id')->map(function ($group) {
+            return $group->pluck('student_id')->unique()->count();
+        });
+
+        return response()->json([
+            'data' => $grouped,
+            'getStudentBatch' => $studentCounts
         ]);
     }
 }

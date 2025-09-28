@@ -33,4 +33,14 @@ class EnglishZoneLevel extends Model
     {
         return $this->hasOne(EnglishZoneUnit::class, 'level_id');
     }
+
+    public function EnglishZoneBatch()
+    {
+        return $this->hasMany(EnglishZoneBatch::class, 'level_id');
+    }
+
+    public function EnglishZoneStudentBatch()
+    {
+        return $this->hasMany(EnglishZoneStudentBatch::class, 'level_id');
+    }
 }

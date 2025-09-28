@@ -299,24 +299,13 @@
                     <span
                         class="text-sm font-bold opacity-70">{{ $descriptionsFeatures[$item->nama_fitur]['price'] ?? '' }}</span>
                 </div>
-                <!-- kalau english zone dan soal pembahasan suda ada, if else nya hapus saja, soalnya list features price harus dibikin duluan padahal fitur nya blm siap -->
-                @if ($item->nama_fitur == 'TANYA' || $item->nama_fitur == 'Soal dan Pembahasan')
-                    <a href="{{ route('paymentFeaturesView', $item->nama_fitur) }}" class="w-full flex justify-center"
-                        aria-label="{{ $item->nama_fitur }}">
-                        <button
-                            class="bg-[--color-second] w-[90%] rounded-full h-[32px] text-white font-bold text-xs md:text-sm">
-                            {{ $descriptionsFeatures[$item->nama_fitur]['textButton'] ?? '' }}
-                        </button>
-                    </a>
-                @else
-                    <a href="{{ route('homePage') }}" class="w-full flex justify-center"
-                        aria-label="{{ $item->nama_fitur }}">
-                        <button
-                            class="bg-[--color-second] w-[90%] rounded-full h-[32px] text-white font-bold text-xs md:text-sm">
-                            {{ $descriptionsFeatures[$item->nama_fitur]['textButton'] ?? '' }}
-                        </button>
-                    </a>
-                @endif
+                <a href="{{ route('paymentFeaturesView', $item->nama_fitur) }}" class="w-full flex justify-center"
+                    aria-label="{{ $item->nama_fitur }}">
+                    <button
+                        class="bg-[--color-second] w-[90%] rounded-full h-[32px] text-white font-bold text-xs md:text-sm">
+                        {{ $descriptionsFeatures[$item->nama_fitur]['textButton'] ?? '' }}
+                    </button>
+                </a>
             </div>
         </article>
     @endforeach
