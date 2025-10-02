@@ -2,6 +2,7 @@
 
 namespace App\Services\PaymentHandlers;
 
+use App\Models\EnglishZoneBatchSchedule;
 use App\Models\EnglishZoneStudentBatch;
 use App\Models\FeatureSubscriptionHistory;
 use App\Models\MentorPaymentDetail;
@@ -18,6 +19,7 @@ class CheckoutEnglishZoneSubscriptionHandler
     {
         // ambil tanggal hari ini
         $date = Carbon::now()->format('Y-m-d');
+        $now = Carbon::now();
 
         Log::info("Menjalankan handler CheckoutEnglishZoneSubscriptionHandler", [
             'transaction_id' => $transaction->id,
@@ -34,7 +36,16 @@ class CheckoutEnglishZoneSubscriptionHandler
         $duration = $transaction->FeaturePrices->duration;
         $month = (int) filter_var($duration, FILTER_SANITIZE_NUMBER_INT);
 
-        $startDate = Carbon::now();
+        $batchSchedule = explode(',', $transactionCallback['batch_schedule_id']);
+
+        $firstSchedule = EnglishZoneBatchSchedule::with('EnglishZoneBatch')->find($batchSchedule[0]);
+
+        $startDate = Carbon::create($now->year, (int) $firstSchedule->EnglishZoneBatch->start_day, (int) $firstSchedule->EnglishZoneBatch->start_month, $now->hour, $now->minute, $now->second);
+
+        if($startDate->lt($now)) {
+            $startDate->addYear();
+        }
+
         $endDate = $startDate->copy()->addMonths($month);
 
         // mengambil packet english zone student yang sedang aktif
@@ -44,7 +55,7 @@ class CheckoutEnglishZoneSubscriptionHandler
 
         // jika tidak ada packet english zone student yang sedang aktif, maka create
         if (!$getPacketEnglishZoneActive) {
-            FeatureSubscriptionHistory::create([
+            $subscriptionHistory = FeatureSubscriptionHistory::create([
                 'student_id' => $transaction->user_id,
                 'transaction_id' => $transaction->id,
                 'start_date' => $startDate,
@@ -58,9 +69,10 @@ class CheckoutEnglishZoneSubscriptionHandler
                 foreach ($levelIds as $levelId) {
                     EnglishZoneStudentBatch::create([
                         'student_id' => $transaction->user_id,
+                        'subscription_history_id' => $subscriptionHistory->id,
                         'level_id' => $levelId ? (int) $levelId : (int) $transactionCallback['level_id'],
                         'batch_schedule_id' => (int) $batchScheduleId,
-                        'mentor_id' => (int) $transactionCallback['mentor_id'],
+                        // 'mentor_id' => (int) $transactionCallback['mentor_id'],
                     ]);
                 }
 

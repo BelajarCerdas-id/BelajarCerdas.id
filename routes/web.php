@@ -110,10 +110,10 @@ Route::fallback(function () {
     Route::get('/chart-data-tanya-tahunan', [ChartController::class, 'chartTanyaTahunan'])->name('getChartDataTanyaTahunan');
     Route::get('/chart-data-tanya-harian', [ChartController::class, 'chartTanyaHarian'])->name('getChartDataTanyaHarian');
 
-    // (batch -> days -> hours -> mentors in ez purchase dropdown)
+    // (batch -> days -> hours in ez purchase dropdown)
+    Route::get('/english-zone/purchase/dropdown-batches/{feature_variant_id}', [EnglishZoneController::class, 'dropdownBatchPurchase'])->name('batches.dropdown.purchase');
     Route::get('/english-zone/purchase/dropdown-days/{batch_id}', [EnglishZoneController::class, 'dropdownDaysPurchase'])->name('days.dropdown.purchase');
-    Route::get('/english-zone/purchase/dropdown-hours/{batch_id}/{day}', [EnglishZoneController::class, 'dropdownHoursPurchase'])->name('hours.dropdown.purchase');
-    Route::get('/english-zone/purchase/dropdown-mentors/{batch_id}/{day}/{schedule_time_group}', [EnglishZoneController::class, 'dropdownMentorsPurchase'])->name('mentors.dropdown.purchase');
+    Route::get('/english-zone/purchase/dropdown-hours/{batch_id}/{day}/{level_id}/{feature_variant_id}', [EnglishZoneController::class, 'dropdownHoursPurchase'])->name('hours.dropdown.purchase');
 
     // MIDDLEWARE LOGIN
     Route::middleware([AuthMiddleware::class])->group(function () {

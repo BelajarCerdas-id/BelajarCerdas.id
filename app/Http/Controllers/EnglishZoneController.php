@@ -20,6 +20,7 @@ use App\Models\EnglishZoneQuestions;
 use App\Models\EnglishZoneUnit;
 use App\Models\EnglishZoneStudentBatch;
 use App\Models\EnglishZoneZoom;
+use App\Models\FeaturePrices;
 use App\Models\Kurikulum;
 use App\Models\MentorFeatureStatus;
 use App\Models\UserAccount;
@@ -34,6 +35,7 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Carbon\Carbon;
 
 class EnglishZoneController extends Controller
 {
@@ -1727,6 +1729,62 @@ class EnglishZoneController extends Controller
         ]);
     }
 
+    // dropdown bertingkan batches in ez purchase
+    public function dropdownBatchPurchase($feature_variant_id)
+    {
+        $now = Carbon::now();
+
+        $getBatch = EnglishZoneBatch::all();
+
+        $monthMap = [
+            "01" => "Januari",
+            "02" => "Februari",
+            "03" => "Maret",
+            "04" => "April",
+            "05" => "Mei",
+            "06" => "Juni",
+            "07" => "Juli",
+            "08" => "Agustus",
+            "09" => "September",
+            "10" => "Oktober", 
+            "11" => "November",
+            "12" => "Desember"
+        ];
+
+        foreach ($getBatch as $batch) {
+            // nama bulan
+            $batch->display_name = $monthMap[$batch->start_month] ?? $batch->batch_name;
+            // tanggal mulai
+            $batch->startDay = $batch->start_day;
+
+            // hitung tanggal start
+            $startDate = Carbon::create(
+                $now->year, 
+                (int) $batch->start_month, 
+                (int) $batch->start_day,
+                0, 0, 0
+            );
+
+            if($startDate->lt($now->copy()->startOfDay())) {
+                $startDate->addYear();
+            }
+
+            $featurePrices = FeaturePrices::where('id', $feature_variant_id)->first();
+
+            $batch->duration = $featurePrices->duration;
+            $month = (int) filter_var($batch->duration, FILTER_SANITIZE_NUMBER_INT);
+
+            // tambahkan field start_date ke objek batch
+            $batch->startDate = $startDate->format('d-m-Y');
+
+            $batch->endDate = $startDate->addMonths($month)->format('d-m-Y');
+        }
+
+        return response()->json([
+            'data' => $getBatch,
+        ]);
+    }
+
     // dropdown bertingkat days in ez purchase
     public function dropdownDaysPurchase($batch_id)
     {
@@ -1743,7 +1801,7 @@ class EnglishZoneController extends Controller
         return response()->json($groups);
     }
 
-    public function dropdownHoursPurchase($batch_id, $group_id)
+    public function dropdownHoursPurchase($batch_id, $group_id, $level_id, $feature_variant_id)
     {
         $schedules = EnglishZoneBatchSchedule::where('batch_id', $batch_id)
             ->where('batch_schedule_group', $group_id)
@@ -1760,34 +1818,24 @@ class EnglishZoneController extends Controller
             ];
         })->values();
 
-        return response()->json($hours);
-    }
+        $levelIds = explode(',', $level_id);
 
-    public function dropdownMentorsPurchase($batch_id, $group_id, $schedule_time_group)
-    {
-        $getMentorStatus = MentorFeatureStatus::where('feature_id', 3)->where('status_mentor', 'aktif')->pluck('mentor_id');
-        
-        $mentors = EnglishZoneMentorSchedule::with('UserAccount.MentorProfiles')->where('status_schedule', 'aktif')->whereIn('mentor_id', $getMentorStatus)
-        ->whereHas('EnglishZoneBatchSchedule', function($q) use ($batch_id, $group_id, $schedule_time_group) {
-            $q->where('batch_id', $batch_id)
-            ->where('batch_schedule_group', $group_id)
-            ->where('schedule_time_group', $schedule_time_group);
-        })->get();
-
-        $grouped = $mentors->groupBy('mentor_id');
-
-        // ambil count student per mentor sesuai schedule
-        $studentCounts = EnglishZoneStudentBatch::whereHas('EnglishZoneBatchSchedule', function($q) use ($batch_id, $group_id, $schedule_time_group) {
-                $q->where('batch_id', $batch_id)
-                ->where('batch_schedule_group', $group_id)
-                ->where('schedule_time_group', $schedule_time_group);
-        })->get()->groupBy('mentor_id')->map(function ($group) {
-            return $group->pluck('student_id')->unique()->count();
-        });
+        $studentCounts = EnglishZoneStudentBatch::with(['EnglishZoneBatchSchedule', 'FeatureSubscriptionHistory.Transactions'])->whereIn('level_id', $levelIds)
+            ->whereHas('EnglishZoneBatchSchedule', function ($q) use ($batch_id, $group_id) {
+                $q->where('batch_id', $batch_id)->where('batch_schedule_group', $group_id);
+            })->whereHas('FeatureSubscriptionHistory.Transactions', function ($q) use ($feature_variant_id) {
+                $q->where('transaction_status', 'Berhasil')->where('feature_variant_id', $feature_variant_id);
+            })->get()
+            ->groupBy(function ($item) {
+                return $item->EnglishZoneBatchSchedule->schedule_time_group;
+            })
+            ->map(function ($items) {
+                return $items->pluck('student_id')->unique()->count();
+            });
 
         return response()->json([
-            'data' => $grouped,
-            'getStudentBatch' => $studentCounts
+            'data' => $hours,
+            'studentCounts' => $studentCounts,
         ]);
     }
 }

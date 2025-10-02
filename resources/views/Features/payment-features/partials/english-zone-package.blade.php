@@ -12,7 +12,7 @@
                 <div>
                     <h2 class="font-bold text-lg opacity-70 mb-4">Pilih paket langganan kamu</h2>
                     @foreach ($dataFeaturesPrices as $index => $item)
-                        <label class="block cursor-pointer w-full h-max mb-6"
+                        <label class="package-option block cursor-pointer w-full h-max mb-6"
                             onclick="packageOption(this, {{ $item->id }})" data-feature-id="{{ $item->feature_id }}"
                             data-variant-id="{{ $item->id }}" data-price="{{ $item->price }}"
                             data-index="{{ $index + 1 }}">
@@ -42,7 +42,6 @@
                             <i class="fas fa-chevron-down text-[8px]"></i>
                         </button>
 
-
                         <!-- Options -->
                         <div id="dropdownOptions"
                             class="absolute mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-48 overflow-y-auto z-10">
@@ -62,13 +61,10 @@
                 <!-- Batch -->
                 <div>
                     <label class="text-sm font-medium">Batch</label>
-                    <select id="batch_id" name="batch_id" class="select select-bordered w-full bg-white">
+                    <select id="batch_id" name="batch_id"
+                        class="select select-bordered w-full bg-white opacity-50 !cursor-default" disabled>
                         <option value="" class="hidden">Choose Batch</option>
-                        @foreach ($getBatch as $item)
-                            <option value="{{ $item->id }}">
-                                {{ $item->batch_name }} - {{ $item->start_day }} {{ $item->display_name }}
-                            </option>
-                        @endforeach
+                        <!-- show option in ajax -->
                     </select>
                 </div>
 
@@ -85,19 +81,9 @@
                 <!-- Jam -->
                 <div>
                     <label class="text-sm font-medium">Jam</label>
-                    <select id="hours_id" name=""
+                    <select id="hours_id" name="hours_id"
                         class="select select-bordered w-full bg-white opacity-50 !cursor-default" disabled>
                         <option value="" class="hidden">Choose Hour</option>
-                        <!-- show option in ajax -->
-                    </select>
-                </div>
-
-                <!-- Mentor -->
-                <div>
-                    <label class="text-sm font-medium">Mentor</label>
-                    <select id="mentors_id" name="mentor_id"
-                        class="select select-bordered w-full bg-white opacity-50 !cursor-default" disabled>
-                        <option value="" class="hidden">Choose Mentor</option>
                         <!-- show option in ajax -->
                     </select>
                 </div>
@@ -140,27 +126,34 @@
                                 <span id="harga-total" class="max-w-60 overflow-hidden">-</span>
                             </div>
                         </div>
+
+                        <div class="mt-6 flex flex-col gap-[5px]">
+                            <h4 class="font-semibold text-sm mb-2">Detail Paket :</h4>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Masa aktif</span>
+                                <span id="masa-aktif" class="max-w-60 overflow-hidden">-</span>
+                            </div>
+                        </div>
                     </div>
 
                     <form id="form-pembelian" method="POST" action="{{ route('checkout.english-zone') }}">
                         @csrf
                         <input type="hidden" name="payment_method_id" id="input-payment-method"
                             value="{{ $paymentMethods[0]['name'] }}">
-                        <input type="" id="input-feature-id" name="feature_id">
-                        <input type="" id="input-feature-variant-id" name="feature_variant_id">
-                        <input type="" id="input-price" name="price">
-                        <input type="text" id="input-level-id" name="level_id">
-                        <input type="text" id="input-batch-id" name="batch_id">
-                        <input type="text" id="input-batch-schedule-group" name="batch_schedule_group">
-                        <input type="text" id="input-batch-schedule-id" name="batch_schedule_id" value="sdevsdv">
-                        <input type="text" id="input-mentor-id" name="mentor_id">
+                        <input type="hidden" id="input-feature-id" name="feature_id">
+                        <input type="hidden" id="input-feature-variant-id" name="feature_variant_id">
+                        <input type="hidden" id="input-price" name="price">
+                        <input type="hidden" id="input-level-id" name="level_id">
+                        <input type="hidden" id="input-batch-id" name="batch_id">
+                        <input type="hidden" id="input-batch-schedule-group" name="batch_schedule_group">
+                        <input type="hidden" id="input-batch-schedule-id" name="batch_schedule_id" value="">
                         @if (Auth::user() === null)
                             <button type="button" onclick="alertLogin()"
                                 class="pay-button bg-gray-300 text-white rounded-full py-2 font-semibold text-sm w-full mt-4"
                                 disabled>
                                 Beli Sekarang
                             </button>
-                        @elseif ($getPacketSoalPembahasanActive)
+                        @elseif ($getPacketActive)
                             <button type="button" onclick="alertPacketActive()"
                                 class="pay-button bg-gray-300 text-white rounded-full py-2 font-semibold text-sm w-full mt-4"
                                 disabled>
@@ -221,13 +214,14 @@
     </section>
 </main>
 
+<script src="{{ asset('js/payment-features/package-option/english-zone-package-option.js') }}"></script> <!--- untuk menampilkan opsi paket yang tersedia pada suatu fitur seperti harga, dll ---->
+<script src="{{ asset('js/payment-features/snap-midtrans/popup-snap-midtrans-english-zone-feature.js') }}"></script> <!--- untuk menampilkan popup pembayaran menggunakan snap midtrans ---->
+
 <!----- COMPONENTS ----->
-<script src="{{ asset('js/payment-features/components/package-option.js') }}"></script> <!--- untuk menampilkan opsi paket yang tersedia pada suatu fitur seperti harga, dll ---->
 <script src="{{ asset('js/payment-features/components/payment-method.js') }}"></script> <!--- untuk menampilkan metode pembayaran apa saja yang tersedia menggunakan popup  ---->
 <script src="{{ asset('js/payment-features/components/open-close-dropdown-payment-method.js') }}"></script> <!--- untuk menampilkan dan menutup popup metode pembayaran setelah memilih ---->
+<script src="{{ asset('js/payment-features/components/level-dropdown-ez-purchase.js') }}"></script> <!--- level dropdown ez purchase (dropdown custom) ---->
 <script src="{{ asset('js/components/english-zone/ez-purchase-dropdown.js') }}"></script> <!--- dorpodown bertingkat ez (pemilihan detail belajar) ---->
-
-<script src="{{ asset('js/payment-features/snap-midtrans/popup-snap-midtrans-english-zone-feature.js') }}"></script> <!--- untuk menampilkan popup pembayaran menggunakan snap midtrans ---->
 
 <script>
     function alertLogin() {
@@ -247,63 +241,4 @@
             text: "Maaf, kamu tidak bisa membeli paket ini, karena kamu masih memiliki paket yang aktif pada fitur ini.",
         });
     }
-</script>
-
-
-<script>
-    function toggleOptions(event) {
-        event.stopPropagation();
-        const options = document.getElementById('dropdownOptions');
-        options.classList.toggle('hidden');
-    }
-
-    function updateButtonText() {
-        const checked = document.querySelectorAll('#dropdownOptions input:checked');
-        const values = Array.from(checked).map(cb => cb.nextElementSibling.textContent.trim());
-
-        if (index == 1) {
-            document.getElementById('dropdownText').textContent = values.length ? values.join(', ') :
-                'Choose one level';
-        } else if (index == 2) {
-            document.getElementById('dropdownText').textContent = values.length ? values.join(', ') :
-                'Choose two levels';
-        } else {
-            document.getElementById('dropdownText').textContent = values.length ? values.join(', ') :
-                'Choose three levels';
-        }
-    }
-
-    function limitSelection(checkbox) {
-        const checked = document.querySelectorAll('#dropdownOptions input:checked');
-        const labels = document.querySelectorAll('.label-checkbox');
-        if (checked.length >= MAX_SELECTED) {
-            document.querySelectorAll('#dropdownOptions input:not(:checked)').forEach(cb => {
-                cb.disabled = true;
-            });
-
-            labels.forEach(label => {
-                if (!label.querySelector('input:checked')) {
-                    label.classList.remove('cursor-pointer');
-                    label.classList.add('opacity-50');
-                }
-            });
-        } else {
-            document.querySelectorAll('#dropdownOptions input').forEach(cb => {
-                cb.disabled = false;
-            });
-
-            labels.forEach(label => {
-                label.classList.add('cursor-pointer');
-                label.classList.remove('opacity-50');
-            });
-        }
-        updateButtonText();
-    }
-
-    document.addEventListener('click', function(e) {
-        const dropdown = document.querySelector('.dropdown-checkbox');
-        if (!dropdown.contains(e.target)) {
-            document.getElementById('dropdownOptions').classList.add('hidden');
-        }
-    });
 </script>

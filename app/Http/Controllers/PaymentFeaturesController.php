@@ -96,7 +96,7 @@ class PaymentFeaturesController extends Controller
         })->get();
 
         // mengambil packet soal pembahasan student yang sedang aktif
-        $getPacketSoalPembahasanActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+        $getPacketActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
             $query->whereIn('feature_id', [2, 3]); // id fitur soal pembahasan, english zone
         })->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)
         ->where('student_id', $userId)->orderBy('created_at', 'desc')->first();
@@ -104,33 +104,8 @@ class PaymentFeaturesController extends Controller
         // FOR ENGLISH ZONE FEATURE
         $getLevels = EnglishZoneLevel::all();
 
-        $getBatch = EnglishZoneBatch::all();
-
-        $monthMap = [
-            "01" => "Januari",
-            "02" => "Februari",
-            "03" => "Maret",
-            "04" => "April",
-            "05" => "Mei",
-            "06" => "Juni",
-            "07" => "Juli",
-            "08" => "Agustus",
-            "09" => "September",
-            "10" => "Oktober", 
-            "11" => "November",
-            "12" => "Desember"
-        ];
-
-        foreach ($getBatch as $batch) {
-            if(isset($monthMap[$batch->start_month])) {
-                $batch->display_name = $monthMap[$batch->start_month];
-            } else {
-                $batch->display_name = $batch->batch_name;
-            }
-        }
-
         return view('Features.payment-features.pembayaran-fitur', compact(
-            'nama_fitur', 'features', 'paymentMethods', 'groupedPaymentMethods', 'dataFeaturesPrices', 'getPacketSoalPembahasanActive', 'getLevels', 'getBatch'
+            'nama_fitur', 'features', 'paymentMethods', 'groupedPaymentMethods', 'dataFeaturesPrices', 'getPacketActive', 'getLevels',
         ));
     }
 
@@ -515,13 +490,15 @@ class PaymentFeaturesController extends Controller
             }
 
             $q->whereIn('id', $batchScheduleIds);
-        })->where('mentor_id', $request->mentor_id)->pluck('student_id')->unique()->count();
+        })->whereHas('FeatureSubscriptionHistory.Transactions', function ($q) use ($request) {
+            $q->where('transaction_status', 'Berhasil')->where('feature_variant_id', $request->feature_variant_id);
+        })->pluck('student_id')->unique()->count();
 
 
-        if ($studentCounts >= 2) {
+        if ($studentCounts >= 10) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Batch pada mentor ini sudah penuh, harap pilih mentor atau jadwal yang lain.',
+                'message' => 'jadwal belajar pada batch tersebut sudah penuh, harap pilih batch atau jadwal belajar yang lain.',
             ], 422);
         }
         
@@ -536,7 +513,6 @@ class PaymentFeaturesController extends Controller
             'transaction_callback' => [
                 'level_id' => $request->level_id,
                 'batch_schedule_id' => $request->batch_schedule_id,
-                'mentor_id' => $request->mentor_id,
             ],
             'transaction_source' => 'non_school_partner',
         ]);

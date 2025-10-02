@@ -1,13 +1,11 @@
 
 $(document).ready(function () {
     var oldBatch = $('#batch_id').val();
-    var oldDays = $('#days_id').val(); // ambil value, bukan object
+    var oldDays = $('#days_id').val();
     var oldHours = $('#hours_id').val();
-    var oldMentor = $('#mentors_id').val();
 
     const selectDays = document.getElementById('days_id');
     const selectHours = document.getElementById('hours_id');
-    const selectMentors = document.getElementById('mentors_id');
 
     function enableSelectDays() {
         selectDays.disabled = false;
@@ -21,26 +19,39 @@ $(document).ready(function () {
         selectHours.classList.replace('!cursor-default', 'cursor-pointer');
     }
 
-    function enableSelectMentors() {
-        selectMentors.disabled = false;
-        selectMentors.classList.replace('opacity-50', 'opacity-100');
-        selectMentors.classList.replace('!cursor-default', 'cursor-pointer');
-    }
+    // === Feature Variant Trigger Change -> Batch ===
+    $('#input-feature-variant-id').on('change', function () {
+        const dataFeatureVariantId = $(this).val();
+        if (!dataFeatureVariantId) return;
 
-    // === Dropdown level, ambil id level ===
-    $('.level-checkbox').on('change', function () {
-        let selected = $('.level-checkbox:checked').map(function () {
-            return $(this).val();
-        }).get();
+        $.ajax({
+            url: '/english-zone/purchase/dropdown-batches/' + dataFeatureVariantId,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                $('#batch_id').empty().append(
+                    '<option value="" class="hidden">Choose Batch</option>'
+                );
 
-        $('#input-level-id').val(selected.join(','));
-        validatePurchase(dataFeatureId); // cek ulang tombol
-    })
-
+                $.each(data.data, function (i, item) {
+                    $('#batch_id').append(`
+                    <option value="${item.id}" data-start-date="${item.startDate}" data-end-date="${item.endDate}">
+                        ${item.batch_name} - ${item.startDay} ${item.display_name}
+                    </option>
+                `);
+                });
+            }
+        });
+    });
     // === Dropdown Batch -> Days ===
     $('#batch_id').on('change', function () {
 
         $('#input-batch-id').val(this.value); // set batch value ke input hidden
+
+        let startDate = $(this).find(':selected').data('start-date');
+        let endDate = $(this).find(':selected').data('end-date');
+
+        $('#masa-aktif').text(startDate + ' - ' + endDate);
 
         var batch_id = $(this).val();
         if (batch_id) {
@@ -82,10 +93,12 @@ $(document).ready(function () {
 
         var group_id = $(this).val();
         var batch_id = $('#batch_id').val();
+        var level_id = $('#input-level-id').val();
+        var feature_variant_id = $('#input-feature-variant-id').val();
 
         if (group_id && batch_id) {
             $.ajax({
-                url: '/english-zone/purchase/dropdown-hours/' + batch_id + '/' + group_id,
+                url: '/english-zone/purchase/dropdown-hours/' + batch_id + '/' + group_id + '/' + level_id + '/' + feature_variant_id,
                 type: 'GET',
                 dataType: 'json',
                 success: function (data) {
@@ -96,14 +109,18 @@ $(document).ready(function () {
                         '<option value="" class="hidden">Choose Hour</option>'
                     );
 
-                    $.each(data, function (i, hour) {
+                    $.each(data.data, function (i, hour) {
+                        let count = data.studentCounts[hour.schedule_time_group] ?? 0;
                         $('#hours_id').append(`
-                                <option value="${hour.schedule_time_group}" data-batch-schedule-id="${hour.ids}">${hour.time}</option>
-                            `
-                        );
+                            <option value="${hour.schedule_time_group}" data-batch-schedule-id="${hour.ids}">
+                                ${hour.time} ${count} / 10
+                            </option>
+                        `);
                     });
                 }
             });
+        } else {
+            $('#hours_id').empty();
         }
     });
 
@@ -112,59 +129,12 @@ $(document).ready(function () {
         $('#days_id').val(oldDays).trigger('change');
     }
 
-    // === Dropdown Hours -> Mentors ===
     $('#hours_id').on('change', function () {
-
         // ambil attribute dari data-batch-schedule-id pada dropdown hours, lalu set data ke value batch_schedule_id
         let selected = $(this).find(':selected');
         // ambil nilai dari attribute data-batch-schedule-id
         let batchScheduleId = selected.data('batch-schedule-id');
         // set nilai itu ke input #input-batch-schedule-id
         $('#input-batch-schedule-id').val(batchScheduleId);
-
-        var schedule_time_group = $(this).val(); // ambil schedule_time_group
-        var batch_id = $('#batch_id').val();
-        var group_id = $('#days_id').val(); // ini batch_schedule_group
-
-        if (schedule_time_group && batch_id && group_id) {
-            $.ajax({
-                url: '/english-zone/purchase/dropdown-mentors/' + batch_id + '/' + group_id + '/' + schedule_time_group,
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-
-                    enableSelectMentors(); // enabled select mentors
-
-                    $('#mentors_id').empty().append(
-                        '<option value="" class="hidden">Choose Mentor</option>'
-                    );
-
-                    $.each(data.data, function (i, mentor) {
-                        const first = mentor[0];
-                        $('#mentors_id').append(`
-                                <option value="${first.user_account?.id}" data-mentor-id="${first.user_account?.id}">
-                                    ${first.user_account?.mentor_profiles?.nama_lengkap} -
-                                    <i class="fa-solid fa-user"></i> ${data.getStudentBatch[first.user_account?.id] ?? 0} / 10
-                                </option>
-                            `
-                        );
-                    });
-                }
-            });
-        }
-    });
-    // Trigger jika ada oldBatch (misalnya reload form karena error validasi)
-    if (oldHours) {
-        $('#hours_id').val(oldHours).trigger('change');
-    }
-
-    // === Dropdown Mentors -> ambil mentor id ===
-    $('#mentors_id').on('change', function () {
-        // ambil attribute dari data-mentor-id pada dropdown hours, lalu set data ke value mentor_id
-        let selected = $(this).find(':selected');
-        // ambil nilai dari attribute data-mentor-id
-        let mentorId = selected.data('mentor-id');
-        // set nilai itu ke input #input-mentor-id
-        $('#input-mentor-id').val(mentorId);
     })
 });

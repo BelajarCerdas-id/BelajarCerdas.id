@@ -37,4 +37,9 @@ class FeatureSubscriptionHistory extends Model
     {
         return $this->belongsTo(Fase::class, 'fase_id');
     }
+
+    public function EnglishZoneStudentBatch()
+    {
+        return $this->hasMany(EnglishZoneStudentBatch::class, 'subscription_history_id');
+    }
 }
