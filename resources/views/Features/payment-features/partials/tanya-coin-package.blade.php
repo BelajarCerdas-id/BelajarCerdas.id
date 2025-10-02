@@ -26,7 +26,7 @@
                         <div class="w-full flex-flex-col mb-2">
                             <label class="font-bold text-md">Beli Koin Satuan</label>
                             <input type="number" id="koin-satuan"
-                                class="w-full bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] text-sm mt-2"
+                                class="w-full bg-white shadow-lg h-12 border-gray-200 border outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] text-sm mt-2"
                                 placeholder="Masukkan Jumlah Koin" oninput="koinSatuan(this)"
                                 onclick="resetCoinOption()" data-feature-id="{{ $item->feature_id }}"
                                 data-variant-id="{{ $item->id }}" data-price="{{ $item->price }}">
@@ -74,7 +74,7 @@
                     </div>
                 </div>
 
-                <form id="form-pembelian" method="POST" action="{{ route('checkout') }}">
+                <form id="form-pembelian" method="POST" action="{{ route('checkout.tanya') }}">
                     @csrf
                     <input type="hidden" name="payment_method_id" id="input-payment-method"
                         value="{{ $paymentMethods[0]['name'] }}">
@@ -140,6 +140,12 @@
     </section>
 </main>
 
+<script src="{{ asset('js/payment-features/snap-midtrans/popup-snap-midtrans-tanya-feature.js') }}"></script> <!--- untuk menampilkan popup pembayaran menggunakan snap midtrans ---->
+<script src="{{ asset('js/payment-features/package-option/tanya-package-option.js') }}"></script> <!--- untuk menampilkan opsi paket yang tersedia pada suatu fitur seperti harga, dll ---->
+
+<!----- COMPONENTS ----->
+<script src="{{ asset('js/payment-features/components/payment-method.js') }}"></script> <!--- untuk menampilkan metode pembayaran apa saja yang tersedia menggunakan popup  ---->
+<script src="{{ asset('js/payment-features/components/open-close-dropdown-payment-method.js') }}"></script> <!--- untuk menampilkan dan menutup popup metode pembayaran setelah memilih ---->
 
 <script>
     function alertLogin() {
@@ -149,293 +155,4 @@
             text: "Harap login terlebih dahulu untuk membeli paket ini!",
         });
     }
-</script>
-
-
-<script>
-    let isProcessing = false;
-    document.getElementById('btn-beli').addEventListener('click', function() {
-        if (isProcessing) return; // ❌ Abaikan jika sedang proses
-
-        isProcessing = true; // ✅ Tandai sedang diproses
-        const featureId = document.getElementById('input-feature-id').value;
-        const featureVariantId = document.getElementById('input-feature-variant-id').value;
-        const jumlahKoin = document.getElementById('input-quantity').value;
-        const price = document.getElementById('input-price').value;
-        const paymentMethodId = document.getElementById('input-payment-method').value;
-
-        const btn = $(this);
-
-        btn.prop('disabled', true); // Disable button UI
-
-        fetch("{{ route('checkout') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({
-                    feature_id: featureId,
-                    feature_variant_id: featureVariantId,
-                    jumlah_koin: jumlahKoin,
-                    price: price,
-                    payment_method_id: paymentMethodId
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.snap_token) {
-                    window.snap.pay(data.snap_token, {
-                        onSuccess: function(result) {
-                            // alert("Pembayaran berhasil!");
-                            // console.log(result);
-                            location.reload();
-                        },
-                        onPending: function(result) {
-                            // alert("Menunggu pembayaran.");
-                            // console.log(result);
-                            isProcessing = false;
-                            btn.prop('disabled', false);
-                        },
-                        onError: function(result) {
-                            // alert("Pembayaran gagal.");
-                            // console.log(result);
-                            isProcessing = false;
-                            btn.prop('disabled', false);
-                        },
-                        onClose: function() {
-                            // ✅ Izinkan user mencoba lagi jika dia menutup modal tanpa bayar
-                            isProcessing = false;
-                            btn.prop('disabled', false);
-                        }
-                    });
-                } else {
-                    alert("Gagal mendapatkan snap token.");
-                    // console.error(data);
-                    isProcessing = false;
-                    btn.prop('disabled', false);
-                }
-            })
-            .catch(error => {
-                alert("Terjadi kesalahan.");
-                // console.error(error);
-                isProcessing = false;
-                btn.prop('disabled', false);
-            });
-    });
-</script>
-
-
-<script>
-    function coinOption(element, id) {
-        const btnPurchase = document.querySelector('.pay-button');
-        const price = parseInt(element.getAttribute('data-price'));
-        const dataFeatureId = element.getAttribute('data-feature-id');
-        const dataFeatureVariantId = element.getAttribute('data-variant-id');
-        const dataPrice = element.getAttribute('data-price');
-        const dataQuantity = element.getAttribute('data-quantity');
-
-        const inputKoin = document.getElementById('koin-satuan');
-        const errorMessage = document.getElementById('error-message');
-
-        inputKoin.value = '';
-        inputKoin.classList.remove('border-red-500');
-        errorMessage.innerHTML = '';
-
-        const formatPrice = price.toLocaleString('id-ID');
-
-        document.getElementById('input-feature-id').value = dataFeatureId;
-        document.getElementById('input-feature-variant-id').value = dataFeatureVariantId;
-        document.getElementById('input-price').value = dataPrice;
-        document.getElementById('input-quantity').value = dataQuantity;
-
-        document.getElementById('harga-paket').innerHTML = `Rp.${formatPrice}`;
-        document.getElementById('harga-total').innerHTML = `Rp.${formatPrice}`;
-
-        btnPurchase.disabled = false;
-        btnPurchase.classList.replace('bg-gray-300', 'bg-[#4189e0]');
-
-        return;
-    }
-
-    function koinSatuan(element) {
-        const inputKoin = document.getElementById('koin-satuan');
-        const priceCoin = element.getAttribute('data-price');
-        const dataFeatureId = element.getAttribute('data-feature-id');
-        const dataFeatureVariantId = element.getAttribute('data-variant-id');
-        const value = parseInt(inputKoin.value);
-
-        const priceSatuan = value * priceCoin;
-
-        const formatPrice = priceSatuan.toLocaleString('id-ID');
-
-        // mengecek apakah value lebih kecil atau sama dengan 0
-        if (!value || value <= 0) {
-            const btnPurchase = document.querySelector('.pay-button');
-            const errorMessage = document.getElementById('error-message');
-            const inputKoin = document.getElementById('koin-satuan');
-
-            document.getElementById('harga-paket').innerHTML = '';
-            document.getElementById('harga-total').innerHTML = '';
-
-            btnPurchase.disabled = true;
-            btnPurchase.classList.replace('bg-[#4189e0]', 'bg-gray-300');
-
-            inputKoin.classList.remove('border-red-500');
-            errorMessage.innerHTML = '';
-            return;
-            // mengecek apakah value lebih besar dari 1000
-        } else if (value > 1000) {
-            const btnPurchase = document.querySelector('.pay-button');
-            const errorMessage = document.getElementById('error-message');
-            const inputKoin = document.getElementById('koin-satuan');
-
-            document.getElementById('harga-paket').innerHTML = `-`;
-            document.getElementById('harga-total').innerHTML = `-`;
-
-            inputKoin.classList.add('border-red-500');
-
-            btnPurchase.disabled = true;
-            btnPurchase.classList.replace('bg-[#4189e0]', 'bg-gray-300');
-
-            errorMessage.innerHTML = 'Jumlah koin tidak boleh lebih dari 1000';
-            return;
-
-            // mengecek apakah value kurang dari 1000
-        } else {
-            const errorMessage = document.getElementById('error-message');
-            const inputKoin = document.getElementById('koin-satuan');
-
-            inputKoin.classList.remove('border-red-500');
-            errorMessage.innerHTML = '';
-        }
-
-        document.getElementById('input-feature-id').value = dataFeatureId;
-        document.getElementById('input-feature-variant-id').value = dataFeatureVariantId;
-        document.getElementById('input-price').value = priceSatuan;
-        document.getElementById('input-quantity').value = value;
-        document.getElementById('harga-paket').innerHTML = `Rp.${formatPrice}`;
-        document.getElementById('harga-total').innerHTML = `Rp.${formatPrice}`;
-
-        const btnPurchase = document.querySelector('.pay-button');
-        btnPurchase.disabled = false;
-        btnPurchase.classList.replace('bg-gray-300', 'bg-[#4189e0]');
-
-    }
-
-    function resetCoinOption() {
-        // Reset radio dari coinOption
-        document.querySelectorAll('input[name="radio1"]').forEach(r => r.checked = false);
-
-        document.getElementById('harga-paket').innerHTML = '-';
-        document.getElementById('harga-total').innerHTML = '-';
-    }
-</script>
-
-<script>
-    function selectPayment(radio) {
-        const logo = radio.dataset.logo;
-        const name = radio.dataset.name;
-        const id = radio.dataset.id;
-        const type = radio.closest('.content-method-payment').querySelector('.title-method').innerText;
-
-        document.getElementById('input-payment-method').value = name;
-        // Update elemen utama
-        const container = document.querySelector('.selected-payment');
-        container.innerHTML = `
-            <div class="border-2 border-gray-300 w-full h-[69px] rounded-lg flex justify-between items-center px-4 cursor-pointer"
-                onclick="my_modal_2.showModal()">
-                <div class="flex gap-2 items-center">
-                    <div>
-                        <img src="${logo}" alt="${name}" class="w-[55px]">
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-md">${type}</span>
-                        <span class="text-sm font-bold">${name}</span>
-                    </div>
-                </div>
-                <i class="fa solid fa-chevron-down"></i>
-            </div>
-        `;
-
-        // Tutup modal setelah pilih
-        document.getElementById('my_modal_2').close();
-    }
-</script>
-
-<script>
-    const paymentContent = document.querySelectorAll(".content-method-payment");
-
-    paymentContent.forEach((item, index) => {
-        let header = item.querySelector("header");
-        header.addEventListener("click", () => {
-            item.classList.toggle("open");
-
-            let choosePayment = item.querySelector(".choose-payment");
-            if (item.classList.contains("open")) {
-                choosePayment.style.height =
-                    `${choosePayment.scrollHeight}px`; // scrollHeight prperty returns the height of an element including padding, but excluding borders, scrollbar or margin.
-                item.querySelector("i").classList.replace("fa-plus", "fa-minus");
-            } else {
-                choosePayment.style.height = "0px";
-                item.querySelector("i").classList.replace("fa-minus", "fa-plus");
-            }
-            removeOpen(
-                index); // calling the function and also passing the index number of the clicked header
-        })
-
-    })
-
-    function removeOpen(index1) {
-        paymentContent.forEach((item2, index2) => {
-            if (index1 != index2) {
-                item2.classList.remove("open");
-
-                let choosePay = item2.querySelector(".choose-payment");
-                choosePay.style.height = "0px";
-                item2.querySelector("i").classList.replace("fa-minus", "fa-plus");
-            }
-        })
-    }
-</script>
-
-
-<script>
-    var a = document.getElementById('paket1'); // paket 5 coin
-    var b = document.getElementById('paket2'); // paket 25 coin
-    var c = document.getElementById('paket3'); // paket 100 coin
-    var d = document.getElementById('paket'); // non paket
-
-    function paket1() {
-        a.style.left = "-1px";
-        b.style.right = "-400px";
-        c.style.left = "-400px";
-        d.style.right = "-400px";
-    }
-
-    function paket2() {
-        a.style.left = "-400px";
-        b.style.right = "-1px";
-        c.style.left = "-400px";
-        d.style.right = "-400px";
-    }
-
-    function paket3() {
-        a.style.left = "-400px";
-        b.style.right = "-400px";
-        c.style.left = "-1px";
-        d.style.right = "-400px";
-    }
-</script>
-
-<script>
-    var rad = document.querySelectorAll(".radio")
-
-
-    rad.forEach((item) => {
-        item.addEventListener("change", () => {
-            input.innerHTML = item.nextElementSibling.innerHTML;
-            input.click();
-        });
-    });
 </script>

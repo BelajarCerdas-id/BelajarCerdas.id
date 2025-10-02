@@ -80,7 +80,7 @@ Route::fallback(function () {
 
     // ROUTES CHECKOUT FEATURES
     // Coin checkout tanya
-    Route::post('/checkout', [PaymentFeaturesController::class, 'checkoutCoinTanya'])->name('checkout');
+    Route::post('/checkout-tanya', [PaymentFeaturesController::class, 'checkoutCoinTanya'])->name('checkout.tanya');
 
     // Checkout soal pembahasan subscription
     Route::post('/checkout-soal-pembahasan', [PaymentFeaturesController::class, 'checkoutSoalPembahasanSubcription'])->name('checkout.soal-pembahasan');
