@@ -46,7 +46,7 @@ function fetchPaginateHistoryTransactionSuccess(page = 1) {
                                 </span>
                             </div>
                             <span class="text-md font-bold opacity-70 block mt-1">
-                                ${item.features.nama_fitur === 'TANYA' ? item.jumlah_koin + ' Koin' : item.feature_prices.variant_name}
+                                ${item.features.nama_fitur === 'TANYA' ? item.transaction_callback['jumlah_koin'] + ' Koin' : item.feature_prices.variant_name}
                             </span>
                             <div class="flex justify-between mt-2">
                                 <span class="text-md bg-[#D0EBFF] px-4 py-1 rounded-xl font-bold text-[#4189FF]">
@@ -120,7 +120,7 @@ function bindDetailToggleSuccess() {
     const toggles = document.querySelectorAll('.button-detail-success');
 
     toggles.forEach(toggle => {
-        toggle.addEventListener('click', function(e) {
+        toggle.addEventListener('click', function (e) {
             e.stopPropagation();
             const listItem = toggle.closest('.list-item');
 

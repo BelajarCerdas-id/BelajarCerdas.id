@@ -74,7 +74,7 @@ function fetchPaginateHistoryTransactionWaiting(page = 1) {
                                 </span>
                             </div>
                             <span class="text-md font-bold opacity-70 block mt-1">
-                                ${item.features.nama_fitur === 'TANYA' ? item.jumlah_koin + ' Koin' : item.feature_prices.variant_name}
+                                ${item.features.nama_fitur === 'TANYA' ? item.transaction_callback['jumlah_koin'] + ' Koin' : item.feature_prices.variant_name}
                             </span>
                             <div class="flex justify-between mt-2">
                                 <span class="text-md bg-[#D0EBFF] px-4 py-1 rounded-xl font-bold text-[#4189FF]">
@@ -152,7 +152,7 @@ function bindDetailToggleWaiting() {
     const toggles = document.querySelectorAll('.button-detail-waiting');
 
     toggles.forEach(toggle => {
-        toggle.addEventListener('click', function(e) {
+        toggle.addEventListener('click', function (e) {
             e.stopPropagation();
             const listItem = toggle.closest('.list-item');
 
@@ -177,7 +177,7 @@ function bindExpireCheckout() {
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // token keamanan
         }
-    }).then(function(response) {
+    }).then(function (response) {
         // Setelah request expire selesai,
         // kita panggil fungsi refresh UI tapi tidak menunggu hasilnya
         return new Promise((resolve) => {
@@ -231,7 +231,7 @@ function alertPaymentSuccess() {
         `
     );
 
-    setTimeout(function() {
+    setTimeout(function () {
         document.getElementById('alertSuccess').remove();
     }, 3000);
 
@@ -253,19 +253,19 @@ function binFetchingCheckout() {
                 "X-CSRF-TOKEN": csrfToken
             },
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'success') {
-                alertPaymentSuccess();
-                fetchPaginateHistoryTransactionWaiting();
-                updateJumlahKoinStudent();
-            }
-        })
-        .catch(err => console.error(err))
-        .finally(() => {
-            isProcessing = false;
-            btn.prop('disabled', false);
-        });
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alertPaymentSuccess();
+                    fetchPaginateHistoryTransactionWaiting();
+                    updateJumlahKoinStudent();
+                }
+            })
+            .catch(err => console.error(err))
+            .finally(() => {
+                isProcessing = false;
+                btn.prop('disabled', false);
+            });
     }
 
     document.querySelectorAll('.btn-beli-waiting').forEach(button => {
@@ -292,52 +292,52 @@ function binFetchingCheckout() {
                     "X-CSRF-TOKEN": csrfToken
                 },
             })
-            .then(async res => {
-                const data = await res.json();
+                .then(async res => {
+                    const data = await res.json();
 
-                if (!res.ok) {
-                    if (data.status === 'expired') {
-                        alertExpiredCheckout(); // popup kadaluarsa
-                        return;
-                    } else {
-                        alert(data.error || "Terjadi kesalahan.");
-                        return;
+                    if (!res.ok) {
+                        if (data.status === 'expired') {
+                            alertExpiredCheckout(); // popup kadaluarsa
+                            return;
+                        } else {
+                            alert(data.error || "Terjadi kesalahan.");
+                            return;
+                        }
                     }
-                }
 
-                return data;
-            })
-            .then(data => {
-                if (!data || !data.snap_token) return;
+                    return data;
+                })
+                .then(data => {
+                    if (!data || !data.snap_token) return;
 
-                window.snap.pay(data.snap_token, {
-                    onSuccess: function(result) {
-                        alertPaymentSuccess();
-                        fetchPaginateHistoryTransactionWaiting();
-                        updateJumlahKoinStudent();
-                        isProcessing = false;
-                        btn.prop('disabled', false);
-                    },
-                    onPending: function(result) {
-                        checkTransactionAndUpdateUI(id, btn);
-                    },
-                    onError: function(result) {
-                        isProcessing = false;
-                        btn.prop('disabled', false);
-                        fetchPaginateHistoryTransactionWaiting();
-                        updateJumlahKoinStudent();
-                    },
-                    onClose: function() {
-                        checkTransactionAndUpdateUI(id, btn);
-                    }
+                    window.snap.pay(data.snap_token, {
+                        onSuccess: function (result) {
+                            alertPaymentSuccess();
+                            fetchPaginateHistoryTransactionWaiting();
+                            updateJumlahKoinStudent();
+                            isProcessing = false;
+                            btn.prop('disabled', false);
+                        },
+                        onPending: function (result) {
+                            checkTransactionAndUpdateUI(id, btn);
+                        },
+                        onError: function (result) {
+                            isProcessing = false;
+                            btn.prop('disabled', false);
+                            fetchPaginateHistoryTransactionWaiting();
+                            updateJumlahKoinStudent();
+                        },
+                        onClose: function () {
+                            checkTransactionAndUpdateUI(id, btn);
+                        }
+                    });
+                })
+                .catch(error => {
+                    alert(error.message || "Terjadi kesalahan.");
+                    console.error(error);
+                    isProcessing = false;
+                    btn.prop('disabled', false);
                 });
-            })
-            .catch(error => {
-                alert(error.message || "Terjadi kesalahan.");
-                console.error(error);
-                isProcessing = false;
-                btn.prop('disabled', false);
-            });
         });
     });
 }
