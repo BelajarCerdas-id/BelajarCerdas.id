@@ -41,8 +41,7 @@ class ProfileController extends Controller
         // mengambil semua packet yang sedang aktif dan group berdasarkan fitur masing"
         $getPacketActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
             $query->groupBy('feature_id');
-        })->where('student_id', Auth::user()->id)->orderBy('created_at', 'desc')
-        ->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->get();
+        })->where('student_id', Auth::user()->id)->orderBy('created_at', 'desc')->whereDate('end_date', '>=', $today)->get();
 
         // menghitung jumlah packet yang sedang aktif dan ambil 1 saja untuk setiap fitur
         $countPacketActive = $getPacketActive->count();
@@ -107,8 +106,7 @@ class ProfileController extends Controller
         // mengambil semua packet yang sedang aktif
         $getPacketActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
             $query->groupBy('feature_id');
-        })->where('student_id', Auth::user()->id)->orderBy('created_at', 'desc')
-        ->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->get();
+        })->where('student_id', Auth::user()->id)->orderBy('created_at', 'desc')->whereDate('end_date', '>=', $today)->get();
 
         return view('Profiles.history-packet-active.history-packet-active-student', compact('getPacketActive'));
     }
