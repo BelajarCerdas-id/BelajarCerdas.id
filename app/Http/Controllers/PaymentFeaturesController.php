@@ -14,6 +14,7 @@ use App\Services\PaymentHandlers\CheckoutCoinHandler;
 use App\Services\PaymentHandlers\CheckoutEnglishZoneSubscriptionHandler;
 use App\Services\PaymentHandlers\CheckoutSoalPembahasanSubscriptionHandler;
 use App\Services\PaymentHandlers\RenewCheckoutCoinHandler;
+use App\Services\PaymentHandlers\RenewCheckoutEnglishZoneSubscriptionHandler;
 use App\Services\PaymentHandlers\RenewCheckoutSoalPembahasanSubscriptionHandler;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -224,6 +225,7 @@ class PaymentFeaturesController extends Controller
                 'BC-co-sp' => CheckoutSoalPembahasanSubscriptionHandler::class,
                 'BC-rnw-sp' => RenewCheckoutSoalPembahasanSubscriptionHandler::class,
                 'BC-co-ez' => CheckoutEnglishZoneSubscriptionHandler::class,
+                'BC-rnw-ez' => RenewCheckoutEnglishZoneSubscriptionHandler::class,
             ];
 
             $handler = $midtransHandlers[$key] ?? null;
@@ -318,6 +320,7 @@ class PaymentFeaturesController extends Controller
         $prefixMap = [
             1 => 'BC-rnw-tanya-',
             2 => 'BC-rnw-sp-',
+            3 => 'BC-rnw-ez-',
             // tambahkan fitur lain di sini
         ];
 
