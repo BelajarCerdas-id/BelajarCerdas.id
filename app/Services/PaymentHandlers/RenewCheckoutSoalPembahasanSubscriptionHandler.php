@@ -102,7 +102,7 @@ public static function handle(Transactions $transaction)
         if ($alreadyExistsHistorySubscription) {
             // jika $getMentor ada maka buat payment
             if ($getMentor) {
-                $mentorPayments = MentorPayments::where('mentor_id', $getMentor->user_id)->first();
+                $mentorPayments = MentorPayments::where('mentor_id', $getMentor->user_id)->orderBy('id', 'desc')->first();
 
                 if (!$mentorPayments || $mentorPayments->total_amount > 50000) {
                     $payMentor = MentorPayments::create([
