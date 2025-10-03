@@ -78,13 +78,12 @@
                         </div>
                     </div>
 
-                    <form id="form-pembelian" method="POST" action="{{ route('checkout') }}">
+                    <form id="form-pembelian" method="POST" action="{{ route('checkout.soal-pembahasan') }}">
                         @csrf
                         <input type="hidden" name="payment_method_id" id="input-payment-method"
                             value="{{ $paymentMethods[0]['name'] }}">
                         <input type="hidden" id="input-feature-id" name="feature_id">
                         <input type="hidden" id="input-feature-variant-id" name="feature_variant_id">
-                        <input type="hidden" id="input-quantity" name="jumlah_koin">
                         <input type="hidden" id="input-price" name="price">
                         @if (Auth::user() === null)
                             <button type="button" onclick="alertLogin()"
@@ -92,7 +91,7 @@
                                 disabled>
                                 Beli Sekarang
                             </button>
-                        @elseif ($getPacketSoalPembahasanActive)
+                        @elseif ($getPacketActive)
                             <button type="button" onclick="alertPacketActive()"
                                 class="pay-button bg-gray-300 text-white rounded-full py-2 font-semibold text-sm w-full mt-4"
                                 disabled>
@@ -152,11 +151,11 @@
 </main>
 
 <!----- COMPONENTS ----->
-<script src="{{ asset('js/payment-features/components/package-option.js') }}"></script> <!--- untuk menampilkan opsi paket yang tersedia pada suatu fitur seperti harga, dll ---->
+<script src="{{ asset('js/payment-features/package-option/soal-pembahasan-package-option.js') }}"></script> <!--- untuk menampilkan opsi paket yang tersedia pada suatu fitur seperti harga, dll ---->
 <script src="{{ asset('js/payment-features/components/payment-method.js') }}"></script> <!--- untuk menampilkan metode pembayaran apa saja yang tersedia menggunakan popup  ---->
 <script src="{{ asset('js/payment-features/components/open-close-dropdown-payment-method.js') }}"></script> <!--- untuk menampilkan dan menutup popup metode pembayaran setelah memilih ---->
 
-<script src="{{ asset('js/payment-features/snap-midtrans/popup-snap-midtrans-soal-pembahasan-feature.js') }}"></script>
+<script src="{{ asset('js/payment-features/snap-midtrans/popup-snap-midtrans-soal-pembahasan-feature.js') }}"></script> <!--- untuk menampilkan popup pembayaran menggunakan snap midtrans ---->
 
 <script>
     function alertLogin() {

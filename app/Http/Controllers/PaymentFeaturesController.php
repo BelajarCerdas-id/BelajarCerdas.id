@@ -95,10 +95,16 @@ class PaymentFeaturesController extends Controller
             $data->where('nama_fitur', $nama_fitur);
         })->get();
 
-        // mengambil packet soal pembahasan student yang sedang aktif
-        $getPacketActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
-            $query->whereIn('feature_id', [2, 3]); // id fitur soal pembahasan, english zone
-        })->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)
+        $getFeatureId = Features::where('nama_fitur', $nama_fitur)->first();
+
+        if (!$getFeatureId) {
+            return redirect()->route('homePage');
+        }
+
+        // mengambil packet student yang sedang aktif / yang aktif nya nanti (yang bertipe subscription)
+        $getPacketActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) use ($getFeatureId) {
+            $query->where('feature_id', $getFeatureId->id); // id fitur yang sedang aktif
+        })->whereDate('end_date', '>=', $today)
         ->where('student_id', $userId)->orderBy('created_at', 'desc')->first();
 
         // FOR ENGLISH ZONE FEATURE
