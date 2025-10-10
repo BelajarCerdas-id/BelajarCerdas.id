@@ -2,207 +2,134 @@
 
 namespace App\Imports;
 
-use App\Events\SchoolPartnerSubscription;
-use App\Models\Fase;
-use App\Models\FeaturePrices;
-use App\Models\Features;
-use App\Models\FeatureSubscriptionHistory;
-use App\Models\Kelas;
-use App\Models\SchoolPartner;
-use App\Models\StudentProfiles;
-use App\Models\Transactions;
-use App\Models\UserAccount;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithStartRow;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\WithTitle;
-use Illuminate\Support\Str;
+use App\Imports\SchoolPartnerHandler\SoalPembahasanHandler;
+use Exception;
 
 class SchoolPartnerImport implements ToCollection, WithHeadingRow, WithStartRow, WithTitle
 {
-    /**
-    * @param Collection $collection
-    */
     protected $userId;
     protected $sheetTitle = '';
 
+    // Konstruktor: akan dijalankan saat class diinisialisasi
     public function __construct($userId, $sheetTitle = '')
     {
-        $this->userId = $userId;
-        $this->sheetTitle = $sheetTitle;
+        $this->userId = $userId;          // Simpan userId dari parameter
+        $this->sheetTitle = $sheetTitle;  // Simpan nama sheet
     }
 
+    // Daftar handler yang digunakan untuk setiap fitur
+    protected $handlers = [
+        'Soal dan Pembahasan' => SoalPembahasanHandler::class,
+        // tambahkan handler fitur lain di sini...
+    ];
+
+    // Fungsi untuk mengembalikan nama sheet saat import berjalan
     public function title(): string
     {
-        return $this->sheetTitle; // set sheet title untuk indetifikasi error pada sheet mana
+        return $this->sheetTitle;
     }
 
+    // Baris ke berapa dianggap sebagai header (judul kolom)
     public function headingRow(): int
     {
-        return 2; // <-- kalo pake WithHeadingRow header row diambil dari kolom pertama, jadi kalo header row tidak di kolom pertama harus di return seperti ini
+        return 2; // artinya baris ke-2 adalah header kolom
     }
+
+    // Baris ke berapa data mulai dibaca
     public function startRow(): int
     {
-        return 3;
+        return 3; // artinya data dimulai dari baris ke-3 (setelah header)
     }
 
+    // Fungsi wajib dari ToCollection → menerima semua baris dari sheet Excel dalam bentuk Collection
     public function collection(Collection $rows)
     {
-        $errors = [];
+        // Panggil fungsi handle untuk memproses data dari setiap baris
+        $this->handle($rows);
+    }
 
+    // Fungsi utama untuk memproses data dari setiap sheet
+    public function handle(Collection $rows)
+    {
+        // Jika sheet kosong → langsung lempar error
+        if ($rows->isEmpty()) {
+            throw new Exception("Sheet '{$this->sheetTitle}' kosong atau tidak terbaca.");
+        }
+
+        // Array untuk menyimpan data yang akan dikirim ke setiap handler
+        $rowsByHandler = [];
+
+        // Menyimpan daftar nama fitur yang ditemukan
+        $collectedFeatures = [];
+
+        // Menyimpan daftar error fitur yang tidak valid
+        $invalidFeatures = [];
+
+        // Loop semua baris di sheet Excel
         foreach ($rows as $index => $row) {
+            // Hitung nomor baris sebenarnya di Excel (karena startRow = 3)
             $rowNumber = $index + 3;
 
-            $validator = Validator::make($row->toArray(), [
-                'nama_siswa' => 'required',
-                'email_siswa' => 'required',
-                'no_hp' => 'required',
-                'fase' => 'required',
-                'kelas' => 'required',
-                'nama_sekolah' => 'required',
-                'npsn' => 'required',
-                'nama_kepsek' => 'required',
-                'nik_kepsek' => 'required',
-                'email_akun' => 'required',
-                'password_akun' => 'required',
-                'pembelian_fitur' => 'required',
-                'varian_fitur' => 'required',
-                'metode_pembayaran' => 'required',
-            ], [
-                "nama_siswa.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom nama siswa wajib diisi.",
-                "email_siswa.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom email wajib diisi.",
-                "no_hp.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom No.HP wajib diisi.",
-                "fase.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom fase wajib diisi.",
-                "kelas.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom kelas wajib diisi.",
-                "nama_sekolah.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom nama sekolah wajib diisi.",
-                "npsn.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom npsn wajib diisi.",
-                "nama_kepsek.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom nama kepsek wajib diisi.",
-                "nik_kepsek.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom nik kepsek wajib diisi.",
-                "email_akun.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom email akun wajib diisi.",
-                "password_akun.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom password akun wajib diisi.",
-                "pembelian_fitur.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom pembelian fitur wajib diisi.",
-                "varian_fitur.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom varian fitur wajib diisi.",
-                "metode_pembayaran.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom metode pembayaran wajib diisi.",
-            ]);
+            // Normalisasi nama fitur:
+            // 1. Ganti spasi ganda dan karakter tak terlihat (U+00A0) jadi spasi biasa
+            // 2. Ubah semua ke huruf kecil agar mudah dibandingkan
+            $featureName = preg_replace('/\x{00A0}|\s+/u', ' ', strtolower(($row['pembelian_fitur'] ?? '')));
 
-            if ($validator->fails()) {
-                $errors = array_merge($errors, $validator->errors()->all());
-                continue;
-            }
+            // Jika kolom "pembelian_fitur" kosong → lewati baris
+            if (empty($featureName)) continue;
 
-            // ambill tanggal hari ini
-            $today = now()->format('Y-m-d');
+            // Simpan nama fitur untuk pengecekan nanti
+            $collectedFeatures[] = $featureName;
 
-            // ambil akun user
-            $user = UserAccount::where('email', $row['email_akun'])->first();
+            // Cek apakah fitur ini cocok dengan salah satu handler yang terdaftar
+            $matchedKey = collect($this->handlers)
+                ->keys() // ambil semua nama fitur yang ada di daftar handler
+                ->first(fn($key) => str_contains($featureName, strtolower(trim($key)))); 
+                // cari yang cocok (misal featureName mengandung "soal dan pembahasan")
 
-            // ambil nama fitur yang sesuai dengan $row pada excel
-            $feature = Features::where('nama_fitur', $row['pembelian_fitur'])->first();
-
-            // ambil nama varian fitur yang dibeli
-            $variantFeature = FeaturePrices::where('variant_name', $row['varian_fitur'])->first();
-
-            // ambil fase
-            $getFase = Fase::where('nama_fase', $row['fase'])->first();
-
-            // ambil kelas
-            $getKelas = Kelas::where('kelas', $row['kelas'])->first();
-
-            // generate order id
-            $orderId = 'BC-co-sch-' . Str::uuid();
-
-            // jika user belum mempunyai akun, maka create
-            $user = UserAccount::firstOrCreate(
-                ['email' => $row['email_akun']], // unique column untuk deteksi
-                [
-                    'password' => bcrypt($row['password_akun']),
-                    'no_hp' => $row['no_hp'],
-                    'role' => 'Siswa',
-                    'status_akun' => 'aktif',
-                ]
-            );
-
-            // ambil subscription history
-            $getSubscriptionHistory = FeatureSubscriptionHistory::where('student_id', $user->id)->whereHas('Transactions', function ($query) use ($feature) {
-                $query->where('feature_id', $feature->id);
-            })->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->first();
-
-            // cek jika siswa masih memiliki fitur yang aktif, maka tampilkan error
-            if ($getSubscriptionHistory) {
-                $errors[] = "Sheet {$this->sheetTitle} - Baris $rowNumber: Siswa dengan email {$row['email_akun']} masih memiliki fitur {$row['pembelian_fitur']} yang aktif.";
-                continue;
-            }
-
-            $createStudentProfiles = StudentProfiles::updateOrCreate([
-                'personal_email' => $row['email_siswa'],
-            ],
-            [
-                'user_id' => $user->id,
-                'nama_lengkap' => $row['nama_siswa'],
-                'sekolah' => $row['nama_sekolah'],
-                'fase_id' => $getFase->id,
-                'kelas_id' => $getKelas->id
-            ]);
-
-            // buat transaksi
-            $transaction = Transactions::create([
-                'user_id' => $user->id,
-                'feature_id' => $feature->id,
-                'feature_variant_id' => $variantFeature->id,
-                'order_id' => $orderId,
-                'payment_method' => $row['metode_pembayaran'],
-                'transaction_status' => 'Berhasil',
-                'price' => $variantFeature->price,
-                'transaction_source' => 'school_partner',
-            ]);
-
-            $duration = $transaction->FeaturePrices->duration;
-            $month = (int) filter_var($duration, FILTER_SANITIZE_NUMBER_INT);
-
-            $startDate = Carbon::now();
-            $endDate = $startDate->copy()->addMonths($month);
-
-            // aktifkan fitur yang telah dibeli
-            if ($feature->id == 2) {
-                $featureSubscriptionHistory = FeatureSubscriptionHistory::create([
-                    'student_id' => $user->id,
-                    'transaction_id' => $transaction->id,
-                    'start_date' => $startDate,
-                    'end_date' => $endDate,
-                    'fase_id' => $getFase->id
-                ]);
+            // Jika cocok, simpan baris ke handler yang sesuai
+            if ($matchedKey) {
+                $rowsByHandler[$matchedKey][] = $row;
             } else {
-                $featureSubscriptionHistory = FeatureSubscriptionHistory::create([
-                    'student_id' => $user->id,
-                    'transaction_id' => $transaction->id,
-                    'start_date' => $startDate,
-                    'end_date' => $endDate
-                ]);
-            }
-
-            // insert school partner
-            $schoolPartner = SchoolPartner::updateOrCreate([
-                    'nama_sekolah' => $row['nama_sekolah'],
-                    'npsn' => $row['npsn'],
-                ],
-                [
-                    // 'nama_sekolah' => $row['nama_sekolah'],
-                    'nama_kepsek' => $row['nama_kepsek'],
-                    'nik_kepsek' => $row['nik_kepsek'],
-                ]);
-
-            if ($featureSubscriptionHistory) {
-                broadcast(new SchoolPartnerSubscription($schoolPartner))->toOthers();
+                // Jika tidak cocok, catat error bahwa fitur ini tidak terdaftar
+                $invalidFeatures[] = "Sheet {$this->sheetTitle} - Baris {$rowNumber}: Fitur '{$row['pembelian_fitur']}' tidak terdaftar.";
             }
         }
-        // Handle error
-        if (!empty($errors)) {
-            throw ValidationException::withMessages(['import' => $errors]);
+
+        // Jika tidak ada fitur yang invalid, pastikan semua baris punya fitur yang sama
+        if (empty($invalidFeatures)) {
+            // Ambil fitur unik dari semua baris
+            $uniqueFeatures = collect($collectedFeatures)->unique();
+
+            // Jika dalam satu sheet ditemukan lebih dari satu fitur berbeda, itu tidak diperbolehkan
+            if ($uniqueFeatures->count() > 1) {
+                $invalidFeatures[] = "Sheet {$this->sheetTitle} memiliki lebih dari satu fitur berbeda (" . implode(', ', $uniqueFeatures->toArray()) . ").";
+            }
+        }
+
+        // Jika ada fitur yang tidak valid → hentikan proses dan tampilkan pesan error
+        if (!empty($invalidFeatures)) {
+            throw ValidationException::withMessages(['import' => $invalidFeatures]);
+        }
+
+        // Jalankan handler yang sesuai dengan fitur yang ditemukan
+        foreach ($rowsByHandler as $featureKey => $featureRows) {
+            $handlerClass = $this->handlers[$featureKey];         // Ambil nama class handler
+            $handler = new $handlerClass($this->userId, $this->sheetTitle); // Buat instance handler
+
+            // Pastikan handler memiliki metode 'handle'
+            if (!method_exists($handler, 'handle')) {
+                throw new Exception("Handler '{$handlerClass}' tidak memiliki metode handle().");
+            }
+
+            // Jalankan handler untuk memproses semua baris fitur tersebut
+            $handler->handle(collect($featureRows));
         }
     }
 }
