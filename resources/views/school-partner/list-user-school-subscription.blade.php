@@ -44,7 +44,7 @@
 
                     <!---- table list user school partner subscription ---->
                     <div id="container-user-school-partner-list" class="overflow-x-auto"
-                        data-school-id="{{ $schoolId }}">
+                        data-school-id="{{ $schoolId }}" data-features-order="{{ $countFeatures->values() }}">
                         <table class="table" id="table-user-school-partner-list">
                             <thead class="thead-table-user-school-partner-list hidden">
                                 <tr>

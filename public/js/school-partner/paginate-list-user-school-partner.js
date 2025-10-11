@@ -46,7 +46,7 @@ function paginateUserSchoolPartner(search_student, page = 1) {
                         const group = items[0];
                         const formatDate = (dateString) => {
                             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-                            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September','Oktober', 'November', 'Desember'];
+                            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
                             const date = new Date(dateString);
                             const day = date.getDate();
@@ -56,48 +56,91 @@ function paginateUserSchoolPartner(search_student, page = 1) {
                             return `${day}-${monthName}-${year}`;
                         };
 
-                        let featureCells = '';
+                        // Ambil urutan fitur dari data attribute features-order di container
+                        const featuresOrder = $('#container-user-school-partner-list').data('features-order');
 
+                        // Buat peta fitur agar bisa diakses berdasarkan nama fiturnya
+                        const featureMap = {};
+
+                        // Simpan tiap item transaksi fitur ke dalam featureMap
                         items.forEach(item => {
-                            const startDate = item.start_date ? formatDate(item.start_date) : 'Tanggal tidak tersedia';
-                            const endDate = item.end_date ? formatDate(item.end_date) : 'Tanggal tidak tersedia';
-
-                            featureCells += `
-                                <td class="td-table !text-black !text-center">${startDate} - ${endDate}</td>
-                                <td class="td-table text-center w-[15%]">
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" class="hidden peer toggle-active-features-user-school-partner"
-                                            data-subscription-id="${item.id}"
-                                            ${item.subscription_status === 'aktif' ? 'checked' : ''} />
-                                        <div class="w-11 h-6 bg-gray-300 peer-checked:bg-green-500 rounded-full transition-colors duration-300 ease-in-out"></div>
-                                        <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 ease-in-out peer-checked:translate-x-2.5"></div>
-                                    </label>
-                                </td>
-                            `;
+                            const featureName = item.transactions?.features?.nama_fitur;
+                            if (featureName) {
+                                featureMap[featureName] = item;
+                            }
                         });
 
-                        $('#dropdown-features-access-control').empty(); // kosongkan dulu
+                        // Variabel untuk menampung cell tabel fitur
+                        let featureCells = '';
 
-                        // tampilkan dropdown kontrol akses fitur
-                        items.forEach(item => {
+                        // Loop setiap fitur sesuai urutan yang telah ditentukan
+                        featuresOrder.forEach(featureName => {
+                            const item = featureMap[featureName]; // Ambil item fitur yang sesuai
+                            if (item) {
+                                // Format tanggal mulai dan akhir
+                                const startDate = item.start_date ? formatDate(item.start_date) : 'Tanggal tidak tersedia';
+                                const endDate = item.end_date ? formatDate(item.end_date) : 'Tanggal tidak tersedia';
+
+                                // Tambahkan cell tabel untuk menampilkan periode aktif dan toggle status aktif/tidak
+                                featureCells += `
+                                    <td class="td-table !text-black !text-center">${startDate} - ${endDate}</td>
+                                    <td class="td-table text-center w-[15%]">
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" class="hidden peer toggle-active-features-user-school-partner"
+                                                data-subscription-id="${item.id}"
+                                                ${item.subscription_status === 'aktif' ? 'checked' : ''} />
+                                            <div class="w-11 h-6 bg-gray-300 peer-checked:bg-green-500 rounded-full transition-colors duration-300 ease-in-out"></div>
+                                            <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 ease-in-out peer-checked:translate-x-2.5"></div>
+                                        </label>
+                                    </td>
+                                `;
+                            } else {
+                                // Jika fitur tidak tersedia, tampilkan tanda "-"
+                                featureCells += `
+                                    <td class="td-table !text-black !text-center">-</td>
+                                    <td class="td-table !text-black !text-center">-</td>
+                                `;
+                            }
+                        });
+
+                        // Map untuk menyimpan status aktif tiap fitur dan ID fiturnya
+                        const activeFeatureStatus = {};
+                        const featureId = {};
+
+                        // Loop semua data untuk mendeteksi status aktif fitur per sekolah
+                        response.data.forEach(items => {
+                            items.forEach(item => {
+                                const featureName = item.transactions?.features?.nama_fitur;
+                                activeFeatureStatus[featureName] = item.subscription_status === 'aktif';
+                                featureId[featureName] = item.transactions?.features?.id;
+                            });
+                        });
+
+                        // Kosongkan dropdown sebelum diisi ulang
+                        $('#dropdown-features-access-control').empty();
+
+                        // Tampilkan daftar fitur dalam dropdown kontrol akses
+                        featuresOrder.forEach(featureName => {
+                            const isActive = activeFeatureStatus[featureName] ? 'checked' : '';
                             $('#dropdown-features-access-control').append([
                                 `
                                     <li>
                                         <a class="hover:bg-transparent !cursor-default">
                                             <label class="relative inline-flex items-center cursor-pointer">
                                                 <input type="checkbox" class="hidden peer toggle-active-features-all-user-school-partner"
-                                                data-school-id="${schoolIdentity.nama_sekolah}" data-feature-id="${item.transactions?.features?.id}"
-                                                ${item.subscription_status === 'aktif' ? 'checked' : ''} />
+                                                data-school-id="${schoolIdentity.nama_sekolah}" data-feature-id="${featureId[featureName]}"
+                                                ${isActive} />
                                                 <div class="w-9 h-4 bg-gray-300 peer-checked:bg-green-500 rounded-full transition-colors duration-300 ease-in-out"></div>
                                                 <div class="absolute left-0.4 top-0.1 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300 ease-in-out peer-checked:translate-x-2.5"></div>
                                             </label>
-                                            <span class="text-xs">${item.transactions?.features?.nama_fitur}</span>
+                                            <span class="text-xs">${featureName}</span>
                                         </a>
                                     </li>
                                 `
                             ])
-                        })
+                        });
 
+                        // Tambahkan baris data siswa ke tabel
                         $('#tbody-user-school-partner-list').append(`
                             <tr>
                                 <td class="td-table !text-black !text-center">${index + 1}</td>
@@ -109,16 +152,16 @@ function paginateUserSchoolPartner(search_student, page = 1) {
                         `);
                     });
 
-                        $('.pagination-container-user-school-partner-list').html(response.links);
-                        bindPaginationLinks();
-                        $('#empty-message-user-school-partner-list').hide(); // sembunyikan pesan kosong
-                        $('.thead-table-user-school-partner-list').show(); // Tampilkan tabel thead
-                        $('#dropdown-features-access-control').show(); // tampikan list dropdown
-                    } else {
-                        $('#tbody-user-school-partner-list').empty(); // Clear existing rows
-                        $('.thead-table-user-school-partner-list').hide(); // Sembunyikan tabel thead
-                        $('#empty-message-user-school-partner-list').show(); // Tampilkan pesan kosong
-                        $('#dropdown-features-access-control').hide(); // sembunyikan list dropdown
+                    $('.pagination-container-user-school-partner-list').html(response.links);
+                    bindPaginationLinks();
+                    $('#empty-message-user-school-partner-list').hide(); // sembunyikan pesan kosong
+                    $('.thead-table-user-school-partner-list').show(); // Tampilkan tabel thead
+                    $('#dropdown-features-access-control').show(); // tampikan list dropdown
+                } else {
+                    $('#tbody-user-school-partner-list').empty(); // Clear existing rows
+                    $('.thead-table-user-school-partner-list').hide(); // Sembunyikan tabel thead
+                    $('#empty-message-user-school-partner-list').show(); // Tampilkan pesan kosong
+                    $('#dropdown-features-access-control').hide(); // sembunyikan list dropdown
                 }
             }
         });
@@ -131,14 +174,14 @@ $(document).ready(function () {
 })
 
 // Fungsi untuk memfilter data berdasarkan search_student (pakai on input karena ketika data yang user cari akan munul tanpa di enter atau apapun by click)
-$('#search_student').on('input', function() {
+$('#search_student').on('input', function () {
     const search_student = $(this).val();
     paginateUserSchoolPartner(search_student); // Call the function to fetch data based on search_student
 });
 
 
 function bindPaginationLinks() {
-    $('.pagination-container-user-school-partner-list').off('click', 'a').on('click', 'a', function(event) {
+    $('.pagination-container-user-school-partner-list').off('click', 'a').on('click', 'a', function (event) {
         event.preventDefault(); // Cegah perilaku default link
         const page = new URL(this.href).searchParams.get('page'); // Dapatkan nomor halaman dari link
         const search_student = $('#search_student').val();

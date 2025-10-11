@@ -108,7 +108,7 @@ class SchoolPartnerController extends Controller
     {
         $getFeatureSubscriptionHistory = FeatureSubscriptionHistory::with(['Transactions.Features', 'UserAccount.StudentProfiles', 'UserAccount.StudentProfiles.Fase', 'UserAccount.StudentProfiles.Kelas'])
         ->whereHas('UserAccount.StudentProfiles', function ($query) use ($schoolId) {
-            $query->where('sekolah', $schoolId);
+            $query->where('sekolah', $schoolId)->whereRaw("substr(email, -length(?)) = ?", ['@belajarcerdas.id', '@belajarcerdas.id']);
         })->get()->groupBy('student_id');
 
         $countFeatures = $getFeatureSubscriptionHistory
@@ -134,7 +134,7 @@ class SchoolPartnerController extends Controller
             if ($request->filled('search_student')) {
                 $query->where('nama_lengkap', 'like', '%' . $request->search_student . '%'); // filter nama sesuai request (jika search a, muncul nama yang mengandung a)
             }
-        })->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->get();
+        })->whereDate('end_date', '>=', $today)->get();
 
         $groupedData = $getFeatureSubscriptionHistory->groupBy('student_id');
 
