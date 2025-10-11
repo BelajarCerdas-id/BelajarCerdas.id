@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Imports\SchoolPartnerHandler\EnglishZoneHandler;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -26,6 +27,7 @@ class SchoolPartnerImport implements ToCollection, WithHeadingRow, WithStartRow,
     // Daftar handler yang digunakan untuk setiap fitur
     protected $handlers = [
         'Soal dan Pembahasan' => SoalPembahasanHandler::class,
+        'English Zone' => EnglishZoneHandler::class,
         // tambahkan handler fitur lain di sini...
     ];
 

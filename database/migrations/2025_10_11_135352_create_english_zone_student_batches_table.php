@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained('user_accounts');
             $table->foreignId('subscription_history_id')->constrained('feature_subscription_histories');
             $table->foreignId('level_id')->constrained('english_zone_levels');
+            $table->date('level_start_date');
+            $table->date('level_end_date');
             $table->foreignId('batch_schedule_id')->constrained('english_zone_batch_schedules');
             $table->timestamps();
         });

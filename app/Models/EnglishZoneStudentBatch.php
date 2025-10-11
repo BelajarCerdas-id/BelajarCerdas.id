@@ -8,9 +8,11 @@ class EnglishZoneStudentBatch extends Model
     use HasFactory;
 
     protected $fillable = [
-        'student_id',
-        'subscription_history_id',
-        'level_id',
+        'student_id', 
+        'subscription_history_id', 
+        'level_id', 
+        'level_start_date', 
+        'level_end_date', 
         'batch_schedule_id'
     ];
 
