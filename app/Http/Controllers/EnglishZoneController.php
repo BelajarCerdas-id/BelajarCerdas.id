@@ -1824,7 +1824,8 @@ class EnglishZoneController extends Controller
             ->whereHas('EnglishZoneBatchSchedule', function ($q) use ($batch_id, $group_id) {
                 $q->where('batch_id', $batch_id)->where('batch_schedule_group', $group_id);
             })->whereHas('FeatureSubscriptionHistory.Transactions', function ($q) use ($feature_variant_id) {
-                $q->where('transaction_status', 'Berhasil')->where('feature_variant_id', $feature_variant_id);
+                $q->where('transaction_status', 'Berhasil')->where('feature_variant_id', $feature_variant_id)
+                ->where('transaction_source', 'non_school_partner');
             })->get()
             ->groupBy(function ($item) {
                 return $item->EnglishZoneBatchSchedule->schedule_time_group;
