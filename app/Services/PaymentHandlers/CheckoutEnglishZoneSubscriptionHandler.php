@@ -65,17 +65,31 @@ class CheckoutEnglishZoneSubscriptionHandler
             $batchScheduleIds = explode(',', $transactionCallback['batch_schedule_id']);
             $levelIds = explode(',', $transactionCallback['level_id']);
 
+            // hitung jumlah level
+            $levelCount = count($levelIds);
+
+            // hitung jumlah bulan per level
+            $monthPerLevel = $month / $levelCount;
+
             foreach ($batchScheduleIds as $batchScheduleId) {
-                foreach ($levelIds as $levelId) {
+                foreach ($levelIds as $index => $levelId) {
+                    // Ambil tanggal mulai paket langganan (misal: 1 Januari 2025), lalu tambahkan bulan sesuai urutan level (index)
+                    // ex: Level 1 (index = 0): 1 Jan + (3 * 0) = 1 Jan 2025, Level 2 (index = 1): 1 Jan + (3 * 1) = 1 Apr 2025
+                    $levelStartDate = $startDate->copy()->addMonths($monthPerLevel * $index);
+                    
+                    // Hitung tanggal selesai level ini, Tambahkan durasi belajar per level
+                    // ex: Level 1: start 1 Jan  → end 1 Apr, Level 2: start 1 Apr  → end 1 Jul
+                    $levelEndDate = $levelStartDate->copy()->addMonths($monthPerLevel);
+
                     EnglishZoneStudentBatch::create([
                         'student_id' => $transaction->user_id,
                         'subscription_history_id' => $subscriptionHistory->id,
                         'level_id' => $levelId ? (int) $levelId : (int) $transactionCallback['level_id'],
+                        'level_start_date' => $levelStartDate,
+                        'level_end_date' => $levelEndDate,
                         'batch_schedule_id' => (int) $batchScheduleId,
-                        // 'mentor_id' => (int) $transactionCallback['mentor_id'],
                     ]);
                 }
-
             }
         }
 
