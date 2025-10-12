@@ -9,6 +9,10 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".list-item").forEach(item => {
             if (item !== except)
                 item.classList.remove("show"); // Hanya hapus class 'show', biarkan 'active' tetap
+            const dropdown = item.querySelector('.content-dropdown'); // Ambil content dropdown
+            if (dropdown) {
+                dropdown.style.maxHeight = "0"; // Tutup dropdown
+            }
         });
     }
 
@@ -25,12 +29,21 @@ document.addEventListener("DOMContentLoaded", () => {
         toggle.addEventListener("click", (e) => {
             e.preventDefault(); // Cegah perilaku default <a href>
             const parent = toggle.closest('.list-item'); // Ambil parent list-item
+            const dropdown = parent.querySelector('.content-dropdown'); // Ambil content dropdown
             const isOpen = parent.classList.contains("show"); // Cek apakah sudah terbuka
 
             closeAllMainDropdowns(); // Tutup semua dropdown lainnya (kecuali yang diklik)
 
             if (!isOpen) {
                 parent.classList.add("show"); // Buka dropdown yang diklik
+                if (dropdown) {
+                    dropdown.style.maxHeight = dropdown.scrollHeight + "px"; // Atur tinggi maksimum dropdown
+                }
+            } else {
+                parent.classList.remove("show"); // Tutup dropdown yang diklik
+                if (dropdown) {
+                    dropdown.style.maxHeight = "0"; // Tutup dropdown
+                }
             }
 
             // Catatan: tidak menambah/menghapus class 'active' di sini.
@@ -70,6 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const contentDropdown = link.closest(".content-dropdown");
             if (contentDropdown) {
                 contentDropdown.classList.add("show"); // Pastikan dropdown terbuka
+                contentDropdown.style.maxHeight = contentDropdown.scrollHeight + "px"; // Atur tinggi maksimum dropdown yang di active
 
                 const listItem = contentDropdown.closest(".list-item");
                 if (listItem) {

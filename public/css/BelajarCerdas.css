@@ -980,6 +980,7 @@ input[type="radio"]:checked + .pilihanSoal .option {
     position: fixed;
     top: 0;
     left: 0;
+    overflow-y: auto;
 }
 
 .list-item {
@@ -1072,7 +1073,6 @@ input[type="radio"]:checked + .pilihanSoal .option {
 
 /* open untuk dropdown utama */
 .list-item.show .content-dropdown {
-    max-height: 200px;
     opacity: 1;
 }
 
