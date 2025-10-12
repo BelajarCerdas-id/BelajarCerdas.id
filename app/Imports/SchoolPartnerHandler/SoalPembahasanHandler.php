@@ -247,7 +247,7 @@ class SoalPembahasanHandler
             $month = (int) filter_var($duration, FILTER_SANITIZE_NUMBER_INT);
 
             $startDate = Carbon::now();
-            $endDate = $startDate->copy()->addMonths($month - 1);
+            $endDate = $startDate->copy()->addMonths($month);
 
             $featureSubscriptionHistory = FeatureSubscriptionHistory::create([
                 'student_id' => $user->id,
