@@ -492,8 +492,10 @@ class PaymentFeaturesController extends Controller
         }
 
         $batchScheduleIds = explode(',', $request->batch_schedule_id);
+        $levelIds = explode(',', $request->level_id);
 
-        $studentCounts = EnglishZoneStudentBatch::whereHas('EnglishZoneBatchSchedule', function ($q) use ($request, $batchScheduleIds) {
+        $studentCounts = EnglishZoneStudentBatch::whereIn('level_id', $levelIds)
+        ->whereHas('EnglishZoneBatchSchedule', function ($q) use ($request, $batchScheduleIds, $levelIds) {
             $q->where('batch_id', $request->batch_id)->where('batch_schedule_group', $request->batch_schedule_group);
 
             if ($request->filled('schedule_time_group')) {
@@ -502,7 +504,8 @@ class PaymentFeaturesController extends Controller
 
             $q->whereIn('id', $batchScheduleIds);
         })->whereHas('FeatureSubscriptionHistory.Transactions', function ($q) use ($request) {
-            $q->where('transaction_status', 'Berhasil')->where('feature_variant_id', $request->feature_variant_id);
+            $q->where('transaction_status', 'Berhasil')->where('feature_variant_id', $request->feature_variant_id)
+            ->where('transaction_source', 'non_school_partner');
         })->pluck('student_id')->unique()->count();
 
 
