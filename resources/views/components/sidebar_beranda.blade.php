@@ -597,6 +597,7 @@
                         <a href="{{ route('EZ.managementBatches.view') }}" class="link-href">Management Batches</a>
                         <a href="{{ route('EZ.managementMentorSchedule.view') }}" class="link-href">Mentor
                             Schedule</a>
+                        <a href="{{ route('EZ.managementStudentBatch.view') }}" class="link-href">Student Batch</a>
                     </div>
                 </div>
             </li>
@@ -899,6 +900,10 @@
                                             <a href="{{ route('EZ.managementMentorSchedule.view') }}"
                                                 class="link-href">
                                                 Mentor Schedule
+                                            </a>
+                                            <a href="{{ route('EZ.managementStudentBatch.view') }}"
+                                                class="link-href">
+                                                Student Batch
                                             </a>
                                         </div>
                                     </div>

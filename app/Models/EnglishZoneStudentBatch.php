@@ -13,7 +13,8 @@ class EnglishZoneStudentBatch extends Model
         'level_id', 
         'level_start_date', 
         'level_end_date', 
-        'batch_schedule_id'
+        'batch_schedule_id',
+        'mentor_id'
     ];
 
     public function Student()
@@ -34,5 +35,10 @@ class EnglishZoneStudentBatch extends Model
     public function FeatureSubscriptionHistory()
     {
         return $this->belongsTo(FeatureSubscriptionHistory::class, 'subscription_history_id');
+    }
+
+    public function Mentor()
+    {
+        return $this->belongsTo(UserAccount::class, 'mentor_id');
     }
 }

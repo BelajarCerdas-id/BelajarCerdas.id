@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('level_start_date');
             $table->date('level_end_date');
             $table->foreignId('batch_schedule_id')->constrained('english_zone_batch_schedules');
+            $table->foreignId('mentor_id')->nullable()->constrained('user_accounts');
             $table->timestamps();
         });
     }
