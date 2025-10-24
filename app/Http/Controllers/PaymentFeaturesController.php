@@ -82,11 +82,6 @@ class PaymentFeaturesController extends Controller
 
     public function paymentFeaturesView($nama_fitur)
     {
-        // Ambil tanggal hari ini
-        $today = Carbon::now()->format('Y-m-d');
-
-        $userId = Auth::id();
-
         $features = Features::all();
         $paymentMethods = $this->getPaymentMethods(); // ✅ ini return array
         $groupedPaymentMethods = collect($paymentMethods)->groupBy('tipe_payment');
@@ -102,17 +97,11 @@ class PaymentFeaturesController extends Controller
             return redirect()->route('homePage');
         }
 
-        // mengambil packet student yang sedang aktif / yang aktif nya nanti (yang bertipe subscription)
-        $getPacketActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) use ($getFeatureId) {
-            $query->where('feature_id', $getFeatureId->id); // id fitur yang sedang aktif
-        })->whereDate('end_date', '>=', $today)
-        ->where('student_id', $userId)->orderBy('created_at', 'desc')->first();
-
         // FOR ENGLISH ZONE FEATURE
         $getLevels = EnglishZoneLevel::all();
 
         return view('Features.payment-features.pembayaran-fitur', compact(
-            'nama_fitur', 'features', 'paymentMethods', 'groupedPaymentMethods', 'dataFeaturesPrices', 'getPacketActive', 'getLevels',
+            'nama_fitur', 'features', 'paymentMethods', 'groupedPaymentMethods', 'dataFeaturesPrices', 'getLevels',
         ));
     }
 
@@ -472,6 +461,7 @@ class PaymentFeaturesController extends Controller
     // FUNCTION ENGLISH ZONE CHECKOUT
     public function checkoutEnglishZoneSubscription(Request $request)
     {
+        $today = now()->format('Y-m-d');
         $user = Auth::user();
         $orderId = 'BC-co-ez-' . Str::uuid();
         $paymentMethod = strtolower($request->payment_method_id);
@@ -489,6 +479,31 @@ class PaymentFeaturesController extends Controller
 
         if (!array_key_exists($paymentMethod, $paymentMap)) {
             return response()->json(['error' => 'Metode tidak dikenali.'], 400);
+        }
+
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
+        // mengambil packet student yang sedang aktif / yang aktif nya nanti (yang bertipe subscription)
+        $getPacketActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) use ($request) {
+            $query->where('feature_id', $request->feature_id); // id fitur yang sedang aktif
+        })->whereDate('end_date', '>=', $today)->where('subscription_status', 'aktif')
+        ->where('student_id', $user->id)->orderBy('created_at', 'desc')->first();
+
+        if ($getPacketActive) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Maaf, kamu tidak bisa membeli paket ini, karena kamu masih memiliki paket yang aktif pada fitur ini.'
+            ], 422);
         }
 
         $batchScheduleIds = explode(',', $request->batch_schedule_id);
