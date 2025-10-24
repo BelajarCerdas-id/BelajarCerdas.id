@@ -401,6 +401,7 @@ class PaymentFeaturesController extends Controller
     // FUNCTION SOAL DAN PEMBAHASAN CHECKOUT
     public function checkoutSoalPembahasanSubcription(Request $request)
     {
+        $today = now()->format('Y-m-d');
         $user = Auth::user();
         $orderId = 'BC-co-sp-' . Str::uuid();
         $paymentMethod = strtolower($request->payment_method_id);
@@ -418,6 +419,31 @@ class PaymentFeaturesController extends Controller
 
         if (!array_key_exists($paymentMethod, $paymentMap)) {
             return response()->json(['error' => 'Metode tidak dikenali.'], 400);
+        }
+
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
+        // mengambil packet student yang sedang aktif / yang aktif nya nanti (yang bertipe subscription)
+        $getPacketActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) use ($request) {
+            $query->where('feature_id', $request->feature_id); // id fitur yang sedang aktif
+        })->whereDate('end_date', '>=', $today)->where('subscription_status', 'aktif')
+        ->where('student_id', $user->id)->orderBy('created_at', 'desc')->first();
+
+        if ($getPacketActive) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Maaf, kamu tidak bisa membeli paket ini, karena kamu masih memiliki paket yang aktif pada fitur ini.'
+            ], 422);
         }
 
         $transaction = Transactions::create([
