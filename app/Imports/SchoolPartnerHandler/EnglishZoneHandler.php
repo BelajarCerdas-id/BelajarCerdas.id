@@ -326,7 +326,8 @@ class EnglishZoneHandler
             $getBatchScheduleIds = EnglishZoneBatchSchedule::where('batch_id', $getBatch->id)->where('batch_schedule_group', $row['batch_group'])->where('start_time', $start)->where('end_time', $end)->whereIn('day_of_week', $days)->pluck('id')->toArray();
 
             // menghitung jumlah siswa yang terdaftar di suatu jadwal pada sekolah tersebut
-            $studentCounts = EnglishZoneStudentBatch::whereHas('EnglishZoneBatchSchedule', function ($q) use ($getBatchScheduleIds, $getBatch, $row) {
+            $studentCounts = EnglishZoneStudentBatch::whereIn('level_id', $getLevel)
+            ->whereHas('EnglishZoneBatchSchedule', function ($q) use ($getBatchScheduleIds, $getBatch, $row) {
                 $q->where('batch_id', $getBatch->id)->where('batch_schedule_group', $row['batch_group']);
                 $q->whereIn('id', $getBatchScheduleIds);
             })
@@ -341,7 +342,7 @@ class EnglishZoneHandler
                 ->count();
 
             // jika $studentCounts >= 10, maka tampilkan kapasitas penuh.
-            if ($studentCounts >= 10) {
+            if ($studentCounts >= 2) {
                 $errors[] = "Jadwal {$row['batch']}, hari {$row['hari']}, jam {$row['jam']} pada sekolah $row[nama_sekolah] sudah penuh / melebihi jumlah kapasitas. Silahkan daftarkan siswa di jadwal lain.";
                 continue;
             }
