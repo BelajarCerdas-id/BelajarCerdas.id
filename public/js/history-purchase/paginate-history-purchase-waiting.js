@@ -34,33 +34,43 @@ function fetchPaginateHistoryTransactionWaiting(page = 1) {
                         second: '2-digit',
                     });
 
-                    const renewCheckout = item.renewCheckout;
+                    const renewCheckout = response.renewCheckout.replace(':id', item.id);
                     const csrfToken = $('meta[name="csrf-token"]').attr('content');
                     const createdAt = item.created_at ? `${formatDate(item.created_at)}, ${timeFormatter.format(new Date(item.created_at))}` : 'Tanggal tidak tersedia';
 
-                    const expiredTime = item.expiredTime;
-                    const getPacketSoalPembahasanActive = item.getPacketSoalPembahasanActive;
-
                     let payButton = '';
 
-                    if (expiredTime) {
-                        payButton = `<button type="button" class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold p-2 rounded-lg shadow-md transition-all text-sm my-4"
-                                        onclick="alertExpiredCheckout()">Beli Sekarang</button>
-                                    `;
-                    } else if (getPacketSoalPembahasanActive) {
-                        payButton = `<button type="button" class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold p-2 rounded-lg shadow-md transition-all text-sm my-4"
-                                        onclick="alertPacketAlreadyExist()">Beli Sekarang</button>
-                                    `;
-                    } else {
-                        payButton = `
-                                <form id="form-pembelian-${item.id}" action="${renewCheckout}" method="POST">
-                                    <input type="hidden" name="_token" value="${csrfToken}">
-                                        <button type="button"
-                                        class="btn-beli-waiting bg-[#4189e0] hover:bg-blue-500 text-white font-bold p-2 rounded-lg shadow-md transition-all text-sm my-4"
-                                        data-id="${item.id}" data-expired="${expiredTime}">
-                                        Beli Sekarang
-                                    </button>
-                                </form>
+                    payButton = `
+                            <form id="form-pembelian-${item.id}" action="${renewCheckout}" method="POST">
+                                <input type="hidden" name="_token" value="${csrfToken}">
+                                    <button type="button"
+                                    class="btn-beli-waiting bg-[#4189e0] hover:bg-blue-500 text-white font-bold p-2 rounded-lg shadow-md transition-all text-sm my-4"
+                                    data-id="${item.id}">
+                                    Beli Sekarang
+                                </button>
+                            </form>
+                    `;
+
+                    let englishZoneDetail = '';
+
+                    if (item.feature_id == 3 || item.features?.nama_fitur == 'English Zone') {
+                        
+                        englishZoneDetail += `
+                            <span class="font-bold opacity-70">
+                                Level : ${item.levels.join(', ')}
+                            </span>
+
+                            <span class="font-bold opacity-70">
+                                Batch : ${item.batchSchedules[0].batch}
+                            </span>
+
+                            <span class="font-bold opacity-70">
+                                Hari : ${item.batchSchedules.map(s => s.day).join(' & ')}
+                            </span>
+
+                            <span class="font-bold opacity-70">
+                                Jam : ${item.batchSchedules[0].startTime} - ${item.batchSchedules[0].endTime}
+                            </span>
                         `;
                     }
 
@@ -94,6 +104,7 @@ function fetchPaginateHistoryTransactionWaiting(page = 1) {
                                             Tanggal Pembelian :
                                             ${createdAt}
                                         </span>
+                                        ${englishZoneDetail}
                                     </div>
 
                                     <span class="font-bold opacity-60">Informasi Pembelian :</span>
@@ -168,48 +179,6 @@ function bindDetailToggleWaiting() {
         });
     });
 }
-
-function bindExpireCheckout() {
-    // Kirim request AJAX POST ke server untuk expire transaksi yang sudah kadaluarsa
-    return $.ajax({
-        url: '/expire-checkout-transaction',
-        type: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // token keamanan
-        }
-    }).then(function (response) {
-        // Setelah request expire selesai,
-        // kita panggil fungsi refresh UI tapi tidak menunggu hasilnya
-        return new Promise((resolve) => {
-            fetchPaginateHistoryTransactionWaiting(); // panggil AJAX untuk refresh data dan UI
-            resolve(); // langsung resolve Promise supaya then berikutnya bisa dijalankan
-        });
-    });
-}
-
-// function untuk menampilkan alert ketika user checkout tapi sudah kadaluarsa
-function alertExpiredCheckout() {
-    // Panggil fungsi expire dan refresh UI
-    bindExpireCheckout().then(() => {
-        // Setelah expire + refresh UI dipanggil, tampilkan popup alert ke user
-        swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Maaf, riwayat pembelian ini telah kadaluarsa. Silahkan lakukan pembelian lain.",
-        });
-    });
-}
-
-function alertPacketAlreadyExist() {
-    bindExpireCheckout().then(() => {
-        swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Maaf, kamu tidak bisa membeli paket ini, karena kamu masih memiliki paket yang aktif pada fitur ini.",
-        });
-    });
-}
-
 
 function alertPaymentSuccess() {
     $('#alert-payment-success').html(
@@ -296,13 +265,10 @@ function binFetchingCheckout() {
                     const data = await res.json();
 
                     if (!res.ok) {
-                        if (data.status === 'expired') {
-                            alertExpiredCheckout(); // popup kadaluarsa
-                            return;
-                        } else {
-                            alert(data.error || "Terjadi kesalahan.");
-                            return;
-                        }
+                        throw {
+                            status: res.status,
+                            message: data.message
+                        };
                     }
 
                     return data;
@@ -314,6 +280,7 @@ function binFetchingCheckout() {
                         onSuccess: function (result) {
                             alertPaymentSuccess();
                             fetchPaginateHistoryTransactionWaiting();
+                            fetchPaginateHistoryTransactionSuccess();
                             updateJumlahKoinStudent();
                             isProcessing = false;
                             btn.prop('disabled', false);
@@ -333,12 +300,21 @@ function binFetchingCheckout() {
                     });
                 })
                 .catch(error => {
-                    alert(error.message || "Terjadi kesalahan.");
-                    console.error(error);
+                    if (error.status === 422) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: error.message,
+                        });
+                        fetchPaginateHistoryTransactionWaiting();
+                        fetchPaginateHistoryTransactionFailed();
+                    } else {
+                        alert("Terjadi kesalahan.");
+                    }
                     isProcessing = false;
                     btn.prop('disabled', false);
                 });
-        });
+            });
     });
 }
 

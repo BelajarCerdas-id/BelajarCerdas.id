@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Events\CountMentorQuestionsAwaitVerification;
 use App\Models\Bab;
 use App\Models\CoinHistory;
+use App\Models\EnglishZoneBatchSchedule;
+use App\Models\EnglishZoneLevel;
 use App\Models\Tanya;
 use Illuminate\Http\Request;
 use App\Models\englishZoneSoal;
@@ -151,8 +153,6 @@ class FilterController extends Controller
         // ambil waktu hari ini
         $today = now();
 
-        // $today = Carbon::createFromFormat('Y-m-d', '2025-08-23')->startOfDay();
-
         // ambil data user yang sedang login
         $user = Auth::user();
 
@@ -160,36 +160,39 @@ class FilterController extends Controller
         $transactions = Transactions::with(['UserAccount.StudentProfiles','Features', 'FeaturePrices'])->where('user_id', $user->id)
         ->where('transaction_status', 'Pending')->orderBy('created_at', 'desc')->paginate(6);
 
-        // menambahkan link checkout
-        $data = $transactions->getCollection()->map(function ($item) use ($today) {
-            // membuat link checkout
-            $item->renewCheckout = route('checkout.pending', ['id' => $item->id]);
-            // expired time
-            $item->expiredTime = $item->created_at->addDays(1) < $today;
+        $data = $transactions->getCollection()->map(function ($item) {
+            if ($item->feature_id == 3) {
+                $levelData = $item->transaction_callback['level_id'] ?? [];
+                $batchScheduleData = $item->transaction_callback['batch_schedule_id'] ?? [];
 
-            // Cek hanya jika fitur dari transaksi ini adalah fitur soal & pembahasan (id = 2)
-            if ($item->feature_id == 2) { // kalo uda ada fitur lain, bukan 2 lagi tapi != 1 (sesuai dengan id fitur tanya)
-                // Ambil tanggal hari ini
-                $date = Carbon::now()->format('Y-m-d');
+                // Kalau string -> explode, kalau array -> langsung pakai
+                $levelIds = is_string($levelData) ? explode(',', $levelData) : (array) $levelData;
+                $batchScheduleIds = is_string($batchScheduleData) ? explode(',', $batchScheduleData) : (array) $batchScheduleData;
 
-                // ambil user yang sedang login
-                $user = Auth::user();
-
-                // mengambil packet yang sedang aktif pada suatu fitur
-                $item->getPacketSoalPembahasanActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
-                    $query->where('feature_id', 2); // kalo uda ada fitur lain, bukan 2 lagi tapi != 1 (sesuai dengan id fitur tanya)
-                })->whereDate('start_date', '<=', $date)->whereDate('end_date', '>=', $date)->where('student_id', $user->id)->orderBy('created_at', 'desc')->exists();
-            } else {
-                $item->getPacketSoalPembahasanActive = false;
+                $item->levels = EnglishZoneLevel::whereIn('id', $levelIds)->pluck('level_name')->unique()->toArray();
+                $item->batchSchedules = EnglishZoneBatchSchedule::with('EnglishZoneBatch')->whereIn('id', $batchScheduleIds)
+                    ->get(['day_of_week', 'batch_id', 'start_time', 'end_time'])
+                    ->map(function ($batch) {
+                        return [
+                            'day' => $batch->day_of_week,
+                            'batch' => $batch->EnglishZoneBatch->batch_name, 
+                            'startTime' => $batch->start_time,
+                            'endTime' => $batch->end_time,
+                        ];
+                    });
             }
-
             return $item;
         });
+
+
+        // $getLevels = EnglishZoneLevel::whereIn('id', $transactions->transaction_callback['level_id'])->pluck('level_name')->unique()->toArray();
 
         return response()->json([
             'data' => $data,
             'links' => (string) $transactions->links(),
             'today' => $today,
+            'renewCheckout' => '/renew-checkout/:id',
+            // 'getLevels' => $getLevels
         ]);
     }
 

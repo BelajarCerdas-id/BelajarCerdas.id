@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\EnglishZoneBatch;
+use App\Models\EnglishZoneBatchSchedule;
 use App\Models\EnglishZoneLevel;
 use App\Models\EnglishZoneStudentBatch;
 use App\Models\FeaturePrices;
@@ -292,13 +293,99 @@ class PaymentFeaturesController extends Controller
     // FUNCTION RENEW CHECKOUT PENDING COIN TANYA
     public function renewCheckoutPacketFeatures(Request $request, String $id)
     {
+        // ambil waktu hari ini
+        $today = now();
+
+        // ambil tanggal hari ini
+        $date = now()->format('Y-m-d');
+
+        // ambil user yang sedang login
+        $user = Auth::user();
+
         // Ambil transaksi dan pastikan milik user yang login
         $getDataTransactions = Transactions::with(['UserAccount', 'UserAccount.StudentProfiles'])->where('id', $id)
             ->where('user_id', Auth::id())
             ->first();
 
+        // Cek jika transaksi tidak ditemukan
         if (!$getDataTransactions) {
             return response()->json(['error' => 'Transaksi tidak ditemukan atau tidak sesuai user.'], 404);
+        }
+
+        if ($getDataTransactions->feature_id == 3 || $getDataTransactions->Features->nama_fitur === 'English Zone') {
+            $batchScheduleIds = explode(',', $getDataTransactions->transaction_callback['batch_schedule_id']);
+            $levelIds = explode(',', $getDataTransactions->transaction_callback['level_id']);
+
+            $batchSchedules = EnglishZoneBatchSchedule::whereIn('id', $batchScheduleIds)->first();
+
+            $studentCounts = EnglishZoneStudentBatch::whereIn('level_id', $levelIds)
+            ->whereHas('EnglishZoneBatchSchedule', function ($q) use ($batchSchedules, $batchScheduleIds) {
+                $q->where('batch_id', $batchSchedules->batch_id)->where('batch_schedule_group', $batchSchedules->batch_schedule_group)->where('schedule_time_group', $batchSchedules->schedule_time_group);
+                $q->whereIn('id', $batchScheduleIds);
+            })->whereHas('FeatureSubscriptionHistory.Transactions', function ($q) use ($getDataTransactions) {
+                $q->where('transaction_status', 'Berhasil')->where('feature_variant_id', $getDataTransactions->feature_variant_id)
+                ->where('transaction_source', 'non_school_partner');
+            })->pluck('student_id')->unique()->count();
+
+            if ($studentCounts >= 10) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'jadwal belajar pada batch tersebut sudah penuh, harap pilih batch atau jadwal belajar yang lain.',
+                ], 422);
+            }
+        
+        }
+
+        // Cek jika transaksi kadaluarsa
+        $expiredTransaction = Transactions::where('transaction_status', 'Pending')->where('user_id', $user->id)->get();
+
+        // Jika transaksi kadaluarsa, maka ubah status menjadi kadaluarsa
+        if ($expiredTransaction) {
+            foreach ($expiredTransaction as $transaction) {
+                if ($transaction->created_at->addDays(1) < $today) {
+                    $transaction->update([
+                        'transaction_status' => 'Kadaluarsa'
+                    ]);
+                }
+            }
+        }
+
+        // Cek jika transaksi kadaluarsa, maka tampilkan pesan kadaluarsa
+        if ($getDataTransactions->created_at->addDays(1) < $today) {
+            return response()->json([
+                'status-response' => 'expired',
+                'message' => 'Maaf, transaksi telah kadaluarsa, silahkan lakukan pembelian ulang.',
+            ], 422);
+        }
+
+        // ambil semua subscription history yang sudah terlewat
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $date)->get();
+
+        // Jika ada subscription history yang sudah terlewat, maka ubah status menjadi tidak aktif
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
+        // cek jika feature_id adalah bukan 1 (tanya), maka jalankan perintah berikut
+        if ($getDataTransactions->feature_id != 1) {
+            $getPacketActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) use ($getDataTransactions) {
+                $query->where('feature_id', $getDataTransactions->feature_id); // id fitur yang sedang aktif
+            })->whereDate('end_date', '>=', $date)->where('subscription_status', 'aktif')
+            ->where('student_id', $user->id)->orderBy('created_at', 'desc')->first();
+
+            // Jika ada subscription history yang sedang aktif, maka tampilkan pesan
+            if ($getPacketActive) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Maaf, kamu tidak bisa membeli paket ini, karena kamu masih memiliki paket yang aktif pada fitur ini.',
+                ], 422);
+            }
         }
 
         // Ambil payment_method & feature_id dari transaksi pending
