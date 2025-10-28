@@ -51,7 +51,7 @@ class RenewCheckoutEnglishZoneSubscriptionHandler
         // mengambil packet english zone student yang sedang aktif
         $getPacketEnglishZoneActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) use ($transaction) {
             $query->where('feature_id', 3)->where('id', $transaction->id); // kalo uda ada fitur lain, bukan 3 lagi tapi != 1 (sesuai dengan id fitur tanya)
-        })->whereDate('start_date', '<=', $date)->whereDate('end_date', '>=', $date)->where('student_id', $transaction->user_id)->orderBy('created_at', 'desc')->exists();
+        })->whereDate('end_date', '>=', $date)->where('status_subscription', 'aktif')->where('student_id', $transaction->user_id)->orderBy('created_at', 'desc')->exists();
 
         // jika tidak ada packet english zone student yang sedang aktif, maka create
         if (!$getPacketEnglishZoneActive) {
