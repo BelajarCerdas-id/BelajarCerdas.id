@@ -36,6 +36,29 @@ function fetchPaginateHistoryTransactionSuccess(page = 1) {
 
                     const createdAt = item.created_at ? `${formatDate(item.created_at)}, ${timeFormatter.format(new Date(item.created_at))}` : 'Tanggal tidak tersedia';
 
+                    let englishZoneDetail = '';
+
+                    if (item.feature_id == 3 || item.features?.nama_fitur == 'English Zone') {
+
+                        englishZoneDetail += `
+                            <span class="font-bold opacity-70">
+                                Level : ${item.levels.join(', ')}
+                            </span>
+
+                            <span class="font-bold opacity-70">
+                                Batch : ${item.batchSchedules[0].batch}
+                            </span>
+
+                            <span class="font-bold opacity-70">
+                                Hari : ${item.batchSchedules.map(s => s.day).join(' & ')}
+                            </span>
+
+                            <span class="font-bold opacity-70">
+                                Jam : ${item.batchSchedules[0].startTime} - ${item.batchSchedules[0].endTime}
+                            </span>
+                        `;
+                    }
+
                     const card = `
                     <div class="list-item">
                         <div class="bg-white shadow-lg rounded-md p-4 border">
@@ -66,6 +89,7 @@ function fetchPaginateHistoryTransactionSuccess(page = 1) {
                                             Tanggal Pembelian :
                                             ${createdAt}
                                         </span>
+                                        ${englishZoneDetail}
                                     </div>
 
                                     <span class="font-bold opacity-60">Informasi Pembelian :</span>
