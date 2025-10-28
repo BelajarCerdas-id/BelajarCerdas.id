@@ -252,8 +252,32 @@ class FilterController extends Controller
         $transactions = Transactions::with(['UserAccount.StudentProfiles','Features', 'FeaturePrices'])->where('user_id', $user->id)
         ->whereIn('transaction_status', ['Gagal', 'Kadaluarsa'])->orderBy('created_at', 'desc')->paginate(6);
 
+        $data = $transactions->getCollection()->map(function ($item) {
+            if ($item->feature_id == 3) {
+                $levelData = $item->transaction_callback['level_id'] ?? [];
+                $batchScheduleData = $item->transaction_callback['batch_schedule_id'] ?? [];
+
+                // Kalau string -> explode, kalau array -> langsung pakai
+                $levelIds = is_string($levelData) ? explode(',', $levelData) : (array) $levelData;
+                $batchScheduleIds = is_string($batchScheduleData) ? explode(',', $batchScheduleData) : (array) $batchScheduleData;
+
+                $item->levels = EnglishZoneLevel::whereIn('id', $levelIds)->pluck('level_name')->unique()->toArray();
+                $item->batchSchedules = EnglishZoneBatchSchedule::with('EnglishZoneBatch')->whereIn('id', $batchScheduleIds)
+                    ->get(['day_of_week', 'batch_id', 'start_time', 'end_time'])
+                    ->map(function ($batch) {
+                        return [
+                            'day' => $batch->day_of_week,
+                            'batch' => $batch->EnglishZoneBatch->batch_name, 
+                            'startTime' => $batch->start_time,
+                            'endTime' => $batch->end_time,
+                        ];
+                    });
+            }
+            return $item;
+        });
+
         return response()->json([
-            'data' => $transactions->items(),
+            'data' => $data,
             'links' => (string) $transactions->links(),
         ]);
     }
