@@ -38,7 +38,7 @@ public static function handle(Transactions $transaction)
         // mengambil packet soal pembahasan student yang sedang aktif
         $getPacketSoalPembahasanActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
             $query->where('feature_id', 2); // kalo uda ada fitur lain, bukan 2 lagi tapi != 1 (sesuai dengan id fitur tanya)
-        })->whereDate('start_date', '<=', $date)->whereDate('end_date', '>=', $date)->where('student_id', $transaction->user_id)->orderBy('created_at', 'desc')->exists();
+        })->whereDate('end_date', '>=', $date)->where('status_subscription', 'aktif')->where('student_id', $transaction->user_id)->orderBy('created_at', 'desc')->exists();
 
         // jika tidak ada packet soal pembahasan student yang sedang aktif, maka create
         if (!$getPacketSoalPembahasanActive) {
