@@ -60,7 +60,7 @@ function fetchPaginateHistoryTransactionSuccess(page = 1) {
                     }
 
                     const card = `
-                    <div class="list-item">
+                    <div class="list-item-history-purchase">
                         <div class="bg-white shadow-lg rounded-md p-4 border">
                             <div class="flex justify-between">
                                 <span class="text-md font-bold opacity-60">${item.features.nama_fitur}</span>
@@ -106,6 +106,14 @@ function fetchPaginateHistoryTransactionSuccess(page = 1) {
                                         </span>
                                     </div>
                                 </div>
+                            <form id="form-pembelian-${item.id}" action="" method="POST">
+                                <input type="hidden" name="_token" value="">
+                                    <button type="button"
+                                    class="btn-beli-waiting bg-[#4189e0] hover:bg-blue-500 text-white font-bold p-2 rounded-lg shadow-md transition-all text-sm my-4"
+                                    data-id="${item.id}">
+                                    Beli Sekarang
+                                </button>
+                            </form>
                             </div>
                         </div>
                     </div>
@@ -141,22 +149,108 @@ $(document).ready(function () {
 });
 
 function bindDetailToggleSuccess() {
+    // Ambil semua tombol yang berfungsi untuk membuka/menutup detail (accordion)
     const toggles = document.querySelectorAll('.button-detail-success');
 
-    toggles.forEach(toggle => {
-        toggle.addEventListener('click', function (e) {
-            e.stopPropagation();
-            const listItem = toggle.closest('.list-item');
+    // Flag untuk mencegah klik berulang cepat saat animasi masih jalan
+    let isTransitioning = false;
 
-            // Tutup semua dropdown lain
-            document.querySelectorAll('.list-item').forEach(item => {
-                if (item !== listItem) {
-                    item.classList.remove('show');
+    // Fungsi untuk menutup semua dropdown utama, kecuali yang sedang dibuka (if except diberikan)
+    function closeAllMainDropdowns(except = null) {
+        document.querySelectorAll(".list-item-history-purchase").forEach(item => {
+            const dropdown = item.querySelector('.content-dropdown-histori-pembelian');
+
+            // Kalau elemen ini bukan yang sedang dikecualikan, tutup dia
+            if (item !== except) {
+                item.classList.remove("show");
+
+                if (dropdown) {
+                    // Buat animasi penutupan halus:
+                    // Set maxHeight ke tinggi saat ini
+                    dropdown.style.maxHeight = dropdown.scrollHeight + "px";
+                    // Trigger reflow supaya browser mendeteksi perubahan
+                    dropdown.offsetHeight;
+                    // Baru set maxHeight ke 0 agar animasi tutup berjalan
+                    dropdown.style.maxHeight = "0";
+                    dropdown.style.overflow = "hidden";
+                    dropdown.style.opacity = "0";
                 }
-            });
+            }
+        });
+    }
 
-            // Toggle dropdown ini
-            listItem.classList.toggle('show');
+    // Pasang event click ke setiap tombol accordion
+    toggles.forEach(toggle => {
+        toggle.addEventListener("click", (e) => {
+            e.preventDefault(); // Cegah perilaku default tombol/link
+
+            // Kalau sedang ada animasi jalan, abaikan klik
+            if (isTransitioning) return;
+            isTransitioning = true; // Tandai bahwa animasi sedang berjalan
+
+            // Ambil elemen parent utama (list-item-history-purchase)
+            const parent = toggle.closest('.list-item-history-purchase');
+            // Ambil kontainer dropdown di dalam parent itu
+            const dropdown = parent.querySelector('.content-dropdown-histori-pembelian');
+            // Cek apakah dropdown ini sedang terbuka
+            const isOpen = parent.classList.contains("show");
+
+            // Tutup semua dropdown lain kecuali yang diklik
+            closeAllMainDropdowns(parent);
+
+            // Jika dropdown sedang tertutup → buka
+            if (!isOpen) {
+                parent.classList.add("show"); // Tambahkan class penanda terbuka
+
+                if (dropdown) {
+                    // Siapkan animasi buka
+                    dropdown.style.transition = "max-height 0.4s ease, opacity 0.4s ease";
+                    dropdown.style.opacity = "1"; // Tampilkan isinya
+                    dropdown.style.overflow = "hidden"; // Sembunyikan overflow saat transisi
+                    // Atur tinggi sementara berdasarkan konten
+                    dropdown.style.maxHeight = dropdown.scrollHeight + "px";
+
+                    // Setelah animasi selesai
+                    dropdown.addEventListener('transitionend', function onEnd(e) {
+                        // Pastikan hanya menangkap event untuk properti max-height
+                        if (e.propertyName === 'max-height') {
+                            // Biarkan tinggi otomatis supaya konten panjang bisa ikut
+                            dropdown.style.maxHeight = "none";
+                            dropdown.style.overflow = "visible"; // Izinkan konten penuh terlihat
+                            dropdown.removeEventListener('transitionend', onEnd); // Hapus listener agar tidak dobel
+                            isTransitioning = false; // Selesai animasi → bisa klik lagi
+                        }
+                    });
+                } else {
+                    // Kalau dropdown tidak ada, langsung izinkan klik lagi
+                    isTransitioning = false;
+                }
+
+                // Jika dropdown sedang terbuka → tutup
+            } else {
+                parent.classList.remove("show"); // Hapus class show
+
+                if (dropdown) {
+                    // Siapkan animasi tutup
+                    dropdown.style.transition = "max-height 0.4s ease, opacity 0.4s ease";
+                    // Set tinggi awal agar animasi dari tinggi penuh ke 0 berjalan halus
+                    dropdown.style.maxHeight = dropdown.scrollHeight + "px";
+                    dropdown.offsetHeight; // reflow agar perubahan terbaca
+                    dropdown.style.maxHeight = "0"; // animasi tutup dimulai
+                    dropdown.style.opacity = "0";
+                    dropdown.style.overflow = "hidden";
+
+                    // Setelah animasi tutup selesai
+                    dropdown.addEventListener('transitionend', function onEnd(e) {
+                        if (e.propertyName === 'max-height') {
+                            dropdown.removeEventListener('transitionend', onEnd);
+                            isTransitioning = false; // izinkan klik lagi
+                        }
+                    });
+                } else {
+                    isTransitioning = false;
+                }
+            }
         });
     });
 }

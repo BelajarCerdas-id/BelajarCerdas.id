@@ -983,7 +983,7 @@ input[type="radio"]:checked + .pilihanSoal .option {
     overflow-y: auto;
 }
 
-.list-item {
+.list-item, .list-item-history-purchase {
     margin: 14px 8px;
 }
 
@@ -1083,8 +1083,7 @@ input[type="radio"]:checked + .pilihanSoal .option {
 }
 
 /* open untuk dropdown histori pembelian siswa & murid */
-.list-item.show .content-dropdown-histori-pembelian {
-    max-height: 400px;
+.list-item-history-purchase.show .content-dropdown-histori-pembelian {
     opacity: 1;
 }
 
