@@ -21,7 +21,19 @@ class ProfileController extends Controller
     {
         // Ambil tanggal hari ini
         $today = Carbon::now()->format('Y-m-d');
-        // $today = Carbon::createFromFormat('Y-m-d', '2025-08-22')->format('Y-m-d');
+        // $today = Carbon::createFromFormat('Y-m-d', '2026-12-12')->format('Y-m-d');
+
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
 
         // ambil data user yang sedang login
         $user = Auth::user();
@@ -41,7 +53,7 @@ class ProfileController extends Controller
         // mengambil semua packet yang sedang aktif dan group berdasarkan fitur masing"
         $getPacketActive = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
             $query->groupBy('feature_id');
-        })->where('student_id', Auth::user()->id)->orderBy('created_at', 'desc')->whereDate('end_date', '>=', $today)->get();
+        })->where('student_id', Auth::user()->id)->orderBy('created_at', 'desc')->whereDate('end_date', '>=', $today)->where('subscription_status', 'aktif')->get();
 
         // menghitung jumlah packet yang sedang aktif dan ambil 1 saja untuk setiap fitur
         $countPacketActive = $getPacketActive->count();
