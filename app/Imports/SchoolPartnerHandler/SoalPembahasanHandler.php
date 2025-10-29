@@ -98,6 +98,21 @@ class SoalPembahasanHandler
                 "metode_pembayaran.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom metode pembayaran wajib diisi.",
             ]);
 
+            // ambill tanggal hari ini
+            $today = now()->format('Y-m-d');
+
+            $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+                $query->where('transaction_status', 'Berhasil');
+            })->whereDate('end_date', '<', $today)->get();
+
+            if ($featureSubscriptionHistory) {
+                foreach ($featureSubscriptionHistory as $history) {
+                    $history->update([
+                        'subscription_status' => 'tidak_aktif'
+                    ]);
+                }
+            }
+
             if ($validator->fails()) {
                 $errors = array_merge($errors, $validator->errors()->all());
                 continue;
@@ -113,9 +128,6 @@ class SoalPembahasanHandler
 
             // Catat email yang sudah dipakai (supaya baris berikutnya tahu)
             $emailsInFile[] = $email;
-
-            // ambill tanggal hari ini
-            $today = now()->format('Y-m-d');
 
             // ambil akun user
             $user = UserAccount::where('email', $row['email_akun'])->first();
@@ -210,7 +222,7 @@ class SoalPembahasanHandler
                     $query->where('feature_id', $feature->id)
                         ->where('transaction_status', 'Berhasil')
                         ->where('transaction_source', 'school_partner');
-                })->whereDate('end_date', '>=', $today) // pastikan masih aktif
+                })->whereDate('end_date', '>=', $today)->where('subscription_status', 'aktif') // pastikan masih aktif
                 ->first();
 
 
