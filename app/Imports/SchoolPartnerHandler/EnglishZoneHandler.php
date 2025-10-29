@@ -113,6 +113,21 @@ class EnglishZoneHandler
                 "metode_pembayaran.required" => "Sheet {$this->sheetTitle} - Baris $rowNumber: Kolom metode pembayaran wajib diisi.",
             ]);
 
+            // ambill tanggal hari ini
+            $today = now()->format('Y-m-d');
+
+            $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+                $query->where('transaction_status', 'Berhasil');
+            })->whereDate('end_date', '<', $today)->get();
+
+            if ($featureSubscriptionHistory) {
+                foreach ($featureSubscriptionHistory as $history) {
+                    $history->update([
+                        'subscription_status' => 'tidak_aktif'
+                    ]);
+                }
+            }
+
             if ($validator->fails()) {
                 $errors = array_merge($errors, $validator->errors()->all());
                 continue;
@@ -129,8 +144,6 @@ class EnglishZoneHandler
             // Catat email yang sudah dipakai (supaya baris berikutnya tahu)
             $emailsInFile[] = $email;
 
-            // ambill tanggal hari ini
-            $today = now()->format('Y-m-d');
             $now = Carbon::now();
 
             // ambil akun user
@@ -313,7 +326,7 @@ class EnglishZoneHandler
                     $query->where('feature_id', $feature->id)
                         ->where('transaction_status', 'Berhasil')
                         ->where('transaction_source', 'school_partner');
-                })->whereDate('end_date', '>=', $today) // pastikan masih aktif
+                })->whereDate('end_date', '>=', $today)->where('subscription_status', 'aktif') // pastikan masih aktif
                 ->first();
 
             // cek jika siswa masih memiliki fitur yang aktif, maka tampilkan error
@@ -342,7 +355,7 @@ class EnglishZoneHandler
                 ->count();
 
             // jika $studentCounts >= 10, maka tampilkan kapasitas penuh.
-            if ($studentCounts >= 2) {
+            if ($studentCounts >= 10) {
                 $errors[] = "Jadwal {$row['batch']}, hari {$row['hari']}, jam {$row['jam']} pada sekolah $row[nama_sekolah] sudah penuh / melebihi jumlah kapasitas. Silahkan daftarkan siswa di jadwal lain.";
                 continue;
             }
