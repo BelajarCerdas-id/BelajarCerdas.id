@@ -553,7 +553,9 @@ class FilterController extends Controller
 
         // FOR BERANDA STUDENT
         // Ambil jumlah Tanya untuk semua user_id dalam satu kali loop
-        $countTanyaStudent = Tanya::with('CoinHistory')->withTrashed()->whereIn('user_id', $getSiswa->pluck('id'))->whereIn('status_soal', ['Diterima', 'Menunggu'])
+        $countTanyaStudent = Tanya::with(['CoinHistory' => function ($query) { 
+            $query->where('tipe_koin', 'Keluar');
+        }])->withTrashed()->whereIn('user_id', $getSiswa->pluck('id'))->whereIn('status_soal', ['Diterima', 'Menunggu'])
         ->where('harga_koin', '!=', 0)->get()->groupBy('user_id')
         ->map(fn($items) => $items->count()); // Hitung jumlah Tanya per user
 
@@ -562,7 +564,7 @@ class FilterController extends Controller
             $query->where('tipe_koin', 'Keluar');
         }]) // pastikan CoinHistory adalah relasi valid dari Tanya
             ->withTrashed()
-            ->whereIn('user_id', $getSiswa->pluck('id'))
+            ->whereIn('user_id', $getSiswa->pluck('id'))->whereIn('status_soal', ['Diterima', 'Menunggu'])->where('harga_koin', '!=', 0)
             ->get()
             ->groupBy('user_id')
             ->map(function ($items) {
@@ -592,7 +594,10 @@ class FilterController extends Controller
         });
 
         // mengambil data tanya student yang sedang login
-        $countDataTanyaUserLogin = Tanya::withTrashed()->where('user_id', Auth::user()->id)->whereIn('status_soal', ['Diterima', 'Menunggu'])->count();
+        $countDataTanyaUserLogin = Tanya::with(['CoinHistory' => function ($query) { 
+            $query->where('tipe_koin', 'Keluar');
+        }])->withTrashed()->where('user_id', Auth::user()->id)->whereIn('status_soal', ['Diterima', 'Menunggu'])
+        ->where('harga_koin', '!=', 0)->count();
 
         // membuat ranking pengguna tanya terbanyak
         $rankingTanyaUser = $sortedTanyaStudent->values()->search(function ($item) use ($userId) {
