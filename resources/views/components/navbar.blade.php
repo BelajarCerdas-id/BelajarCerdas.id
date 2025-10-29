@@ -28,13 +28,13 @@
                 </div>
                 @if (Auth::user() != null)
                     <!-- profile user -->
-                    <li class="list-item relative md:hidden">
+                    <li class="list-item-button-profile relative md:hidden">
                         <div class="dropdown-menu">
-                            <div class="toggle-menu">
+                            <div class="toggle-menu-button-profile">
                                 <i class="fas fa-circle-user !text-4xl"></i>
                             </div>
                             <div
-                                class="content-dropdown z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
+                                class="content-dropdown-button-profile z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
                                 <a href="{{ route('beranda') }}">
                                     <div
                                         class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
@@ -88,9 +88,9 @@
                         Masuk / Daftar</button>
                 @else
                     <div class="hidden md:block">
-                        <li class="list-item">
+                        <li class="list-item-button-profile">
                             <div class="dropdown-menu">
-                                <div class="toggle-menu">
+                                <div class="toggle-menu-button-profile">
                                     <div class="profile justify-between bg-[--color-default]">
                                         <div class="flex items-center gap-2">
                                             <i class="fa-regular fa-circle-user !text-3xl"></i>
@@ -105,7 +105,7 @@
                                     </div>
                                 </div>
                                 <div
-                                    class="content-dropdown z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[220px] rounded-lg mt-2">
+                                    class="content-dropdown-button-profile z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[220px] rounded-lg mt-2">
                                     <a href="{{ route('beranda') }}">
                                         <div
                                             class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
@@ -234,13 +234,13 @@
                         </a>
                     </div>
                     <!-- profile user -->
-                    <li class="list-item relative md:hidden">
+                    <li class="list-item-button-profile relative md:hidden">
                         <div class="dropdown-menu">
-                            <div class="toggle-menu">
+                            <div class="toggle-menu-button-profile">
                                 <i class="fas fa-circle-user !text-4xl"></i>
                             </div>
                             <div
-                                class="content-dropdown z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
+                                class="content-dropdown-button-profile z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
                                 <a href="{{ route('beranda') }}">
                                     <div
                                         class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
@@ -295,9 +295,9 @@
                     </button>
                 @else
                     <div class="hidden md:block">
-                        <li class="list-item">
+                        <li class="list-item-button-profile">
                             <div class="dropdown-menu">
-                                <div class="toggle-menu">
+                                <div class="toggle-menu-button-profile">
                                     <div class="profile justify-between bg-[--color-default]">
                                         <div class="flex items-center gap-2">
                                             <i class="fa-regular fa-circle-user !text-3xl"></i>
@@ -312,7 +312,7 @@
                                     </div>
                                 </div>
                                 <div
-                                    class="content-dropdown z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[220px] rounded-lg mt-2">
+                                    class="content-dropdown-button-profile z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[220px] rounded-lg mt-2">
                                     <a href="{{ route('beranda') }}">
                                         <div
                                             class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
@@ -415,13 +415,13 @@
                 </div>
                 @if (Auth::user() != null)
                     <!-- profile user -->
-                    <li class="list-item relative md:hidden">
+                    <li class="list-item-button-profile relative md:hidden">
                         <div class="dropdown-menu">
-                            <div class="toggle-menu">
+                            <div class="toggle-menu-button-profile">
                                 <i class="fas fa-circle-user !text-4xl"></i>
                             </div>
                             <div
-                                class="content-dropdown z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
+                                class="content-dropdown-button-profile z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
                                 <a href="{{ route('beranda') }}">
                                     <div
                                         class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
@@ -475,9 +475,9 @@
                         Daftar</button>
                 @else
                     <div class="hidden md:block">
-                        <li class="list-item">
+                        <li class="list-item-button-profile">
                             <div class="dropdown-menu">
-                                <div class="toggle-menu">
+                                <div class="toggle-menu-button-profile">
                                     <div class="profile justify-between bg-[--color-default]">
                                         <div class="flex items-center gap-2">
                                             <i class="fa-regular fa-circle-user !text-3xl"></i>
@@ -492,7 +492,7 @@
                                     </div>
                                 </div>
                                 <div
-                                    class="content-dropdown z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[220px] rounded-lg mt-2">
+                                    class="content-dropdown-button-profile z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[220px] rounded-lg mt-2">
                                     <a href="{{ route('beranda') }}">
                                         <div
                                             class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
