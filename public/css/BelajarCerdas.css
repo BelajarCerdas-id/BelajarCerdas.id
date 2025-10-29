@@ -983,13 +983,15 @@ input[type="radio"]:checked + .pilihanSoal .option {
     overflow-y: auto;
 }
 
-.list-item, .list-item-history-purchase {
+.list-item, .list-item-history-purchase,
+.list-item-button-profile {
     margin: 14px 8px;
 }
 
 .toggle-menu,
 .toggle-menu-profile,
-.toggle-menu-sidebar {
+.toggle-menu-sidebar,
+.toggle-menu-button-profile {
     display: flex;
     align-items: center;
     gap: 14px;
@@ -1006,7 +1008,8 @@ input[type="radio"]:checked + .pilihanSoal .option {
     margin: 0 15px;
 }
 
-.toggle-menu-sidebar i {
+.toggle-menu-sidebar i,
+.toggle-menu-button-profile i {
     font-size: 12px;
     transition: all 0.4s ease;
 }
@@ -1035,7 +1038,8 @@ input[type="radio"]:checked + .pilihanSoal .option {
 .content-dropdown,
 .list-content-dropdown,
 .content-dropdown-histori-pembelian,
-.content-dropdown-history-coin-out {
+.content-dropdown-history-coin-out, 
+.content-dropdown-button-profile {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
@@ -1043,7 +1047,8 @@ input[type="radio"]:checked + .pilihanSoal .option {
     font-size: 12px;
 }
 
-.content-dropdown .link-href {
+.content-dropdown .link-href,
+.content-dropdown-button-profile .link-href {
     display: flex;
     flex-direction: column;
     padding: 8px 15px;
@@ -1091,6 +1096,17 @@ input[type="radio"]:checked + .pilihanSoal .option {
 .list-item.show .content-dropdown-history-coin-out {
     max-height: 400px;
     opacity: 1;
+}
+
+/* open untuk dropdown button profile navbar */
+.list-item-button-profile.show .content-dropdown-button-profile {
+    max-height: 400px;
+    opacity: 1;
+}
+
+/* rotate untuk button profile navbar */
+.list-item-button-profile.show #rotate {
+    transform: rotate(-180deg);
 }
 
 .list-item.show #rotate {
@@ -1193,7 +1209,8 @@ input[type="radio"]:checked + .pilihanSoal .option {
     font-size: 14px;
 }
 
-.list-item {
+.list-item,
+.list-item-button-profile {
     list-style: none;
 }
 

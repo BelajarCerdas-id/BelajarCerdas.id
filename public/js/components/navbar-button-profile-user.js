@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const toggles = document.querySelectorAll(".toggle-menu"); // Dropdown utama
+    const toggles = document.querySelectorAll(".toggle-menu-button-profile"); // Dropdown utama
 
     // Fungsi untuk menutup semua dropdown
     function closeAllSubDropdowns(except = null) {
-        document.querySelectorAll(".content-dropdown").forEach(dropdown => {
+        document.querySelectorAll(".content-dropdown-button-profile").forEach(dropdown => {
             if (dropdown !== except) {
                 dropdown.classList.remove("show");
             }
@@ -21,13 +21,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Event listener untuk dropdown utama
     toggles.forEach(toggle => {
         toggle.addEventListener("click", () => {
-            const parent = toggle.closest('.list-item'); // Cari elemen utama
+            const parent = toggle.closest('.list-item-button-profile'); // Cari elemen utama
 
             // Toggle dropdown utama
             parent.classList.toggle("show");
 
             // Tutup dropdown lain yang tidak diklik
-            document.querySelectorAll(".list-item").forEach(dropdown => {
+            document.querySelectorAll(".list-item-button-profile").forEach(dropdown => {
                 if (dropdown !== parent) {
                     dropdown.classList.remove("show");
                 }
@@ -37,21 +37,4 @@ document.addEventListener("DOMContentLoaded", () => {
             closeAllSubDropdowns();
         });
     });
-
-    // Event listener untuk sub-dropdown (toggle-menu2)
-    // toggles2.forEach(toggle => {
-    //     toggle.addEventListener("click", () => {
-    //         const parent = toggle.closest('.content-dropdown'); // Cari elemen sub-dropdown
-
-    //         if (parent.classList.contains("show")) {
-    //             // Jika sudah terbuka, tutup
-    //             parent.classList.remove("show");
-    //         } else {
-    //             // Jika belum terbuka, tutup yang lain lalu buka yang ini
-    //             closeAllSubDropdowns();
-    //             closeAllListDropdowns();
-    //             parent.classList.add("show");
-    //         }
-    //     });
-    // });
 });

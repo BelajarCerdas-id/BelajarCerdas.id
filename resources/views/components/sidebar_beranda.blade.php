@@ -87,9 +87,9 @@
                         </div>
                     </div>
                     <!--- profile button dekstop --->
-                    <div class="list-item">
+                    <div class="list-item-button-profile">
                         <div class="dropdown-menu hidden lg:block">
-                            <div class="toggle-menu-sidebar">
+                            <div class="toggle-menu-button-profile">
                                 <div class="profile justify-between bg-[--color-second]">
                                     <div class="flex items-center gap-2">
                                         <i class="fa-regular fa-circle-user !text-3xl"></i>
@@ -103,7 +103,7 @@
                                 </div>
                             </div>
                             <div
-                                class="content-dropdown !z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[220px] rounded-lg mt-2">
+                                class="content-dropdown-button-profile !z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[220px] rounded-lg mt-2">
                                 <a href="{{ route('beranda') }}">
                                     <div
                                         class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
@@ -131,13 +131,13 @@
                     </div>
 
                     <!-- profile button rounded mobile -->
-                    <li class="list-item relative lg:hidden">
+                    <li class="list-item-button-profile relative lg:hidden">
                         <div class="dropdown-menu">
-                            <div class="toggle-menu">
+                            <div class="toggle-menu-button-profile">
                                 <i class="fas fa-circle-user !text-4xl"></i>
                             </div>
                             <div
-                                class="content-dropdown z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
+                                class="content-dropdown-button-profile z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
                                 <a href="{{ route('beranda') }}">
                                     <div
                                         class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
@@ -310,9 +310,9 @@
                         </div> --}}
                     </div>
                     <!--- profile button dekstop --->
-                    <div class="list-item">
+                    <div class="list-item-button-profile">
                         <div class="dropdown-menu hidden lg:block">
-                            <div class="toggle-menu-sidebar">
+                            <div class="toggle-menu-button-profile">
                                 <div class="profile justify-between bg-[--color-second]">
                                     <div class="flex items-center gap-2">
                                         <i class="fa-regular fa-circle-user !text-3xl"></i>
@@ -326,7 +326,7 @@
                                 </div>
                             </div>
                             <div
-                                class="content-dropdown !z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[220px] rounded-lg mt-2">
+                                class="content-dropdown-button-profile !z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[220px] rounded-lg mt-2">
                                 <a href="{{ route('beranda') }}">
                                     <div
                                         class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
@@ -354,13 +354,13 @@
                     </div>
 
                     <!-- profile button rounded mobile -->
-                    <li class="list-item relative lg:hidden">
+                    <li class="list-item-button-profile relative lg:hidden">
                         <div class="dropdown-menu">
-                            <div class="toggle-menu">
+                            <div class="toggle-menu-button-profile">
                                 <i class="fas fa-circle-user !text-4xl"></i>
                             </div>
                             <div
-                                class="content-dropdown z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
+                                class="content-dropdown-button-profile z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
                                 <a href="{{ route('beranda') }}">
                                     <div
                                         class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
@@ -400,13 +400,13 @@
         </div>
         <div class="flex items-center gap-8 text-2xl relative top-1">
             <!-- profile button rounded mobile -->
-            <li class="list-item relative lg:hidden">
+            <li class="list-item-button-profile relative lg:hidden">
                 <div class="dropdown-menu">
-                    <div class="toggle-menu">
+                    <div class="toggle-menu-button-profile">
                         <i class="fas fa-circle-user !text-4xl text-white font-bold"></i>
                     </div>
                     <div
-                        class="content-dropdown z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
+                        class="content-dropdown-button-profile z-[2] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
                         <a href="{{ route('beranda') }}">
                             <div
                                 class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
@@ -627,9 +627,9 @@
                 </header>
 
                 <!-- profile button dekstop -->
-                <li class="list-item">
+                <li class="list-item-button-profile">
                     <div class="dropdown-menu hidden lg:block">
-                        <div class="toggle-menu-sidebar">
+                        <div class="toggle-menu-button-profile">
                             <div class="profile justify-between bg-[--color-second]">
                                 <div class="flex items-center gap-2">
                                     <i class="fa-regular fa-circle-user !text-3xl"></i>
@@ -643,7 +643,7 @@
                             </div>
                         </div>
                         <div
-                            class="content-dropdown !z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[220px] rounded-lg mt-2">
+                            class="content-dropdown-button-profile !z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[220px] rounded-lg mt-2">
                             <a href="{{ route('beranda') }}">
                                 <div
                                     class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
@@ -671,13 +671,13 @@
                 </li>
 
                 <!-- profile button rounded mobile -->
-                <li class="list-item relative lg:hidden">
+                <li class="list-item-button-profile relative lg:hidden">
                     <div class="dropdown-menu">
-                        <div class="toggle-menu">
+                        <div class="toggle-menu-button-profile">
                             <i class="fas fa-circle-user !text-4xl"></i>
                         </div>
                         <div
-                            class="content-dropdown z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
+                            class="content-dropdown-button-profile z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
                             <a href="{{ route('beranda') }}">
                                 <div
                                     class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
@@ -717,13 +717,13 @@
         </div>
         <div class="flex items-center gap-8 text-2xl relative top-1">
             <!-- profile button rounded -->
-            <li class="list-item relative md:hidden">
+            <li class="list-item-button-profile relative md:hidden">
                 <div class="dropdown-menu">
-                    <div class="toggle-menu">
+                    <div class="toggle-menu-button-profile">
                         <i class="fas fa-circle-user !text-4xl text-white font-bold"></i>
                     </div>
                     <div
-                        class="content-dropdown z-[9999] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
+                        class="content-dropdown-button-profile z-[2] absolute bg-white border border-gray-200 shadow-lg w-[140px] rounded-lg mt-2 right-0">
                         <a href="{{ route('beranda') }}">
                             <div
                                 class="link-href hover:bg-gray-100 hover:!text-black !flex-row items-center gap-[5px]">
