@@ -138,6 +138,8 @@ function paginateManagementBatchesSchedule() {
                         });
                     });
 
+                } else {
+                    $('#grid-list-accordion-groups').empty();
                 }
 
                 const containerAccordionNewGroup = $('#accordion-new-groups-container');
