@@ -14,7 +14,6 @@ class EnglishZoneBatch extends Model
         'batch_name',
         'start_day',
         'start_month',
-        'max_capacity'
     ];
 
     public function UserAccount()

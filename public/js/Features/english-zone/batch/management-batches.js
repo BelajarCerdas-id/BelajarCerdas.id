@@ -33,7 +33,6 @@ function paginateManagementBatches() {
                         <td class="td-table !text-black !text-center">${index + 1}</td>
                         <td class="td-table !text-black !text-center">${item.batch_name}</td>
                         <td class="td-table !text-black !text-center">${item.start_day} - ${montLabel}</td>
-                        <td class="td-table !text-black !text-center">${item.max_capacity}</td>
                         <td class="td-table !text-black !text-center">
                             <a href="${batchSchedule}" class="text-[#4189e0] font-bold text-xs">Lihat Detail</a>
                         </td>
@@ -157,7 +156,6 @@ $(document).off('click', '.btn-edit-batch').on('click', '.btn-edit-batch', funct
     $('#batch_name_id').val(batch.batch_name);
     $('#start_day_id').val(batch.start_day);
     $('#start_month_id').val(batch.start_month);
-    $('#max_capacity_id').val(batch.max_capacity);
 
     // buka modal
     const modal = document.getElementById('my_modal_1');

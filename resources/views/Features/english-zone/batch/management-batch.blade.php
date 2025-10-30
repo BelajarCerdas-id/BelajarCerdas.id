@@ -12,7 +12,7 @@
             <main class="bg-white shadow-lg border h-max rounded-lg">
                 <section class="border-b">
                     <form id="management-batch-form" enctype="multipart/form-data">
-                        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 py-10 px-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-2  gap-6 py-10 px-6">
                             <!--- Batch Name--->
                             <div class="flex flex-col">
                                 <label class="mb-2 text-sm">Batch<sup class="text-red-500 pl-1">&#42;</sup></label>
@@ -62,27 +62,6 @@
                                 <span id="error-start_month" class="text-red-500 font-bold text-xs pt-2"></span>
                             </div>
 
-                            <!--- Max Capacity --->
-                            <div class="flex flex-col">
-                                <label class="mb-2 text-sm">Kapasitas User<sup
-                                        class="text-red-500 pl-1">&#42;</sup></label>
-                                <select name="max_capacity" id="max_capacity"
-                                    class="w-full bg-white shadow-lg h-12 text-sm border-gray-200 border outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer"
-                                    data-old-max_capacity="{{ old('max_capacity') }}">
-                                    <option value="" class="hidden">Pilih Jumlah Kapasitas</option>
-                                    <option value="10" {{ old('max_capacity') == 10 ? 'selected' : '' }}>
-                                        10
-                                    </option>
-                                    <option value="20" {{ old('max_capacity') == 20 ? 'selected' : '' }}>
-                                        20
-                                    </option>
-                                    <option value="30" {{ old('max_capacity') == 30 ? 'selected' : '' }}>
-                                        30
-                                    </option>
-                                </select>
-                                <span id="error-max_capacity" class="text-red-500 font-bold text-xs pt-2"></span>
-                            </div>
-
                             <!--- button add batch --->
                             <div class="flex items-center w-full mt-6">
                                 <button type="button" id="submit-button"
@@ -106,7 +85,6 @@
                                     <th class="th-table text-black opacity-70">No</th>
                                     <th class="th-table text-black opacity-70">Batch</th>
                                     <th class="th-table text-black opacity-70">Start Batch</th>
-                                    <th class="th-table text-black opacity-70">Kapasitas User</th>
                                     <th class="th-table text-black opacity-70">Detail</th>
                                     <th class="th-table text-black opacity-70">
                                         <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -185,27 +163,6 @@
                                     @endforeach
                                 </select>
                                 <span id="error-start_month" class="text-red-500 font-bold text-xs pt-2"></span>
-                            </div>
-
-                            <!--- Max Capacity --->
-                            <div class="flex flex-col mt-4 w-96">
-                                <label class="mb-2 text-sm">Kapasitas Batch<sup
-                                        class="text-red-500 pl-1">&#42;</sup></label>
-                                <select name="max_capacity" id="max_capacity_id"
-                                    class="w-full bg-white shadow-lg h-12 text-sm border-gray-200 border-[1px] outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer"
-                                    data-old-max_capacity="{{ old('max_capacity') }}">
-                                    <option value="" class="hidden">Pilih Jumlah Kapasitas</option>
-                                    <option value="10" {{ old('max_capacity') == 10 ? 'selected' : '' }}>
-                                        10
-                                    </option>
-                                    <option value="20" {{ old('max_capacity') == 20 ? 'selected' : '' }}>
-                                        20
-                                    </option>
-                                    <option value="30" {{ old('max_capacity') == 30 ? 'selected' : '' }}>
-                                        30
-                                    </option>
-                                </select>
-                                <span id="error-max_capacity" class="text-red-500 font-bold text-xs pt-2"></span>
                             </div>
 
                             <div class="flex justify-end mt-8">

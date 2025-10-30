@@ -824,13 +824,11 @@ class EnglishZoneController extends Controller
             'batch_name' => 'required|unique:english_zone_batches,batch_name',
             'start_day' => 'required',
             'start_month' => 'required',
-            'max_capacity' => 'required',
         ], [
             'batch_name.required' => 'Harap pilih batch.',
             'batch_name.unique' => 'Batch telah terdaftar.',
             'start_day.required' => 'Harap pilih hari.',
             'start_month.required' => 'Harap pilih bulan.',
-            'max_capacity.required' => 'Harap pilih kapasitas.',
         ]);
 
         if ($validator->fails()) {
@@ -845,7 +843,6 @@ class EnglishZoneController extends Controller
             'batch_name' => $request->batch_name,
             'start_day' => $request->start_day,
             'start_month' => $request->start_month,
-            'max_capacity' => $request->max_capacity,
         ]);
 
         broadcast(new EventEnglishZoneBatch($batch))->toOthers();
@@ -880,13 +877,11 @@ class EnglishZoneController extends Controller
             ],
             'start_day' => 'required',
             'start_month' => 'required',
-            'max_capacity' => 'required',
         ], [
             'batch_name.required' => 'Harap pilih batch.',
             'batch_name.unique' => 'Batch telah terdaftar.',
             'start_day.required' => 'Harap pilih hari.',
             'start_month.required' => 'Harap pilih bulan.',
-            'max_capacity.required' => 'Harap pilih kapasitas.',
         ]);
 
         if ($validator->fails()) {
@@ -903,7 +898,6 @@ class EnglishZoneController extends Controller
             'batch_name' => $request->batch_name,
             'start_day' => $request->start_day,
             'start_month' => $request->start_month,
-            'max_capacity' => $request->max_capacity,
         ]);
 
         broadcast(new EventEnglishZoneBatch($batch))->toOthers();

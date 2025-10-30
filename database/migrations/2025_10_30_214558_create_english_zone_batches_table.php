@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('batch_name');
             $table->string('start_day');
             $table->string('start_month');
-            $table->integer('max_capacity');
             $table->timestamps();
         });
     }
