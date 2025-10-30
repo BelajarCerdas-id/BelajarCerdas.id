@@ -170,8 +170,5 @@
 <script src="{{ asset('js/Tanya/access/form-tanya-access.js') }}"></script> <!--- form crud tanya access (create, update) ---->
 <script src="{{ asset('js/Tanya/access/open-modal-form-tanya-access.js') }}"></script> <!--- open modal & datepicker ---->
 
-<!--- components ---->
-<script src="{{ asset('js/components/btn-close-alert-success.js') }}"></script> <!--- clear error on input ---->
-
 <!--- PUSHER LISTENER TANYA ---->
 <script src="{{ asset('js/pusher-listener/tanya/tanya-access.js') }}"></script> <!--- untuk mendengarkan ketika administrator insert / update tanya access ---->
