@@ -35,7 +35,6 @@ function paginateManagementMateriDetail() {
                     $.each(response.data, function (index, item) {
                         const materiVocabulary = getFileIcon(item.materi_vocabulary);
                         const materiGrammar = getFileIcon(item.materi_grammar);
-                        const lessonPlan = getFileIcon(item.lesson_plan);
 
                         const videoId = item.video_id;
                         const modal = `
@@ -110,37 +109,11 @@ function paginateManagementMateriDetail() {
                             `);
                         }
 
-                        if (item.lesson_plan) {
-                            container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-${item.id}-${item.lesson_plan}" class="modal">
-                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
-                                        <div class="flex justify-center w-full mb-4">
-                                            <span class="text-2xl font-bold opacity-70">Lesson Plan</span>
-                                        </div>
-                                        <div class="border max-w-6xl h-[500px] flex justify-start">
-                                            <div class="w-full h-full">
-                                                <iframe class="w-full h-[600px]"
-                                                    src="/english-zone-materi/${item.lesson_plan}"
-                                                    frameborder="0" allowfullscreen>
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form method="dialog" class="modal-backdrop">
-                                        <button>close</button>
-                                    </form>
-                                </dialog>
-                            `);
-                        }
-
                         $('#table-list-management-materi-detail').append(`
                             <tr class="text-xs">
                                 <td class="td-table !text-black !text-center">${index + 1}</td>
                                 <td class="td-table !text-black !text-center">
                                     ${item.english_zone_level?.level_name}
-                                </td>
-                                <td class="td-table !text-black !text-center">
-                                    ${item.english_zone_unit?.unit_name}
                                 </td>
                                 <td class="td-table !text-black !text-center">
                                     Sesi ${item.session}
@@ -153,11 +126,6 @@ function paginateManagementMateriDetail() {
                                 <td class="td-table !text-black !text-center">
                                     <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_grammar}">
                                         ${materiGrammar}
-                                    </a>
-                                </td>
-                                <td class="td-table !text-black !text-center">
-                                    <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.lesson_plan}">
-                                        ${lessonPlan}
                                     </a>
                                 </td>
                                 <td class="td-table !text-black !text-center">
@@ -242,7 +210,7 @@ function closePembahasanModal(materiId) {
     }
 }
 
-// show materi vocabulary, grammar, lesson plan
+// show materi vocabulary, grammar
 $(document).off('click', '.btn-materi').on('click', '.btn-materi', function (e) {
     e.preventDefault();
     const materiId = $(this).data('materi-id');

@@ -14,9 +14,7 @@ class EnglishZoneMateri extends Model
         'materi_vocabulary',
         'materi_grammar',
         'video_materi',
-        'lesson_plan',
         'level_id',
-        'unit_id',
         'session',
     ];
 
@@ -28,10 +26,5 @@ class EnglishZoneMateri extends Model
     public function EnglishZoneLevel()
     {
         return $this->belongsTo(EnglishZoneLevel::class, 'level_id');
-    }
-
-    public function EnglishZoneUnit()
-    {
-        return $this->belongsTo(EnglishZoneUnit::class, 'unit_id');
     }
 }

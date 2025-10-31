@@ -1111,12 +1111,10 @@ class EnglishZoneController extends Controller
             'materi_vocabulary' => 'required|max:100000',
             'materi_grammar' => 'required|max:100000',
             'video_materi' => 'required|url',
-            'lesson_plan' => 'required|max:10000',
             'level_id' => 'required',
-            'unit_id' => 'required',
             'session' => [
                 'required',
-                Rule::unique('english_zone_materis', 'session')->where('level_id', $request->level_id)->where('unit_id', $request->unit_id),
+                Rule::unique('english_zone_materis', 'session')->where('level_id', $request->level_id),
             ],
         ], [
             'materi_vocabulary.required' => 'Harap upload materi vocabulary.',
@@ -1125,12 +1123,9 @@ class EnglishZoneController extends Controller
             'materi_grammar.max' => 'Ukuran file melebihi kapasitas yang ditentukan.',
             'video_materi.required' => 'Harap isi video materi.',
             'video_materi.url' => 'Harap isi link video yang valid.',
-            'lesson_plan.required' => 'Harap upload lesson plan.',
-            'lesson_plan.max' => 'Ukuran file melebihi kapasitas yang ditentukan.',
             'level_id.required' => 'Harap pilih level.',
-            'unit_id.required' => 'Harap pilih unit.',
             'session.required' => 'Harap pilih sesi.',
-            'session.unique' => 'Sesi telah terdaftar pada level dan unit tersebut.',
+            'session.unique' => 'Sesi telah terdaftar pada level tersebut.',
         ]);
 
         if ($validator->fails()) {
@@ -1142,7 +1137,6 @@ class EnglishZoneController extends Controller
         
         $materiVocabularyName = null;
         $materiGrammarName = null;
-        $lessonPlanName = null;
 
         // 🔹 Helper: simpan file unik berdasarkan hash
         $saveFileByHash = function ($file, $folder) {
@@ -1168,20 +1162,13 @@ class EnglishZoneController extends Controller
             $materiGrammarName = $saveFileByHash($request->file('materi_grammar'), 'english-zone-materi');
         }
 
-        // Upload lesson_plan
-        if ($request->hasFile('lesson_plan')) {
-            $lessonPlanName = $saveFileByHash($request->file('lesson_plan'), 'english-zone-materi');
-        }
-
         $createMateri = EnglishZoneMateri::create([
             'administrator_id' => $user->id,
             'materi_vocabulary' => $materiVocabularyName,
             'materi_grammar' => $materiGrammarName,
             'video_materi' => $request->video_materi,
             'link_zoom' => $request->link_zoom,
-            'lesson_plan' => $lessonPlanName,
             'level_id' => $request->level_id,
-            'unit_id' => $request->unit_id,
             'session' => $request->input('session'),
         ]);
 
@@ -1219,7 +1206,7 @@ class EnglishZoneController extends Controller
     // function paginate management materi detail
     public function paginateManagementMateriDetail($id)
     {
-        $dataMateri = EnglishZoneMateri::with(['EnglishZoneLevel', 'EnglishZoneUnit', 'UserAccount'])
+        $dataMateri = EnglishZoneMateri::with(['EnglishZoneLevel', 'UserAccount'])
             ->where('level_id', $id)
             ->get()
             ->map(function ($item) {
@@ -1231,13 +1218,7 @@ class EnglishZoneController extends Controller
                 return $item;
             });
 
-        $dataMateri = $dataMateri->sortBy('session')->sortBy(function ($item) {
-            // Ambil angka dari unit_name: "Unit 1 - ..." → 1
-            if (preg_match('/Unit (\d+)/i', $item->EnglishZoneUnit->unit_name, $matches)) {
-                return (int) $matches[1];
-            }
-            return 999; // Kalau gagal, taruh di akhir
-        });
+        $dataMateri = $dataMateri->sortBy('session');
 
         return response()->json([
             'data' => $dataMateri->values(),
@@ -1253,12 +1234,10 @@ class EnglishZoneController extends Controller
             'materi_vocabulary' => 'required',
             'materi_grammar' => 'required',
             'video_materi' => 'required',
-            'lesson_plan' => 'required',
         ], [
             'materi_vocabulary.required' => 'Harap isi materi vocabulary.',
             'materi_grammar.required' => 'Harap isi materi grammar.',
             'video_materi.required' => 'Harap isi video materi.',
-            'lesson_plan.required' => 'Harap isi lesson plan.',
         ]);
 
         if ($validator->fails()) {
@@ -1272,7 +1251,6 @@ class EnglishZoneController extends Controller
 
         $materiVocabularyName = null;
         $materiGrammarName = null;
-        $lessonPlanName = null;
 
         // 🔹 Helper: simpan file unik berdasarkan hash
         $saveFileByHash = function ($file, $folder) {
@@ -1298,17 +1276,11 @@ class EnglishZoneController extends Controller
             $materiGrammarName = $saveFileByHash($request->file('materi_grammar'), 'english-zone-materi');
         }
 
-        // Upload Lesson Plan
-        if ($request->hasFile('lesson_plan')) {
-            $lessonPlanName = $saveFileByHash($request->file('lesson_plan'), 'english-zone-materi');
-        }
-
         $dataMateri->update([
             'administrator_id' => $user->id,
             'materi_vocabulary' => $materiVocabularyName,
             'materi_grammar' => $materiGrammarName,
             'video_materi' => $request->video_materi,
-            'lesson_plan' => $lessonPlanName,
         ]);
 
         broadcast(new EnglishZoneMateriListener('EnglishZoneMateri', 'update', $dataMateri))->toOthers();

@@ -24,11 +24,9 @@
                                 <tr>
                                     <th class="th-table text-black opacity-70">No</th>
                                     <th class="th-table text-black opacity-70 py-2 px-3 text-center">Level</th>
-                                    <th class="th-table text-black opacity-70 py-2 px-3 text-center">Unit</th>
                                     <th class="th-table text-black opacity-70 py-2 px-3 text-center">Sesi</th>
                                     <th class="th-table text-black opacity-70 py-2 px-3 text-center">Vocabulary</th>
                                     <th class="th-table text-black opacity-70 py-2 px-3 text-center">Grammar</th>
-                                    <th class="th-table text-black opacity-70 py-2 px-3 text-center">Lesson Plan</th>
                                     <th class="th-table text-black opacity-70 py-2 px-3 text-center">Video</th>
                                     <th class="th-table text-black opacity-70 py-2 px-3 text-center">
                                         <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -53,7 +51,7 @@
 
                 <!-- Modal Edit Materi -->
                 <dialog id="my_modal_3" class="modal">
-                    <div class="modal-box bg-white max-w-6xl">
+                    <div class="modal-box bg-white max-w-3xl">
 
                         <!-- untuk menghilangkan focus input type pada saat open modal  --->
                         <div tabindex="-1"></div> <!-- Tambahkan ini -->
@@ -64,7 +62,7 @@
                             <h2 class="text-lg font-semibold text-gray-700 pointer-events-none my-6">📂 Materi</h2>
 
                             <!-- Video -->
-                            <div class="w-full lg:w-[49%]">
+                            <div class="w-full">
                                 <label class="text-sm font-bold opacity-70">
                                     Video
                                     <sup class="text-red-500">&#42;</sup>
@@ -76,7 +74,7 @@
                                     class="text-red-500 text-xs mt-1 font-bold pt-[2px]"></span>
                             </div>
 
-                            <div class="grid lg:grid-cols-2 my-6 gap-6">
+                            <div class="flex flex-col my-6 gap-6">
                                 <!-- Vocabulary -->
                                 <div class="flex flex-col">
                                     <div class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-max">
@@ -162,54 +160,6 @@
                                             accept=".pdf">
 
                                         <span id="error-materi_grammar"
-                                            class="text-red-500 text-xs mt-1 font-bold"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Lesson Plan -->
-                            <div class="w-full lg:w-[49%] mb-6">
-                                <div class="flex flex-col">
-                                    <div class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-max">
-                                        <div data-prefix="materi-pdf-lesson-plan"
-                                            class="file-wrapper flex items-center justify-between">
-                                            <div id="pdfPreviewContainer-materi-pdf-lesson-plan"
-                                                class="flex items-center gap-3">
-                                                <div id="fileArrowUp-materi-pdf-lesson-plan"
-                                                    class="bg-blue-100 p-3 rounded-lg">
-                                                    <i class="fa-solid fa-file-arrow-up text-blue-600 text-xl"></i>
-                                                </div>
-                                                <img id="pdfLogo-materi-pdf-lesson-plan"
-                                                    class="max-w-[56px] max-h-[56px] hidden">
-                                                <div>
-                                                    <div class="flex flex-col gap-1">
-                                                        <p class="text-sm font-bold opacity-70">Lesson Plan</p>
-                                                        <p class="text-xs text-gray-400">PDF (Max 100MB)</p>
-                                                    </div>
-                                                    <p id="textPreview-materi-pdf-lesson-plan" class="text-xs mt-1">
-                                                    </p>
-                                                    <div class="flex flex-row gap-1 items-center">
-                                                        <p id="textSize-materi-pdf-lesson-plan" class="text-xs"></p>
-                                                        <p id="textCircle-materi-pdf-lesson-plan" class="text-[5px]">
-                                                        </p>
-                                                        <p id="textPages-materi-pdf-lesson-plan" class="text-xs"></p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <label for="file-materi-pdf-lesson-plan"
-                                                class="px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600">
-                                                Upload
-                                            </label>
-                                        </div>
-                                    </div>
-
-                                    <!-- BUNGKUS INPUT + SPAN -->
-                                    <div class="flex flex-col">
-                                        <input id="file-materi-pdf-lesson-plan" type="file" class="hidden"
-                                            name="lesson_plan" onchange="previewPDF(event, 'materi-pdf-lesson-plan')"
-                                            accept=".pdf">
-
-                                        <span id="error-lesson_plan"
                                             class="text-red-500 text-xs mt-1 font-bold"></span>
                                     </div>
                                 </div>

@@ -17,9 +17,7 @@ return new class extends Migration
             $table->string('materi_vocabulary');
             $table->string('materi_grammar');
             $table->string('video_materi');
-            $table->string('lesson_plan');
             $table->foreignId('level_id')->constrained('english_zone_levels');
-            $table->foreignId('unit_id')->constrained('english_zone_units');
             $table->string('session');
             $table->timestamps();
         });
