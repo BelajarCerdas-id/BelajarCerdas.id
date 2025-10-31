@@ -10,7 +10,6 @@ use App\Events\EnglishZoneMateriListener;
 use App\Events\EnglishZoneMentorScheduleListener;
 use App\Events\EnglishZoneStudentBatchRefund;
 use App\Events\EnglishZoneStudentBatchReschedule;
-use App\Events\EnglishZoneUnitListener;
 use App\Events\EnglishZoneZoomListener;
 use App\Events\EventEnglishZoneBatch;
 use App\Models\EnglishZoneBatch;
@@ -19,7 +18,6 @@ use App\Models\EnglishZoneLevel;
 use App\Models\EnglishZoneMateri;
 use App\Models\EnglishZoneMentorSchedule;
 use App\Models\EnglishZoneQuestions;
-use App\Models\EnglishZoneUnit;
 use App\Models\EnglishZoneStudentBatch;
 use App\Models\EnglishZoneZoom;
 use App\Models\FeaturePrices;
@@ -152,110 +150,6 @@ class EnglishZoneController extends Controller
         ]);
     }
     
-    public function managementUnitView($id)
-    {
-        return view('Features.english-zone.management-unit.management-unit', compact('id'));
-    }
-
-    public function managementUnitStore(Request $request, $levelId)
-    {
-        $user = Auth::user();
-
-        $validator = Validator::make($request->all(), [
-            'unit_name' => [
-                'required',
-                Rule::unique('english_zone_units', 'unit_name')
-            ]
-        ], [
-            'unit_name.required' => 'Harap isi nama unit.',
-            'unit_name.unique' => 'Unit telah terdaftar.',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        $createUnit = EnglishZoneUnit::create([
-            'administrator_id' => $user->id,
-            'level_id' => $levelId,
-            'unit_name' => $request->unit_name
-        ]);
-
-        broadcast(new EnglishZoneUnitListener('EnglishZoneUnit', 'create', $createUnit))->toOthers();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Unit berhasil ditambahkan.',
-        ], 200);
-    }
-
-    // function paginate management level detail
-    public function paginateManagementUnit($levelId)
-    {
-        $dataManagementUnit = EnglishZoneUnit::where('level_id', $levelId)->paginate(20);
-
-        return response()->json([
-            'data' => $dataManagementUnit->items(),
-            'links' => (string) $dataManagementUnit->links(),
-        ]);
-    }
-
-    public function managementUnitEdit(Request $request, $id)
-    {
-        $user = Auth::user();
-
-        $validator = Validator::make($request->all(), [
-            'unit_name' => [
-                'required',
-                Rule::unique('english_zone_units', 'unit_name')
-            ],
-        ], [
-            'unit_name.required' => 'Harap isi nama unit.',
-            'unit_name.unique' => 'Nama unit telah terdaftar.',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        $dataManagementUnit = EnglishZoneUnit::findOrFail($id);
-
-        $dataManagementUnit->update([
-            'administrator_id' => $user->id,
-            'unit_name' => $request->unit_name
-        ]);
-
-        broadcast(new EnglishZoneUnitListener('EnglishZoneUnit', 'update', $dataManagementUnit))->toOthers();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Unit berhasil diubah.',
-        ]);
-    }
-
-    // function management level delete
-    public function managementUnitDelete($id)
-    {
-        $dataManagementUnit = EnglishZoneUnit::findOrFail($id);
-
-        $deletedData = $dataManagementUnit->toArray();
-
-        broadcast(new EnglishZoneUnitListener('EnglishZoneUnit', 'delete', $deletedData))->toOthers();
-
-        $dataManagementUnit->delete();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Unit berhasil dihapus.',
-        ]);
-    }
-
     // BANK SOAL
     // function bankSoal view
     public function bankSoalView()
@@ -1349,13 +1243,6 @@ class EnglishZoneController extends Controller
         return response()->json([
             'data' => $dataMateri->values(),
         ]);
-    }
-
-    // DROPDOWN BERTINGKAT UNIT BY LEVEL
-    public function getUnitByLevel($levelId)
-    {
-        $unit = EnglishZoneUnit::where('level_id', $levelId)->get();
-        return response()->json($unit);
     }
 
     // function management materi edit

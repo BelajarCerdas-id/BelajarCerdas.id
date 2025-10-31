@@ -349,7 +349,6 @@ Route::fallback(function () {
     // MANAGEMENT LEVELS
     // views(ADMINISTRATOR)
     Route::get('/english-zone/management-levels', [EnglishZoneController::class, 'managementLevelView'])->name('EZ.managementLevel.view');
-    Route::get('/english-zone/management-levels/unit/{id}', [EnglishZoneController::class, 'managementUnitView'])->name('EZ.managementUnit.view');
 
     // CRUD (ADMINISTRATOR)
     // management level
@@ -357,17 +356,8 @@ Route::fallback(function () {
     Route::put('/english-zone/management-levels/edit/{id}', [EnglishZoneController::class, 'managementLevelEdit'])->name('EZ.managementLevel.edit');
     Route::delete('/english-zone/management-levels/delete/{id}', [EnglishZoneController::class, 'managementLevelDelete'])->name('EZ.managementLevel.delete');
 
-    // management unit
-    Route::post('/english-zone/management-levels/unit/store/{levelId}', [EnglishZoneController::class, 'managementUnitStore'])->name('EZ.managementUnit.store');
-    Route::put('/english-zone/management-levels/unit/edit/{id}', [EnglishZoneController::class, 'managementUnitEdit'])->name('EZ.managementUnit.edit');
-    Route::delete('/english-zone/management-levels/unit/delete/{id}', [EnglishZoneController::class, 'managementUnitDelete'])->name('EZ.managementUnit.delete');
-
     // PAGINATE
     Route::get('/english-zone/management-levels/paginate', [EnglishZoneController::class, 'paginateManagementLevel'])->name('EZ.managementLevel.paginate');
-    Route::get('/english-zone/management-levels/unit/paginate/{levelId}', [EnglishZoneController::class, 'paginateManagementUnit'])->name('EZ.managementUnit.paginate');
-
-    // DROPDOWN BERTINGKAT UNIT BY LEVEL
-    Route::get('/english-zone/dropdown-bertingkat-unit/{levelId}', [EnglishZoneController::class, 'getUnitByLevel'])->name('EZ.getUnitByLevel.dropdown');
     
     // BANK SOAL
     // views(ADMINISTRATOR)
