@@ -92,7 +92,6 @@ class EnglishZoneController extends Controller
         return response()->json([
             'data' => $dataManagementLevel->items(),
             'links' => (string) $dataManagementLevel->links(),
-            'managementUnit' => '/english-zone/management-levels/unit/:id',
         ]);
     }
 

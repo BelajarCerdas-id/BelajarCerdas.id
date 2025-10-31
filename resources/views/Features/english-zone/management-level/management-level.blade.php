@@ -48,7 +48,6 @@
                                 <tr>
                                     <th class="th-table text-black opacity-70">No</th>
                                     <th class="th-table text-black opacity-70">Nama Level</th>
-                                    <th class="th-table text-black opacity-70">Detail</th>
                                     <th class="th-table text-black opacity-70">
                                         <i class="fa-solid fa-ellipsis-vertical"></i>
                                     </th>
