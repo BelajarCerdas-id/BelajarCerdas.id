@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignId('batch_schedule_id')->constrained('english_zone_batch_schedules');
             $table->foreignId('mentor_id')->constrained('user_accounts');
             $table->foreignId('level_id')->constrained('english_zone_levels');
-            $table->foreignId('unit_id')->constrained('english_zone_units');
             $table->string('session');
             $table->string('link_zoom');
             $table->string('meeting_id');

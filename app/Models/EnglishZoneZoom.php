@@ -14,7 +14,6 @@ class EnglishZoneZoom extends Model
         'batch_schedule_id',
         'mentor_id',
         'level_id',
-        'unit_id',
         'session',
         'link_zoom',
         'meeting_id',
@@ -39,10 +38,5 @@ class EnglishZoneZoom extends Model
     public function EnglishZoneLevel()
     {
         return $this->belongsTo(EnglishZoneLevel::class, 'level_id');
-    }
-
-    public function EnglishZoneUnit()
-    {
-        return $this->belongsTo(EnglishZoneUnit::class, 'unit_id');
     }
 }

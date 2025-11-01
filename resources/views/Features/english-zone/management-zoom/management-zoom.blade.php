@@ -110,20 +110,6 @@
                                 <span id="error-level_id" class="text-red-500 text-xs mt-1 font-bold pt-[2px]"></span>
                             </div>
 
-                            <!-- Unit -->
-                            <div>
-                                <label class="text-sm font-bold opacity-70">
-                                    Unit
-                                    <sup class="text-red-500">&#42;</sup>
-                                </label>
-                                <select id="unit_id" name="unit_id"
-                                    class="select select-bordered w-full bg-white opacity-50 !cursor-default" disabled>
-                                    <option value="" class="hidden">Pilih Unit</option>
-
-                                </select>
-                                <span id="error-unit_id" class="text-red-500 text-xs mt-1 font-bold pt-[2px]"></span>
-                            </div>
-
                             <!-- Sesi -->
                             <div>
                                 <label class="text-sm font-bold opacity-70">
@@ -211,7 +197,6 @@
                                     <th class="th-table text-black opacity-70">No</th>
                                     <th class="th-table text-black opacity-70">Mentor</th>
                                     <th class="th-table text-black opacity-70">Level</th>
-                                    <th class="th-table text-black opacity-70">Unit</th>
                                     <th class="th-table text-black opacity-70">Sesi</th>
                                     <th class="th-table text-black opacity-70">Batch</th>
                                     <th class="th-table text-black opacity-70">Batch Schedule Group</th>
@@ -339,7 +324,9 @@
 <!--- COMPONENTS ---->
 <script src="{{ asset('js/components/clear-error-on-input.js') }}"></script> <!--- clear error on input ---->
 <script src="{{ asset('js/components/english-zone/schedule-dropdown.js') }}"></script> <!--- schedule dropdown ---->
-<script src="{{ asset('js/components/english-zone/level-unit-dropdown.js') }}"></script> <!--- level & unit dropdown ---->
 
 <!--- PUSHER LISTENER ---->
 <script src="{{ asset('js/pusher-listener/english-zone/management-zoom.js') }}"></script> <!--- pusher listener pada saat CRUD zoom ---->
+
+
+

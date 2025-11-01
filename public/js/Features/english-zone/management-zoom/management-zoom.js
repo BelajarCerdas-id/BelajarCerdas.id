@@ -17,7 +17,6 @@ function paginateManagementZoom(search_mentor = '', page = 1) {
                             <td class="td-table !text-black !text-center">${index + 1}</td>
                             <td class="td-table !text-black !text-center">${item.mentor?.mentor_profiles?.nama_lengkap ?? '-'}</td>
                             <td class="td-table !text-black !text-center">${item.english_zone_level?.level_name ?? '-'}</td>
-                            <td class="td-table !text-black !text-center">${item.english_zone_unit?.unit_name ?? '-'}</td>
                             <td class="td-table !text-black !text-center">Sesi ${item.session ?? '-'}</td>
                             <td class="td-table !text-black !text-center">${item.english_zone_batch_schedule?.english_zone_batch?.batch_name ?? '-'}</td>
                             <td class="td-table !text-black !text-center">Group ${item.english_zone_batch_schedule?.batch_schedule_group ?? '-'}</td>

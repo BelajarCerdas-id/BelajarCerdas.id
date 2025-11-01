@@ -1412,7 +1412,7 @@ class EnglishZoneController extends Controller
     public function paginateManagementZoom(Request $request)
     {
         $getZoom = EnglishZoneZoom::with(['Administrator', 'Mentor.MentorProfiles', 'EnglishZoneBatchSchedule', 'EnglishZoneBatchSchedule.EnglishZoneBatch', 
-        'EnglishZoneLevel', 'EnglishZoneUnit']);
+        'EnglishZoneLevel']);
 
         // filter search_mentor
         if ($request->filled('search_mentor')) {
@@ -1442,10 +1442,9 @@ class EnglishZoneController extends Controller
             'hours_id' => 'required',
             'mentor_id' => 'required',
             'level_id' => 'required',
-            'unit_id' => 'required',
             'session' => [
                 'required',
-                Rule::unique('english_zone_zooms', 'session')->where('level_id', $request->level_id)->where('unit_id', $request->unit_id)
+                Rule::unique('english_zone_zooms', 'session')->where('level_id', $request->level_id)
                 ->where('mentor_id', $request->mentor_id),
             ],
             'link_zoom' => [
@@ -1469,9 +1468,8 @@ class EnglishZoneController extends Controller
             'hours_id.unique' => 'Jam telah terdaftar pada mentor ini.',
             'mentor_id.required' => 'Harap pilih mentor.',
             'level_id.required' => 'Harap pilih level.',
-            'unit_id.required' => 'Harap pilih unit.',
             'session.required' => 'Harap pilih sesi.',
-            'session.unique' => 'Sesi telah terdaftar pada level, unit, dan mentor tersebut.',
+            'session.unique' => 'Sesi telah terdaftar pada level dan mentor tersebut.',
             'link_zoom.required' => 'Harap isi link zoom.',
             'link_zoom.url' => 'Format link tidak sesuai.',
             'link_zoom.unique' => 'Link Zoom telah terdaftar.',
@@ -1502,7 +1500,6 @@ class EnglishZoneController extends Controller
             'batch_schedule_id' => $request->batch_schedule_id,
             'mentor_id' => $request->mentor_id,
             'level_id' => $request->level_id,
-            'unit_id' => $request->unit_id,
             'session' => $request->input('session'),
             'link_zoom' => $request->link_zoom,
             'meeting_id' => $request->meeting_id,
