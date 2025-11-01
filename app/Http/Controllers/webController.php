@@ -158,6 +158,12 @@ class webController extends Controller
                     'url' => "/tanya",
                     'button' => 'TANYA'
                 ],
+                [
+                    'image' => 'image/logo-fitur/logo-englishZone.png',
+                    'text' => 'Sesi Boot Camp for Conversation Only.',
+                    'url' => '/english-zone-mentor',
+                    'button' => 'English Zone'
+                ],
             ];
         }
 

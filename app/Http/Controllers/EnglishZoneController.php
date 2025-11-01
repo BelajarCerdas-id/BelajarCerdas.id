@@ -2290,4 +2290,10 @@ class EnglishZoneController extends Controller
         ]);
     }
 
+    // MENTOR
+    public function englishZoneMentorView()
+    {
+        return view('Features.english-zone.mentor.english-zone-mentor');
+    }
+
 }

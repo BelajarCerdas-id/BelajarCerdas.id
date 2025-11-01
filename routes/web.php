@@ -474,6 +474,9 @@ Route::fallback(function () {
     Route::get('/english-zone/management-student-batch-detail/school-partner/dropdown-hours/{batch_id}/{group_id}/{level_id}/{feature_variant_id}/{transaction_source}/{school_id}', [EnglishZoneController::class, 'dropdownHourStudentBatch'])->name('EZ.dropdownHourStudentBatch.nonSchool');
     Route::get('/english-zone/management-student-batch-detail/non-school-partner/dropdown-hours/{batch_id}/{group_id}/{level_id}/{transaction_source}/{feature_variant_id}', [EnglishZoneController::class, 'dropdownHourStudentBatch'])->name('EZ.dropdownHourStudentBatch.school');
 
+    // MENTOR SIDE
+    // views
+    Route::get('/english-zone-mentor', [EnglishZoneController::class, 'englishZoneMentorView'])->name('EZ.mentor.view');
 
     // ROUTES SCHOOL PARTNER
     // school subscription
