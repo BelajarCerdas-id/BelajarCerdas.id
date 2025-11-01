@@ -588,7 +588,7 @@ class EnglishZoneController extends Controller
                 ];
                 // Pastikan semua OPTION yang ada terisi, plus field wajib lain
                 $presentOptions = array_filter(array_keys($answerMap), fn($opt) => isset($dataSoal[$opt]) && $extractor->isMeaningfullyEmpty($dataSoal[$opt]));
-                $requiredFields = array_merge($presentOptions, ['ANSWER', 'EXPLANATION', 'LEVEL', 'UNIT', 'SESI', 'STATUS', 'DIFFICULTY']);
+                $requiredFields = array_merge($presentOptions, ['ANSWER', 'EXPLANATION', 'LEVEL', 'SESI', 'STATUS', 'DIFFICULTY']);
 
                 foreach ($requiredFields as $field) {
                     if (!isset($dataSoal[$field]) || $extractor->isMeaningfullyEmpty($dataSoal[$field])) {
@@ -674,7 +674,6 @@ class EnglishZoneController extends Controller
                                 'difficulty' => trim(strip_tags($dataSoal['DIFFICULTY'] ?? '')),
                                 'explanation' => $dataSoal['EXPLANATION'] ?? '',
                                 'level_id' => $dataSoal['LEVEL'], // ambil dari luar scope  foreach $table as $index
-                                'unit' => trim(strip_tags($dataSoal['UNIT'] ?? '')),
                                 'session' => trim(strip_tags($dataSoal['SESI'] ?? '')),
                                 'status_soal' => trim(strip_tags($dataSoal['STATUS'] ?? '')),
                                 'status_bank_soal' => $statusBankSoal,

@@ -21,7 +21,6 @@ return new class extends Migration
             $table->enum('difficulty', ['Mudah', 'Sedang', 'Sukar']);
             $table->text('explanation');
             $table->foreignId('level_id')->constrained('english_zone_levels');
-            $table->string('unit');
             $table->string('status_soal');
             $table->enum('status_bank_soal', ['Unpublish', 'Publish'])->default('Unpublish');
             $table->timestamps();

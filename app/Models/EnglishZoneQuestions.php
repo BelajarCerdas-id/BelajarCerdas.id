@@ -15,8 +15,7 @@ class EnglishZoneQuestions extends Model
         'answer_key', 
         'difficulty', 
         'explanation', 
-        'level_id', 
-        'unit', 
+        'level_id',  
         'status_soal', 
         'status_bank_soal'
     ];
