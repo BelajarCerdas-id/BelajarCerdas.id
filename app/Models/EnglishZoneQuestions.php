@@ -16,6 +16,7 @@ class EnglishZoneQuestions extends Model
         'difficulty', 
         'explanation', 
         'level_id',  
+        'session',
         'status_soal', 
         'status_bank_soal'
     ];

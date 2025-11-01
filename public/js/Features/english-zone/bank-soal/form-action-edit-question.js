@@ -37,6 +37,21 @@ function paginateBankSoalEditQuestionEZ() {
                 .filter((value, index, self) => self.indexOf(value) === index) // hapus duplikat
                 .map(opt => `<option value="${opt}">${opt}</option>`) // buat options sesuai banyaknya options_key
                 .join('');
+            
+            const levelOptions = response.getLevels.map(level => `
+                <option value="${level.id}" ${level.id === question.level_id ? 'selected' : ''}>
+                    ${level.level_name}
+                </option>
+            `).join('');
+
+            const sessionOptions = []; for (let i = 1; i <= 2; i++) {
+                const option = `
+                    <option value="${i}" ${i === question.session ? 'selected' : ''}>
+                        Sesi ${i}
+                    </option>
+                `;
+                sessionOptions.push(option);
+            }
 
             const formHtml = `
                 <form id="bank-soal-edit-question-form" data-level-id="${levelId}" data-question-id="${questionId}"
@@ -74,9 +89,43 @@ function paginateBankSoalEditQuestionEZ() {
                                         ${question.difficulty}
                                     <option value="Mudah">Mudah</option>
                                     <option value="Sedang">Sedang</option>
-                                    <option value="Sulit">Sulit</option>
+                                    <option value="Sukar">Sukar</option>
                             </select>
                             <span id="error-difficulty" class="text-red-500 font-bold text-xs pt-2"></span>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="mb-2 text-sm">Level</label>
+                            <select name="level_id" id="level_id" value="{{ old('level_id') }}"
+                                class="bg-white shadow-lg h-12 text-sm border-gray-200 border outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer">
+                                    <option value="${question.level_id}" class="hidden">
+                                        ${question.english_zone_level?.level_name}
+                                    ${levelOptions}
+                            </select>
+                            <span id="error-level_id" class="text-red-500 font-bold text-xs pt-2"></span>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="mb-2 text-sm">Sesi</label>
+                            <select name="session" id="session" value="{{ old('session') }}"
+                                class="bg-white shadow-lg h-12 text-sm border-gray-200 border outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer">
+                                    <option value="${question.session}" class="hidden">
+                                        Sesi ${question.session}
+                                    ${sessionOptions}
+                            </select>
+                            <span id="error-session" class="text-red-500 font-bold text-xs pt-2"></span>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="mb-2 text-sm">Status Soal</label>
+                            <select name="status_soal" id="status_soal" value="{{ old('status_soal') }}"
+                                class="bg-white shadow-lg h-12 text-sm border-gray-200 border outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer">
+                                    <option value="${question.status_soal}" class="hidden">
+                                        ${question.status_soal}
+                                    <option value="Free">Free</option>
+                                    <option value="Premium">Premium</option>
+                            </select>
+                            <span id="error-status_soal" class="text-red-500 font-bold text-xs pt-2"></span>
                         </div>
                     </div>
 

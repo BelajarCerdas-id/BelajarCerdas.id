@@ -272,22 +272,25 @@ class EnglishZoneController extends Controller
     // function load form edit question
     public function formEditQuestion(Request $request, $levelId, $id)
     {
-        $editQuestion = EnglishZoneQuestions::find($id);
+        $editQuestion = EnglishZoneQuestions::with(['EnglishZoneLevel'])->find($id);
 
         if (!$editQuestion) {
             return redirect()->route('EZ.bankSoal.detail.view', [$levelId]);
         }
 
         // Mengambil data soal yang punya pertanyaan (questions) yang sama, lalu dikelompokkan berdasarkan isi questions-nya
-        $dataSoal = EnglishZoneQuestions::where('questions', $editQuestion->questions)->get()->groupBy('questions');
+        $dataSoal = EnglishZoneQuestions::with(['EnglishZoneLevel'])->where('questions', $editQuestion->questions)->get()->groupBy('questions');
 
         // Simpan hasil pengelompokan ke variabel baru
         $groupedSoal = $dataSoal;
+
+        $getLevels = EnglishZoneLevel::all();
 
         return response()->json([
             'status' => 'success',
             'data' => $groupedSoal,
             'editQuestion' => $editQuestion,
+            'getLevels' => $getLevels
         ]);
     }
 
@@ -302,12 +305,18 @@ class EnglishZoneController extends Controller
             'answer_key' => 'required',
             'difficulty' => 'required',
             'explanation' => 'required',
+            'level_id' => 'required',
+            'session' => 'required',
+            'status_soal' => 'required',
         ], [
             'questions.required' => 'Harap isi pertanyaan soal!',
             'options_value.*.required' => 'Harap isi jawaban soal!',
             'answer_key.required' => 'Harap isi jawaban soal!',
             'difficulty.required' => 'Harap isi difficulty soal!',
             'explanation.required' => 'Harap isi pembahasan soal!',
+            'level_id.required' => 'Harap isi level soal!',
+            'session.required' => 'Harap isi session soal!',
+            'status_soal.required' => 'Harap isi status soal!',
         ]);
 
         if ($validator->fails()) {
@@ -333,6 +342,9 @@ class EnglishZoneController extends Controller
                     'options_value' => $request->options_value[$soal->id], // untuk each option_value masing" options
                     'difficulty' => $request->difficulty,
                     'explanation' => $request->explanation,
+                    'level_id' => $request->level_id,
+                    'session' => $request->input('session'),
+                    'status_soal' => $request->status_soal
                 ]);
             }
         }
