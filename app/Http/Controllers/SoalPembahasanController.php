@@ -113,6 +113,8 @@ class SoalPembahasanController extends Controller
             'skilltag' => 'required',
             'difficulty' => 'required',
             'explanation' => 'required',
+            'status_soal' => 'required',
+            'tipe_soal' => 'required',
         ], [
             'questions.required' => 'Harap isi pertanyaan soal!',
             'options_value.*.required' => 'Harap isi jawaban soal!',
@@ -120,6 +122,8 @@ class SoalPembahasanController extends Controller
             'skilltag.required' => 'Harap isi skilltag soal!',
             'difficulty.required' => 'Harap isi difficulty soal!',
             'explanation.required' => 'Harap isi pembahasan soal!',
+            'status_soal.required' => 'Harap isi status soal!',
+            'tipe_soal.required' => 'Harap isi tipe soal!',
         ]);
 
         if ($validator->fails()) {
@@ -145,6 +149,8 @@ class SoalPembahasanController extends Controller
                     'skilltag' => $request->skilltag,
                     'difficulty' => $request->difficulty,
                     'explanation' => $request->explanation,
+                    'status_soal' => $request->status_soal,
+                    'tipe_soal' => $request->tipe_soal
                 ]);
             }
         }

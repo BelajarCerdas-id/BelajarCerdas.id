@@ -90,9 +90,33 @@ function paginateBankSoalEditQuestion() {
                                         ${question.difficulty}
                                     <option value="Mudah">Mudah</option>
                                     <option value="Sedang">Sedang</option>
-                                    <option value="Sulit">Sulit</option>
+                                    <option value="Sukar">Sukar</option>
                             </select>
                             <span id="error-difficulty" class="text-red-500 font-bold text-xs pt-2"></span>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="mb-2 text-sm">Status Soal</label>
+                            <select name="status_soal" id="status_soal" value="{{ old('status_soal') }}"
+                                class="bg-white shadow-lg h-12 text-sm border-gray-200 border outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer">
+                                    <option value="${question.status_soal}" class="hidden">
+                                        ${question.status_soal}
+                                    <option value="Free">Free</option>
+                                    <option value="Premium">Premium</option>
+                            </select>
+                            <span id="error-status_soal" class="text-red-500 font-bold text-xs pt-2"></span>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="mb-2 text-sm">Tipe Soal</label>
+                            <select name="tipe_soal" id="tipe_soal" value="{{ old('tipe_soal') }}"
+                                class="bg-white shadow-lg h-12 text-sm border-gray-200 border outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer">
+                                    <option value="${question.tipe_soal}" class="hidden">
+                                        ${question.tipe_soal}
+                                    <option value="Latihan">Latihan</option>
+                                    <option value="Ujian">Ujian</option>
+                            </select>
+                            <span id="error-tipe_soal" class="text-red-500 font-bold text-xs pt-2"></span>
                         </div>
                     </div>
 
