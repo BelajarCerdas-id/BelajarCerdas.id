@@ -634,6 +634,8 @@ class PaymentFeaturesController extends Controller
         })->whereHas('FeatureSubscriptionHistory.Transactions', function ($q) use ($request) {
             $q->where('transaction_status', 'Berhasil')->where('feature_variant_id', $request->feature_variant_id)
             ->where('transaction_source', 'non_school_partner');
+        })->whereHas('FeatureSubscriptionHistory', function ($q) use ($today) {
+            $q->whereDate('end_date', '>=', $today)->where('subscription_status', 'aktif');
         })->pluck('student_id')->unique()->count();
 
 
