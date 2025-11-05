@@ -53,6 +53,7 @@ function updateButtonText() {
 
 
 function limitSelection(checkbox) {
+    updateButtonText();
 
 
     const checked = Array.from(document.querySelectorAll('#dropdownOptions input[type="checkbox"]:checked'));
@@ -61,7 +62,22 @@ function limitSelection(checkbox) {
     // update hidden input agar konsisten
     const selectedIds = checked.map(cb => cb.value);
     const hiddenLevelInput = document.getElementById('input-level-id');
-    if (hiddenLevelInput) hiddenLevelInput.value = selectedIds.join(',');
+    if (hiddenLevelInput) {
+        hiddenLevelInput.value = selectedIds.join(',');
+    }
+
+    if (selectedIds.length === 0) {
+        $('#batch_id').empty().append('<option value="" class="hidden">Choose Batch</option>').prop('disabled', true).addClass('opacity-50 !cursor-default');
+        $('#days_id').empty().append('<option value="" class="hidden">Choose Day</option>').prop('disabled', true).addClass('opacity-50 !cursor-default');
+        $('#hours_id').empty().append('<option value="" class="hidden">Choose Hour</option>').prop('disabled', true).addClass('opacity-50 !cursor-default');
+
+        $('#masa-aktif').text('-');
+        $('#input-batch-id').val('');
+        $('#input-batch-schedule-group').val('');
+        $('#input-batch-schedule-id').val('');
+
+        resetBatchDropdown();
+    }
 
     if (checked.length >= MAX_SELECTED) {
         document.querySelectorAll('#dropdownOptions input:not(:checked)').forEach(cb => cb.disabled = true);
@@ -79,7 +95,6 @@ function limitSelection(checkbox) {
         });
     }
 
-    updateButtonText();
     // gunakan nilai dari hidden input sebagai source-of-truth untuk feature id
     validatePurchase(document.getElementById('input-feature-id')?.value || dataFeatureId);
 }

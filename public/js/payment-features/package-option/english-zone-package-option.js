@@ -10,12 +10,13 @@ function validatePurchase(featureId) {
     const dayId = document.getElementById('days_id')?.value || "";
     const hourId = document.getElementById('hours_id')?.value || "";
     const levelId = document.getElementById('input-level-id')?.value || "";
+    const batchScheduleId = document.getElementById('input-batch-schedule-id')?.value || "";
 
     // split levelId jadi array level yang dipilih
     const selectedLevels = levelId ? levelId.split(',').filter(l => l.trim() !== "") : [];
 
     // jika featureId 3 (English Zone), semua dropdown harus diisi + jumlah level sesuai MAX_SELECTED
-    if (batchId && dayId && hourId && selectedLevels.length === MAX_SELECTED) {
+    if (batchId && dayId && hourId && batchScheduleId && selectedLevels.length === MAX_SELECTED) {
         ready = true;
     }
 
@@ -43,6 +44,7 @@ function packageOption(element, id) {
     let index = element.getAttribute('data-index');
 
     if (index == 1) {
+        $('#batch_id').empty().append('<option value="" class="hidden">Choose Batch</option>').prop('disabled', true).addClass('opacity-50 !cursor-default');
         MAX_SELECTED = 1;
     } else if (index == 2) {
         MAX_SELECTED = 2;

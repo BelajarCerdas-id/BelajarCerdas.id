@@ -1,3 +1,26 @@
+function resetBatchDropdown() {
+    const dataFeatureVariantId = $('#input-feature-variant-id').val();
+    if (!dataFeatureVariantId) return;
+
+    $.ajax({
+        url: '/english-zone/purchase/dropdown-batches/' + dataFeatureVariantId,
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            $('#batch_id').empty().append(
+                '<option value="" class="hidden">Choose Batch</option>'
+            );
+
+            $.each(data.data, function (i, item) {
+                $('#batch_id').append(`
+                    <option value="${item.id}" data-start-date="${item.startDate}" data-end-date="${item.endDate}">
+                        ${item.batch_name} - ${item.startDay} ${item.display_name}
+                    </option>
+                `);
+            });
+        }
+    });
+}
 
 $(document).ready(function () {
     var oldBatch = $('#batch_id').val();
@@ -21,27 +44,8 @@ $(document).ready(function () {
 
     // === Feature Variant Trigger Change -> Batch ===
     $('#input-feature-variant-id').on('change', function () {
-        const dataFeatureVariantId = $(this).val();
-        if (!dataFeatureVariantId) return;
-
-        $.ajax({
-            url: '/english-zone/purchase/dropdown-batches/' + dataFeatureVariantId,
-            type: 'GET',
-            dataType: 'json',
-            success: function (data) {
-                $('#batch_id').empty().append(
-                    '<option value="" class="hidden">Choose Batch</option>'
-                );
-
-                $.each(data.data, function (i, item) {
-                    $('#batch_id').append(`
-                    <option value="${item.id}" data-start-date="${item.startDate}" data-end-date="${item.endDate}">
-                        ${item.batch_name} - ${item.startDay} ${item.display_name}
-                    </option>
-                `);
-                });
-            }
-        });
+        // panggil function resetBatchDropdown
+        resetBatchDropdown();
     });
     // === Dropdown Batch -> Days ===
     $('#batch_id').on('change', function () {
@@ -66,6 +70,11 @@ $(document).ready(function () {
                     $('#days_id').empty().append(
                         '<option value="" class="hidden">Choose Day</option>'
                     );
+
+                    $('#hours_id').empty().append('<option value="" class="hidden">Choose Hour</option>').prop('disabled', true).addClass('opacity-50 !cursor-default');
+                    $('#input-batch-schedule-group').val('');
+                    $('#input-batch-schedule-id').val('');
+                    validatePurchase($('#input-feature-variant-id').val());
 
                     $.each(data, function (i, group) {
                         let days = group.days.join(' & ');
@@ -95,6 +104,10 @@ $(document).ready(function () {
         var batch_id = $('#batch_id').val();
         var level_id = $('#input-level-id').val();
         var feature_variant_id = $('#input-feature-variant-id').val();
+
+        // Reset hidden input & revalidate button
+        $('#input-batch-schedule-id').val('');
+        validatePurchase($('#input-feature-variant-id').val());
 
         if (group_id && batch_id) {
             $.ajax({
@@ -136,5 +149,7 @@ $(document).ready(function () {
         let batchScheduleId = selected.data('batch-schedule-id');
         // set nilai itu ke input #input-batch-schedule-id
         $('#input-batch-schedule-id').val(batchScheduleId);
+
+        validatePurchase($('#input-feature-variant-id').val());
     })
 });
