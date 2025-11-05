@@ -204,10 +204,10 @@ Route::fallback(function () {
         // paginate features list
         Route::get('/paginate-features-list', [FeatureManagementController::class, 'paginateFeaturesList'])->name('featuresManagement.paginate');
 
-    // TANYA HOLIDAY ACCESS MIDDLEWARE (untuk mencegah akses user pada fitur tanya di hari libur)
-    Route::middleware([TanyaHolidayAccess::class])->group(function () {
-        // TANYA MENTOR ACCESS MIDDLEWARE (untuk membatasi mentor yang tidak aktif pada fitur tanya)
-        Route::middleware([TanyaMentorAccess::class])->group(function () {
+    // MENTOR FEATURE ACCESS MIDDLEWARE (untuk membatasi mentor yang tidak aktif pada fitur tanya)
+    Route::middleware(['mentor.feature.access:1'])->group(function () {
+        // TANYA HOLIDAY ACCESS MIDDLEWARE (untuk mencegah akses user pada fitur tanya di hari libur)
+        Route::middleware([TanyaHolidayAccess::class])->group(function () {
             // VIEWS
             Route::get('/tanya', [TanyaController::class, 'index'])->name('tanya.index'); // page tanya (siswa & murid & mentor)
             Route::get('/view/{id}', [TanyaController::class, 'edit'])->name('tanya.edit'); // page jawab soal siswa (mentor)
@@ -246,6 +246,10 @@ Route::fallback(function () {
             // CLAIM COIN DAILY (student)
             Route::post('/tanya/claim-coin', [TanyaController::class, 'claimCoinDaily'])->name('tanya.claimCoinDaily');
         });
+    });
+
+    Route::middleware(['mentor.feature.access:3'])->group(function () {
+
     });
 
     // TANYA ACCESS CRUD (ADMINISTRATOR)
