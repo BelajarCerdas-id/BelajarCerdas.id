@@ -483,15 +483,18 @@ Route::fallback(function () {
     Route::get('/english-zone/management-student-batch-detail/non-school-partner/dropdown-hours/{batch_id}/{group_id}/{level_id}/{transaction_source}/{feature_variant_id}', [EnglishZoneController::class, 'dropdownHourStudentBatch'])->name('EZ.dropdownHourStudentBatch.school');
 
     // MENTOR SIDE
-    // views
-    Route::get('/english-zone-mentor', [EnglishZoneController::class, 'englishZoneMentorView'])->name('EZ.mentor.view');
-    Route::get('/english-zone-mentor/student-batch/detail/{featureVariantId}/{levelId}/{batchId}/{batchScheduleGroups}/{batchScheduleIds}/{studentIds}', [EnglishZoneController::class, 'mentorStudentBatchDetailView'])->name('EZ.mentorStudentBatchDetail.view');
-
-    // paginate
-    Route::get('/english-zone-mentor/student-batch/non-school-partner/paginate', [EnglishZoneController::class, 'paginateMentorStudentBatchNonSchoolPartner'])->name('EZ.mentorStudentBatch.paginate.nonSchool');
-    Route::get('/english-zone-mentor/student-batch/school-partner/paginate', [EnglishZoneController::class, 'paginateMentorStudentBatchSchoolPartner'])->name('EZ.mentorStudentBatch.paginate.school');
-    Route::get('/english-zone-mentor/student-batch-detail/{featureVariantId}/{levelId}/{batchId}/{batchScheduleGroups}/{batchScheduleIds}/{studentIds}/paginate', [EnglishZoneController::class, 'paginateMentorStudentBatchDetail'])->name('EZ.mentorStudentBatchDetail.paginate');
-    Route::get('/english-zone-mentor/student-batch-detail/materi/{levelId}/{studentIds}/{activeLevel}/paginate', [EnglishZoneController::class, 'paginateMentorStudentBatchDetailMateri'])->name('EZ.mentorStudentBatchDetailMateri.paginate');
+    // mentor feature access middleware (untuk membatasi mentor yang tidak aktif pada fitur english zone)
+    Route::middleware(['mentor.feature.access:3'])->group(function () {
+        // views
+        Route::get('/english-zone-mentor', [EnglishZoneController::class, 'englishZoneMentorView'])->name('EZ.mentor.view');
+        Route::get('/english-zone-mentor/student-batch/detail/{featureVariantId}/{levelId}/{batchId}/{batchScheduleGroups}/{batchScheduleIds}/{studentIds}', [EnglishZoneController::class, 'mentorStudentBatchDetailView'])->name('EZ.mentorStudentBatchDetail.view');
+    
+        // paginate
+        Route::get('/english-zone-mentor/student-batch/non-school-partner/paginate', [EnglishZoneController::class, 'paginateMentorStudentBatchNonSchoolPartner'])->name('EZ.mentorStudentBatch.paginate.nonSchool');
+        Route::get('/english-zone-mentor/student-batch/school-partner/paginate', [EnglishZoneController::class, 'paginateMentorStudentBatchSchoolPartner'])->name('EZ.mentorStudentBatch.paginate.school');
+        Route::get('/english-zone-mentor/student-batch-detail/{featureVariantId}/{levelId}/{batchId}/{batchScheduleGroups}/{batchScheduleIds}/{studentIds}/paginate', [EnglishZoneController::class, 'paginateMentorStudentBatchDetail'])->name('EZ.mentorStudentBatchDetail.paginate');
+        Route::get('/english-zone-mentor/student-batch-detail/materi/{levelId}/{studentIds}/{activeLevel}/paginate', [EnglishZoneController::class, 'paginateMentorStudentBatchDetailMateri'])->name('EZ.mentorStudentBatchDetailMateri.paginate');
+    });
 
     // ROUTES SCHOOL PARTNER
     // school subscription
