@@ -2296,4 +2296,413 @@ class EnglishZoneController extends Controller
         return view('Features.english-zone.mentor.english-zone-mentor');
     }
 
+    public function paginateMentorStudentBatchNonSchoolPartner(Request $request)
+    {
+        $today = now()->format('Y-m-d');
+
+        $user = Auth::user();
+
+        $studentBatch = EnglishZoneStudentBatch::with([
+            'EnglishZoneLevel',
+            'EnglishZoneBatchSchedule',
+            'FeatureSubscriptionHistory.Transactions',
+        ])->whereHas('FeatureSubscriptionHistory.Transactions', function ($q) {
+            $q->where('feature_id', 3)->where('transaction_status', 'Berhasil')->where('transaction_source', 'non_school_partner');
+        })->whereHas('FeatureSubscriptionHistory', function ($q) use ($today) { 
+            $q->whereDate('end_date', '>=', $today)->where('subscription_status', 'aktif'); 
+        })->where('mentor_id', $user->id)->get();
+        
+        $studentBatchGroup = $studentBatch->groupBy(function ($item) use($user) {
+            $variantId = $item->FeatureSubscriptionHistory->Transactions->feature_variant_id;
+            $variantName = $item->FeatureSubscriptionHistory->Transactions->FeaturePrices->variant_name;
+            $level = $item->EnglishZoneLevel->id;
+            $batch = $item->EnglishZoneBatchSchedule->EnglishZoneBatch->id;
+            $batchScheduleGroup = $item->EnglishZoneBatchSchedule->batch_schedule_group;
+            $day = $item->EnglishZoneBatchSchedule->schedule_time_group;
+            $startTime = $item->EnglishZoneBatchSchedule->start_time;
+            $endTime = $item->EnglishZoneBatchSchedule->end_time;
+
+            if ($variantId == 10 || $variantName == 'Langganan 3 Bulan') {
+                    return implode('|', [$variantId, $level, $batch, $batchScheduleGroup, $day, $startTime, $endTime]);
+            } else {
+                // Default: group by variant saja
+                return implode('|', [$variantId, $batch, $batchScheduleGroup, $day, $startTime, $endTime]);
+            }
+            
+        })->map(function ($items) {
+            return [
+                $startTime = $items->first()->EnglishZoneBatchSchedule->start_time,
+                $endTime = $items->first()->EnglishZoneBatchSchedule->end_time,
+                
+                'variant_id' => $items->first()->FeatureSubscriptionHistory->Transactions->FeaturePrices->id,
+                'variant_name' => $items->first()->FeatureSubscriptionHistory->Transactions->FeaturePrices->variant_name,
+                'level_ids' => $items->pluck('EnglishZoneLevel.id')->unique()->values()->toArray(),
+                'level_names' => $items->pluck('EnglishZoneLevel.level_name')->unique()->values()->toArray(),
+                'batch_ids' => $items->pluck('EnglishZoneBatchSchedule.EnglishZoneBatch.id')->unique()->values()->toArray(),
+                'batch_names' => $items->pluck('EnglishZoneBatchSchedule.EnglishZoneBatch.batch_name')->unique()->values()->toArray(),
+                'days_of_week' => $items->pluck('EnglishZoneBatchSchedule.day_of_week')->unique()->values()->toArray(),
+                'hours' => $startTime . ' - ' . $endTime,
+                'batch_schedule_groups' => $items->pluck('EnglishZoneBatchSchedule.batch_schedule_group')->unique()->values()->toArray(),
+                'batch_schedule_ids' => $items->pluck('EnglishZoneBatchSchedule.id')->unique()->values()->toArray(),
+                'count_students' => $items->pluck('student_id')->unique()->count(),
+                'student_batch_ids' => $items->pluck('id')->unique()->values()->toArray(),
+                'student_ids' => $items->pluck('student_id')->unique()->values()->toArray(),
+                'mentor_ids' => $items->pluck('mentor_id')->unique()->values(),
+                'start_date' => $items->first()->FeatureSubscriptionHistory->start_date,
+                'end_date' => $items->first()->FeatureSubscriptionHistory->end_date,
+            ];
+        })
+        ->filter(); // untuk hapus group yang null
+
+        // Pagination manual
+        $page = $request->get('page', 1);
+        $perPage = 5;
+        $offset = ($page - 1) * $perPage;
+
+        $pagedData = $studentBatchGroup->slice($offset, $perPage)->values();
+
+        $paginated = new LengthAwarePaginator(
+            $pagedData,
+            $studentBatchGroup->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
+        $getStudentIds = implode(',', $studentBatch->pluck('student_id')->unique()->toArray());
+
+        return response()->json([
+            'data' => $paginated->values(),
+            'links' => (string) $paginated->links(),
+            'getStudentIds' => $getStudentIds,
+            'studentBatchDetail' => '/english-zone-mentor/student-batch/detail/:featureVariantId/:levelId/:batchId/:batchScheduleGroups/:batchScheduleIds/:studentIds',
+        ]);
+    }
+
+    public function paginateMentorStudentBatchSchoolPartner(Request $request)
+    {
+        $today = now()->format('Y-m-d');
+
+        $user = Auth::user();
+
+        $studentBatchQuery = EnglishZoneStudentBatch::with([
+            'EnglishZoneLevel',
+            'EnglishZoneBatchSchedule',
+            'FeatureSubscriptionHistory.Transactions',
+            'Student.StudentProfiles', // tambahkan biar eager load sekolah juga
+        ])->whereHas('FeatureSubscriptionHistory.Transactions', function ($q) {
+            $q->where('feature_id', 3)
+            ->where('transaction_status', 'Berhasil')
+            ->where('transaction_source', 'school_partner');
+        })->whereHas('FeatureSubscriptionHistory', function ($q) use ($today) {
+            $q->whereDate('end_date', '>=', $today)
+            ->where('subscription_status', 'aktif');
+        })->where('mentor_id', $user->id);
+
+        // 🔍 Filter sekolah DI SINI (masih query builder)
+        if ($request->filled('search_school_partner')) {
+            $search = strtolower($request->search_school_partner);
+            $studentBatchQuery->whereHas('Student.StudentProfiles', function ($q) use ($search) {
+                $q->whereRaw('LOWER(sekolah) LIKE ?', ["%{$search}%"]);
+            });
+        }
+
+        // Baru ambil hasilnya
+        $studentBatch = $studentBatchQuery->get();
+
+        $studentBatchGroup = $studentBatch->groupBy(function ($item) {
+            $variantId = $item->FeatureSubscriptionHistory->Transactions->feature_variant_id;
+            $variantName = $item->FeatureSubscriptionHistory->Transactions->FeaturePrices->variant_name;
+            $level = $item->EnglishZoneLevel->id;
+            $batch = $item->EnglishZoneBatchSchedule->EnglishZoneBatch->id;
+            $batchScheduleGroup = $item->EnglishZoneBatchSchedule->batch_schedule_group;
+            $day = $item->EnglishZoneBatchSchedule->schedule_time_group;
+            $startTime = $item->EnglishZoneBatchSchedule->start_time;
+            $endTime = $item->EnglishZoneBatchSchedule->end_time;
+            $schoolPartnerId = $item->Student->StudentProfiles->sekolah;
+
+            if ($variantId == 10 || $variantName == 'Langganan 3 Bulan') {
+                    return implode('|', [$variantId, $level, $batch, $batchScheduleGroup, $day, $startTime, $endTime, $schoolPartnerId]);
+            } else {
+                // Default: group by variant saja
+                return implode('|', [$variantId, $batch, $batchScheduleGroup, $day, $startTime, $endTime, $schoolPartnerId]);
+            }
+
+        })->map(function ($items) {
+            return [
+                $startTime = $items->first()->EnglishZoneBatchSchedule->start_time,
+                $endTime = $items->first()->EnglishZoneBatchSchedule->end_time,
+                
+                'variant_id' => $items->first()->FeatureSubscriptionHistory->Transactions->FeaturePrices->id,
+                'variant_name' => $items->first()->FeatureSubscriptionHistory->Transactions->FeaturePrices->variant_name,
+                'level_ids' => $items->pluck('EnglishZoneLevel.id')->unique()->values()->toArray(),
+                'level_names' => $items->pluck('EnglishZoneLevel.level_name')->unique()->values()->toArray(),
+                'batch_ids' => $items->pluck('EnglishZoneBatchSchedule.EnglishZoneBatch.id')->unique()->values()->toArray(),
+                'batch_names' => $items->pluck('EnglishZoneBatchSchedule.EnglishZoneBatch.batch_name')->unique()->values()->toArray(),
+                'days_of_week' => $items->pluck('EnglishZoneBatchSchedule.day_of_week')->unique()->values()->toArray(),
+                'hours' => $startTime . ' - ' . $endTime,
+                'batch_schedule_groups' => $items->pluck('EnglishZoneBatchSchedule.batch_schedule_group')->unique()->values()->toArray(),
+                'batch_schedule_ids' => $items->pluck('EnglishZoneBatchSchedule.id')->unique()->values()->toArray(),
+                'count_students' => $items->pluck('student_id')->unique()->count(),
+                'student_batch_ids' => $items->pluck('id')->unique()->values()->toArray(),
+                'student_ids' => $items->pluck('student_id')->unique()->values()->toArray(),
+                'mentor_ids' => $items->pluck('mentor_id')->unique()->values(),
+                'school' => $items->first()->Student->StudentProfiles->sekolah,
+                'start_date' => $items->first()->FeatureSubscriptionHistory->start_date,
+                'end_date' => $items->first()->FeatureSubscriptionHistory->end_date,
+            ];
+        })
+        ->filter(); // untuk hapus group yang null
+
+        // Pagination manual
+        $page = (int) $request->get('page', 1);
+        $perPage = 5;
+        $offset = ($page - 1) * $perPage;
+
+        $pagedData = $studentBatchGroup->slice($offset, $perPage)->values();
+
+        $paginated = new LengthAwarePaginator(
+            $pagedData,
+            $studentBatchGroup->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
+        $getStudentIds = implode(',', $studentBatch->pluck('student_id')->unique()->toArray());
+
+        return response()->json([
+            'data' => $paginated->values(),
+            'links' => $paginated->isEmpty() ? '' : (string) $paginated->links(),
+            'getStudentIds' => $getStudentIds,
+            'studentBatchDetail' => '/english-zone-mentor/student-batch/detail/:featureVariantId/:levelId/:batchId/:batchScheduleGroups/:batchScheduleIds/:studentIds',
+        ]);
+    }
+
+    public function mentorStudentBatchDetailView($featureVariantId, $levelId, $batchId, $batchScheduleGroups, $batchScheduleIds, $studentIds)
+    {
+        return view('Features.english-zone.mentor.english-zone-mentor-student-batch-detail', compact('featureVariantId', 'levelId', 
+        'batchId', 'batchScheduleGroups', 'batchScheduleIds', 'studentIds'));
+    }
+
+    public function paginateMentorStudentBatchDetail($featureVariantId, $levelId, $batchId, $batchScheduleGroups, $batchScheduleIds, $studentIds)
+    {
+        // Ambil tanggal hari ini dalam format YYYY-MM-DD
+        $today = Carbon::now()->format('Y-m-d');
+
+        // Ambil data batch berdasarkan batchId
+        $getBatch = EnglishZoneBatch::where('id', $batchId)->first();
+
+        // Ambil data level berdasarkan levelId (bisa lebih dari satu ID)
+        $getLevels = EnglishZoneLevel::whereIn('id', explode(',', $levelId))->get();
+
+        // Ubah semua parameter string menjadi array untuk query whereIn()
+        $studentIds = explode(',', $studentIds);
+        $levelIds = explode(',', $levelId);
+        $featureVariantId = explode(',', $featureVariantId);
+        $batchScheduleIds = explode(',', $batchScheduleIds);
+
+        // 🔹 Ambil daftar siswa dalam batch berdasarkan berbagai relasi dan filter
+        $data = EnglishZoneStudentBatch::with(['Student.StudentProfiles', 'Mentor.MentorProfiles', 'FeatureSubscriptionHistory.Transactions.FeaturePrices', 'EnglishZoneLevel',
+        'EnglishZoneBatchSchedule','EnglishZoneBatchSchedule.EnglishZoneBatch'])
+        // Filter hanya data dengan transaksi yang sukses & variant yang cocok
+        ->whereHas('FeatureSubscriptionHistory.Transactions', function ($query) use ($featureVariantId) {
+            $query->where('transaction_status', 'Berhasil')
+                ->where('feature_variant_id', $featureVariantId);
+        })
+        // Filter hanya subscription yang masih aktif dan belum lewat tanggalnya
+        ->whereHas('FeatureSubscriptionHistory', function ($query) use ($today) {
+            $query->where('end_date', '>=', $today)->where('subscription_status', 'aktif');
+        })
+        // Filter berdasarkan batch yang sama dan grup jadwal tertentu
+        ->whereHas('EnglishZoneBatchSchedule', function ($query) use ($batchId, $batchScheduleGroups) {
+            $query->where('batch_id', $batchId)->where('batch_schedule_group', $batchScheduleGroups);
+        })->whereIn('batch_schedule_id', $batchScheduleIds)->whereIn('level_id', $levelIds)
+        ->whereIn('student_id', $studentIds)->get()->groupBy('student_id');
+
+        // Ambil daftar jadwal batch (hari, jam mulai, jam selesai)
+        $batchSchedule = EnglishZoneBatchSchedule::with(['EnglishZoneBatch'])
+            ->whereIn('id', $batchScheduleIds)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'day_of_week' => $item->day_of_week,
+                    'start_time' => $item->start_time,
+                    'end_time' => $item->end_time,
+                ];
+            });
+
+        // Ambil semua subscription yang sudah lewat masa aktifnya (end_date < hari ini)
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        // Jika ada subscription yang kadaluwarsa, ubah statusnya jadi tidak_aktif
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
+        // Kembalikan hasil dalam bentuk JSON untuk frontend
+        return response()->json([
+            'data' => $data->values(),
+            'batchSchedules' => $batchSchedule->values(),
+            'getBatch' => $getBatch,
+            'getLevels' => $getLevels
+        ]);
+    }
+
+    public function paginateMentorStudentBatchDetailMateri($levelId, $studentIds, $activeLevel)
+    {
+        // Ambil tanggal hari ini dalam format YYYY-MM-DD
+        $date = Carbon::now()->format('Y-m-d');
+
+        // Ambil data user yang sedang login (mentor)
+        $user = Auth::user();
+
+        // Pisahkan string studentIds (misal "1,2,3") menjadi array [1,2,3]
+        $explodeStudentIds = explode(',', $studentIds);
+
+        // Ambil semua batch yang terkait dengan level aktif dan mentor saat ini
+        $studentBatch = EnglishZoneStudentBatch::whereHas('FeatureSubscriptionHistory', function ($query) use ($date) {
+            $query->where('end_date', '>=', $date)->where('subscription_status', 'aktif');
+        })->where('level_id', $activeLevel)->whereIn('student_id', $explodeStudentIds)->where('mentor_id', $user->id)->get();
+
+        // Ambil tanggal mulai dan selesai dari level (berdasarkan batch pertama)
+        $levelStartDate = Carbon::parse($studentBatch->first()->level_start_date);
+        $levelEndDate = Carbon::parse($studentBatch->first()->level_end_date);
+
+        // Ambil semua batch_schedule_id dari studentBatch (jadwal tiap siswa)
+        $batchScheduleIds = $studentBatch->pluck('batch_schedule_id')->toArray();
+
+        // Ambil daftar hari dari jadwal (misal ['Senin', 'Rabu'])
+        $batchSchedules = EnglishZoneBatchSchedule::whereIn('id', $batchScheduleIds)->pluck('day_of_week')->toArray();
+
+        // Urutkan daftar hari sesuai urutan umum
+        $order = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+        usort($batchSchedules, fn($a, $b) => array_search($a, $order) <=> array_search($b, $order));
+
+        // Ambil semua materi berdasarkan level aktif
+        $materiList = EnglishZoneMateri::with('EnglishZoneLevel')
+            ->where('level_id', $activeLevel)
+            ->get()
+            ->map(function ($item) {
+                // Ekstrak ID video YouTube jika ada link-nya
+                if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $item['video_materi'], $matches)) {
+                    $item['video_id'] = $matches[1] ?? $matches[2]; // simpan hanya ID video
+                } else {
+                    $item['video_id'] = null; // tidak ada video YouTube
+                }
+                return $item;
+            });
+
+        // Ambil daftar Zoom berdasarkan level & mentor
+        $zoomList = EnglishZoneZoom::with('EnglishZoneBatchSchedule')
+            ->where('level_id', $activeLevel)
+            ->where('mentor_id', $user->id)
+            ->get();
+
+        // Buat peta sesi Zoom agar mudah diakses berdasarkan sesi
+        $zoomMap = [];
+        foreach ($zoomList as $zoom) {
+            $zoomMap[$zoom->session] = [
+                'link_zoom' => $zoom->link_zoom,
+                'day_of_week' => $zoom->EnglishZoneBatchSchedule?->day_of_week
+            ];
+        }
+
+        // Buat daftar materi lengkap dengan tanggal dan link Zoom
+        $materiWithZoom = $materiList->map(function ($materi) use ($levelStartDate, $levelEndDate, $batchSchedules, $zoomMap) {
+            $session = $materi->session; // nomor sesi materi
+            $daysCount = count($batchSchedules); // jumlah hari dalam seminggu (misal 2 hari: Senin & Rabu)
+            $weekOffset = floor(($session - 1) / $daysCount); // minggu ke berapa
+            $dayIndex = ($session - 1) % $daysCount; // indeks hari ke berapa (0 untuk Senin, 1 untuk Rabu, dst)
+
+            // Ambil nama hari dari daftar jadwal
+            $dayName = $batchSchedules[$dayIndex];
+
+            // Daftar offset hari (untuk hitung selisih hari)
+            $dayOffsets = [
+                'Senin' => 0,
+                'Selasa' => 1,
+                'Rabu' => 2,
+                'Kamis' => 3,
+                'Jumat' => 4,
+                'Sabtu' => 5,
+                'Minggu' => 6,
+            ];
+
+            // Ambil hari pertama batch (misal: Senin)
+            $firstDayName = $batchSchedules[0];
+            $firstDayOffset = $dayOffsets[$firstDayName] ?? 0;
+            $targetOffset = $dayOffsets[$dayName] ?? 0;
+
+            // Temukan tanggal pertama kali hari "Senin" muncul setelah level_start_date
+            $firstDay = $levelStartDate->copy();
+            while ($firstDay->dayOfWeekIso != ($firstDayOffset + 1)) {
+                $firstDay->addDay();
+            }
+
+            // Hitung tanggal sesi berdasarkan minggu ke-n dan perbedaan hari
+            $sessionDate = $firstDay->copy()->addWeeks($weekOffset)->addDays($targetOffset - $firstDayOffset);
+
+            // Jika tanggal sesi melebihi tanggal akhir level, jangan ditampilkan
+            if ($sessionDate->greaterThan($levelEndDate)) {
+                return null;
+            }
+
+            // Tambahkan data tambahan ke objek materi
+            $materi->zoom_link = $zoomMap[$session]['link_zoom'] ?? null;
+            $materi->day_of_week = $zoomMap[$session]['day_of_week'] ?? $dayName;
+            $materi->session_date = $sessionDate->translatedFormat('d F Y'); // format tanggal misal "05 November 2025"
+            $materi->session_date_check = $sessionDate->translatedFormat('Y-m-d'); // format ISO untuk perbandingan
+            $materi->level_start_date = $levelStartDate->translatedFormat('Y-m-d');
+            $materi->level_end_date = $levelEndDate->translatedFormat('Y-m-d');
+
+            return $materi;
+        });
+
+        // Hapus materi yang null (karena sesi lewat tanggal akhir level)
+        $materiWithZoom = $materiWithZoom->filter(fn($m) => $m !== null)->values();
+
+        // Ambil data level (bisa lebih dari satu) berdasarkan ID yang dikirim
+        $getLevels = EnglishZoneLevel::whereIn('id', explode(',', $levelId))->get();
+
+        // Kembalikan hasil sebagai JSON ke frontend
+        return response()->json([
+            'data' => $materiWithZoom,
+            'getLevels' => $getLevels,
+            'date' => $date,
+            'studentBatch' => $studentBatch
+        ]);
+    }
+
+
 }
