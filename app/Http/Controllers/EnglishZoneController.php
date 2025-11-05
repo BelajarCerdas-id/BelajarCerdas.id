@@ -1667,6 +1667,20 @@ class EnglishZoneController extends Controller
 
     public function dropdownHoursPurchase($batch_id, $group_id, $level_id, $feature_variant_id)
     {
+        $today = Carbon::now()->format('Y-m-d');
+
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
         $schedules = EnglishZoneBatchSchedule::where('batch_id', $batch_id)
             ->where('batch_schedule_group', $group_id)
             ->get();
@@ -1690,6 +1704,8 @@ class EnglishZoneController extends Controller
             })->whereHas('FeatureSubscriptionHistory.Transactions', function ($q) use ($feature_variant_id) {
                 $q->where('transaction_status', 'Berhasil')->where('feature_variant_id', $feature_variant_id)
                 ->where('transaction_source', 'non_school_partner');
+            })->whereHas('FeatureSubscriptionHistory', function ($q) use ($today) {
+                $q->whereDate('end_date', '>=', $today)->where('subscription_status', 'aktif');
             })->get()
             ->groupBy(function ($item) {
                 return $item->EnglishZoneBatchSchedule->schedule_time_group;
