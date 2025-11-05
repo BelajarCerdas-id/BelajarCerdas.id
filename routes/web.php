@@ -18,6 +18,7 @@ use App\Http\Controllers\PaymentFeaturesController;
 use App\Http\Controllers\SchoolPartnerController;
 use App\Http\Controllers\SoalPembahasanController;
 use App\Http\Controllers\webController; // data biasa seperti foreach (tidak dari database) dan lain lain (jika ada selain foreach)
+use App\Http\Middleware\FeaturePurchaseStudentOnly;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\TanyaMentorAccess;
 
@@ -72,11 +73,14 @@ Route::fallback(function () {
     // ROUTE LOGOUT
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // ROUTE PAYMENT FEATURES VIEW
-    Route::get('/pembayaran-fitur/{nama_fitur}', [PaymentFeaturesController::class, 'paymentFeaturesView'])->name('paymentFeaturesView');
-
-    // ROUTE FEATURES STORE
-    Route::get('/pembelian-fitur', [PaymentFeaturesController::class, 'featuresStore'])->name('featuresStore');
+    // MIDDLEWARE ACCESS FEATURE PURCHASE VIEW
+    Route::middleware([FeaturePurchaseStudentOnly::class])->group(function () {
+        // ROUTE PAYMENT FEATURES VIEW
+        Route::get('/pembayaran-fitur/{nama_fitur}', [PaymentFeaturesController::class, 'paymentFeaturesView'])->name('paymentFeaturesView');
+    
+        // ROUTE FEATURES STORE
+        Route::get('/pembelian-fitur', [PaymentFeaturesController::class, 'featuresStore'])->name('featuresStore');
+    });
 
     // ROUTES CHECKOUT FEATURES
     // Coin checkout tanya

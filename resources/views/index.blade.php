@@ -1,5 +1,16 @@
 <x-navbar></x-navbar>
 
+<!-- ALERT TANYA ACCESS UNTUK ROLE SELAIN SISWA -->
+@if (session('error-access-feature-purchase-view'))
+    <script>
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "{{ session('error-access-feature-purchase-view') }}",
+        });
+    </script>
+@endif
+
 <main>
     <!---- jumbotron dekstop ----->
     <section class="hidden lg:grid grid-cols-12 relative">
