@@ -349,6 +349,8 @@ class EnglishZoneHandler
                 })
                 ->whereHas('Student.StudentProfiles', function ($q) use ($row) {
                     $q->where('sekolah', $row['nama_sekolah']);
+                })->whereHas('FeatureSubscriptionHistory', function ($q) use ($today) {
+                    $q->whereDate('end_date', '>=', $today)->where('subscription_status', 'aktif');
                 })
                 ->pluck('student_id')
                 ->unique()
