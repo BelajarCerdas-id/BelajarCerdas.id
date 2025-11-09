@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('administrator_id')->constrained('user_accounts');
             $table->string('level_name');
+            $table->string('lesson_plan');
             $table->timestamps();
         });
     }

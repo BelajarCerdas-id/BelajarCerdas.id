@@ -12,6 +12,7 @@ class EnglishZoneLevel extends Model
     protected $fillable = [
         'administrator_id',
         'level_name',
+        'lesson_plan',
     ];
 
     public function UserAccount()
@@ -27,11 +28,6 @@ class EnglishZoneLevel extends Model
     public function EnglishZoneMateri()
     {
         return $this->hasOne(EnglishZoneMateri::class, 'level_id');
-    }
-
-    public function EnglishZoneUnit()
-    {
-        return $this->hasOne(EnglishZoneUnit::class, 'level_id');
     }
 
     public function EnglishZoneBatch()

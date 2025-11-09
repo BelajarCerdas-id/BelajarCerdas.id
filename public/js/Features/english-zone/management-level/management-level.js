@@ -9,37 +9,80 @@ function paginateManagementLevel(page = 1) {
             $('#table-list-management-level').empty(); // Clear previous entries
             $('.pagination-container-management-level').empty(); // Clear previous pagination links
 
+            function getFileIcon(filename) {
+                if (!filename) return;
+
+                const extension = filename.split('.').pop().toLowerCase();
+
+                switch (extension) {
+                    case 'pdf':
+                        return '<i class="fa-solid fa-file-pdf text-red-600"></i>';
+                    default:
+                        return '-';
+                }
+            }
+
             if (data.data.length > 0) {
                 $.each(data.data, function (index, item) {
 
-                    $('#table-list-management-level').append(`
-                    <tr class="text-xs">
-                        <td class="td-table !text-black !text-center">${index + 1}</td>
-                        <td class="td-table !text-black !text-center">${item.level_name}</td>
-                        <td class="border text-center border-gray-300">
-                            <div class="dropdown dropdown-left">
-                                <div tabindex="0" role="button">
-                                    <i class="fa-solid fa-ellipsis-vertical cursor-pointer"></i>
+                    const lessonPlan = getFileIcon(item.lesson_plan);
+
+                    const modal = `
+                        <dialog id="my_modal_3-${item.id}-${item.lesson_plan}" class="modal">
+                            <div class="modal-box bg-white max-w-6xl max-h-[600px]">
+                                <div class="flex justify-center w-full mb-4">
+                                    <span class="text-2xl font-bold opacity-70">Lesson Plan</span>
                                 </div>
-                                <ul tabindex="0"
-                                    class="dropdown-content menu bg-base-100 rounded-box z-1 w-max p-2 shadow-sm z-[9999]">
-                                    <li class="text-xs">
-                                        <a href="#" class="btn-edit-level" data-level-id="${item.id}" data-level='${JSON.stringify(item)}'>
-                                            <i class="fa-solid fa-pen text-[#4189e0]"></i>
-                                            Edit Level
-                                        </a>
-                                    </li>
-                                    <li class="text-xs">
-                                        <a href="#" class="btn-delete-level text-red-600" data-level-id="${item.id}">
-                                            <i class="fa-solid fa-trash text-red-600"></i>
-                                            Delete Level
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                `);
+                                    <div class="border max-w-6xl h-[500px] flex justify-start">
+                                        <div class="w-full h-full">
+                                            <iframe class="w-full h-full"
+                                                src="/english-zone-materi/${item.lesson_plan}"
+                                                    frameborder="0" allowfullscreen>
+                                            </iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                            <form method="dialog" class="modal-backdrop">
+                                <button>close</button>
+                            </form>
+                        </dialog>
+                    `;
+
+                    $('#lesson-plan-modals').append(modal);
+
+                    $('#table-list-management-level').append(`
+                        <tr class="text-xs">
+                            <td class="td-table !text-black !text-center">${index + 1}</td>
+                            <td class="td-table !text-black !text-center">${item.level_name}</td>
+                            <td class="td-table !text-black !text-center">
+                                <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.lesson_plan}">
+                                    ${lessonPlan}
+                                </a>
+                            </td>
+                            <td class="border text-center border-gray-300">
+                                <div class="dropdown dropdown-left">
+                                    <div tabindex="0" role="button">
+                                        <i class="fa-solid fa-ellipsis-vertical cursor-pointer"></i>
+                                    </div>
+                                    <ul tabindex="0"
+                                        class="dropdown-content menu bg-base-100 rounded-box z-1 w-max p-2 shadow-sm z-[9999]">
+                                        <li class="text-xs">
+                                            <a href="#" class="btn-edit-level" data-level-id="${item.id}" data-level='${JSON.stringify(item)}'>
+                                                <i class="fa-solid fa-pen text-[#4189e0]"></i>
+                                                Edit Level
+                                            </a>
+                                        </li>
+                                        <li class="text-xs">
+                                            <a href="#" class="btn-delete-level text-red-600" data-level-id="${item.id}">
+                                                <i class="fa-solid fa-trash text-red-600"></i>
+                                                Delete Level
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    `);
                 });
 
                 // Append pagination links
@@ -67,6 +110,17 @@ function bindPaginationLinks() {
         paginateManagementLevel(page); // Ambil data yang difilter untuk halaman yang ditentukan
     });
 }
+
+// show lesson plan
+$(document).off('click', '.btn-materi').on('click', '.btn-materi', function (e) {
+    e.preventDefault();
+    const materiId = $(this).data('materi-id');
+    const materi = $(this).data('materi');
+    const modal = document.getElementById('my_modal_3-' + materiId + '-' + materi);
+    if (modal) {
+        modal.showModal();
+    }
+});
 
 // Form Action Insert level
 $('#submit-button').on('click', function (e) {
@@ -112,6 +166,17 @@ $('#submit-button').on('click', function (e) {
 
             $('#management-level-form')[0].reset();
 
+            // reset form (upload file)
+            $('.file-wrapper').each(function () {
+                let prefix = $(this).data('prefix');
+                $('#textPreview-' + prefix).text('');
+                $('#textSize-' + prefix).text('');
+                $('#textPages-' + prefix).text('');
+                $('#textCircle-' + prefix).html('');
+                $('#pdfLogo-' + prefix).attr('src', '').css('display', '');
+                $('#fileArrowUp-' + prefix).show();
+            })
+
             paginateManagementLevel();
         },
         error: function (xhr) {
@@ -140,11 +205,11 @@ $(document).off('click', '.btn-edit-level').on('click', '.btn-edit-level', funct
     const levelId = level.id;
 
     // set id ke form
-    $('#edit-level-form').data('level-id', levelId);
+    $('#edit-management-level-form').data('level-id', levelId);
 
     // Reset error
-    $('#edit-level-form .text-red-500').text('');
-    $('#edit-level-form input, #edit-level-form select').removeClass('border-red-400 border');
+    $('#edit-management-level-form .text-red-500').text('');
+    $('#edit-management-level-form input, #edit-management-level-form select').removeClass('border-red-400 border');
 
     // isi semua field otomatis
     $('#level_name_id').val(level.level_name);
@@ -156,23 +221,26 @@ $(document).off('click', '.btn-edit-level').on('click', '.btn-edit-level', funct
 
 
 // edit level
-$('#edit-level-form').on('submit', function (e) {
+$('#edit-management-level-form').on('submit', function (e) {
     e.preventDefault();
 
     const levelId = $(this).data('level-id');
-    const formData = $(this).serialize(); // otomatis ambil semua field input/select di form
+    const form = $('#edit-management-level-form')[0]; // ambil DOM Form-nya
+    const formData = new FormData(form); // buat FormData dari form, BUKAN dari tombol
 
     // kosongkan error
-    $('#edit-level-form .text-red-500').text('');
-    $('#edit-level-form input').removeClass('border-red-400 border');
+    $('#edit-management-level-form .text-red-500').text('');
+    $('#edit-management-level-form input').removeClass('border-red-400 border');
 
     $.ajax({
         url: `/english-zone/management-levels/edit/${levelId}`,
-        method: 'PUT',
+        method: 'POST',
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         data: formData,
+        processData: false,
+        contentType: false,
         success: function (response) {
             document.getElementById('my_modal_1').close();
 
@@ -197,6 +265,19 @@ $('#edit-level-form').on('submit', function (e) {
             setTimeout(() => $('#alertSuccess').remove(), 3000);
             $('#btnClose').on('click', () => $('#alertSuccess').remove());
 
+            $('#edit-management-level-form')[0].reset();
+
+            // reset form (upload file)
+            $('.file-wrapper-edit').each(function () {
+                let prefix = $(this).data('prefix-edit');
+                $('#textPreview-' + prefix).text('');
+                $('#textSize-' + prefix).text('');
+                $('#textPages-' + prefix).text('');
+                $('#textCircle-' + prefix).html('');
+                $('#pdfLogo-' + prefix).attr('src', '').css('display', '');
+                $('#fileArrowUp-' + prefix).show();
+            })
+
             paginateManagementLevel();
         },
         error: function (xhr) {
@@ -205,10 +286,10 @@ $('#edit-level-form').on('submit', function (e) {
 
                 $.each(errors, function (field, messages) {
                     // Tampilkan pesan error
-                    $('#edit-level-form').find(`#error-${field}`).text(messages[0]);
+                    $('#edit-management-level-form').find(`#error-${field}`).text(messages[0]);
 
                     // Tambahkan style error ke input (jika ada)
-                    $('#edit-level-form').find(`[name="${field}"]`).addClass('border-red-400 border');
+                    $('#edit-management-level-form').find(`[name="${field}"]`).addClass('border-red-400 border');
                 })
             }
         }

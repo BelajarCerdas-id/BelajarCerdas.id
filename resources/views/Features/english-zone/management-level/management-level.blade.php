@@ -13,28 +13,75 @@
             <div id="alert-success-delete-level"></div>
 
             <main class="bg-white shadow-lg border h-max rounded-lg">
+                <div id="lesson-plan-modals"></div>
                 <!--- form action insert level --->
                 <section class="p-6">
                     <form id="management-level-form" enctype="multipart/form-data">
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
-                            <div class="w-full">
-                                <label class="text-sm">Nama Level<sup class="text-red-500 pl-1">&#42;</sup></label>
-                                <div class="flex relative max-w-lg mt-2 gap-2">
-                                    <div class="flex flex-col w-full">
-                                        <input type="text" id="level_name" name="level_name"
-                                            class="w-full bg-white shadow-lg h-11 border-gray-200 border outline-none rounded-full text-xs px-2
-                                                    focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]"
-                                            value="" placeholder="Masukkan Nama Level">
-                                        <span id="error-level_name"
-                                            class="text-red-500 text-xs mt-1 font-bold pt-[2px]"></span>
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                            <!-- Level Name -->
+                            <div class="flex flex-col">
+                                <label for="level_name" class="text-sm font-semibold text-gray-700 mb-1">
+                                    Nama Level
+                                    <sup class="text-red-500">&#42;</sup>
+                                </label>
+                                <input type="text" id="level_name" name="level_name"
+                                    placeholder="Masukkan Nama Level"
+                                    class="w-full h-14 border border-gray-300 focus:border-gray-400 rounded-lg px-3 text-sm shadow-sm outline-none" />
+                                <span id="error-level_name" class="text-red-500 text-xs mt-1 font-semibold"></span>
+                            </div>
+
+                            <!-- Lesson Plan -->
+                            <div class="flex flex-col">
+                                <div class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-max">
+                                    <div data-prefix="materi-pdf-lesson-plan-insert"
+                                        class="file-wrapper flex items-center justify-between">
+                                        <div id="pdfPreviewContainer-materi-pdf-lesson-plan-insert"
+                                            class="flex items-center gap-3">
+                                            <div id="fileArrowUp-materi-pdf-lesson-plan-insert"
+                                                class="bg-blue-100 p-3 rounded-lg">
+                                                <i class="fa-solid fa-file-arrow-up text-blue-600 text-xl"></i>
+                                            </div>
+                                            <img id="pdfLogo-materi-pdf-lesson-plan-insert"
+                                                class="max-w-[56px] max-h-[56px] hidden">
+                                            <div>
+                                                <div class="flex flex-col gap-1">
+                                                    <p class="text-sm font-bold opacity-70">Lesson Plan</p>
+                                                    <p class="text-xs text-gray-400">PDF (Max 100MB)</p>
+                                                </div>
+                                                <p id="textPreview-materi-pdf-lesson-plan-insert" class="text-xs mt-1"></p>
+                                                <div class="flex flex-row gap-1 items-center">
+                                                    <p id="textSize-materi-pdf-lesson-plan-insert" class="text-xs"></p>
+                                                    <p id="textCircle-materi-pdf-lesson-plan-insert" class="text-[5px]"></p>
+                                                    <p id="textPages-materi-pdf-lesson-plan-insert" class="text-xs"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label for="file-materi-pdf-lesson-plan-insert"
+                                            class="px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600">
+                                            Upload
+                                        </label>
                                     </div>
-                                    <button id="submit-button" type="button"
-                                        class="bg-[#4189e0] hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-full shadow-md transition-all h-max text-md">
-                                        Tambah
-                                    </button>
+                                </div>
+
+                                <!-- BUNGKUS INPUT + SPAN -->
+                                <div class="flex flex-col">
+                                    <input id="file-materi-pdf-lesson-plan-insert" type="file" class="hidden"
+                                        name="lesson_plan" onchange="previewPDF(event, 'materi-pdf-lesson-plan-insert')"
+                                        accept=".pdf">
+
+                                    <span id="error-lesson_plan" class="text-red-500 text-xs mt-1 font-bold"></span>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Submit Button -->
+                        <div class="flex justify-end mt-8">
+                            <button id="submit-button" type="button"
+                                class="bg-[#4189e0] hover:bg-blue-500 text-white font-semibold py-2 px-6 rounded-full shadow-md transition">
+                                <i class="fa-solid fa-plus mr-2"></i> Tambah
+                            </button>
+                        </div>
+
                     </form>
                 </section>
 
@@ -48,6 +95,7 @@
                                 <tr>
                                     <th class="th-table text-black opacity-70">No</th>
                                     <th class="th-table text-black opacity-70">Nama Level</th>
+                                    <th class="th-table text-black opacity-70">Lesson Plan</th>
                                     <th class="th-table text-black opacity-70">
                                         <i class="fa-solid fa-ellipsis-vertical"></i>
                                     </th>
@@ -70,22 +118,64 @@
 
                 <!---- modal edit level  ---->
                 <dialog id="my_modal_1" class="modal">
-                    <div class="modal-box bg-white w-max">
+                    <div class="modal-box bg-white max-w-3xl">
 
                         <!-- untuk menghilangkan focus input type pada saat open modal  --->
                         <div tabindex="-1"></div> <!-- Tambahkan ini -->
 
-                        <form id="edit-level-form" autocomplete="OFF">
+                        <form id="edit-management-level-form" autocomplete="OFF" enctype="multipart/form-data">
                             <span class="text-xl font-bold flex justify-center">Edit Level</span>
 
                             <!--- Level Name--->
-                            <div class="flex flex-col mt-4 w-96">
+                            <div class="flex flex-col mt-4 w-full">
                                 <label class="mb-2 text-sm">Nama Level<sup class="text-red-500 pl-1">&#42;</sup></label>
                                 <input type="text" id="level_name_id" name="level_name"
-                                    class="w-full bg-white shadow-lg h-11 border-gray-200 border outline-none rounded-full text-xs px-2
-                                    focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue]"
-                                    value="" placeholder="Masukkan Nama Level">
+                                    placeholder="Masukkan Nama Level"
+                                    class="w-full h-14 border-2 border-gray-300 focus:border-gray-400 rounded-lg px-3 text-sm shadow-sm outline-none" />
                                 <span id="error-level_name" class="text-red-500 font-bold text-xs pt-2"></span>
+                            </div>
+
+                            <!-- Lesson Plan -->
+                            <div class="flex flex-col my-6">
+                                <div class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-max">
+                                    <div data-prefix-edit="materi-pdf-lesson-plan-edit"
+                                        class="file-wrapper-edit flex items-center justify-between">
+                                        <div id="pdfPreviewContainer-materi-pdf-lesson-plan-edit"
+                                            class="flex items-center gap-3">
+                                            <div id="fileArrowUp-materi-pdf-lesson-plan-edit"
+                                                class="bg-blue-100 p-3 rounded-lg">
+                                                <i class="fa-solid fa-file-arrow-up text-blue-600 text-xl"></i>
+                                            </div>
+                                            <img id="pdfLogo-materi-pdf-lesson-plan-edit"
+                                                class="max-w-[56px] max-h-[56px] hidden">
+                                            <div>
+                                                <div class="flex flex-col gap-1">
+                                                    <p class="text-sm font-bold opacity-70">Lesson Plan</p>
+                                                    <p class="text-xs text-gray-400">PDF (Max 100MB)</p>
+                                                </div>
+                                                <p id="textPreview-materi-pdf-lesson-plan-edit" class="text-xs mt-1"></p>
+                                                <div class="flex flex-row gap-1 items-center">
+                                                    <p id="textSize-materi-pdf-lesson-plan-edit" class="text-xs"></p>
+                                                    <p id="textCircle-materi-pdf-lesson-plan-edit" class="text-[5px]"></p>
+                                                    <p id="textPages-materi-pdf-lesson-plan-edit" class="text-xs"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label for="file-materi-pdf-lesson-plan-edit"
+                                            class="px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600">
+                                            Upload
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- BUNGKUS INPUT + SPAN -->
+                                <div class="flex flex-col">
+                                    <input id="file-materi-pdf-lesson-plan-edit" type="file" class="hidden"
+                                        name="lesson_plan" onchange="previewPDF(event, 'materi-pdf-lesson-plan-edit')"
+                                        accept=".pdf">
+
+                                    <span id="error-lesson_plan" class="text-red-500 text-xs pt-2 font-bold"></span>
+                                </div>
                             </div>
 
                             <div class="flex justify-end mt-8">
@@ -138,6 +228,7 @@
 
 <!--- COMPONENTS ---->
 <script src="{{ asset('js/components/clear-error-on-input.js') }}"></script> <!--- clear error on input ---->
+<script src="{{ asset('js/components/preview/pdf-upload-preview.js') }}"></script> <!--- show pdf ---->
 
 <!--- PUSHER LISTENER ---->
 <script src="{{ asset('js/pusher-listener/english-zone/management-level.js') }}"></script> <!--- pusher listener pada saat CRUD level ---->
