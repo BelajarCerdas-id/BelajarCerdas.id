@@ -2555,17 +2555,13 @@ class EnglishZoneController extends Controller
             });
 
         // Ambil daftar Zoom berdasarkan level & mentor
-        $zoomList = EnglishZoneZoom::with('EnglishZoneBatchSchedule')
-            ->where('level_id', $activeLevel)
-            ->where('mentor_id', $user->id)
-            ->get();
+        $zoomList = EnglishZoneZoom::where('mentor_id', $user->id)->get();
 
         // Buat peta sesi Zoom agar mudah diakses berdasarkan sesi
         $zoomMap = [];
         foreach ($zoomList as $zoom) {
-            $zoomMap[$zoom->session] = [
+            $zoomMap = [
                 'link_zoom' => $zoom->link_zoom,
-                'day_of_week' => $zoom->EnglishZoneBatchSchedule?->day_of_week
             ];
         }
 
@@ -2610,8 +2606,8 @@ class EnglishZoneController extends Controller
             }
 
             // Tambahkan data tambahan ke objek materi
-            $materi->zoom_link = $zoomMap[$session]['link_zoom'] ?? null;
-            $materi->day_of_week = $zoomMap[$session]['day_of_week'] ?? $dayName;
+            $materi->zoom_link = $zoomMap['link_zoom'] ?? null;
+            $materi->day_of_week = $dayName;
             $materi->session_date = $sessionDate->translatedFormat('d F Y'); // format tanggal misal "05 November 2025"
             $materi->session_date_check = $sessionDate->translatedFormat('Y-m-d'); // format ISO untuk perbandingan
             $materi->level_start_date = $levelStartDate->translatedFormat('Y-m-d');
