@@ -424,11 +424,8 @@ Route::fallback(function () {
     // PAGINATE
     Route::get('/english-zone/management-batches/paginate', [EnglishZoneController::class, 'paginateManagementBatches'])->name('EZ.managementBatches.paginate');
 
-    // DROPDOWN BERTINGKAT (batch -> batch_schedule_groups -> days -> hours -> mentors in administrator)
-    Route::get('/batch-schedule-groups/{batch_id}', [EnglishZoneController::class, 'dropdownBatchScheduleGroup'])->name('batchScheduleGroups.dropdown');
-    Route::get('/days/{batch_id}/{batch_schedule_group}', [EnglishZoneController::class, 'dropdownDays'])->name('days.dropdown');
-    Route::get('/hours/{batch_id}/{batch_schedule_group}/{day}', [EnglishZoneController::class, 'dropdownHours'])->name('hours.dropdown');
-    Route::get('/mentors/{batch_id}/{batch_schedule_group}/{day}/{schedule_time_group}', [EnglishZoneController::class, 'dropdownMentors'])->name('mentors.dropdown');
+    // DROPDOWN mentors in administrator
+    Route::get('/schedule-dropdown-mentors', [EnglishZoneController::class, 'dropdownMentors'])->name('mentors.dropdown');
     
     // MANAGEMENT BATCHES SCHEDULE
     // views (ADMINISTRATOR)

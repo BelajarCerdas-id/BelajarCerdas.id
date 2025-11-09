@@ -16,16 +16,6 @@ function paginateManagementZoom(search_mentor = '', page = 1) {
                         <tr class="text-xs">
                             <td class="td-table !text-black !text-center">${index + 1}</td>
                             <td class="td-table !text-black !text-center">${item.mentor?.mentor_profiles?.nama_lengkap ?? '-'}</td>
-                            <td class="td-table !text-black !text-center">${item.english_zone_level?.level_name ?? '-'}</td>
-                            <td class="td-table !text-black !text-center">Sesi ${item.session ?? '-'}</td>
-                            <td class="td-table !text-black !text-center">${item.english_zone_batch_schedule?.english_zone_batch?.batch_name ?? '-'}</td>
-                            <td class="td-table !text-black !text-center">Group ${item.english_zone_batch_schedule?.batch_schedule_group ?? '-'}</td>
-                            <td class="td-table !text-black !text-center">
-                                ${item.english_zone_batch_schedule?.day_of_week ?? '-'}
-                                <div> 
-                                    ${item.english_zone_batch_schedule?.start_time ?? '-'} - ${item.english_zone_batch_schedule?.end_time ?? '-'}
-                                </div>
-                            </td>
                             <td class="td-table !text-black !text-center">
                                 <a href="${item.link_zoom ?? '-'}" target="_blank" class="text-blue-600 font-bold text-xs underline underline-offset-1"> 
                                     Link Zoom
@@ -161,14 +151,6 @@ $('#submit-button').on('click', function (e) {
 
                     // Tambahkan style error ke input (jika ada)
                     $('#management-zoom-form').find(`[name="${field}"]`).addClass('border-red-400 border');
-
-                    if (errors.batch_schedule_id) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: errors.batch_schedule_id[0],
-                        });
-                    }
                 });
             } else {
                 alert('Terjadi kesalahan saat mengirim data.');

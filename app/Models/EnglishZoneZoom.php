@@ -11,10 +11,7 @@ class EnglishZoneZoom extends Model
 
     protected $fillable = [
         'administrator_id',
-        'batch_schedule_id',
         'mentor_id',
-        'level_id',
-        'session',
         'link_zoom',
         'meeting_id',
         'zoom_passcode',
@@ -28,15 +25,5 @@ class EnglishZoneZoom extends Model
     public function Mentor()
     {
         return $this->belongsTo(UserAccount::class, 'mentor_id');
-    }
-
-    public function EnglishZoneBatchSchedule()
-    {
-        return $this->belongsTo(EnglishZoneBatchSchedule::class, 'batch_schedule_id');
-    }
-
-    public function EnglishZoneLevel()
-    {
-        return $this->belongsTo(EnglishZoneLevel::class, 'level_id');
     }
 }

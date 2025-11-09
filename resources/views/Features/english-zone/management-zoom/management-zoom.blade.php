@@ -18,68 +18,7 @@
                 <section class="border-b px-6">
                     <form id="management-zoom-form" autocomplete="OFF" class="py-10">
 
-                        <input type="text" value="" name="batch_schedule_id" id="batch_schedule_id"
-                            class="hidden">
-
                         <div class="grid lg:grid-cols-2 gap-6">
-                            <!-- Batch -->
-                            <div>
-                                <label class="text-sm font-bold opacity-70">
-                                    Batch
-                                    <sup class="text-red-500">&#42;</sup>
-                                </label>
-                                <select id="batch_id" name="batch_id" class="select select-bordered w-full bg-white">
-                                    <option value="" class="hidden">Pilih Batch</option>
-                                    @foreach ($getBatch as $item)
-                                        <option value="{{ $item->id }}">{{ $item->display_name }}</option>
-                                    @endforeach
-                                </select>
-                                <span id="error-batch_id" class="text-red-500 text-xs mt-1 font-bold pt-[2px]"></span>
-                            </div>
-
-                            <!-- Batch Schedule Group -->
-                            <div>
-                                <label class="text-sm font-bold opacity-70">
-                                    Batch Schedule Group
-                                    <sup class="text-red-500">&#42;</sup>
-                                </label>
-                                <select id="batch_schedule_group_id" name="batch_schedule_group_id"
-                                    class="select select-bordered w-full bg-white opacity-50 !cursor-default" disabled>
-                                    <option value="" class="hidden">Pilih Group</option>
-
-                                </select>
-                                <span id="error-batch_schedule_group_id"
-                                    class="text-red-500 text-xs mt-1 font-bold pt-[2px]"></span>
-                            </div>
-
-                            <!-- Hari -->
-                            <div>
-                                <label class="text-sm font-bold opacity-70">
-                                    Hari
-                                    <sup class="text-red-500">&#42;</sup>
-                                </label>
-                                <select id="days_id" name="days_id"
-                                    class="select select-bordered w-full bg-white opacity-50 !cursor-default" disabled>
-                                    <option value="" class="hidden">Pilih Hari</option>
-
-                                </select>
-                                <span id="error-days_id" class="text-red-500 text-xs mt-1 font-bold pt-[2px]"></span>
-                            </div>
-
-                            <!-- Jam -->
-                            <div>
-                                <label class="text-sm font-bold opacity-70">
-                                    Jam
-                                    <sup class="text-red-500">&#42;</sup>
-                                </label>
-                                <select id="hours_id" name="hours_id"
-                                    class="select select-bordered w-full bg-white opacity-50 !cursor-default" disabled>
-                                    <option value="" class="hidden">Pilih Jam</option>
-
-                                </select>
-                                <span id="error-hours_id" class="text-red-500 text-xs mt-1 font-bold pt-[2px]"></span>
-                            </div>
-
                             <!-- Mentor -->
                             <div>
                                 <label class="text-sm font-bold opacity-70">
@@ -87,42 +26,11 @@
                                     <sup class="text-red-500">&#42;</sup>
                                 </label>
                                 <select id="mentor_id" name="mentor_id"
-                                    class="select select-bordered w-full bg-white opacity-50 !cursor-default" disabled>
+                                    class="select select-bordered w-full bg-white">
                                     <option value="" class="hidden">Pilih Mentor</option>
 
                                 </select>
                                 <span id="error-mentor_id" class="text-red-500 text-xs mt-1 font-bold pt-[2px]"></span>
-                            </div>
-
-                            <!-- Level -->
-                            <div>
-                                <label class="text-sm font-bold opacity-70">
-                                    Level
-                                    <sup class="text-red-500">&#42;</sup>
-                                </label>
-                                <select id="level_id" name="level_id" class="select select-bordered w-full bg-white"
-                                    data-old-level="{{ old('level_id') }}">
-                                    <option value="" class="hidden">Pilih Level</option>
-                                    @foreach ($getLevels as $item)
-                                        <option value="{{ $item->id }}">{{ $item->level_name }}</option>
-                                    @endforeach
-                                </select>
-                                <span id="error-level_id" class="text-red-500 text-xs mt-1 font-bold pt-[2px]"></span>
-                            </div>
-
-                            <!-- Sesi -->
-                            <div>
-                                <label class="text-sm font-bold opacity-70">
-                                    Sesi
-                                    <sup class="text-red-500">&#42;</sup>
-                                </label>
-                                <select id="session" name="session" class="select select-bordered w-full bg-white">
-                                    <option value="" class="hidden">Pilih Sesi</option>
-                                    @for ($i = 1; $i <= 2; $i++)
-                                        <option value="{{ $i }}">Sesi {{ $i }}</option>
-                                    @endfor
-                                </select>
-                                <span id="error-session" class="text-red-500 text-xs mt-1 font-bold pt-[2px]"></span>
                             </div>
 
                             <!-- Link Zoom -->
@@ -196,11 +104,6 @@
                                 <tr>
                                     <th class="th-table text-black opacity-70">No</th>
                                     <th class="th-table text-black opacity-70">Mentor</th>
-                                    <th class="th-table text-black opacity-70">Level</th>
-                                    <th class="th-table text-black opacity-70">Sesi</th>
-                                    <th class="th-table text-black opacity-70">Batch</th>
-                                    <th class="th-table text-black opacity-70">Batch Schedule Group</th>
-                                    <th class="th-table text-black opacity-70">Day Of Week</th>
                                     <th class="th-table text-black opacity-70">Link Zoom</th>
                                     <th class="th-table text-black opacity-70">Meeting ID</th>
                                     <th class="th-table text-black opacity-70">Passcode</th>

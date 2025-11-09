@@ -1353,77 +1353,18 @@ class EnglishZoneController extends Controller
         return view('Features.english-zone.management-zoom.management-zoom', compact('getLevels', 'getBatch'));
     }
 
-    // function dropdown bertingkat batch schedule groups
-    public function dropdownBatchScheduleGroup($batch_id)
+    // function dropdown mentors
+    public function dropdownMentors()
     {
-        $schedules = EnglishZoneBatchSchedule::where('batch_id', $batch_id)->get();
-
-        $batchScheduleGroups = $schedules->groupBy('batch_schedule_group')->map(function ($group) {
-            return [
-                'batch_schedule_group' => $group->pluck('batch_schedule_group')->unique(),
-                'days' => $group->pluck('day_of_week')->unique(),
-            ];
-        })->values();
-
-        return response()->json($batchScheduleGroups);
-    }
-
-    // function dropdown bertingkat days
-    public function dropdownDays($batch_id, $batch_schedule_group)
-    {
-        $schedules = EnglishZoneBatchSchedule::where('batch_id', $batch_id)->where('batch_schedule_group', $batch_schedule_group)->get();
-
-        $days = $schedules->pluck('day_of_week')->unique()->map(function ($day) {
-            return ['day' => $day];
-        })->values();
-
-        return response()->json($days);
-    }
-
-    // function dropdown bertingkat hours
-    public function dropdownHours($batch_id, $batch_schedule_group, $day)
-    {
-        $schedules = EnglishZoneBatchSchedule::where('batch_id', $batch_id)->where('batch_schedule_group', $batch_schedule_group)
-            ->where('day_of_week', $day)
-            ->get();
-
-        // group by jam unik
-        $hours = $schedules->groupBy(function ($item) {
-            return $item->start_time . '-' . $item->end_time;
-        })->map(function ($items) {
-            return [
-                'ids' => $items->pluck('id')->toArray(),
-                'time' => $items->first()->start_time . ' - ' . $items->first()->end_time,
-                'schedule_time_group' => $items->first()->schedule_time_group,
-            ];
-        })->values();
-
-        return response()->json($hours);
-    }
-
-    // function dropdown bertingkat mentors
-    public function dropdownMentors($batch_id, $batch_schedule_group, $day, $schedule_time_group)
-    {
-        $getMentorStatus = MentorFeatureStatus::where('feature_id', 3)->where('status_mentor', 'aktif')->pluck('mentor_id');
+        $getMentorStatus = MentorFeatureStatus::with('UserAccount.MentorProfiles')->where('feature_id', 3)->where('status_mentor', 'aktif')->get();
         
-        $mentors = EnglishZoneMentorSchedule::with('UserAccount.MentorProfiles')->where('status_schedule', 'aktif')->whereIn('mentor_id', $getMentorStatus)
-        ->whereHas('EnglishZoneBatchSchedule', function($q) use ($batch_id, $batch_schedule_group, $day, $schedule_time_group) {
-                $q->where('batch_id', $batch_id)->where('batch_schedule_group', $batch_schedule_group)
-                ->where('day_of_week', $day)
-                ->where('schedule_time_group', $schedule_time_group);
-            })
-            ->get();
-
-            $grouped = $mentors->groupBy('mentor_id');
-
-        return response()->json($grouped);
+        return response()->json($getMentorStatus);
     }
 
     // function pagiante management zoom
     public function paginateManagementZoom(Request $request)
     {
-        $getZoom = EnglishZoneZoom::with(['Administrator', 'Mentor.MentorProfiles', 'EnglishZoneBatchSchedule', 'EnglishZoneBatchSchedule.EnglishZoneBatch', 
-        'EnglishZoneLevel']);
+        $getZoom = EnglishZoneZoom::with(['Administrator', 'Mentor.MentorProfiles']);
 
         // filter search_mentor
         if ($request->filled('search_mentor')) {
@@ -1447,16 +1388,9 @@ class EnglishZoneController extends Controller
         $user = Auth::user();
 
         $validator = Validator::make($request->all(), [
-            'batch_id' => 'required',
-            'batch_schedule_group_id' => 'required',
-            'days_id' => 'required',
-            'hours_id' => 'required',
-            'mentor_id' => 'required',
-            'level_id' => 'required',
-            'session' => [
+            'mentor_id' => [
                 'required',
-                Rule::unique('english_zone_zooms', 'session')->where('level_id', $request->level_id)
-                ->where('mentor_id', $request->mentor_id),
+                Rule::unique('english_zone_zooms', 'mentor_id'),
             ],
             'link_zoom' => [
                 'required',
@@ -1472,15 +1406,8 @@ class EnglishZoneController extends Controller
                 Rule::unique('english_zone_zooms', 'zoom_passcode'),
             ],
         ], [
-            'batch_id.required' => 'Harap pilih batch.',
-            'batch_schedule_group_id.required' => 'Harap pilih batch schedule group.',
-            'days_id.required' => 'Harap pilih hari.',
-            'hours_id.required' => 'Harap pilih jam.',
-            'hours_id.unique' => 'Jam telah terdaftar pada mentor ini.',
             'mentor_id.required' => 'Harap pilih mentor.',
-            'level_id.required' => 'Harap pilih level.',
-            'session.required' => 'Harap pilih sesi.',
-            'session.unique' => 'Sesi telah terdaftar pada level dan mentor tersebut.',
+            'mentor_id.unique' => 'Mentor ini telah terdaftar.',
             'link_zoom.required' => 'Harap isi link zoom.',
             'link_zoom.url' => 'Format link tidak sesuai.',
             'link_zoom.unique' => 'Link Zoom telah terdaftar.',
@@ -1490,28 +1417,16 @@ class EnglishZoneController extends Controller
             'zoom_passcode.unique' => 'Passcode telah terdaftar.',
         ]);
 
-        // memeriksa apakah schedule tela terdaftar pada mentor yang di request atau belum
-        $check = EnglishZoneZoom::where('batch_schedule_id', $request->batch_schedule_id)->where('mentor_id', $request->mentor_id)->exists();
-
-        if ($validator->fails() || $check) {
-            $errors = $validator->errors()->toArray();
-
-            if ($check) {
-                $errors['batch_schedule_id'] = ['Schedule zoom pada mentor ini telah terdaftar, silahkan pilih mentor atau schedule yang lain.'];
-            }
-
+        if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'errors' => $errors,
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $createZoom = EnglishZoneZoom::create([
             'administrator_id' => $user->id,
-            'batch_schedule_id' => $request->batch_schedule_id,
             'mentor_id' => $request->mentor_id,
-            'level_id' => $request->level_id,
-            'session' => $request->input('session'),
             'link_zoom' => $request->link_zoom,
             'meeting_id' => $request->meeting_id,
             'zoom_passcode' => $request->zoom_passcode,
