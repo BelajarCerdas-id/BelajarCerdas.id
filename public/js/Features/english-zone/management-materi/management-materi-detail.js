@@ -309,7 +309,7 @@ $('#submit-button').on('click', function (e) {
                 $('#textSize-' + prefix).text('');
                 $('#textPages-' + prefix).text('');
                 $('#textCircle-' + prefix).html('');
-                $('#pdfLogo-' + prefix).attr('src', '').hide();
+                $('#pdfLogo-' + prefix).attr('src', '').css('display', '');
                 $('#fileArrowUp-' + prefix).show();
             })
 
