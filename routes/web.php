@@ -361,7 +361,7 @@ Route::fallback(function () {
     // CRUD (ADMINISTRATOR)
     // management level
     Route::post('/english-zone/management-levels/store', [EnglishZoneController::class, 'managementLevelStore'])->name('EZ.managementLevel.store');
-    Route::post('/english-zone/management-levels/edit/{id}', [EnglishZoneController::class, 'managementLevelEdit'])->name('EZ.managementLevel.edit');
+    Route::put('/english-zone/management-levels/edit/{id}', [EnglishZoneController::class, 'managementLevelEdit'])->name('EZ.managementLevel.edit');
     Route::delete('/english-zone/management-levels/delete/{id}', [EnglishZoneController::class, 'managementLevelDelete'])->name('EZ.managementLevel.delete');
 
     // PAGINATE

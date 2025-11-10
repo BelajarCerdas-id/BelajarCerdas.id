@@ -59,12 +59,9 @@ class EnglishZoneController extends Controller
                 'required',
                 Rule::unique('english_zone_levels', 'level_name')
             ],
-            'lesson_plan' => 'required|max:100000',
         ]), [
             'level_name.required' => 'Harap isi nama level.',
             'level_name.unique' => 'Nama level telah terdaftar.',
-            'lesson_plan.required' => 'Harap upload lesson plan.',
-            'lesson_plan.max' => 'Ukuran file melebihi kapasitas yang ditentukan.',
         ]);
 
         if ($validator->fails()) {
@@ -74,31 +71,9 @@ class EnglishZoneController extends Controller
             ], 422);
         }
 
-        $lessonPlan = null;
-
-        // Helper: simpan file unik berdasarkan hash
-        $saveFileByHash = function ($file, $folder) {
-            $hash = md5_file($file->getRealPath());
-            $ext = $file->getClientOriginalExtension();
-            $newName = $hash . '.' . $ext; // nama file = hash.ext
-            $path = public_path($folder . '/' . $newName);
-
-            if (!file_exists($path)) {
-                $file->move(public_path($folder), $newName);
-            }
-
-            return $newName;
-        };
-
-        // Upload Vocabulary
-        if ($request->hasFile('lesson_plan')) {
-            $lessonPlan = $saveFileByHash($request->file('lesson_plan'), 'english-zone-materi');
-        }
-
         $createLevel = EnglishZoneLevel::create([
             'administrator_id' => $user->id,
             'level_name' => $request->level_name,
-            'lesson_plan' => $lessonPlan
         ]);
 
         broadcast(new EnglishZoneLevelsListener('EnglishZoneLevel', 'create', $createLevel))->toOthers();
@@ -130,12 +105,9 @@ class EnglishZoneController extends Controller
                 'required',
                 Rule::unique('english_zone_levels', 'level_name')
             ],
-            'lesson_plan' => 'required|max:100000',
         ], [
             'level_name.required' => 'Harap isi nama level.',
             'level_name.unique' => 'Nama level telah terdaftar.',
-            'lesson_plan.required' => 'Harap upload lesson plan.',
-            'lesson_plan.max' => 'Ukuran file melebihi kapasitas yang ditentukan.',
         ]);
 
         if ($validator->fails()) {
@@ -147,31 +119,9 @@ class EnglishZoneController extends Controller
 
         $dataManagementLevel = EnglishZoneLevel::findOrFail($id);
 
-        $lessonPlan = null;
-
-        // Helper: simpan file unik berdasarkan hash
-        $saveFileByHash = function ($file, $folder) {
-            $hash = md5_file($file->getRealPath());
-            $ext = $file->getClientOriginalExtension();
-            $newName = $hash . '.' . $ext; // nama file = hash.ext
-            $path = public_path($folder . '/' . $newName);
-
-            if (!file_exists($path)) {
-                $file->move(public_path($folder), $newName);
-            }
-
-            return $newName;
-        };
-
-        // Upload Vocabulary
-        if ($request->hasFile('lesson_plan')) {
-            $lessonPlan = $saveFileByHash($request->file('lesson_plan'), 'english-zone-materi');
-        }
-
         $dataManagementLevel->update([
             'administrator_id' => $user->id,
             'level_name' => $request->level_name,
-            'lesson_plan' => $lessonPlan
         ]);
 
         broadcast(new EnglishZoneLevelsListener('EnglishZoneLevel', 'update', $dataManagementLevel))->toOthers();

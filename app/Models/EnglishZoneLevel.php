@@ -12,7 +12,6 @@ class EnglishZoneLevel extends Model
     protected $fillable = [
         'administrator_id',
         'level_name',
-        'lesson_plan',
     ];
 
     public function UserAccount()
