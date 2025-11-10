@@ -1121,6 +1121,7 @@ class EnglishZoneController extends Controller
         $validator = Validator::make($request->all(), [
             'materi_vocabulary' => 'required|max:100000',
             'materi_grammar' => 'required|max:100000',
+            'materi_lesson_plan' => 'required|max:100000',
             'video_materi' => 'required|url',
             'level_id' => 'required',
             'session' => [
@@ -1132,6 +1133,8 @@ class EnglishZoneController extends Controller
             'materi_vocabulary.max' => 'Ukuran file melebihi kapasitas yang ditentukan.',
             'materi_grammar.required' => 'Harap upload materi grammar.',
             'materi_grammar.max' => 'Ukuran file melebihi kapasitas yang ditentukan.',
+            'materi_lesson_plan.required' => 'Harap upload materi lesson plan.',
+            'materi_lesson_plan.max' => 'Ukuran file melebihi kapasitas yang ditentukan.',
             'video_materi.required' => 'Harap isi video materi.',
             'video_materi.url' => 'Harap isi link video yang valid.',
             'level_id.required' => 'Harap pilih level.',
@@ -1148,6 +1151,7 @@ class EnglishZoneController extends Controller
         
         $materiVocabularyName = null;
         $materiGrammarName = null;
+        $materiLessonPlanName = null;
 
         // 🔹 Helper: simpan file unik berdasarkan hash
         $saveFileByHash = function ($file, $folder) {
@@ -1173,10 +1177,16 @@ class EnglishZoneController extends Controller
             $materiGrammarName = $saveFileByHash($request->file('materi_grammar'), 'english-zone-materi');
         }
 
+        // Upload Lesson Plan
+        if ($request->hasFile('materi_lesson_plan')) {
+            $materiLessonPlanName = $saveFileByHash($request->file('materi_lesson_plan'), 'english-zone-materi');
+        }
+
         $createMateri = EnglishZoneMateri::create([
             'administrator_id' => $user->id,
             'materi_vocabulary' => $materiVocabularyName,
             'materi_grammar' => $materiGrammarName,
+            'materi_lesson_plan' => $materiLessonPlanName,
             'video_materi' => $request->video_materi,
             'link_zoom' => $request->link_zoom,
             'level_id' => $request->level_id,
@@ -1242,13 +1252,19 @@ class EnglishZoneController extends Controller
         $user = Auth::user();
 
         $validator = Validator::make($request->all(), [
-            'materi_vocabulary' => 'required',
-            'materi_grammar' => 'required',
-            'video_materi' => 'required',
+            'materi_vocabulary' => 'required|max:100000',
+            'materi_grammar' => 'required|max:100000',
+            'materi_lesson_plan' => 'required|max:100000',
+            'video_materi' => 'required|url',
         ], [
-            'materi_vocabulary.required' => 'Harap isi materi vocabulary.',
-            'materi_grammar.required' => 'Harap isi materi grammar.',
+            'materi_vocabulary.required' => 'Harap upload materi vocabulary.',
+            'materi_vocabulary.max' => 'Ukuran file melebihi kapasitas yang ditentukan.',
+            'materi_grammar.required' => 'Harap upload materi grammar.',
+            'materi_grammar.max' => 'Ukuran file melebihi kapasitas yang ditentukan.',
+            'materi_lesson_plan.required' => 'Harap upload materi lesson plan.',
+            'materi_lesson_plan.max' => 'Ukuran file melebihi kapasitas yang ditentukan.',
             'video_materi.required' => 'Harap isi video materi.',
+            'video_materi.url' => 'Harap isi link video yang valid.',
         ]);
 
         if ($validator->fails()) {
@@ -1262,6 +1278,7 @@ class EnglishZoneController extends Controller
 
         $materiVocabularyName = null;
         $materiGrammarName = null;
+        $materiLessonPlanName = null;
 
         // 🔹 Helper: simpan file unik berdasarkan hash
         $saveFileByHash = function ($file, $folder) {
@@ -1287,10 +1304,16 @@ class EnglishZoneController extends Controller
             $materiGrammarName = $saveFileByHash($request->file('materi_grammar'), 'english-zone-materi');
         }
 
+        // Upload Lesson Plan
+        if ($request->hasFile('materi_lesson_plan')) {
+            $materiLessonPlanName = $saveFileByHash($request->file('materi_lesson_plan'), 'english-zone-materi');
+        }
+
         $dataMateri->update([
             'administrator_id' => $user->id,
             'materi_vocabulary' => $materiVocabularyName,
             'materi_grammar' => $materiGrammarName,
+            'materi_lesson_plan' => $materiLessonPlanName,
             'video_materi' => $request->video_materi,
         ]);
 

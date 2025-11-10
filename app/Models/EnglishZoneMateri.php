@@ -13,6 +13,7 @@ class EnglishZoneMateri extends Model
         'administrator_id',
         'materi_vocabulary',
         'materi_grammar',
+        'materi_lesson_plan',
         'video_materi',
         'level_id',
         'session',

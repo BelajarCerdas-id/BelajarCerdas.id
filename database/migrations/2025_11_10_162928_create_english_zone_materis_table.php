@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('administrator_id')->constrained('user_accounts');
             $table->string('materi_vocabulary');
             $table->string('materi_grammar');
+            $table->string('materi_lesson_plan');
             $table->string('video_materi');
             $table->foreignId('level_id')->constrained('english_zone_levels');
             $table->string('session');

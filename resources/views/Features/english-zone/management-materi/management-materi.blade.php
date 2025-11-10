@@ -147,6 +147,50 @@
                                         class="text-red-500 text-xs mt-1 font-bold"></span>
                                 </div>
                             </div>
+
+                            <!-- Lesson Plan -->
+                            <div class="flex flex-col">
+                                <div class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-max">
+                                    <div data-prefix="materi-pdf-lesson-plan"
+                                        class="file-wrapper flex items-center justify-between">
+                                        <div id="pdfPreviewContainer-materi-pdf-lesson-plan"
+                                            class="flex items-center gap-3">
+                                            <div id="fileArrowUp-materi-pdf-lesson-plan" class="bg-blue-100 p-3 rounded-lg">
+                                                <i class="fa-solid fa-file-arrow-up text-blue-600 text-xl"></i>
+                                            </div>
+                                            <img id="pdfLogo-materi-pdf-lesson-plan"
+                                                class="max-w-[56px] max-h-[56px] hidden">
+                                            <div>
+                                                <div class="flex flex-col gap-1">
+                                                    <p class="text-sm font-bold opacity-70">Lesson Plan</p>
+                                                    <p class="text-xs text-gray-400">PDF (Max 100MB)</p>
+                                                </div>
+                                                <p id="textPreview-materi-pdf-lesson-plan" class="text-xs mt-1"></p>
+                                                <div class="flex flex-row gap-1 items-center">
+                                                    <p id="textSize-materi-pdf-lesson-plan" class="text-xs"></p>
+                                                    <p id="textCircle-materi-pdf-lesson-plan" class="text-[5px]">
+                                                    </p>
+                                                    <p id="textPages-materi-pdf-lesson-plan" class="text-xs"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label for="file-materi-pdf-lesson-plan"
+                                            class="px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600">
+                                            Upload
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- BUNGKUS INPUT + SPAN -->
+                                <div class="flex flex-col">
+                                    <input id="file-materi-pdf-lesson-plan" type="file" class="hidden"
+                                        name="materi_lesson_plan" onchange="previewPDF(event, 'materi-pdf-lesson-plan')"
+                                        accept=".pdf">
+
+                                    <span id="error-materi_lesson_plan"
+                                        class="text-red-500 text-xs mt-1 font-bold"></span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Tombol Submit -->

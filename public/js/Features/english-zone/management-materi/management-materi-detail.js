@@ -35,6 +35,7 @@ function paginateManagementMateriDetail() {
                     $.each(response.data, function (index, item) {
                         const materiVocabulary = getFileIcon(item.materi_vocabulary);
                         const materiGrammar = getFileIcon(item.materi_grammar);
+                        const materiLessonPlan = getFileIcon(item.materi_lesson_plan);
 
                         const videoId = item.video_id;
                         const modal = `
@@ -109,6 +110,29 @@ function paginateManagementMateriDetail() {
                             `);
                         }
 
+                        if (item.materi_lesson_plan) {
+                            container.insertAdjacentHTML('beforeend', `
+                                <dialog id="my_modal_2-${item.id}-${item.materi_lesson_plan}" class="modal">
+                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
+                                        <div class="flex justify-center w-full mb-4">
+                                            <span class="text-2xl font-bold opacity-70">Grammar</span>
+                                        </div>
+                                        <div class="border max-w-6xl h-[500px] flex justify-start">
+                                            <div class="w-full h-full">
+                                                <iframe class="w-full h-full"
+                                                    src="/english-zone-materi/${item.materi_lesson_plan}"
+                                                    frameborder="0" allowfullscreen>
+                                                </iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <form method="dialog" class="modal-backdrop">
+                                        <button>close</button>
+                                    </form>
+                                </dialog>
+                            `);
+                        }
+
                         $('#table-list-management-materi-detail').append(`
                             <tr class="text-xs">
                                 <td class="td-table !text-black !text-center">${index + 1}</td>
@@ -126,6 +150,11 @@ function paginateManagementMateriDetail() {
                                 <td class="td-table !text-black !text-center">
                                     <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_grammar}">
                                         ${materiGrammar}
+                                    </a>
+                                </td>
+                                <td class="td-table !text-black !text-center">
+                                    <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_lesson_plan}">
+                                        ${materiLessonPlan}
                                     </a>
                                 </td>
                                 <td class="td-table !text-black !text-center">
