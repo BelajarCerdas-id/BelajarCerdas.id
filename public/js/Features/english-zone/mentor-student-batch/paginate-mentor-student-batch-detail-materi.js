@@ -116,6 +116,29 @@ function paginateMentorStudentBatchDetailMateri(selectedLevel = null) {
                             `);
                         }
 
+                        if (item.materi_lesson_plan) {
+                            container.insertAdjacentHTML('beforeend', `
+                                <dialog id="my_modal_2-${item.id}-${item.materi_lesson_plan}" class="modal">
+                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
+                                        <div class="flex justify-center w-full mb-4">
+                                            <span class="text-2xl font-bold opacity-70">Grammar</span>
+                                        </div>
+                                        <div class="border max-w-6xl h-[500px] flex justify-start">
+                                            <div class="w-full h-full">
+                                                <iframe class="w-full h-full"
+                                                    src="/english-zone-materi/${item.materi_lesson_plan}"
+                                                    frameborder="0" allowfullscreen>
+                                                </iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <form method="dialog" class="modal-backdrop">
+                                        <button>close</button>
+                                    </form>
+                                </dialog>
+                            `);
+                        }
+
                         const formatDate = (dateString) => {
                             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Juli', 'Agust', 'Sep', 'Okt', 'Nov', 'Des'];
@@ -149,7 +172,13 @@ function paginateMentorStudentBatchDetailMateri(selectedLevel = null) {
                         }
 
                         // jika level sudah dimulai, maka tampilkan tombol lihat materi, jika belum maka tampilkan tanggal mulai level
-                        if (response.date >= item.level_start_date ) {
+                        if (response.date >= item.level_start_date) {
+                            lockLessonPlan = `
+                                <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_lesson_plan}">
+                                    Lihat Materi
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            `;
                             lockMateriVocabulary = `
                                 <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_vocabulary}">
                                     Lihat Materi
@@ -175,6 +204,13 @@ function paginateMentorStudentBatchDetailMateri(selectedLevel = null) {
                             lockIcon = ``;
 
                         } else {
+                            lockLessonPlan = `
+                                <span class="font-bold opacity-70 flex flex-col sm:flex-row items-center sm:gap-2">
+                                    <p>${levelStartDate}</p>
+                                    -
+                                    <p>${levelEndDate}</p>
+                                </span>
+                            `;
                             lockMateriVocabulary = `
                                 <span class="font-bold opacity-70 flex flex-col sm:flex-row items-center sm:gap-2">
                                     <p>${levelStartDate}</p>
@@ -217,6 +253,13 @@ function paginateMentorStudentBatchDetailMateri(selectedLevel = null) {
 
                                 <div class="content-accordion">
                                     <div class="w-full text-sm mt-6 flex flex-col gap-8">
+                                        <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
+                                            <div>
+                                                <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
+                                                <p class="text-md font-semibold opacity-70">Lesson Plan</p>
+                                            </div>
+                                                ${lockLessonPlan}
+                                        </div>
                                         <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
                                             <div>
                                                 <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
