@@ -366,6 +366,18 @@ Route::fallback(function () {
 
     // PAGINATE
     Route::get('/english-zone/management-levels/paginate', [EnglishZoneController::class, 'paginateManagementLevel'])->name('EZ.managementLevel.paginate');
+
+    // MANAGEMENT SESSION (ADMINISTRATOR)
+    // views
+    Route::get('/english-zone/management-levels/{levelId}/management-session', [EnglishZoneController::class, 'managementSessionView'])->name('EZ.managementSession.view');
+
+    // crud
+    Route::post('/english-zone/management-levels/management-session/store', [EnglishZoneController::class, 'managementSessionStore'])->name('EZ.managementSession.store');
+    Route::post('/english-zone/management-levels/management-session/edit/{id}', [EnglishZoneController::class, 'managementSessionEdit'])->name('EZ.managementSession.edit');
+    Route::delete('/english-zone/management-levels/management-session/delete/{id}', [EnglishZoneController::class, 'managementSessionDelete'])->name('EZ.managementSession.delete');
+
+    // paginate
+    Route::get('/english-zone/management-levels/{levelId}/management-session/paginate', [EnglishZoneController::class, 'paginateManagementSession'])->name('EZ.managementSession.paginate');
     
     // BANK SOAL
     // views(ADMINISTRATOR)

@@ -12,10 +12,17 @@ function paginateManagementLevel(page = 1) {
             if (data.data.length > 0) {
                 $.each(data.data, function (index, item) {
 
+                    const managementSessionDetail = data.managementSession.replace(':levelId', item.id);
+
                     $('#table-list-management-level').append(`
                     <tr class="text-xs">
                         <td class="td-table !text-black !text-center">${index + 1}</td>
                         <td class="td-table !text-black !text-center">${item.level_name}</td>
+                        <td class="border text-center border-gray-300">
+                            <a href="${managementSessionDetail}" class="font-bold text-[#4189e0] text-xs">
+                                Lihat Detail
+                            </a>
+                        </td>
                         <td class="border text-center border-gray-300">
                             <div class="dropdown dropdown-left">
                                 <div tabindex="0" role="button">

@@ -8,6 +8,7 @@ use App\Events\EnglishZoneBatchScheduleListener;
 use App\Events\EnglishZoneLevelsListener;
 use App\Events\EnglishZoneMateriListener;
 use App\Events\EnglishZoneMentorScheduleListener;
+use App\Events\EnglishZoneSessionListener;
 use App\Events\EnglishZoneStudentBatchRefund;
 use App\Events\EnglishZoneStudentBatchReschedule;
 use App\Events\EnglishZoneZoomListener;
@@ -18,6 +19,7 @@ use App\Models\EnglishZoneLevel;
 use App\Models\EnglishZoneMateri;
 use App\Models\EnglishZoneMentorSchedule;
 use App\Models\EnglishZoneQuestions;
+use App\Models\EnglishZoneSession;
 use App\Models\EnglishZoneStudentBatch;
 use App\Models\EnglishZoneZoom;
 use App\Models\FeaturePrices;
@@ -92,6 +94,7 @@ class EnglishZoneController extends Controller
         return response()->json([
             'data' => $dataManagementLevel->items(),
             'links' => (string) $dataManagementLevel->links(),
+            'managementSession' => '/english-zone/management-levels/:levelId/management-session',
         ]);
     }
 
@@ -146,6 +149,113 @@ class EnglishZoneController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Level berhasil dihapus.',
+        ]);
+    }
+
+    // MANAGEMENT SESSION
+    // function management session view
+    public function managementSessionView($levelId)
+    {
+        return view('Features.english-zone.management-session.management-session', compact('levelId'));
+    }
+
+    // function paginate management session
+    public function paginateManagementSession($levelId)
+    {
+        $dataManagementSession = EnglishZoneSession::with(['EnglishZoneLevel'])->where('level_id', $levelId)->get();
+
+        return response()->json([
+            'data' => $dataManagementSession,
+        ]);
+    }
+
+    // function management session store
+    public function managementSessionStore(Request $request)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'session_name' => [
+                'required',
+                Rule::unique('english_zone_sessions', 'session_name')
+            ],
+        ], [
+            'session_name.required' => 'Harap isi nama sesi.',
+            'session_name.unique' => 'Nama sesi telah terdaftar.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $createSession = EnglishZoneSession::create([
+            'administrator_id' => $user->id,
+            'session_name' => $request->session_name,
+            'level_id' => $request->level_id,
+        ]);
+
+        broadcast(new EnglishZoneSessionListener('EnglishZoneSession', 'create', $createSession))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Sesi berhasil ditambahkan.',
+        ], 200);
+    }
+
+    // function management session edit
+    public function managementSessionEdit(Request $request, $id)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'session_name' => [
+                'required',
+                Rule::unique('english_zone_sessions', 'session_name')
+            ],
+        ], [
+            'session_name.required' => 'Harap isi nama sesi.',
+            'session_name.unique' => 'Nama sesi telah terdaftar.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $dataManagementSession = EnglishZoneSession::findOrFail($id);
+
+        $dataManagementSession->update([
+            'administrator_id' => $user->id,
+            'session_name' => $request->session_name,
+        ]);
+
+        broadcast(new EnglishZoneSessionListener('EnglishZoneSession', 'update', $dataManagementSession))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Sesi berhasil diubah.',
+        ]);
+    }
+
+    // function management session delete
+    public function managementSessionDelete($id)
+    {
+        $dataManagementSession = EnglishZoneSession::findOrFail($id);
+
+        $deletedData = $dataManagementSession->toArray();
+
+        broadcast(new EnglishZoneSessionListener('EnglishZoneSession', 'delete', $deletedData))->toOthers();
+
+        $dataManagementSession->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Sesi berhasil dihapus.',
         ]);
     }
     
