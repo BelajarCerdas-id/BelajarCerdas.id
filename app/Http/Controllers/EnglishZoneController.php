@@ -2682,7 +2682,7 @@ class EnglishZoneController extends Controller
         usort($batchSchedules, fn($a, $b) => array_search($a, $order) <=> array_search($b, $order));
 
         // Ambil semua materi berdasarkan level aktif
-        $materiList = EnglishZoneMateri::with('EnglishZoneLevel')
+        $materiList = EnglishZoneMateri::with(['EnglishZoneLevel', 'EnglishZoneSession'])
             ->where('level_id', $activeLevel)
             ->get()
             ->map(function ($item) {
@@ -2696,19 +2696,16 @@ class EnglishZoneController extends Controller
             });
 
         // Ambil daftar Zoom berdasarkan level & mentor
-        $zoomList = EnglishZoneZoom::where('mentor_id', $user->id)->get();
+        $zoomList = EnglishZoneZoom::where('mentor_id', $user->id)->first();
 
-        // Buat peta sesi Zoom agar mudah diakses berdasarkan sesi
-        $zoomMap = [];
-        foreach ($zoomList as $zoom) {
-            $zoomMap = [
-                'link_zoom' => $zoom->link_zoom,
-            ];
-        }
+        // Buat peta sesi Zoom agar mudah diakses
+        $zoomMap = [
+            'link_zoom' => $zoomList->link_zoom,
+        ];
 
         // Buat daftar materi lengkap dengan tanggal dan link Zoom
         $materiWithZoom = $materiList->map(function ($materi) use ($levelStartDate, $levelEndDate, $batchSchedules, $zoomMap) {
-            $session = $materi->session; // nomor sesi materi
+            $session = $materi->session_id; // nomor sesi materi
             $daysCount = count($batchSchedules); // jumlah hari dalam seminggu (misal 2 hari: Senin & Rabu)
             $weekOffset = floor(($session - 1) / $daysCount); // minggu ke berapa
             $dayIndex = ($session - 1) % $daysCount; // indeks hari ke berapa (0 untuk Senin, 1 untuk Rabu, dst)

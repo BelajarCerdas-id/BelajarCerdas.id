@@ -244,8 +244,8 @@ function paginateMentorStudentBatchDetailMateri(selectedLevel = null) {
                             <div class="wrapper-content-accordion !mt-2 mb-8 !px-6">
 
                                 <div class="toggleButton">
-                                    <div class="flex gap-2 max-w-[1450px] items-center">
-                                        <span class="w-full opacity-70">PERTEMUAN ${item.session}</span>
+                                    <div class="flex pr-6 items-center">
+                                        <span class="w-full opacity-70 mr-4">${item.english_zone_session?.session_name}</span>
                                         ${lockIcon}
                                     </div>
                                     <i class="fa-solid fa-chevron-up icon"></i>
