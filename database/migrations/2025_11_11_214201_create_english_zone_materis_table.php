@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('materi_lesson_plan');
             $table->string('video_materi');
             $table->foreignId('level_id')->constrained('english_zone_levels');
-            $table->string('session');
+            $table->foreignId('session_id')->constrained('english_zone_sessions');
             $table->timestamps();
         });
     }

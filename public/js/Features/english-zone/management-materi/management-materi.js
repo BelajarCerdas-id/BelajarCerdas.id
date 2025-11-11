@@ -145,3 +145,50 @@ $('#submit-button').on('click', function (e) {
         }
     });
 });
+
+// drodpwon bertingkat level -> sesi
+$(document).ready(function () {
+    var oldLevel = $('#level_id').attr('data-old-level');
+    var oldSession = $('#session_id').attr('data-old-session'); // Ambil kelas yang dipilih jika ada
+
+    var selectSession = document.getElementById('session_id');
+
+    $('#level_id').on('change', function () {
+        var level_id = $(this).val();
+        if (level_id) {
+            $.ajax({
+                url: '/english-zone/session-dropdown/' + level_id,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    selectSession.disabled =
+                        false; // untuk menonaktifkan disabled pada select kelas ketika fase sudah dipilih
+                    selectSession.classList.replace('!cursor-default', '!cursor-pointer');
+                    selectSession.classList.replace('opacity-50', 'opacity-100');
+                    $('#session_id').empty();
+                    $('#session_id').append(
+                        '<option value="" class="hidden">Pilih Sesi</option>'
+                    );
+                    $.each(data, function (key, session) {
+                        $('#session_id').append(
+                            '<option value="' + session.id + '"' +
+                            (oldSession == session.id ? ' selected' : '') +
+                            '>' +
+                            session.session_name + '</option>'
+                        );
+                    });
+
+                    if (oldSession) {
+                        $('#session_id').val(oldSession).trigger('change');
+                    }
+                }
+            });
+        } else {
+            $('#session_id').empty();
+        }
+    });
+
+    if (oldLevel) {
+        $('#level_id').val(oldLevel).trigger('change');
+    }
+});

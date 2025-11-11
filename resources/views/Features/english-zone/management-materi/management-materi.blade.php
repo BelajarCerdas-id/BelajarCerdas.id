@@ -34,13 +34,12 @@
                                     Sesi
                                     <sup class="text-red-500">&#42;</sup>
                                 </label>
-                                <select id="session" name="session" class="select select-bordered w-full">
+                                <select id="session_id" name="session_id" class="select select-bordered w-full opacity-50 !cursor-default" 
+                                data-old-session="{{ old('session_id') }}" disabled>
                                     <option value="" class="hidden">Pilih Sesi</option>
-                                    @for ($i = 1; $i <= 2; $i++)
-                                        <option value="{{ $i }}">Sesi {{ $i }}</option>
-                                    @endfor
+                                    <!--  show data in ajax -->
                                 </select>
-                                <span id="error-session" class="text-red-500 text-xs mt-1 font-bold pt-[2px]"></span>
+                                <span id="error-session_id" class="text-red-500 text-xs mt-1 font-bold pt-[2px]"></span>
                             </div>
                         </div>
 

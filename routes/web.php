@@ -378,6 +378,9 @@ Route::fallback(function () {
 
     // paginate
     Route::get('/english-zone/management-levels/{levelId}/management-session/paginate', [EnglishZoneController::class, 'paginateManagementSession'])->name('EZ.managementSession.paginate');
+
+    // dropdown bertingkat level -> session
+    Route::get('/english-zone/session-dropdown/{levelId}', [EnglishZoneController::class, 'dropdownSessionByLevel'])->name('EZ.session.dropdown');
     
     // BANK SOAL
     // views(ADMINISTRATOR)

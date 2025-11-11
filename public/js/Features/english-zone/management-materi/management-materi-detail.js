@@ -139,8 +139,8 @@ function paginateManagementMateriDetail() {
                                 <td class="td-table !text-black !text-center">
                                     ${item.english_zone_level?.level_name}
                                 </td>
-                                <td class="td-table !text-black !text-center">
-                                    Sesi ${item.session}
+                                <td class="td-table !text-black">
+                                    ${item.english_zone_session?.session_name}
                                 </td>
                                 <td class="td-table !text-black !text-center">
                                     <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_vocabulary}">

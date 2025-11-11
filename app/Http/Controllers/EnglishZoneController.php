@@ -258,6 +258,14 @@ class EnglishZoneController extends Controller
             'message' => 'Sesi berhasil dihapus.',
         ]);
     }
+
+    // dropdown session by level
+    public function dropdownSessionByLevel($levelId)
+    {
+        $session = EnglishZoneSession::where('level_id', $levelId)->get();
+
+        return response()->json($session);
+    }
     
     // BANK SOAL
     // function bankSoal view
@@ -1234,9 +1242,9 @@ class EnglishZoneController extends Controller
             'materi_lesson_plan' => 'required|max:100000',
             'video_materi' => 'required|url',
             'level_id' => 'required',
-            'session' => [
+            'session_id' => [
                 'required',
-                Rule::unique('english_zone_materis', 'session')->where('level_id', $request->level_id),
+                Rule::unique('english_zone_materis', 'session_id')->where('level_id', $request->level_id),
             ],
         ], [
             'materi_vocabulary.required' => 'Harap upload materi vocabulary.',
@@ -1248,8 +1256,8 @@ class EnglishZoneController extends Controller
             'video_materi.required' => 'Harap isi video materi.',
             'video_materi.url' => 'Harap isi link video yang valid.',
             'level_id.required' => 'Harap pilih level.',
-            'session.required' => 'Harap pilih sesi.',
-            'session.unique' => 'Sesi telah terdaftar pada level tersebut.',
+            'session_id.required' => 'Harap pilih sesi.',
+            'session_id.unique' => 'Sesi telah terdaftar pada level tersebut.',
         ]);
 
         if ($validator->fails()) {
@@ -1300,7 +1308,7 @@ class EnglishZoneController extends Controller
             'video_materi' => $request->video_materi,
             'link_zoom' => $request->link_zoom,
             'level_id' => $request->level_id,
-            'session' => $request->input('session'),
+            'session_id' => $request->session_id,
         ]);
 
         broadcast(new EnglishZoneMateriListener('EnglishZoneMateri', 'create', $createMateri))->toOthers();
@@ -1337,7 +1345,7 @@ class EnglishZoneController extends Controller
     // function paginate management materi detail
     public function paginateManagementMateriDetail($id)
     {
-        $dataMateri = EnglishZoneMateri::with(['EnglishZoneLevel', 'UserAccount'])
+        $dataMateri = EnglishZoneMateri::with(['EnglishZoneLevel', 'UserAccount', 'EnglishZoneSession'])
             ->where('level_id', $id)
             ->get()
             ->map(function ($item) {
