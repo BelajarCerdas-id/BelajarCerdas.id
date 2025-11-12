@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignId('kelas_id')->constrained('kelas');
             $table->string('mentor_referral_code')->nullable();
             $table->string('mentor_referral_joined_at')->nullable();
+            $table->string('student_type');
             $table->timestamps();
         });
     }

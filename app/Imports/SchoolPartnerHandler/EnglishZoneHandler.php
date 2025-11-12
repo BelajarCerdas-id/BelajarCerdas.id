@@ -384,7 +384,8 @@ class EnglishZoneHandler
                 'nama_lengkap' => $row['nama_siswa'],
                 'sekolah' => $row['nama_sekolah'],
                 'fase_id' => $getFase->id,
-                'kelas_id' => $getKelas->id
+                'kelas_id' => $getKelas->id,
+                'student_type' => 'school_partner',
             ]);
 
             // transaction_callback

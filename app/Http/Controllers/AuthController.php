@@ -124,7 +124,8 @@ class AuthController extends Controller
                 'fase_id' => $request->fase_id,
                 'kelas_id' => $request->kelas_id,
                 'mentor_referral_code' => $request->mentor_referral_code,
-                'mentor_referral_joined_at' => now()
+                'mentor_referral_joined_at' => now(),
+                'student_type' => 'non_school_partner',
             ]);
 
             $otpData->update([

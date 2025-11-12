@@ -18,6 +18,7 @@ class StudentProfiles extends Model
         'kelas_id',
         'mentor_referral_code',
         'mentor_referral_joined_at',
+        'student_type',
     ];
 
     public function UserAccount() {
