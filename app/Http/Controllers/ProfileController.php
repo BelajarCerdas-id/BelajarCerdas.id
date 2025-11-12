@@ -228,12 +228,19 @@ class ProfileController extends Controller
 
         $user->update([
             'nama_lengkap' => $request->nama_lengkap,
+            'personal_email' => $request->email
         ]);
 
-        $dataStudentProfiles->update([
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,
-        ]);
+        if (Auth::user()->Profile->student_type === 'non_school_partner') {
+            $dataStudentProfiles->update([
+                'email' => $request->email,
+                'no_hp' => $request->no_hp,
+            ]);
+        } else {
+            $dataStudentProfiles->update([
+                'no_hp' => $request->no_hp
+            ]);
+        }
 
         return redirect()->back()->with('success-update-data-personal-student', 'Data berhasil diubah!');
     }

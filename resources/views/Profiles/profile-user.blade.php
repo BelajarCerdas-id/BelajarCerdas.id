@@ -133,7 +133,7 @@
                                         <label for="">Email</label>
                                         <input
                                             class="w-full bg-white shadow-lg h-12 border-gray-200 border-[2px] outline-none rounded-md text-sm px-2"
-                                            value="{{ Auth::user()->email }}" disabled>
+                                            value="{{ Auth::user()->Profile->personal_email }}" disabled>
                                     </div>
                                 </div>
                             </div>
@@ -227,7 +227,7 @@
                             <input type="text" id="email_{{ Auth::user()->id }}" name="email"
                                 class="w-full bg-white shadow-lg h-11 border-gray-200 border-[1px] outline-none rounded-full text-xs px-2 mt-2
                                 {{ $errors->has('email') && session('formErrorInformationId') == Auth::user()->id ? 'border-red-400' : 'focus:border-[dodgerblue] focus:shadow-[0_0_6px_0_dodgerblue]' }}"
-                                value="{{ session('formErrorInformationId') == Auth::user()->id ? old('email') : Auth::user()->email }}"
+                                value="{{ session('formErrorInformationId') == Auth::user()->id ? old('email') : Auth::user()->Profile->personal_email }}"
                                 placeholder="Masukkan Email">
                             @if (session('formErrorInformationId') == Auth::user()->id)
                                 <span class="text-red-500 font-bold text-xs pt-2">{{ $errors->first('email') }}</span>
