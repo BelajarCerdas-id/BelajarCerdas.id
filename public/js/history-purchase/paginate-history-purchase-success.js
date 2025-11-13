@@ -106,14 +106,6 @@ function fetchPaginateHistoryTransactionSuccess(page = 1) {
                                         </span>
                                     </div>
                                 </div>
-                            <form id="form-pembelian-${item.id}" action="" method="POST">
-                                <input type="hidden" name="_token" value="">
-                                    <button type="button"
-                                    class="btn-beli-waiting bg-[#4189e0] hover:bg-blue-500 text-white font-bold p-2 rounded-lg shadow-md transition-all text-sm my-4"
-                                    data-id="${item.id}">
-                                    Beli Sekarang
-                                </button>
-                            </form>
                             </div>
                         </div>
                     </div>
