@@ -146,8 +146,8 @@ class webController extends Controller
                 [
                     'image' => 'image/logo-fitur/logo-englishZone.png',
                     'text' => 'Sesi Boot Camp for Conversation Only.',
-                    'url' => '',
-                    'button' => 'Segera Hadir'
+                    'url' => '/english-zone',
+                    'button' => 'English Zone'
                 ],
             ];
         } else {

@@ -2769,5 +2769,11 @@ class EnglishZoneController extends Controller
         ]);
     }
 
+    // STUDENT
+    // function view student page
+    public function englishZoneStudentView()
+    {
+        return view('Features.english-zone.student.english-zone-student');
+    }
 
 }

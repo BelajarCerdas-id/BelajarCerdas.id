@@ -508,6 +508,10 @@ Route::fallback(function () {
         Route::get('/english-zone-mentor/student-batch-detail/materi/{levelId}/{studentIds}/{activeLevel}/paginate', [EnglishZoneController::class, 'paginateMentorStudentBatchDetailMateri'])->name('EZ.mentorStudentBatchDetailMateri.paginate');
     });
 
+    // STUDENT SIDE
+    // views
+    Route::get('/english-zone', [EnglishZoneController::class, 'englishZoneStudentView'])->name('EZ.student.view');
+
     // ROUTES SCHOOL PARTNER
     // school subscription
     Route::get('/school-subscription', [SchoolPartnerController::class, 'schoolSubscriptionView'])->name('schoolSubscription.view');
