@@ -190,6 +190,270 @@
                                         class="text-red-500 text-xs mt-1 font-bold"></span>
                                 </div>
                             </div>
+
+                            <!-- Reading -->
+                            <div class="flex flex-col">
+                                <div class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-max">
+                                    <div data-prefix="materi-pdf-reading"
+                                        class="file-wrapper flex items-center justify-between">
+                                        <div id="pdfPreviewContainer-materi-pdf-reading"
+                                            class="flex items-center gap-3">
+                                            <div id="fileArrowUp-materi-pdf-reading" class="bg-blue-100 p-3 rounded-lg">
+                                                <i class="fa-solid fa-file-arrow-up text-blue-600 text-xl"></i>
+                                            </div>
+                                            <img id="pdfLogo-materi-pdf-reading"
+                                                class="max-w-[56px] max-h-[56px] hidden">
+                                            <div>
+                                                <div class="flex flex-col gap-1">
+                                                    <p class="text-sm font-bold opacity-70">Reading</p>
+                                                    <p class="text-xs text-gray-400">PDF (Max 100MB)</p>
+                                                </div>
+                                                <p id="textPreview-materi-pdf-reading" class="text-xs mt-1"></p>
+                                                <div class="flex flex-row gap-1 items-center">
+                                                    <p id="textSize-materi-pdf-reading" class="text-xs"></p>
+                                                    <p id="textCircle-materi-pdf-reading" class="text-[5px]">
+                                                    </p>
+                                                    <p id="textPages-materi-pdf-reading" class="text-xs"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label for="file-materi-pdf-reading"
+                                            class="px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600">
+                                            Upload
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- BUNGKUS INPUT + SPAN -->
+                                <div class="flex flex-col">
+                                    <input id="file-materi-pdf-reading" type="file" class="hidden"
+                                        name="materi_reading" onchange="previewPDF(event, 'materi-pdf-reading')"
+                                        accept=".pdf">
+
+                                    <span id="error-materi_reading"
+                                        class="text-red-500 text-xs mt-1 font-bold"></span>
+                                </div>
+                            </div>
+
+                            <!-- Writing -->
+                            <div class="flex flex-col">
+                                <div class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-max">
+                                    <div data-prefix="materi-pdf-writing"
+                                        class="file-wrapper flex items-center justify-between">
+                                        <div id="pdfPreviewContainer-materi-pdf-writing"
+                                            class="flex items-center gap-3">
+                                            <div id="fileArrowUp-materi-pdf-writing" class="bg-blue-100 p-3 rounded-lg">
+                                                <i class="fa-solid fa-file-arrow-up text-blue-600 text-xl"></i>
+                                            </div>
+                                            <img id="pdfLogo-materi-pdf-writing"
+                                                class="max-w-[56px] max-h-[56px] hidden">
+                                            <div>
+                                                <div class="flex flex-col gap-1">
+                                                    <p class="text-sm font-bold opacity-70">Writing</p>
+                                                    <p class="text-xs text-gray-400">PDF (Max 100MB)</p>
+                                                </div>
+                                                <p id="textPreview-materi-pdf-writing" class="text-xs mt-1"></p>
+                                                <div class="flex flex-row gap-1 items-center">
+                                                    <p id="textSize-materi-pdf-writing" class="text-xs"></p>
+                                                    <p id="textCircle-materi-pdf-writing" class="text-[5px]">
+                                                    </p>
+                                                    <p id="textPages-materi-pdf-writing" class="text-xs"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label for="file-materi-pdf-writing"
+                                            class="px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600">
+                                            Upload
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- BUNGKUS INPUT + SPAN -->
+                                <div class="flex flex-col">
+                                    <input id="file-materi-pdf-writing" type="file" class="hidden"
+                                        name="materi_writing" onchange="previewPDF(event, 'materi-pdf-writing')"
+                                        accept=".pdf">
+
+                                    <span id="error-materi_writing"
+                                        class="text-red-500 text-xs mt-1 font-bold"></span>
+                                </div>
+                            </div>
+
+                            <!-- Listening -->
+                            <div class="flex flex-col">
+                                <div class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-max">
+                                    <div data-prefix="materi-pdf-listening"
+                                        class="file-wrapper flex items-center justify-between">
+                                        <div id="pdfPreviewContainer-materi-pdf-listening"
+                                            class="flex items-center gap-3">
+                                            <div id="fileArrowUp-materi-pdf-listening" class="bg-blue-100 p-3 rounded-lg">
+                                                <i class="fa-solid fa-file-arrow-up text-blue-600 text-xl"></i>
+                                            </div>
+                                            <img id="pdfLogo-materi-pdf-listening"
+                                                class="max-w-[56px] max-h-[56px] hidden">
+                                            <div>
+                                                <div class="flex flex-col gap-1">
+                                                    <p class="text-sm font-bold opacity-70">Listening</p>
+                                                    <p class="text-xs text-gray-400">PDF (Max 100MB)</p>
+                                                </div>
+                                                <p id="textPreview-materi-pdf-listening" class="text-xs mt-1"></p>
+                                                <div class="flex flex-row gap-1 items-center">
+                                                    <p id="textSize-materi-pdf-listening" class="text-xs"></p>
+                                                    <p id="textCircle-materi-pdf-listening" class="text-[5px]">
+                                                    </p>
+                                                    <p id="textPages-materi-pdf-listening" class="text-xs"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label for="file-materi-pdf-listening"
+                                            class="px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600">
+                                            Upload
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- BUNGKUS INPUT + SPAN -->
+                                <div class="flex flex-col">
+                                    <input id="file-materi-pdf-listening" type="file" class="hidden"
+                                        name="materi_listening" onchange="previewPDF(event, 'materi-pdf-listening')"
+                                        accept=".pdf">
+
+                                    <span id="error-materi_listening"
+                                        class="text-red-500 text-xs mt-1 font-bold"></span>
+                                </div>
+                            </div>
+
+                            <!-- Speaking -->
+                            <div class="flex flex-col">
+                                <div class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-max">
+                                    <div data-prefix="materi-pdf-speaking"
+                                        class="file-wrapper flex items-center justify-between">
+                                        <div id="pdfPreviewContainer-materi-pdf-speaking"
+                                            class="flex items-center gap-3">
+                                            <div id="fileArrowUp-materi-pdf-speaking" class="bg-blue-100 p-3 rounded-lg">
+                                                <i class="fa-solid fa-file-arrow-up text-blue-600 text-xl"></i>
+                                            </div>
+                                            <img id="pdfLogo-materi-pdf-speaking"
+                                                class="max-w-[56px] max-h-[56px] hidden">
+                                            <div>
+                                                <div class="flex flex-col gap-1">
+                                                    <p class="text-sm font-bold opacity-70">Speaking</p>
+                                                    <p class="text-xs text-gray-400">PDF (Max 100MB)</p>
+                                                </div>
+                                                <p id="textPreview-materi-pdf-speaking" class="text-xs mt-1"></p>
+                                                <div class="flex flex-row gap-1 items-center">
+                                                    <p id="textSize-materi-pdf-speaking" class="text-xs"></p>
+                                                    <p id="textCircle-materi-pdf-speaking" class="text-[5px]">
+                                                    </p>
+                                                    <p id="textPages-materi-pdf-speaking" class="text-xs"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label for="file-materi-pdf-speaking"
+                                            class="px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600">
+                                            Upload
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- BUNGKUS INPUT + SPAN -->
+                                <div class="flex flex-col">
+                                    <input id="file-materi-pdf-speaking" type="file" class="hidden"
+                                        name="materi_speaking" onchange="previewPDF(event, 'materi-pdf-speaking')"
+                                        accept=".pdf">
+
+                                    <span id="error-materi_speaking"
+                                        class="text-red-500 text-xs mt-1 font-bold"></span>
+                                </div>
+                            </div>
+
+                            <!-- WorkSheet -->
+                            <div class="flex flex-col">
+                                <div class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-max">
+                                    <div data-prefix="materi-pdf-worksheet"
+                                        class="file-wrapper flex items-center justify-between">
+                                        <div id="pdfPreviewContainer-materi-worksheet"
+                                            class="flex items-center gap-3">
+                                            <div id="fileArrowUp-materi-pdf-worksheet" class="bg-blue-100 p-3 rounded-lg">
+                                                <i class="fa-solid fa-file-arrow-up text-blue-600 text-xl"></i>
+                                            </div>
+                                            <img id="pdfLogo-materi-pdf-worksheet"
+                                                class="max-w-[56px] max-h-[56px] hidden">
+                                            <div>
+                                                <div class="flex flex-col gap-1">
+                                                    <p class="text-sm font-bold opacity-70">WorkSheet</p>
+                                                    <p class="text-xs text-gray-400">PDF (Max 100MB)</p>
+                                                </div>
+                                                <p id="textPreview-materi-pdf-worksheet" class="text-xs mt-1"></p>
+                                                <div class="flex flex-row gap-1 items-center">
+                                                    <p id="textSize-materi-pdf-worksheet" class="text-xs"></p>
+                                                    <p id="textCircle-materi-pdf-worksheet" class="text-[5px]">
+                                                    </p>
+                                                    <p id="textPages-materi-pdf-worksheet" class="text-xs"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label for="file-materi-pdf-worksheet"
+                                            class="px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600">
+                                            Upload
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- BUNGKUS INPUT + SPAN -->
+                                <div class="flex flex-col">
+                                    <input id="file-materi-pdf-worksheet" type="file" class="hidden"
+                                        name="worksheet" onchange="previewPDF(event, 'materi-pdf-worksheet')"
+                                        accept=".pdf">
+
+                                    <span id="error-worksheet"
+                                        class="text-red-500 text-xs mt-1 font-bold"></span>
+                                </div>
+                            </div>
+
+                            <!-- Materi Pembelajaran -->
+                            <div class="flex flex-col">
+                                <div class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-max">
+                                    <div data-prefix="materi-pembelajaran"
+                                        class="file-wrapper flex items-center justify-between">
+                                        <div id="pdfPreviewContainer-materi-pembelajaran"
+                                            class="flex items-center gap-3">
+                                            <div id="fileArrowUp-materi-pembelajaran" class="bg-blue-100 p-3 rounded-lg">
+                                                <i class="fa-solid fa-file-arrow-up text-blue-600 text-xl"></i>
+                                            </div>
+                                            <img id="pdfLogo-materi-pembelajaran"
+                                                class="max-w-[56px] max-h-[56px] hidden">
+                                            <div>
+                                                <div class="flex flex-col gap-1">
+                                                    <p class="text-sm font-bold opacity-70">Materi Pembelajaran</p>
+                                                    <p class="text-xs text-gray-400">PDF (Max 100MB)</p>
+                                                </div>
+                                                <p id="textPreview-materi-pembelajaran" class="text-xs mt-1"></p>
+                                                <div class="flex flex-row gap-1 items-center">
+                                                    <p id="textSize-materi-pembelajaran" class="text-xs"></p>
+                                                    <p id="textCircle-materi-pembelajaran" class="text-[5px]">
+                                                    </p>
+                                                    <p id="textPages-materi-pembelajaran" class="text-xs"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label for="file-materi-pembelajaran"
+                                            class="px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600">
+                                            Upload
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- BUNGKUS INPUT + SPAN -->
+                                <div class="flex flex-col">
+                                    <input id="file-materi-pembelajaran" type="file" class="hidden"
+                                        name="materi_pembelajaran" onchange="previewPDF(event, 'materi-pembelajaran')"
+                                        accept=".pdf">
+
+                                    <span id="error-materi_pembelajaran"
+                                        class="text-red-500 text-xs mt-1 font-bold"></span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Tombol Submit -->
@@ -208,44 +472,44 @@
                     <div class="overflow-x-auto mt-4 pb-14">
                         <table class="table" id="table-management-materi">
                             <thead class="thead-table-management-materi hidden">
-                                <tr>
-                                    <th class="th-table text-black opacity-70">No</th>
-                                    <th class="th-table text-black opacity-70">Materi Level</th>
-                                    <th class="th-table text-black opacity-70">
-                                        Detail
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-list-management-materi">
-                                <!-- show data in ajax -->
-                            </tbody>
-                        </table>
+                                                <tr>
+                                                    <th class="th-table text-black opacity-70">No</th>
+                                                    <th class="th-table text-black opacity-70">Materi Level</th>
+                                                    <th class="th-table text-black opacity-70">
+                                                        Detail
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="table-list-management-materi">
+                                                <!-- show data in ajax -->
+                                            </tbody>
+                                        </table>
 
-                        <div class="pagination-container-management-materi flex justify-center my-4 sm:my-0"></div>
+                                        <div class="pagination-container-management-materi flex justify-center my-4 sm:my-0"></div>
 
-                        <div id="empty-message-management-materi" class="w-full h-96 hidden">
-                            <span class="w-full h-full flex items-center justify-center">
-                                Tidak ada daftar materi.
-                            </span>
+                                        <div id="empty-message-management-materi" class="w-full h-96 hidden">
+                                            <span class="w-full h-full flex items-center justify-center">
+                                                Tidak ada daftar materi.
+                                            </span>
+                                        </div>
+                                    </div>
+                                </section>
+                            </main>
                         </div>
                     </div>
-                </section>
-            </main>
-        </div>
-    </div>
-@else
-    <div class="flex flex-col min-h-screen items-center justify-center">
-        <p>ALERT SEMENTARA</p>
-        <p>You do not have access to this pages.</p>
-    </div>
-@endif
+                @else
+                    <div class="flex flex-col min-h-screen items-center justify-center">
+                        <p>ALERT SEMENTARA</p>
+                        <p>You do not have access to this pages.</p>
+                    </div>
+                @endif
 
 
-<script src="{{ asset('js/Features/english-zone/management-materi/management-materi.js') }}"></script> <!--- management materi ---->
+                <script src="{{ asset('js/Features/english-zone/management-materi/management-materi.js') }}"></script> <!--- management materi ---->
 
-<!--- COMPONENTS ---->
-<script src="{{ asset('js/components/clear-error-on-input.js') }}"></script> <!--- clear error on input ---->
-<script src="{{ asset('js/components/preview/pdf-upload-preview.js') }}"></script> <!--- show pdf ---->
+                <!--- COMPONENTS ---->
+                <script src="{{ asset('js/components/clear-error-on-input.js') }}"></script> <!--- clear error on input ---->
+                <script src="{{ asset('js/components/preview/pdf-upload-preview.js') }}"></script> <!--- show pdf ---->
 
 
 <!--- PUSHER LISTENER ---->

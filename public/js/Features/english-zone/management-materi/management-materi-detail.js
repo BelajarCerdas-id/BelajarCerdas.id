@@ -36,6 +36,12 @@ function paginateManagementMateriDetail() {
                         const materiVocabulary = getFileIcon(item.materi_vocabulary);
                         const materiGrammar = getFileIcon(item.materi_grammar);
                         const materiLessonPlan = getFileIcon(item.materi_lesson_plan);
+                        const materiReading = getFileIcon(item.materi_reading);
+                        const materiWriting = getFileIcon(item.materi_writing);
+                        const materiListening = getFileIcon(item.materi_listening);
+                        const materiSpeaking = getFileIcon(item.materi_speaking);
+                        const materiPembelajaran = getFileIcon(item.materi_pembelajaran);
+                        const worksheet = getFileIcon(item.worksheet);
 
                         const videoId = item.video_id;
                         const modal = `
@@ -66,7 +72,7 @@ function paginateManagementMateriDetail() {
                         let materi = '';
                         if (item.materi_vocabulary) {
                             container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-${item.id}-${item.materi_vocabulary}" class="modal">
+                                <dialog id="my_modal_2-vocabulary-${item.id}-${item.materi_vocabulary}" class="modal">
                                     <div class="modal-box bg-white max-w-6xl max-h-[600px]">
                                         <div class="flex justify-center w-full mb-4">
                                             <span class="text-2xl font-bold opacity-70">Vocabulary</span>
@@ -89,7 +95,7 @@ function paginateManagementMateriDetail() {
 
                         if (item.materi_grammar) {
                             container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-${item.id}-${item.materi_grammar}" class="modal">
+                                <dialog id="my_modal_2-grammar-${item.id}-${item.materi_grammar}" class="modal">
                                     <div class="modal-box bg-white max-w-6xl max-h-[600px]">
                                         <div class="flex justify-center w-full mb-4">
                                             <span class="text-2xl font-bold opacity-70">Grammar</span>
@@ -112,15 +118,153 @@ function paginateManagementMateriDetail() {
 
                         if (item.materi_lesson_plan) {
                             container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-${item.id}-${item.materi_lesson_plan}" class="modal">
+                                <dialog id="my_modal_2-lessonPlan-${item.id}-${item.materi_lesson_plan}" class="modal">
                                     <div class="modal-box bg-white max-w-6xl max-h-[600px]">
                                         <div class="flex justify-center w-full mb-4">
-                                            <span class="text-2xl font-bold opacity-70">Grammar</span>
+                                            <span class="text-2xl font-bold opacity-70">Lesson Plan</span>
                                         </div>
                                         <div class="border max-w-6xl h-[500px] flex justify-start">
                                             <div class="w-full h-full">
                                                 <iframe class="w-full h-full"
                                                     src="/english-zone-materi/${item.materi_lesson_plan}"
+                                                    frameborder="0" allowfullscreen>
+                                                </iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <form method="dialog" class="modal-backdrop">
+                                        <button>close</button>
+                                    </form>
+                                </dialog>
+                            `);
+                        }
+
+                        if (item.materi_reading) {
+                            container.insertAdjacentHTML('beforeend', `
+                                <dialog id="my_modal_2-reading-${item.id}-${item.materi_reading}" class="modal">
+                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
+                                        <div class="flex justify-center w-full mb-4">
+                                            <span class="text-2xl font-bold opacity-70">Reading</span>
+                                        </div>
+                                        <div class="border max-w-6xl h-[500px] flex justify-start">
+                                            <div class="w-full h-full">
+                                                <iframe class="w-full h-full"
+                                                    src="/english-zone-materi/${item.materi_reading}"
+                                                    frameborder="0" allowfullscreen>
+                                                </iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <form method="dialog" class="modal-backdrop">
+                                        <button>close</button>
+                                    </form>
+                                </dialog>
+                            `);
+                        }
+
+                        if (item.materi_writing) {
+                            container.insertAdjacentHTML('beforeend', `
+                                <dialog id="my_modal_2-writing-${item.id}-${item.materi_writing}" class="modal">
+                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
+                                        <div class="flex justify-center w-full mb-4">
+                                            <span class="text-2xl font-bold opacity-70">Writing</span>
+                                        </div>
+                                        <div class="border max-w-6xl h-[500px] flex justify-start">
+                                            <div class="w-full h-full">
+                                                <iframe class="w-full h-full"
+                                                    src="/english-zone-materi/${item.materi_writing}"
+                                                    frameborder="0" allowfullscreen>
+                                                </iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <form method="dialog" class="modal-backdrop">
+                                        <button>close</button>
+                                    </form>
+                                </dialog>
+                            `);
+                        }
+
+                        if (item.materi_listening) {
+                            container.insertAdjacentHTML('beforeend', `
+                                <dialog id="my_modal_2-listening-${item.id}-${item.materi_listening}" class="modal">
+                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
+                                        <div class="flex justify-center w-full mb-4">
+                                            <span class="text-2xl font-bold opacity-70">Listening</span>
+                                        </div>
+                                        <div class="border max-w-6xl h-[500px] flex justify-start">
+                                            <div class="w-full h-full">
+                                                <iframe class="w-full h-full"
+                                                    src="/english-zone-materi/${item.materi_listening}"
+                                                    frameborder="0" allowfullscreen>
+                                                </iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <form method="dialog" class="modal-backdrop">
+                                        <button>close</button>
+                                    </form>
+                                </dialog>
+                            `);
+                        }
+
+                        if (item.materi_speaking) {
+                            container.insertAdjacentHTML('beforeend', `
+                                <dialog id="my_modal_2-speaking-${item.id}-${item.materi_speaking}" class="modal">
+                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
+                                        <div class="flex justify-center w-full mb-4">
+                                            <span class="text-2xl font-bold opacity-70">Speaking</span>
+                                        </div>
+                                        <div class="border max-w-6xl h-[500px] flex justify-start">
+                                            <div class="w-full h-full">
+                                                <iframe class="w-full h-full"
+                                                    src="/english-zone-materi/${item.materi_speaking}"
+                                                    frameborder="0" allowfullscreen>
+                                                </iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <form method="dialog" class="modal-backdrop">
+                                        <button>close</button>
+                                    </form>
+                                </dialog>
+                            `);
+                        }
+
+                        if (item.materi_pembelajaran) {
+                            container.insertAdjacentHTML('beforeend', `
+                                <dialog id="my_modal_2-pembelajaran-${item.id}-${item.materi_pembelajaran}" class="modal">
+                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
+                                        <div class="flex justify-center w-full mb-4">
+                                            <span class="text-2xl font-bold opacity-70">Pembelajaran</span>
+                                        </div>
+                                        <div class="border max-w-6xl h-[500px] flex justify-start">
+                                            <div class="w-full h-full">
+                                                <iframe class="w-full h-full"
+                                                    src="/english-zone-materi/${item.materi_pembelajaran}"
+                                                    frameborder="0" allowfullscreen>
+                                                </iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <form method="dialog" class="modal-backdrop">
+                                        <button>close</button>
+                                    </form>
+                                </dialog>
+                            `);
+                        }
+
+                        if (item.worksheet) {
+                            container.insertAdjacentHTML('beforeend', `
+                                <dialog id="my_modal_2-worksheet-${item.id}-${item.worksheet}" class="modal">
+                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
+                                        <div class="flex justify-center w-full mb-4">
+                                            <span class="text-2xl font-bold opacity-70">Worksheet</span>
+                                        </div>
+                                        <div class="border max-w-6xl h-[500px] flex justify-start">
+                                            <div class="w-full h-full">
+                                                <iframe class="w-full h-full"
+                                                    src="/english-zone-materi/${item.worksheet}"
                                                     frameborder="0" allowfullscreen>
                                                 </iframe>
                                             </div>
@@ -143,18 +287,48 @@ function paginateManagementMateriDetail() {
                                     ${item.english_zone_session?.session_name}
                                 </td>
                                 <td class="td-table !text-black !text-center">
-                                    <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_vocabulary}">
+                                    <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_vocabulary}" data-materi-type="vocabulary">
                                         ${materiVocabulary}
                                     </a>
                                 </td>
                                 <td class="td-table !text-black !text-center">
-                                    <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_grammar}">
+                                    <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_grammar}" data-materi-type="grammar">
                                         ${materiGrammar}
                                     </a>
                                 </td>
                                 <td class="td-table !text-black !text-center">
-                                    <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_lesson_plan}">
+                                    <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_lesson_plan}" data-materi-type="lessonPlan">
                                         ${materiLessonPlan}
+                                    </a>
+                                </td>
+                                <td class="td-table !text-black !text-center">
+                                    <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_reading}" data-materi-type="reading">
+                                        ${materiReading}
+                                    </a>
+                                </td>
+                                <td class="td-table !text-black !text-center">
+                                    <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_writing}" data-materi-type="writing">
+                                        ${materiWriting}
+                                    </a>
+                                </td>
+                                <td class="td-table !text-black !text-center">
+                                    <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_listening}" data-materi-type="listening">
+                                        ${materiListening}
+                                    </a>
+                                </td>
+                                <td class="td-table !text-black !text-center">
+                                    <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_speaking}" data-materi-type="speaking">
+                                        ${materiSpeaking}
+                                    </a>
+                                </td>
+                                <td class="td-table !text-black !text-center">
+                                    <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.materi_pembelajaran}" data-materi-type="pembelajaran">
+                                        ${materiPembelajaran}
+                                    </a>
+                                </td>
+                                <td class="td-table !text-black !text-center">
+                                    <a href="" class="btn-materi text-lg" data-materi-id="${item.id}" data-materi="${item.worksheet}" data-materi-type="worksheet">
+                                        ${worksheet}
                                     </a>
                                 </td>
                                 <td class="td-table !text-black !text-center">
@@ -244,7 +418,8 @@ $(document).off('click', '.btn-materi').on('click', '.btn-materi', function (e) 
     e.preventDefault();
     const materiId = $(this).data('materi-id');
     const materi = $(this).data('materi');
-    const modal = document.getElementById('my_modal_2-' + materiId + '-' + materi);
+    const materiType = $(this).data('materi-type');
+    const modal = document.getElementById('my_modal_2-' + materiType + '-' + materiId + '-' + materi);
     if (modal) {
         modal.showModal();
     }

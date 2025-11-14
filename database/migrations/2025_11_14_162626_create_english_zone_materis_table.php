@@ -17,6 +17,12 @@ return new class extends Migration
             $table->string('materi_vocabulary');
             $table->string('materi_grammar');
             $table->string('materi_lesson_plan');
+            $table->string('materi_reading');
+            $table->string('materi_writing');
+            $table->string('materi_listening');
+            $table->string('materi_speaking');
+            $table->string('materi_pembelajaran');
+            $table->string('worksheet');
             $table->string('video_materi');
             $table->foreignId('level_id')->constrained('english_zone_levels');
             $table->foreignId('session_id')->constrained('english_zone_sessions');
