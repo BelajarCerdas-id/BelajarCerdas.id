@@ -21,6 +21,7 @@ function paginateMentorStudentBatchDetailMateri(selectedLevel = null) {
             success: function (response) {
                 const containerMateri = $('#grid-list-materi')
                 containerMateri.empty();
+                document.getElementById('dynamic-modal-container-materi').innerHTML = '';
 
                 if (response.data.length > 0) {
 
@@ -70,75 +71,6 @@ function paginateMentorStudentBatchDetailMateri(selectedLevel = null) {
 
                         container.insertAdjacentHTML('beforeend', modal);
 
-                        if (item.materi_vocabulary) {
-                            container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-${item.id}-${item.materi_vocabulary}" class="modal">
-                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
-                                        <div class="flex justify-center w-full mb-4">
-                                            <span class="text-2xl font-bold opacity-70">Vocabulary</span>
-                                        </div>
-                                        <div class="border max-w-6xl h-[500px] flex justify-start">
-                                            <div class="w-full h-full">
-                                                <iframe class="w-full h-full"
-                                                    src="/english-zone-materi/${item.materi_vocabulary}"
-                                                    frameborder="0" allowfullscreen>
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form method="dialog" class="modal-backdrop">
-                                        <button>close</button>
-                                    </form>
-                                </dialog>
-                            `);
-                        }
-
-                        if (item.materi_grammar) {
-                            container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-${item.id}-${item.materi_grammar}" class="modal">
-                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
-                                        <div class="flex justify-center w-full mb-4">
-                                            <span class="text-2xl font-bold opacity-70">Grammar</span>
-                                        </div>
-                                        <div class="border max-w-6xl h-[500px] flex justify-start">
-                                            <div class="w-full h-full">
-                                                <iframe class="w-full h-full"
-                                                    src="/english-zone-materi/${item.materi_grammar}"
-                                                    frameborder="0" allowfullscreen>
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form method="dialog" class="modal-backdrop">
-                                        <button>close</button>
-                                    </form>
-                                </dialog>
-                            `);
-                        }
-
-                        if (item.materi_lesson_plan) {
-                            container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-${item.id}-${item.materi_lesson_plan}" class="modal">
-                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
-                                        <div class="flex justify-center w-full mb-4">
-                                            <span class="text-2xl font-bold opacity-70">Grammar</span>
-                                        </div>
-                                        <div class="border max-w-6xl h-[500px] flex justify-start">
-                                            <div class="w-full h-full">
-                                                <iframe class="w-full h-full"
-                                                    src="/english-zone-materi/${item.materi_lesson_plan}"
-                                                    frameborder="0" allowfullscreen>
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form method="dialog" class="modal-backdrop">
-                                        <button>close</button>
-                                    </form>
-                                </dialog>
-                            `);
-                        }
-
                         const formatDate = (dateString) => {
                             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Juli', 'Agust', 'Sep', 'Okt', 'Nov', 'Des'];
@@ -174,20 +106,23 @@ function paginateMentorStudentBatchDetailMateri(selectedLevel = null) {
                         // jika level sudah dimulai, maka tampilkan tombol lihat materi, jika belum maka tampilkan tanggal mulai level
                         if (response.date >= item.level_start_date) {
                             lockLessonPlan = `
-                                <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_lesson_plan}">
+                                <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_lesson_plan}"
+                                    data-materi-type="lesson plan">
                                     Lihat Materi
                                     <i class="fas fa-chevron-right"></i>
                                 </a>
                             `;
                             lockMateriVocabulary = `
-                                <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_vocabulary}">
+                                <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_vocabulary}"
+                                    data-materi-type="vocabulary">
                                     Lihat Materi
                                     <i class="fas fa-chevron-right"></i>
                                 </a>
                             `;
 
                             lockMateriGrammar = `
-                                <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_grammar}">
+                                <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_grammar}"
+                                    data-materi-type="grammar">
                                     Lihat Materi
                                     <i class="fas fa-chevron-right"></i>
                                 </a>
@@ -245,7 +180,7 @@ function paginateMentorStudentBatchDetailMateri(selectedLevel = null) {
 
                                 <div class="toggleButton">
                                     <div class="flex pr-6 items-center">
-                                        <span class="w-full opacity-70 mr-4">${item.english_zone_session?.session_name}</span>
+                                        <span class="w-full opacity-70 mr-4 text-sm">${item.english_zone_session?.session_name}</span>
                                         ${lockIcon}
                                     </div>
                                     <i class="fa-solid fa-chevron-up icon"></i>
@@ -340,13 +275,44 @@ function closePembahasanModal(materiId) {
     }
 }
 
-// show materi vocabulary, grammar
+// show materi
 $(document).off('click', '.btn-materi').on('click', '.btn-materi', function (e) {
     e.preventDefault();
     const materiId = $(this).data('materi-id');
     const materi = $(this).data('materi');
-    const modal = document.getElementById('my_modal_2-' + materiId + '-' + materi);
+    const materiType = $(this).data('materi-type');
+
+    const modalId = 'my_modal_2-' + materiType + '-' + materiId + '-' + materi;
+
+    showModal(materiId, materi, materiType);
+
+    const modal = document.getElementById(modalId);
     if (modal) {
         modal.showModal();
     }
 });
+
+function showModal(materiId, materi, materiType) {
+    const modalId = `my_modal_2-${materiType}-${materiId}-${materi}`;
+
+    const container = document.getElementById('dynamic-modal-container-materi');
+
+    container.insertAdjacentHTML('beforeend', `
+        <dialog id="${modalId}" class="modal">
+            <div class="modal-box bg-white max-w-6xl max-h-[600px] lg:max-h-[800px]">
+                <div class="flex justify-center w-full mb-4">
+                    <span class="text-2xl font-bold opacity-70">${materiType.toUpperCase()}</span>
+                </div>
+                <div class="border max-w-6xl h-[500px] lg:h-[700px] flex justify-start">
+                    <iframe class="w-full h-full"
+                        src="/english-zone-materi/${materi}"
+                        frameborder="0"
+                        allowfullscreen></iframe>
+                </div>
+            </div>
+            <form method="dialog" class="modal-backdrop">
+                <button>close</button>
+            </form>
+        </dialog>
+    `);
+}

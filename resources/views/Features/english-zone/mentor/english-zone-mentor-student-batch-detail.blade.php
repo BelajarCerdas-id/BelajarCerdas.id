@@ -8,6 +8,8 @@
     <div class="home-beranda z-[-1] md:z-0 mt-[40px] md:mt-0">
         <div class="content-beranda">
 
+            <div id="dynamic-modal-container-materi"></div>
+
             <div id="student-batch-detail-identity" class="mb-10">
                 <!---- shwo data in ajax ---->
             </div>
