@@ -56,6 +56,8 @@
                     </div>
                 </section>
 
+                <div id="dynamic-modal-container-materi"></div>
+
                 <!-- Modal Edit Materi -->
                 <dialog id="my_modal_3" class="modal">
                     <div class="modal-box bg-white max-w-6xl">

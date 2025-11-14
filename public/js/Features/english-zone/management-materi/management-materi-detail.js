@@ -7,16 +7,13 @@ function paginateManagementMateriDetail() {
 
     fetchFilteredManagementMateriDetail(levelId);
 
-    function fetchFilteredManagementMateriDetail(page = 1) {
+    function fetchFilteredManagementMateriDetail() {
         $.ajax({
             url: `/english-zone/management-materi/detail/paginate/${levelId}`,
             method: 'GET',
-            data: {
-                page: page
-            },
             success: function (response) {
                 $('#table-list-management-materi-detail').empty(); // Clear previous entries
-                $('.pagination-container-management-materi-detail').empty(); // Clear previous pagination links
+                document.getElementById('dynamic-modal-container-materi').innerHTML = '';
 
                 function getFileIcon(filename) {
                     if (!filename) return;
@@ -68,214 +65,6 @@ function paginateManagementMateriDetail() {
                         `;
 
                         container.insertAdjacentHTML('beforeend', modal);
-
-                        let materi = '';
-                        if (item.materi_vocabulary) {
-                            container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-vocabulary-${item.id}-${item.materi_vocabulary}" class="modal">
-                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
-                                        <div class="flex justify-center w-full mb-4">
-                                            <span class="text-2xl font-bold opacity-70">Vocabulary</span>
-                                        </div>
-                                        <div class="border max-w-6xl h-[500px] flex justify-start">
-                                            <div class="w-full h-full">
-                                                <iframe class="w-full h-full"
-                                                    src="/english-zone-materi/${item.materi_vocabulary}"
-                                                    frameborder="0" allowfullscreen>
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form method="dialog" class="modal-backdrop">
-                                        <button>close</button>
-                                    </form>
-                                </dialog>
-                        `);
-                        }
-
-                        if (item.materi_grammar) {
-                            container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-grammar-${item.id}-${item.materi_grammar}" class="modal">
-                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
-                                        <div class="flex justify-center w-full mb-4">
-                                            <span class="text-2xl font-bold opacity-70">Grammar</span>
-                                        </div>
-                                        <div class="border max-w-6xl h-[500px] flex justify-start">
-                                            <div class="w-full h-full">
-                                                <iframe class="w-full h-full"
-                                                    src="/english-zone-materi/${item.materi_grammar}"
-                                                    frameborder="0" allowfullscreen>
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form method="dialog" class="modal-backdrop">
-                                        <button>close</button>
-                                    </form>
-                                </dialog>
-                            `);
-                        }
-
-                        if (item.materi_lesson_plan) {
-                            container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-lessonPlan-${item.id}-${item.materi_lesson_plan}" class="modal">
-                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
-                                        <div class="flex justify-center w-full mb-4">
-                                            <span class="text-2xl font-bold opacity-70">Lesson Plan</span>
-                                        </div>
-                                        <div class="border max-w-6xl h-[500px] flex justify-start">
-                                            <div class="w-full h-full">
-                                                <iframe class="w-full h-full"
-                                                    src="/english-zone-materi/${item.materi_lesson_plan}"
-                                                    frameborder="0" allowfullscreen>
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form method="dialog" class="modal-backdrop">
-                                        <button>close</button>
-                                    </form>
-                                </dialog>
-                            `);
-                        }
-
-                        if (item.materi_reading) {
-                            container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-reading-${item.id}-${item.materi_reading}" class="modal">
-                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
-                                        <div class="flex justify-center w-full mb-4">
-                                            <span class="text-2xl font-bold opacity-70">Reading</span>
-                                        </div>
-                                        <div class="border max-w-6xl h-[500px] flex justify-start">
-                                            <div class="w-full h-full">
-                                                <iframe class="w-full h-full"
-                                                    src="/english-zone-materi/${item.materi_reading}"
-                                                    frameborder="0" allowfullscreen>
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form method="dialog" class="modal-backdrop">
-                                        <button>close</button>
-                                    </form>
-                                </dialog>
-                            `);
-                        }
-
-                        if (item.materi_writing) {
-                            container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-writing-${item.id}-${item.materi_writing}" class="modal">
-                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
-                                        <div class="flex justify-center w-full mb-4">
-                                            <span class="text-2xl font-bold opacity-70">Writing</span>
-                                        </div>
-                                        <div class="border max-w-6xl h-[500px] flex justify-start">
-                                            <div class="w-full h-full">
-                                                <iframe class="w-full h-full"
-                                                    src="/english-zone-materi/${item.materi_writing}"
-                                                    frameborder="0" allowfullscreen>
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form method="dialog" class="modal-backdrop">
-                                        <button>close</button>
-                                    </form>
-                                </dialog>
-                            `);
-                        }
-
-                        if (item.materi_listening) {
-                            container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-listening-${item.id}-${item.materi_listening}" class="modal">
-                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
-                                        <div class="flex justify-center w-full mb-4">
-                                            <span class="text-2xl font-bold opacity-70">Listening</span>
-                                        </div>
-                                        <div class="border max-w-6xl h-[500px] flex justify-start">
-                                            <div class="w-full h-full">
-                                                <iframe class="w-full h-full"
-                                                    src="/english-zone-materi/${item.materi_listening}"
-                                                    frameborder="0" allowfullscreen>
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form method="dialog" class="modal-backdrop">
-                                        <button>close</button>
-                                    </form>
-                                </dialog>
-                            `);
-                        }
-
-                        if (item.materi_speaking) {
-                            container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-speaking-${item.id}-${item.materi_speaking}" class="modal">
-                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
-                                        <div class="flex justify-center w-full mb-4">
-                                            <span class="text-2xl font-bold opacity-70">Speaking</span>
-                                        </div>
-                                        <div class="border max-w-6xl h-[500px] flex justify-start">
-                                            <div class="w-full h-full">
-                                                <iframe class="w-full h-full"
-                                                    src="/english-zone-materi/${item.materi_speaking}"
-                                                    frameborder="0" allowfullscreen>
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form method="dialog" class="modal-backdrop">
-                                        <button>close</button>
-                                    </form>
-                                </dialog>
-                            `);
-                        }
-
-                        if (item.materi_pembelajaran) {
-                            container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-pembelajaran-${item.id}-${item.materi_pembelajaran}" class="modal">
-                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
-                                        <div class="flex justify-center w-full mb-4">
-                                            <span class="text-2xl font-bold opacity-70">Pembelajaran</span>
-                                        </div>
-                                        <div class="border max-w-6xl h-[500px] flex justify-start">
-                                            <div class="w-full h-full">
-                                                <iframe class="w-full h-full"
-                                                    src="/english-zone-materi/${item.materi_pembelajaran}"
-                                                    frameborder="0" allowfullscreen>
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form method="dialog" class="modal-backdrop">
-                                        <button>close</button>
-                                    </form>
-                                </dialog>
-                            `);
-                        }
-
-                        if (item.worksheet) {
-                            container.insertAdjacentHTML('beforeend', `
-                                <dialog id="my_modal_2-worksheet-${item.id}-${item.worksheet}" class="modal">
-                                    <div class="modal-box bg-white max-w-6xl max-h-[600px]">
-                                        <div class="flex justify-center w-full mb-4">
-                                            <span class="text-2xl font-bold opacity-70">Worksheet</span>
-                                        </div>
-                                        <div class="border max-w-6xl h-[500px] flex justify-start">
-                                            <div class="w-full h-full">
-                                                <iframe class="w-full h-full"
-                                                    src="/english-zone-materi/${item.worksheet}"
-                                                    frameborder="0" allowfullscreen>
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form method="dialog" class="modal-backdrop">
-                                        <button>close</button>
-                                    </form>
-                                </dialog>
-                            `);
-                        }
 
                         $('#table-list-management-materi-detail').append(`
                             <tr class="text-xs">
@@ -362,10 +151,6 @@ function paginateManagementMateriDetail() {
                             </tr>
                         `);
                     });
-
-                    // Append pagination links
-                    $('.pagination-container-management-materi-detail').html(response.links);
-                    bindPaginationLinks(); // Bind click event ke link pagination yang baru
                     $('#empty-message-management-materi-detail').hide(); // sembunyikan pesan kosong
                     $('.thead-table-management-materi-detail').show(); // Tampilkan tabel thead
                 } else {
@@ -382,14 +167,6 @@ function paginateManagementMateriDetail() {
 $(document).ready(function () {
     paginateManagementMateriDetail();
 });
-
-function bindPaginationLinks() {
-    $('.pagination-container-management-materi-detail').off('click', 'a').on('click', 'a', function (event) {
-        event.preventDefault(); // Cegah perilaku default link
-        const page = new URL(this.href).searchParams.get('page'); // Dapatkan nomor halaman dari link
-        paginateManagementMateriDetail(page); // Ambil response yang difilter untuk halaman yang ditentukan
-    });
-}
 
 // Tampilkan pembahasan soal latihan melalaui modal
 function showVideo(element) {
@@ -419,11 +196,41 @@ $(document).off('click', '.btn-materi').on('click', '.btn-materi', function (e) 
     const materiId = $(this).data('materi-id');
     const materi = $(this).data('materi');
     const materiType = $(this).data('materi-type');
-    const modal = document.getElementById('my_modal_2-' + materiType + '-' + materiId + '-' + materi);
+
+    const modalId = 'my_modal_2-' + materiType + '-' + materiId + '-' + materi;
+
+    showModal(materiId, materi, materiType);
+
+    const modal = document.getElementById(modalId);
     if (modal) {
         modal.showModal();
     }
 });
+
+function showModal(materiId, materi, materiType) {
+    const modalId = `my_modal_2-${materiType}-${materiId}-${materi}`;
+
+    const container = document.getElementById('dynamic-modal-container-materi');
+
+    container.insertAdjacentHTML('beforeend', `
+        <dialog id="${modalId}" class="modal">
+            <div class="modal-box bg-white max-w-6xl max-h-[600px]">
+                <div class="flex justify-center w-full mb-4">
+                    <span class="text-2xl font-bold opacity-70">${materiType.toUpperCase()}</span>
+                </div>
+                <div class="border max-w-6xl h-[500px] flex justify-start">
+                    <iframe class="w-full h-full"
+                        src="/english-zone-materi/${materi}"
+                        frameborder="0"
+                        allowfullscreen></iframe>
+                </div>
+            </div>
+            <form method="dialog" class="modal-backdrop">
+                <button>close</button>
+            </form>
+        </dialog>
+    `);
+}
 
 // Event listener tombol "edit materi" (open modal)
 $(document).off('click', '.btn-edit-materi').on('click', '.btn-edit-materi', function (e) {
