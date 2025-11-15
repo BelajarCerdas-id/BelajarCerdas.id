@@ -128,6 +128,54 @@ function paginateMentorStudentBatchDetailMateri(selectedLevel = null) {
                                 </a>
                             `;
 
+                            lockMateriReading = `
+                                <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_reading}"
+                                    data-materi-type="reading">
+                                    Lihat Materi
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            `;
+
+                            lockMateriWriting = `
+                                <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_writing}"
+                                    data-materi-type="writing">
+                                    Lihat Materi
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            `;
+
+                            lockMateriListening = `
+                                <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_listening}"
+                                    data-materi-type="listening">
+                                    Lihat Materi
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            `;
+
+                            lockMateriSpeaking = `
+                                <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_speaking}"
+                                    data-materi-type="speaking">
+                                    Lihat Materi
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            `;
+
+                            lockMateriPembelajaran = `
+                                <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_pembelajaran}"
+                                    data-materi-type="pembelajaran">
+                                    Lihat Materi
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            `;
+
+                            lockWorksheet = `
+                                <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.worksheet}"
+                                    data-materi-type="worksheet">
+                                    Lihat Materi
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            `;
+
                             lockMateriVideo = `
                                 <button type="button" onclick="showVideo(this)" data-materi-id="${item.id}" data-video-id="${videoId}"
                                     class="text-[#4189E0] flex items-center gap-2 text-md font-bold">
@@ -140,14 +188,14 @@ function paginateMentorStudentBatchDetailMateri(selectedLevel = null) {
 
                         } else {
                             lockLessonPlan = `
-                                <span class="font-bold opacity-70 flex flex-col sm:flex-row items-center sm:gap-2">
+                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-2 lg:gap-0 xl:gap-2">
                                     <p>${levelStartDate}</p>
                                     -
                                     <p>${levelEndDate}</p>
                                 </span>
                             `;
                             lockMateriVocabulary = `
-                                <span class="font-bold opacity-70 flex flex-col sm:flex-row items-center sm:gap-2">
+                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-2 lg:gap-0 xl:gap-2">
                                     <p>${levelStartDate}</p>
                                     -
                                     <p>${levelEndDate}</p>
@@ -155,7 +203,55 @@ function paginateMentorStudentBatchDetailMateri(selectedLevel = null) {
                             `;
 
                             lockMateriGrammar = `
-                                <span class="font-bold opacity-70 flex flex-col sm:flex-row items-center sm:gap-2">
+                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-2 lg:gap-0 xl:gap-2">
+                                    <p>${levelStartDate}</p>
+                                    -
+                                    <p>${levelEndDate}</p>
+                                </span>
+                            `;
+
+                            lockMateriReading = `
+                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-2 lg:gap-0 xl:gap-2">
+                                    <p>${levelStartDate}</p>
+                                    -
+                                    <p>${levelEndDate}</p>
+                                </span>
+                            `;
+
+                            lockMateriWriting = `
+                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-2 lg:gap-0 xl:gap-2">
+                                    <p>${levelStartDate}</p>
+                                    -
+                                    <p>${levelEndDate}</p>
+                                </span>
+                            `;
+
+                            lockMateriListening = `
+                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-2 lg:gap-0 xl:gap-2">
+                                    <p>${levelStartDate}</p>
+                                    -
+                                    <p>${levelEndDate}</p>
+                                </span>
+                            `;
+
+                            lockMateriSpeaking = `
+                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-2 lg:gap-0 xl:gap-2">
+                                    <p>${levelStartDate}</p>
+                                    -
+                                    <p>${levelEndDate}</p>
+                                </span>
+                            `;
+
+                            lockMateriPembelajaran = `
+                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-2 lg:gap-0 xl:gap-2">
+                                    <p>${levelStartDate}</p>
+                                    -
+                                    <p>${levelEndDate}</p>
+                                </span>
+                            `;
+
+                            lockWorksheet = `
+                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-2 lg:gap-0 xl:gap-2">
                                     <p>${levelStartDate}</p>
                                     -
                                     <p>${levelEndDate}</p>
@@ -163,7 +259,7 @@ function paginateMentorStudentBatchDetailMateri(selectedLevel = null) {
                             `;
 
                             lockMateriVideo = `
-                                <span class="font-bold opacity-70 flex flex-col sm:flex-row items-center sm:gap-2">
+                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-2 lg:gap-0 xl:gap-2">
                                     <p>${levelStartDate}</p>
                                     -
                                     <p>${levelEndDate}</p>
@@ -189,37 +285,134 @@ function paginateMentorStudentBatchDetailMateri(selectedLevel = null) {
                                 <div class="content-accordion">
                                     <div class="w-full text-sm mt-6 flex flex-col gap-8">
                                         <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
-                                            <div>
-                                                <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
-                                                <p class="text-md font-semibold opacity-70">Lesson Plan</p>
+                                            <div class="flex items-center gap-2">
+                                                <div> 
+                                                    <i class="fa-solid fa-chalkboard-user bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full"></i>
+                                                </div>
+                                                <div>
+                                                    <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
+                                                    <p class="text-md font-semibold opacity-70">Lesson Plan</p>
+                                                </div>
                                             </div>
                                                 ${lockLessonPlan}
                                         </div>
-                                        <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
-                                            <div>
-                                                <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
-                                                <p class="text-md font-semibold opacity-70">Vocabulary</p>
+                                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                            <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
+                                                <div class="flex items-center gap-2">
+                                                    <div> 
+                                                        <i class="fa-solid fa-book bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full"></i>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
+                                                        <p class="text-md font-semibold opacity-70">Vocabulary</p>
+                                                    </div>
+                                                </div>
+                                                    ${lockMateriVocabulary}
                                             </div>
-                                                ${lockMateriVocabulary}
-                                        </div>
-                                        <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
-                                            <div>
-                                                <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
-                                                <p class="text-md font-semibold opacity-70">Grammar</p>
+                                            <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
+                                                <div class="flex items-center gap-2">
+                                                    <div> 
+                                                        <i class="fa-solid fa-spell-check bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full"></i>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
+                                                        <p class="text-md font-semibold opacity-70">Grammar</p>
+                                                    </div>
+                                                </div>
+                                                ${lockMateriGrammar}
                                             </div>
-                                            ${lockMateriGrammar}
-                                        </div>
-                                        <div class="flex flex-col xl:flex-row gap-8 w-full">
+                                            <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
+                                                <div class="flex items-center gap-2">
+                                                    <div> 
+                                                        <i class="fa-brands fa-readme bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full"></i>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
+                                                        <p class="text-md font-semibold opacity-70">Reading</p>
+                                                    </div>
+                                                </div>
+                                                ${lockMateriReading}
+                                            </div>
+                                            <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
+                                                <div class="flex items-center gap-2">
+                                                    <div> 
+                                                        <i class="fa-solid fa-file-pen bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full pl-1"></i>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
+                                                        <p class="text-md font-semibold opacity-70">Writing</p>
+                                                    </div>
+                                                </div>
+                                                ${lockMateriWriting}
+                                            </div>
+                                            <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
+                                                <div class="flex items-center gap-2">
+                                                    <div> 
+                                                        <i class="fa-solid fa-headphones bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full"></i>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
+                                                        <p class="text-md font-semibold opacity-70">Listening</p>
+                                                    </div>
+                                                </div>
+                                                ${lockMateriListening}
+                                            </div>
+                                            <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
+                                                <div class="flex items-center gap-2">
+                                                    <div> 
+                                                        <i class="fa-solid fa-microphone bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full"></i>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
+                                                        <p class="text-md font-semibold opacity-70">Speaking</p>
+                                                    </div>
+                                                </div>
+                                                ${lockMateriSpeaking}
+                                            </div>
+                                            <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
+                                                <div class="flex items-center gap-2">
+                                                    <div> 
+                                                        <i class="fa-solid fa-lightbulb bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full"></i>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
+                                                        <p class="text-md font-semibold opacity-70">Pembelajaran</p>
+                                                    </div>
+                                                </div>
+                                                ${lockMateriPembelajaran}
+                                            </div>
+                                            <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
+                                                <div class="flex items-center gap-2">
+                                                    <div> 
+                                                        <i class="fa-solid fa-file-alt bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full"></i>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
+                                                        <p class="text-md font-semibold opacity-70">Worksheet</p>
+                                                    </div>
+                                                </div>
+                                                ${lockWorksheet}
+                                            </div>
                                             <div class="w-full h-20 border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
-                                            <div>
-                                                <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
-                                                <p class="text-md font-semibold opacity-70">Video</p>
-                                            </div>
+                                                <div class="flex items-center gap-2">
+                                                    <div> 
+                                                        <i class="fa-solid fa-play bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full"></i>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-semibold text-sm text-[#4189E0]">Materi</span>
+                                                        <p class="text-md font-semibold opacity-70">Video</p>
+                                                    </div>
+                                                </div>
                                                 ${lockMateriVideo}
                                             </div>
                                             <div class="w-full h-20 border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
-                                                <div>
-                                                    <p class="text-md font-semibold opacity-70">Zoom</p>
+                                                <div class="flex items-center gap-2">
+                                                    <div> 
+                                                        <i class="fa-solid fa-video bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-md font-semibold opacity-70">Zoom</p>
+                                                    </div>
                                                 </div>
                                                 ${checkSession}
                                             </div>
