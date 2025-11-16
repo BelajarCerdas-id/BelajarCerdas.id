@@ -26,6 +26,7 @@ use App\Models\FeaturePrices;
 use App\Models\FeatureSubscriptionHistory;
 use App\Models\Kurikulum;
 use App\Models\MentorFeatureStatus;
+use App\Models\Transactions;
 use App\Models\UserAccount;
 use Illuminate\Http\Request;
 use App\Services\DocxImageExtractor;
@@ -2893,7 +2894,188 @@ class EnglishZoneController extends Controller
     // function view student page
     public function englishZoneStudentView()
     {
-        return view('Features.english-zone.student.english-zone-student');
+        // ambil data hari ini
+        $date = now()->format('Y-m-d');
+
+        // mendapatkan data user yang sedang login
+        $user = Auth::user();
+
+        $getSubscriptionStudent = FeatureSubscriptionHistory::where('student_id', $user->id)
+        ->whereDate('end_date', '>', $date)->first();
+
+        if ($getSubscriptionStudent) {
+            $levelIds = $getSubscriptionStudent->Transactions->transaction_callback['level_id'];
+        } else {
+            $levelIds = EnglishZoneLevel::first()->id;
+        }
+
+        return view('Features.english-zone.student.english-zone-student', compact('levelIds'));
+    }
+
+    // paginate materi
+    public function paginateStudentMateri($levelIds, $activeLevel)
+    {
+        // ambil data hari ini
+        $date = now()->format('Y-m-d');
+
+        // mendapatkan data user yang sedang login
+        $user = Auth::user();
+
+        $getSubscriptionStudent = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('feature_id', 3)->where('transaction_status', 'Berhasil');
+        })->where('student_id', $user->id)->whereDate('end_date', '>', $date)->first();
+
+        if ($getSubscriptionStudent) {
+            // Ambil semua batch yang terkait dengan level aktif dan mentor saat ini
+            $studentBatch = EnglishZoneStudentBatch::whereHas('FeatureSubscriptionHistory', function ($query) use ($date) {
+                $query->where('end_date', '>=', $date)->where('subscription_status', 'aktif');
+            })->where('level_id', $activeLevel)->where('student_id', $user->id)->get();
+    
+            // Ambil tanggal mulai dan selesai dari level (berdasarkan batch pertama)
+            $levelStartDate = Carbon::parse($studentBatch->first()->level_start_date ?? null);
+            $levelEndDate = Carbon::parse($studentBatch->first()->level_end_date ?? null);
+    
+            // Ambil semua batch_schedule_id dari studentBatch (jadwal tiap siswa)
+            $batchScheduleIds = $studentBatch->pluck('batch_schedule_id')->toArray();
+    
+            // Ambil daftar hari dari jadwal (misal ['Senin', 'Rabu'])
+            $batchSchedules = EnglishZoneBatchSchedule::whereIn('id', $batchScheduleIds)->pluck('day_of_week')->toArray();
+    
+            // Urutkan daftar hari sesuai urutan umum
+            $order = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+            usort($batchSchedules, fn($a, $b) => array_search($a, $order) <=> array_search($b, $order));
+
+            // Ambil semua materi berdasarkan level aktif
+            $materiList = EnglishZoneMateri::with(['EnglishZoneLevel', 'EnglishZoneSession'])
+            ->where('level_id', $activeLevel)
+            ->get()
+            ->map(function ($item) {
+                // Ekstrak ID video YouTube jika ada link-nya
+                if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $item['video_materi'], $matches)) {
+                    $item['video_id'] = $matches[1] ?? $matches[2]; // simpan hanya ID video
+                } else {
+                    $item['video_id'] = null; // tidak ada video YouTube
+                }
+                return $item;
+            });
+
+            $materiList = $materiList->values(); // reset index
+            foreach ($materiList as $i => $item) {
+                $item->session_number = $i + 1; // nomor sesi baru dimulai dari 1
+            }
+
+            // Ambil daftar Zoom berdasarkan level & mentor
+            $zoomList = EnglishZoneZoom::where('mentor_id', $studentBatch->first()->mentor_id ?? null)->first();
+    
+            // Buat peta sesi Zoom agar mudah diakses
+            $zoomMap = [
+                'link_zoom' => $zoomList->link_zoom ?? null,
+            ];
+    
+            // Buat daftar materi lengkap dengan tanggal dan link Zoom
+            $materiWithZoom = $materiList->map(function ($materi) use ($levelStartDate, $levelEndDate, $batchSchedules, $zoomMap) {
+                $session = $materi->session_number; // nomor sesi materi
+                $daysCount = count($batchSchedules); // jumlah hari dalam seminggu (misal 2 hari: Senin & Rabu)
+                $weekOffset = floor(($session - 1) / $daysCount); // minggu ke berapa
+                $dayIndex = ($session - 1) % $daysCount; // indeks hari ke berapa (0 untuk Senin, 1 untuk Rabu, dst)
+    
+                // Ambil nama hari dari daftar jadwal
+                $dayName = $batchSchedules[$dayIndex];
+    
+                // Daftar offset hari (untuk hitung selisih hari)
+                $dayOffsets = [
+                    'Senin' => 0,
+                    'Selasa' => 1,
+                    'Rabu' => 2,
+                    'Kamis' => 3,
+                    'Jumat' => 4,
+                    'Sabtu' => 5,
+                    'Minggu' => 6,
+                ];
+    
+                // Ambil hari pertama batch (misal: Senin)
+                $firstDayName = $batchSchedules[0];
+                $firstDayOffset = $dayOffsets[$firstDayName] ?? 0;
+                $targetOffset = $dayOffsets[$dayName] ?? 0;
+    
+                // Temukan tanggal pertama kali hari "Senin" muncul setelah level_start_date
+                $firstDay = $levelStartDate->copy();
+                while ($firstDay->dayOfWeekIso != ($firstDayOffset + 1)) {
+                    $firstDay->addDay();
+                }
+    
+                // Hitung tanggal sesi berdasarkan minggu ke-n dan perbedaan hari
+                $sessionDate = $firstDay->copy()->addWeeks($weekOffset)->addDays($targetOffset - $firstDayOffset);
+    
+                // Jika tanggal sesi melebihi tanggal akhir level, jangan ditampilkan
+                if ($sessionDate->greaterThan($levelEndDate)) {
+                    return null;
+                }
+    
+                // Tambahkan data tambahan ke objek materi
+                $materi->zoom_link = $zoomMap['link_zoom'] ?? null;
+                $materi->day_of_week = $dayName;
+                $materi->session_date = $sessionDate->translatedFormat('d F Y'); // format tanggal misal "05 November 2025"
+                $materi->session_date_check = $sessionDate->translatedFormat('Y-m-d'); // format ISO untuk perbandingan
+                $materi->level_start_date = $levelStartDate->translatedFormat('Y-m-d');
+                $materi->level_end_date = $levelEndDate->translatedFormat('Y-m-d');
+    
+                return $materi;
+            });
+
+            // Ambil data level (bisa lebih dari satu) berdasarkan ID yang dikirim
+            $getLevels = EnglishZoneLevel::whereIn('id', explode(',', $levelIds))->get();
+        } else {
+            // Ambil semua materi berdasarkan level aktif
+            $materiList = EnglishZoneMateri::with(['EnglishZoneLevel', 'EnglishZoneSession'])
+                ->where('level_id', $activeLevel)
+                ->get()
+                ->map(function ($item) {
+                    // Ekstrak ID video YouTube jika ada link-nya
+                    if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $item['video_materi'], $matches)) {
+                        $item['video_id'] = $matches[1] ?? $matches[2]; // simpan hanya ID video
+                    } else {
+                        $item['video_id'] = null; // tidak ada video YouTube
+                    }
+                    return $item;
+                });
+                $getLevels = EnglishZoneLevel::all();
+        }
+
+        return response()->json([
+            'data' => $materiWithZoom ?? $materiList,
+            'getLevels' => $getLevels,
+            'date' => $date,
+            'studentBatch' => $studentBatch ?? null,
+            'getSubscriptionStudent' => $getSubscriptionStudent ?? null,
+            'worksheetDetail' => '/english-zone/:levelId/worksheet-detail',
+        ]);
+    }
+
+    public function worksheetDetailView($levelId)
+    {
+        $user = Auth::user();
+
+        $date = now()->format('Y-m-d');
+
+        $getSubscriptionStudent = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('feature_id', 3)->where('transaction_status', 'Berhasil');
+        })->where('student_id', $user->id)->whereDate('end_date', '>', $date)->first();
+
+        if (!$getSubscriptionStudent) {
+            return redirect()->route('EZ.student.view');
+        }
+
+        return view('Features.english-zone.student.english-zone-worksheet-detail', compact('levelId'));
+    }
+
+    public function paginateWorksheetDetail($levelId)
+    {
+        $worksheet = EnglishZoneMateri::with(['EnglishZoneLevel', 'EnglishZoneSession'])->where('level_id', $levelId)->get();
+
+        return response()->json([
+            'data' => $worksheet,
+        ]);
     }
 
 }
