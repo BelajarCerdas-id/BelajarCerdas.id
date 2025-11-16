@@ -48,8 +48,10 @@ function packageOption(element, id) {
         MAX_SELECTED = 1;
     } else if (index == 2) {
         MAX_SELECTED = 2;
-    } else {
+    } else if (index == 3) {
         MAX_SELECTED = 3;
+    } else {
+        MAX_SELECTED = 4;
     }
 
     // reset semua input level (checkbox)
@@ -78,8 +80,10 @@ function packageOption(element, id) {
         document.getElementById('dropdownText').textContent = 'Choose one level';
     } else if (index == 2) {
         document.getElementById('dropdownText').textContent = 'Choose two levels';
-    } else {
+    } else if (index == 3) {
         document.getElementById('dropdownText').textContent = 'Choose three levels';
+    } else {
+        document.getElementById('dropdownText').textContent = 'Choose four levels';
     }
 
     // reset hidden input (level, batch, day, hour)
@@ -101,11 +105,12 @@ function packageOption(element, id) {
         $('#input-level-id').val(levels[0].value + ',' + levels[1].value);
 
         if (levels.length >= 2) {
-            // lock level 1 & 2
+            // lock level 1
             levels[0].checked = true;
             levels[0].addEventListener('click', e => e.preventDefault());
             labels[0].classList.replace('cursor-pointer', '!cursor-default');
 
+            // lock level 2
             levels[1].checked = true;
             levels[1].addEventListener('click', e => e.preventDefault());
             labels[1].classList.replace('cursor-pointer', '!cursor-default');
@@ -114,6 +119,11 @@ function packageOption(element, id) {
             levels[2].disabled = true;
             levels[2].checked = false;
             labels[2].classList.replace('cursor-pointer', '!cursor-default');
+
+            // disable level 4
+            levels[3].disabled = true;
+            levels[3].checked = false;
+            labels[3].classList.replace('cursor-pointer', '!cursor-default');
         }
         updateButtonText();
     }
@@ -122,18 +132,50 @@ function packageOption(element, id) {
         $('#input-level-id').val(levels[0].value + ',' + levels[1].value + ',' + levels[2].value);
 
         if (levels.length >= 3) {
-            // lock semua level
+            // lock level 1
             levels[0].checked = true;
             levels[0].addEventListener('click', e => e.preventDefault());
             labels[0].classList.replace('cursor-pointer', '!cursor-default');
 
+            // lock level 2
             levels[1].checked = true;
             levels[1].addEventListener('click', e => e.preventDefault());
             labels[1].classList.replace('cursor-pointer', '!cursor-default');
 
+            // lock level 3
             levels[2].checked = true;
             levels[2].addEventListener('click', e => e.preventDefault());
             labels[2].classList.replace('cursor-pointer', '!cursor-default');
+
+            // disable level 4
+            levels[3].disabled = true;
+            levels[3].checked = false;
+            labels[3].classList.replace('cursor-pointer', '!cursor-default');
+        }
+        updateButtonText();
+    } else if (index == 4) {
+        $('#input-level-id').val(levels[0].value + ',' + levels[1].value + ',' + levels[2].value + ',' + levels[3].value);
+
+        if (levels.length >= 4) {
+            // lock level 1
+            levels[0].checked = true;
+            levels[0].addEventListener('click', e => e.preventDefault());
+            labels[0].classList.replace('cursor-pointer', '!cursor-default');
+    
+            // lock level 2
+            levels[1].checked = true;
+            levels[1].addEventListener('click', e => e.preventDefault());
+            labels[1].classList.replace('cursor-pointer', '!cursor-default');
+    
+            // lock level 3
+            levels[2].checked = true;
+            levels[2].addEventListener('click', e => e.preventDefault());
+            labels[2].classList.replace('cursor-pointer', '!cursor-default');
+    
+            // lock level 4
+            levels[3].checked = true;
+            levels[3].addEventListener('click', e => e.preventDefault());
+            labels[3].classList.replace('cursor-pointer', '!cursor-default');
         }
         updateButtonText();
     }
@@ -162,6 +204,7 @@ function packageOption(element, id) {
 
     // panggil validasi (supaya tombol aktif kalau semua dropdown terisi)
     validatePurchase(dataFeatureId);
+    document.querySelectorAll('#dropdownOptions input[type="checkbox"]').forEach(cb => limitSelection(cb));
 
     return;
 }

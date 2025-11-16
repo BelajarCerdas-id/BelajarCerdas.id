@@ -44,9 +44,12 @@ function updateButtonText() {
 
         // Kalau paket index lain (anggap 3) → berarti langganan 12 bulan
         // Fallback text = "Choose three levels"
-    } else {
+    } else if (index == 3) {
         document.getElementById('dropdownText').textContent = values.length ? values.join(', ') :
             'Choose three levels';
+    } else {
+        document.getElementById('dropdownText').textContent = values.length ? values.join(', ') :
+            'Choose four levels';
     }
 }
 
