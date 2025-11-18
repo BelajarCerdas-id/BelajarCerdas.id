@@ -9,6 +9,11 @@ class FeatureSubscriptionHistory extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+    ];
+
     protected $fillable = [
         'student_id',
         'transaction_id',
@@ -41,5 +46,9 @@ class FeatureSubscriptionHistory extends Model
     public function EnglishZoneStudentBatch()
     {
         return $this->hasMany(EnglishZoneStudentBatch::class, 'subscription_history_id');
+    }
+
+    public function EnglishZoneAttendance() {
+        return $this->hasMany(EnglishZoneAttendance::class, 'subscription_history_id');
     }
 }

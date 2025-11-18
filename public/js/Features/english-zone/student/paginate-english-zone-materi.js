@@ -82,13 +82,22 @@ function paginateMateriStudent(selectedLevel = null) {
 
                         const worksheetDetail = response.worksheetDetail.replace(':levelId', activeLevel);
     
-                        if (response.getSubscriptionStudent &&  response.date == item.session_date_check) {
-                            checkSession = `
-                                <a href="${item.zoom_link ? item.zoom_link : ''}" class="text-[#4189E0] flex items-center gap-2 text-md font-bold">
-                                    Link Zoom
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            `;
+                        if (response.getSubscriptionStudent && response.date == item.session_date_check) {
+                            if (!response.dataAttendance) {
+                                checkSession = `
+                                    <span class="text-[#4189E0] flex items-center gap-2 text-md font-bold cursor-pointer" onclick="alertStudentAttendanceHistory()">
+                                        Link Zoom
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                `;
+                            } else {
+                                checkSession = `
+                                    <a href="${item.zoom_link ? item.zoom_link : ''}" class="text-[#4189E0] flex items-center gap-2 text-md font-bold">
+                                        Link Zoom
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                `;
+                            }
                         } else if (response.getSubscriptionStudent && response.date != item.session_date_check) {
                             checkSession = `
                                 <span class="font-bold opacity-70 flex flex-col sm:flex-row items-center sm:gap-1 lg::gap-2 text-xs md:text-[13px]">
@@ -109,7 +118,7 @@ function paginateMateriStudent(selectedLevel = null) {
                         if (response.date >= item.level_start_date) {
                             lockMateriVocabulary = `
                                     <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_vocabulary}"
-                                        data-materi-type="vocabulary">
+                                        data-materi-type="vocabulary" data-student-attendance-history="${response.dataAttendance}">
                                         Lihat Materi
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -117,7 +126,7 @@ function paginateMateriStudent(selectedLevel = null) {
     
                             lockMateriGrammar = `
                                     <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_grammar}"
-                                        data-materi-type="grammar">
+                                        data-materi-type="grammar" data-student-attendance-history="${response.dataAttendance}">
                                         Lihat Materi
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -125,7 +134,7 @@ function paginateMateriStudent(selectedLevel = null) {
     
                             lockMateriReading = `
                                     <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_reading}"
-                                        data-materi-type="reading">
+                                        data-materi-type="reading" data-student-attendance-history="${response.dataAttendance}">
                                         Lihat Materi
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -133,7 +142,7 @@ function paginateMateriStudent(selectedLevel = null) {
     
                             lockMateriWriting = `
                                     <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_writing}"
-                                        data-materi-type="writing">
+                                        data-materi-type="writing" data-student-attendance-history="${response.dataAttendance}">
                                         Lihat Materi
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -141,7 +150,7 @@ function paginateMateriStudent(selectedLevel = null) {
     
                             lockMateriListening = `
                                     <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_listening}"
-                                        data-materi-type="listening">
+                                        data-materi-type="listening" data-student-attendance-history="${response.dataAttendance}">
                                         Lihat Materi
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -149,7 +158,7 @@ function paginateMateriStudent(selectedLevel = null) {
     
                             lockMateriSpeaking = `
                                     <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_speaking}"
-                                        data-materi-type="speaking">
+                                        data-materi-type="speaking" data-student-attendance-history="${response.dataAttendance}">
                                         Lihat Materi
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -157,7 +166,7 @@ function paginateMateriStudent(selectedLevel = null) {
     
                             lockMateriPembelajaran = `
                                     <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_pembelajaran}"
-                                        data-materi-type="pembelajaran">
+                                        data-materi-type="pembelajaran" data-student-attendance-history="${response.dataAttendance}">
                                         Lihat Materi
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -165,14 +174,14 @@ function paginateMateriStudent(selectedLevel = null) {
     
                             lockWorksheet = `
                                     <a href="${worksheetDetail}" class="text-[#4189E0] flex items-center gap-2 text-sm font-bold"
-                                        data-materi-type="worksheet">
+                                        data-materi-type="worksheet" data-student-attendance-history="${response.dataAttendance}">
                                         Detail
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
                                 `;
     
                             lockMateriVideo = `
-                                    <button type="button" onclick="showVideo(this)" data-materi-id="${item.id}" data-video-id="${videoId}"
+                                    <button type="button" onclick="showVideo(this)" data-materi-id="${item.id}" data-video-id="${videoId}" data-student-attendance-history="${response.dataAttendance}"
                                         class="text-[#4189E0] flex items-center gap-2 text-md font-bold">
                                             Lihat Video
                                             <i class="fas fa-chevron-right"></i>
@@ -482,19 +491,33 @@ $(document).on('change', '#dropdown-filter-level', function () {
     paginateMateriStudent($(this).val());
 });
 
+function alertStudentAttendanceHistory() {
+    Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Maaf, kamu harus absen hadir hari ini terlebih dahulu.",
+    });
+}
+
 // Tampilkan video materi melalui modal
 function showVideo(element) {
     const materiId = element.getAttribute('data-materi-id');
     const modal = document.getElementById('my_modal_1-' + materiId);
     const iframe = document.getElementById('video-frame-' + materiId);
+    const studentAttendanceHistory = $(this).data('student-attendance-history');
 
-    const videoId = element.getAttribute('data-video-id');
+    if (!studentAttendanceHistory) {
+        alertStudentAttendanceHistory();
+        return;
+    } else {
+        const videoId = element.getAttribute('data-video-id');
 
-    if (iframe && videoId) {
-        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+        if (iframe && videoId) {
+            iframe.src = `https://www.youtube.com/embed/${videoId}`;
+        }
+
+        modal.showModal();
     }
-
-    modal.showModal();
 }
 
 function closePembahasanModal(materiId) {
@@ -510,14 +533,20 @@ $(document).off('click', '.btn-materi').on('click', '.btn-materi', function (e) 
     const materiId = $(this).data('materi-id');
     const materi = $(this).data('materi');
     const materiType = $(this).data('materi-type');
+    const studentAttendanceHistory = $(this).data('student-attendance-history');
 
-    const modalId = 'my_modal_2-' + materiType + '-' + materiId + '-' + materi;
-
-    showModal(materiId, materi, materiType);
-
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.showModal();
+    if (!studentAttendanceHistory) {
+        alertStudentAttendanceHistory();
+        return;
+    } else {
+        const modalId = 'my_modal_2-' + materiType + '-' + materiId + '-' + materi;
+    
+        showModal(materiId, materi, materiType);
+    
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.showModal();
+        }
     }
 });
 

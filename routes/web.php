@@ -513,9 +513,13 @@ Route::fallback(function () {
     Route::get('/english-zone', [EnglishZoneController::class, 'englishZoneStudentView'])->name('EZ.student.view');
     Route::get('/english-zone/{levelId}/worksheet-detail', [EnglishZoneController::class, 'worksheetDetailView'])->name('EZ.student.worksheet.detail.view');
 
+    // crud
+    Route::post('/english-zone-student/attendance', [EnglishZoneController::class, 'submitStudentAttendance'])->name('EZ.submitStudentAttendance.store');
+
     // paginate
     Route::get('/english-zone-student/materi/{levelIds}/{activeLevel}/paginate', [EnglishZoneController::class, 'paginateStudentMateri'])->name('EZ.studentMateri.paginate');
     Route::get('/english-zone/{levelId}/worksheet-detail/paginate', [EnglishZoneController::class, 'paginateWorksheetDetail'])->name('EZ.worksheet.detail.paginate');
+    Route::get('/english-zone-student/attendance/paginate', [EnglishZoneController::class, 'paginateStudentAttendanceHistory'])->name('EZ.studentAttendanceHistory.paginate');
 
     // ROUTES SCHOOL PARTNER
     // school subscription

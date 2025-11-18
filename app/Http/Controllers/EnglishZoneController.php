@@ -13,6 +13,7 @@ use App\Events\EnglishZoneStudentBatchRefund;
 use App\Events\EnglishZoneStudentBatchReschedule;
 use App\Events\EnglishZoneZoomListener;
 use App\Events\EventEnglishZoneBatch;
+use App\Models\EnglishZoneAttendance;
 use App\Models\EnglishZoneBatch;
 use App\Models\EnglishZoneBatchSchedule;
 use App\Models\EnglishZoneLevel;
@@ -2906,8 +2907,10 @@ class EnglishZoneController extends Controller
         // mendapatkan data user yang sedang login
         $user = Auth::user();
 
-        $getSubscriptionStudent = FeatureSubscriptionHistory::where('student_id', $user->id)
-        ->whereDate('end_date', '>', $date)->first();
+        $getSubscriptionStudent = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('feature_id', 3)->where('transaction_status', 'Berhasil');
+        })->where('student_id', $user->id)
+        ->whereDate('end_date', '>=', $date)->where('subscription_status', 'aktif')->first();
 
         if ($getSubscriptionStudent) {
             $levelIds = $getSubscriptionStudent->Transactions->transaction_callback['level_id'];
@@ -2915,7 +2918,9 @@ class EnglishZoneController extends Controller
             $levelIds = EnglishZoneLevel::first()->id;
         }
 
-        return view('Features.english-zone.student.english-zone-student', compact('levelIds'));
+        $dataAttendance = EnglishZoneAttendance::where('student_id', $user->id)->whereDate('attendance_time_in', '>=', $date)->first();
+
+        return view('Features.english-zone.student.english-zone-student', compact('date', 'getSubscriptionStudent', 'levelIds', 'dataAttendance'));
     }
 
     // paginate materi
@@ -2929,13 +2934,11 @@ class EnglishZoneController extends Controller
 
         $getSubscriptionStudent = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
             $query->where('feature_id', 3)->where('transaction_status', 'Berhasil');
-        })->where('student_id', $user->id)->whereDate('end_date', '>', $date)->first();
+        })->where('student_id', $user->id)->where('end_date', '>=', $date)->where('subscription_status', 'aktif')->first();
 
         if ($getSubscriptionStudent) {
             // Ambil semua batch yang terkait dengan level aktif dan mentor saat ini
-            $studentBatch = EnglishZoneStudentBatch::whereHas('FeatureSubscriptionHistory', function ($query) use ($date) {
-                $query->where('end_date', '>=', $date)->where('subscription_status', 'aktif');
-            })->where('level_id', $activeLevel)->where('student_id', $user->id)->get();
+            $studentBatch = EnglishZoneStudentBatch::where('level_id', $activeLevel)->where('student_id', $user->id)->get();
     
             // Ambil tanggal mulai dan selesai dari level (berdasarkan batch pertama)
             $levelStartDate = Carbon::parse($studentBatch->first()->level_start_date ?? null);
@@ -3031,6 +3034,9 @@ class EnglishZoneController extends Controller
 
             // Ambil data level (bisa lebih dari satu) berdasarkan ID yang dikirim
             $getLevels = EnglishZoneLevel::whereIn('id', explode(',', $levelIds))->get();
+
+            // ambil data absensi hari ini berdasarkan user yang sedang login
+            $dataAttendance = EnglishZoneAttendance::where('student_id', $user->id)->whereDate('attendance_time_in', '>=', $date)->first();
         } else {
             // Ambil semua materi berdasarkan level aktif
             $materiList = EnglishZoneMateri::with(['EnglishZoneLevel', 'EnglishZoneSession'])
@@ -3054,6 +3060,7 @@ class EnglishZoneController extends Controller
             'date' => $date,
             'studentBatch' => $studentBatch ?? null,
             'getSubscriptionStudent' => $getSubscriptionStudent ?? null,
+            'dataAttendance' => $dataAttendance ?? null,
             'worksheetDetail' => '/english-zone/:levelId/worksheet-detail',
         ]);
     }
@@ -3081,6 +3088,37 @@ class EnglishZoneController extends Controller
 
         return response()->json([
             'data' => $worksheet,
+        ]);
+    }
+
+    // submit student attendance
+    public function submitStudentAttendance(Request $request)
+    {
+        $user = Auth::user();
+
+        $storeAttendance = EnglishZoneAttendance::create([
+            'student_id' => $user->id,
+            'subscription_history_id' => $request->subscription_history_id,
+            'attendance_time_in' => now(),
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Absen berhasil'
+        ]);
+    }
+
+    // paginate attendance history
+    public function paginateStudentAttendanceHistory()
+    {
+        $user = Auth::user();
+
+        $dataAttendance = EnglishZoneAttendance::with(['UserAccount', 'FeatureSubscriptionHistory', 'FeatureSubscriptionHistory.Transactions.FeaturePrices'])
+        ->where('student_id', $user->id)->orderBy('created_at', 'desc')->paginate(20);
+
+        return response()->json([
+            'data' => $dataAttendance->items(),
+            'links' => (string) $dataAttendance->links(),
         ]);
     }
 
