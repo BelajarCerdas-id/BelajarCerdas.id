@@ -115,18 +115,6 @@ function paginateBankSoalEditQuestionEZ() {
                             </select>
                             <span id="error-session" class="text-red-500 font-bold text-xs pt-2"></span>
                         </div>
-
-                        <div class="flex flex-col">
-                            <label class="mb-2 text-sm">Status Soal</label>
-                            <select name="status_soal" id="status_soal" value="{{ old('status_soal') }}"
-                                class="bg-white shadow-lg h-12 text-sm border-gray-200 border outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer">
-                                    <option value="${question.status_soal}" class="hidden">
-                                        ${question.status_soal}
-                                    <option value="Free">Free</option>
-                                    <option value="Premium">Premium</option>
-                            </select>
-                            <span id="error-status_soal" class="text-red-500 font-bold text-xs pt-2"></span>
-                        </div>
                     </div>
 
                     <div class="leading-10 w-full my-6">

@@ -427,7 +427,6 @@ class EnglishZoneController extends Controller
             'explanation' => 'required',
             'level_id' => 'required',
             'session' => 'required',
-            'status_soal' => 'required',
         ], [
             'questions.required' => 'Harap isi pertanyaan soal!',
             'options_value.*.required' => 'Harap isi jawaban soal!',
@@ -436,7 +435,6 @@ class EnglishZoneController extends Controller
             'explanation.required' => 'Harap isi pembahasan soal!',
             'level_id.required' => 'Harap isi level soal!',
             'session.required' => 'Harap isi session soal!',
-            'status_soal.required' => 'Harap isi status soal!',
         ]);
 
         if ($validator->fails()) {
@@ -464,7 +462,6 @@ class EnglishZoneController extends Controller
                     'explanation' => $request->explanation,
                     'level_id' => $request->level_id,
                     'session' => $request->input('session'),
-                    'status_soal' => $request->status_soal
                 ]);
             }
         }
@@ -720,7 +717,7 @@ class EnglishZoneController extends Controller
                 ];
                 // Pastikan semua OPTION yang ada terisi, plus field wajib lain
                 $presentOptions = array_filter(array_keys($answerMap), fn($opt) => isset($dataSoal[$opt]) && $extractor->isMeaningfullyEmpty($dataSoal[$opt]));
-                $requiredFields = array_merge($presentOptions, ['ANSWER', 'EXPLANATION', 'LEVEL', 'SESI', 'STATUS', 'DIFFICULTY']);
+                $requiredFields = array_merge($presentOptions, ['ANSWER', 'EXPLANATION', 'LEVEL', 'SESI', 'DIFFICULTY']);
 
                 foreach ($requiredFields as $field) {
                     if (!isset($dataSoal[$field]) || $extractor->isMeaningfullyEmpty($dataSoal[$field])) {
@@ -807,7 +804,6 @@ class EnglishZoneController extends Controller
                                 'explanation' => $dataSoal['EXPLANATION'] ?? '',
                                 'level_id' => $dataSoal['LEVEL'], // ambil dari luar scope  foreach $table as $index
                                 'session' => trim(strip_tags($dataSoal['SESI'] ?? '')),
-                                'status_soal' => trim(strip_tags($dataSoal['STATUS'] ?? '')),
                                 'status_bank_soal' => $statusBankSoal,
                             ]);
                         }
