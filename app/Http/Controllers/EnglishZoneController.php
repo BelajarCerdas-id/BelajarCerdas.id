@@ -2913,7 +2913,7 @@ class EnglishZoneController extends Controller
         ->whereDate('end_date', '>=', $date)->where('subscription_status', 'aktif')->first();
 
         if ($getSubscriptionStudent) {
-            $levelIds = $getSubscriptionStudent->Transactions->transaction_callback['level_id'];
+            $levelIds = implode(',', $getSubscriptionStudent->Transactions->transaction_callback['level_id']);
         } else {
             $levelIds = EnglishZoneLevel::first()->id;
         }
