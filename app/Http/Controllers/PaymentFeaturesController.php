@@ -645,6 +645,9 @@ class PaymentFeaturesController extends Controller
                 'message' => 'jadwal belajar pada batch tersebut sudah penuh, harap pilih batch atau jadwal belajar yang lain.',
             ], 422);
         }
+
+        $levelIdsArray = array_map('intval', explode(',', $request->level_id));
+        $batchScheduleIdsArray = array_map('intval', explode(',', $request->batch_schedule_id));
         
         $transaction = Transactions::create([
             'user_id' => $user->id,
@@ -655,8 +658,8 @@ class PaymentFeaturesController extends Controller
             'price' => (int)$request->price,
             'transaction_status' => 'Pending',
             'transaction_callback' => [
-                'level_id' => $request->level_id,
-                'batch_schedule_id' => $request->batch_schedule_id,
+                'level_id' => $levelIdsArray,
+                'batch_schedule_id' => $batchScheduleIdsArray,
             ],
             'transaction_source' => 'non_school_partner',
         ]);
