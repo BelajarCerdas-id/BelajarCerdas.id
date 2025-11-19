@@ -106,10 +106,12 @@ class SchoolPartnerController extends Controller
     // function untuk menampilkan halaman list user school subscription
     public function userSchoolSubscriptionView($schoolId)
     {
+        $date = now()->format('Y-m-d');
+
         $getFeatureSubscriptionHistory = FeatureSubscriptionHistory::with(['Transactions.Features', 'UserAccount.StudentProfiles', 'UserAccount.StudentProfiles.Fase', 'UserAccount.StudentProfiles.Kelas'])
         ->whereHas('UserAccount.StudentProfiles', function ($query) use ($schoolId) {
             $query->where('sekolah', $schoolId)->whereRaw("substr(email, -length(?)) = ?", ['@belajarcerdas.id', '@belajarcerdas.id']);
-        })->get()->groupBy('student_id');
+        })->whereDate('end_date', '>=', $date)->get()->groupBy('student_id');
 
         $countFeatures = $getFeatureSubscriptionHistory
         ->flatten() // gabung semua item
