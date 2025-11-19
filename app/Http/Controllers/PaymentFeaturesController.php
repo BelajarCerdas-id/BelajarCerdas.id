@@ -313,8 +313,8 @@ class PaymentFeaturesController extends Controller
         }
 
         if ($getDataTransactions->feature_id == 3 || $getDataTransactions->Features->nama_fitur === 'English Zone') {
-            $batchScheduleIds = explode(',', $getDataTransactions->transaction_callback['batch_schedule_id']);
-            $levelIds = explode(',', $getDataTransactions->transaction_callback['level_id']);
+            $batchScheduleIds = $getDataTransactions->transaction_callback['batch_schedule_id'];
+            $levelIds = $getDataTransactions->transaction_callback['level_id'];
 
             $batchSchedules = EnglishZoneBatchSchedule::whereIn('id', $batchScheduleIds)->first();
 

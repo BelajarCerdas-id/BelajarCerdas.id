@@ -36,7 +36,7 @@ class RenewCheckoutEnglishZoneSubscriptionHandler
         $duration = $transaction->FeaturePrices->duration;
         $month = (int) filter_var($duration, FILTER_SANITIZE_NUMBER_INT);
 
-        $batchSchedule = explode(',', $transactionCallback['batch_schedule_id']);
+        $batchSchedule = $transactionCallback['batch_schedule_id'];
 
         $firstSchedule = EnglishZoneBatchSchedule::with('EnglishZoneBatch')->find($batchSchedule[0]);
 
@@ -62,8 +62,8 @@ class RenewCheckoutEnglishZoneSubscriptionHandler
                 'end_date' => $endDate,
             ]);
 
-            $batchScheduleIds = explode(',', $transactionCallback['batch_schedule_id']);
-            $levelIds = explode(',', $transactionCallback['level_id']);
+            $batchScheduleIds = $transactionCallback['batch_schedule_id'];
+            $levelIds = $transactionCallback['level_id'];
 
             // hitung jumlah level
             $levelCount = count($levelIds);
