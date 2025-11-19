@@ -2907,6 +2907,18 @@ class EnglishZoneController extends Controller
         // mendapatkan data user yang sedang login
         $user = Auth::user();
 
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $date)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
         $getSubscriptionStudent = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
             $query->where('feature_id', 3)->where('transaction_status', 'Berhasil');
         })->where('student_id', $user->id)
@@ -2931,6 +2943,18 @@ class EnglishZoneController extends Controller
 
         // mendapatkan data user yang sedang login
         $user = Auth::user();
+
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $date)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
 
         $getSubscriptionStudent = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
             $query->where('feature_id', 3)->where('transaction_status', 'Berhasil');
