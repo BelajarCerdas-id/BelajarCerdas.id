@@ -16,7 +16,7 @@ class EnglishZoneQuestions extends Model
         'difficulty', 
         'explanation', 
         'level_id',  
-        'session',
+        'session_id',
         'status_bank_soal'
     ];
 
@@ -28,5 +28,10 @@ class EnglishZoneQuestions extends Model
     public function EnglishZoneLevel()
     {
         return $this->belongsTo(EnglishZoneLevel::class, 'level_id');
+    }
+
+    public function EnglishZoneSession()
+    {
+        return $this->belongsTo(EnglishZoneSession::class, 'session_id');
     }
 }

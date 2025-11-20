@@ -44,14 +44,11 @@ function paginateBankSoalEditQuestionEZ() {
                 </option>
             `).join('');
 
-            const sessionOptions = []; for (let i = 1; i <= 2; i++) {
-                const option = `
-                    <option value="${i}" ${i === question.session ? 'selected' : ''}>
-                        Sesi ${i}
-                    </option>
-                `;
-                sessionOptions.push(option);
-            }
+            const sessionOptions = response.getSessions.map(session => `
+                <option value="${session.id}" ${session.id === question.session_id ? 'selected' : ''}>
+                    ${session.session_name}
+                </option>
+            `).join('');
 
             const formHtml = `
                 <form id="bank-soal-edit-question-form" data-level-id="${levelId}" data-question-id="${questionId}"
@@ -97,7 +94,8 @@ function paginateBankSoalEditQuestionEZ() {
                         <div class="flex flex-col">
                             <label class="mb-2 text-sm">Level</label>
                             <select name="level_id" id="level_id" value="{{ old('level_id') }}"
-                                class="bg-white shadow-lg h-12 text-sm border-gray-200 border outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer">
+                                class="bg-white shadow-lg h-12 text-sm border-gray-200 border outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer"
+                                data-old-level="${question.level_id}">
                                     <option value="${question.level_id}" class="hidden">
                                         ${question.english_zone_level?.level_name}
                                     ${levelOptions}
@@ -107,13 +105,13 @@ function paginateBankSoalEditQuestionEZ() {
 
                         <div class="flex flex-col">
                             <label class="mb-2 text-sm">Sesi</label>
-                            <select name="session" id="session" value="{{ old('session') }}"
-                                class="bg-white shadow-lg h-12 text-sm border-gray-200 border outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer">
-                                    <option value="${question.session}" class="hidden">
-                                        Sesi ${question.session}
+                            <select name="session_id" id="session_id" value="{{ old('session_id') }}"
+                                class="bg-white shadow-lg h-12 text-sm border-gray-200 border outline-none rounded-md px-2 focus:border-[1px] focus:border-[dodgerblue] focus:shadow-[0_0_9px_0_dodgerblue] cursor-pointer"
+                                data-old-session="${question.session_id}">
+                                    <option value="${question.session_id}" class="hidden">
                                     ${sessionOptions}
                             </select>
-                            <span id="error-session" class="text-red-500 font-bold text-xs pt-2"></span>
+                            <span id="error-session_id" class="text-red-500 font-bold text-xs pt-2"></span>
                         </div>
                     </div>
 
@@ -226,6 +224,9 @@ $(document).ready(function () {
 
         const formData = new FormData(this);
         const questionId = $(this).data('question-id');
+        const container = document.getElementById('editor-container');
+        const levelContainer = container.dataset.levelId;
+        const levelOption = $('#level_id').val();
 
         $.ajax({
             url: `/english-zone/bank-soal/update/${questionId}`,
@@ -256,13 +257,19 @@ $(document).ready(function () {
                     `
                 );
 
-                setTimeout(function() {
+                setTimeout(function () {
                     document.getElementById('alertSuccess').remove();
                 }, 3000);
 
                 document.getElementById('btnClose').addEventListener('click', function () {
                     document.getElementById('alertSuccess').remove();
                 });
+
+                // jika level di container tidak sama dengan level di option, maka akan diarahkan ke halaman detail
+                if (levelContainer != levelOption) {
+                    const levelId = levelOption;
+                    window.location.href = `/english-zone/bank-soal/${levelId}/detail`;
+                }
 
                 // inisialiasi paginateBankSoalEditQuestionEZ() setelah berhasil edit question
                 paginateBankSoalEditQuestionEZ();
@@ -305,4 +312,49 @@ $(document).ready(function () {
             }
         });
     });
+});
+
+// DROPDOWN LEVEL → SESSION (DELEGATED)
+$(document).on('change', '#level_id', function () {
+
+    const level_id = $(this).val();
+    const oldSession = $('#session_id').data('old-session');
+    const selectSession = document.getElementById('session_id');
+
+    if (!level_id) {
+        $('#session_id').empty();
+        return;
+    }
+
+    $.ajax({
+        url: '/english-zone/session-dropdown/' + level_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+
+            selectSession.disabled = false;
+            selectSession.classList.replace('opacity-50', 'opacity-100');
+
+            $('#session_id').empty();
+            $('#session_id').append('<option value="" class="hidden">Pilih Sesi</option>');
+
+            $.each(data, function (key, session) {
+                $('#session_id').append(
+                    '<option value="' + session.id + '"' +
+                    (oldSession == session.id ? ' selected' : '') +
+                    '>' +
+                    session.session_name + '</option>'
+                );
+            });
+        }
+    });
+});
+
+// Trigger load awal (jika ada old-level)
+$(document).on('DOMNodeInserted', function () {
+    const level = $('#level_id');
+    if (level.length && !level.hasClass('initialized')) {
+        level.addClass('initialized');
+        level.trigger('change');
+    }
 });

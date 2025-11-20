@@ -24,4 +24,9 @@ class EnglishZoneSession extends Model
     {
         return $this->belongsTo(EnglishZoneLevel::class, 'level_id');
     }
+
+    public function EnglishZoneQuestions()
+    {
+        return $this->hasMany(EnglishZoneQuestions::class, 'session_id');
+    }
 }

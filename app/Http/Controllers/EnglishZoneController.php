@@ -406,11 +406,14 @@ class EnglishZoneController extends Controller
 
         $getLevels = EnglishZoneLevel::all();
 
+        $getSessions = EnglishZoneSession::where('level_id', $levelId)->get();
+
         return response()->json([
             'status' => 'success',
             'data' => $groupedSoal,
             'editQuestion' => $editQuestion,
-            'getLevels' => $getLevels
+            'getLevels' => $getLevels,
+            'getSessions' => $getSessions
         ]);
     }
 
@@ -426,7 +429,7 @@ class EnglishZoneController extends Controller
             'difficulty' => 'required',
             'explanation' => 'required',
             'level_id' => 'required',
-            'session' => 'required',
+            'session_id' => 'required',
         ], [
             'questions.required' => 'Harap isi pertanyaan soal!',
             'options_value.*.required' => 'Harap isi jawaban soal!',
@@ -434,7 +437,7 @@ class EnglishZoneController extends Controller
             'difficulty.required' => 'Harap isi difficulty soal!',
             'explanation.required' => 'Harap isi pembahasan soal!',
             'level_id.required' => 'Harap isi level soal!',
-            'session.required' => 'Harap isi session soal!',
+            'session_id.required' => 'Harap isi session soal!',
         ]);
 
         if ($validator->fails()) {
@@ -461,7 +464,7 @@ class EnglishZoneController extends Controller
                     'difficulty' => $request->difficulty,
                     'explanation' => $request->explanation,
                     'level_id' => $request->level_id,
-                    'session' => $request->input('session'),
+                    'session_id' => $request->session_id,
                 ]);
             }
         }
@@ -727,8 +730,25 @@ class EnglishZoneController extends Controller
 
                 $getLevel = EnglishZoneLevel::where('level_name', trim(strip_tags($dataSoal['LEVEL'] ?? '')))->first();
 
+                $rawSession = trim(strip_tags($dataSoal['SESI'] ?? ''));
+
+                // Decode HTML entities (&amp; → &)
+                $sessionName = html_entity_decode($rawSession, ENT_QUOTES, 'UTF-8');
+
+                // Normalisasi spasi, dash, dan karakter aneh dari Word
+                $sessionName = preg_replace('/\s+/', ' ', $sessionName);
+                $sessionName = str_replace(['–','—'], '-', $sessionName);
+                $sessionName = trim($sessionName);
+
+                // Cari berdasarkan nama
+                $session = EnglishZoneSession::where('session_name', $sessionName)->first();
+
                 if (!$getLevel) {
-                    $validationErrors[] = "Soal ke-$soalNumber: Level '".($dataSoal['LEVEL'] ?? '')."' tidak ditemukan.";
+                    $validationErrors[] = "Soal ke-$soalNumber: Level tidak ditemukan.";
+                }
+
+                if (!$session) {
+                    $validationErrors[] = "Soal ke-$soalNumber: Sesi tidak ditemukan.";
                 }
 
                 // Jika validasi gagal → simpan error & lanjut ke soal berikutnya
@@ -745,6 +765,7 @@ class EnglishZoneController extends Controller
                 }
 
                 $dataSoal['LEVEL'] = $getLevel->id; // simpan instance Level untuk dipakai nanti
+                $dataSoal['SESI'] = $session->id; // simpan instance Sesi untuk dipakai nanti
                 $validSoalData[] = $dataSoal; // masukkan ke kumpulan soal valid
             }
 
@@ -803,7 +824,7 @@ class EnglishZoneController extends Controller
                                 'difficulty' => trim(strip_tags($dataSoal['DIFFICULTY'] ?? '')),
                                 'explanation' => $dataSoal['EXPLANATION'] ?? '',
                                 'level_id' => $dataSoal['LEVEL'], // ambil dari luar scope  foreach $table as $index
-                                'session' => trim(strip_tags($dataSoal['SESI'] ?? '')),
+                                'session_id' => $dataSoal['SESI'],
                                 'status_bank_soal' => $statusBankSoal,
                             ]);
                         }
