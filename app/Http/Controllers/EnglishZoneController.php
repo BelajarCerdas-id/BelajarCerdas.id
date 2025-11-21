@@ -3095,6 +3095,8 @@ class EnglishZoneController extends Controller
                 $getLevels = EnglishZoneLevel::all();
         }
 
+        $bankSoal = EnglishZoneQuestions::where('level_id', $activeLevel)->groupBy('session_id')->pluck('session_id');
+
         return response()->json([
             'data' => $materiWithZoom ?? $materiList,
             'getLevels' => $getLevels,
@@ -3102,24 +3104,14 @@ class EnglishZoneController extends Controller
             'studentBatch' => $studentBatch ?? null,
             'getSubscriptionStudent' => $getSubscriptionStudent ?? null,
             'dataAttendance' => $dataAttendance ?? null,
+            'bankSoal' => $bankSoal->values(),
             'worksheetDetail' => '/english-zone/:levelId/worksheet-detail',
+            'examDetail' => '/english-zone/:levelId/:sessionId/exam',
         ]);
     }
 
     public function worksheetDetailView($levelId)
     {
-        $user = Auth::user();
-
-        $date = now()->format('Y-m-d');
-
-        $getSubscriptionStudent = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
-            $query->where('feature_id', 3)->where('transaction_status', 'Berhasil');
-        })->where('student_id', $user->id)->whereDate('end_date', '>', $date)->first();
-
-        if (!$getSubscriptionStudent) {
-            return redirect()->route('EZ.student.view');
-        }
-
         return view('Features.english-zone.student.english-zone-worksheet-detail', compact('levelId'));
     }
 
@@ -3161,6 +3153,25 @@ class EnglishZoneController extends Controller
             'data' => $dataAttendance->items(),
             'links' => (string) $dataAttendance->links(),
         ]);
+    }
+
+    // exam non ielts
+    public function examView($levelId, $sessionId)
+    {
+        $user = Auth::user();
+
+        $date = now()->format('Y-m-d');
+
+        $getSubscriptionStudent = FeatureSubscriptionHistory::whereHas('Transactions', function($query) {
+            $query->where('feature_id', 3)->where('transaction_status', 'Berhasil');    
+        })->where('student_id', $user->id)->whereDate('start_date', '<=', $date)->whereDate('end_date', '>=', $date)
+        ->where('subscription_status', 'aktif')->exists();
+
+        if (!$getSubscriptionStudent) {
+            return redirect()->route('EZ.student.view');
+        }
+
+        return view('Features.english-zone.student.exam.english-zone-student-exam', compact('levelId', 'sessionId'));
     }
 
 }

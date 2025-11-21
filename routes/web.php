@@ -512,6 +512,7 @@ Route::fallback(function () {
     // views
     Route::get('/english-zone', [EnglishZoneController::class, 'englishZoneStudentView'])->name('EZ.student.view');
     Route::get('/english-zone/{levelId}/worksheet-detail', [EnglishZoneController::class, 'worksheetDetailView'])->name('EZ.student.worksheet.detail.view');
+    Route::get('/english-zone/{levelId}/{sessionId}/exam', [EnglishZoneController::class, 'examView'])->name('EZ.exam.view');
 
     // crud
     Route::post('/english-zone-student/attendance', [EnglishZoneController::class, 'submitStudentAttendance'])->name('EZ.submitStudentAttendance.store');

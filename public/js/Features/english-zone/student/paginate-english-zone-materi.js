@@ -81,6 +81,7 @@ function paginateMateriStudent(selectedLevel = null) {
                         const sessionDate = item.session_date ? `${formatDate(item.session_date)}` : 'Tanggal tidak tersedia';
 
                         const worksheetDetail = response.worksheetDetail.replace(':levelId', activeLevel);
+                        const examDetail = response.examDetail.replace(':levelId', activeLevel).replace(':sessionId', item.session_id); // exam non ielts test (reading, listening, speaking, writing)
     
                         if (response.getSubscriptionStudent && response.date == item.session_date_check) {
                             if (!response.dataAttendance) {
@@ -187,6 +188,23 @@ function paginateMateriStudent(selectedLevel = null) {
                                             <i class="fas fa-chevron-right"></i>
                                     </button>
                                 `;
+                            
+                            lockExam = `
+                                <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
+                                    <div class="flex items-center gap-2">
+                                        <div>
+                                            <i class="fa-solid fa-pen-to-square bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full pl-1 pb-1"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs md:text-md font-semibold opacity-70">Exam</p>
+                                        </div>
+                                    </div>
+                                    <a href="${examDetail}" class="text-[#4189E0] flex items-center gap-2 text-sm font-bold">
+                                        Lihat Ujian
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </div>
+                            `;
     
                             lockIcon = ``;
     
@@ -262,6 +280,24 @@ function paginateMateriStudent(selectedLevel = null) {
                                         <p>${levelEndDate}</p>
                                     </span>
                                 `;
+                            
+                            lockExam = `
+                                <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
+                                    <div class="flex items-center gap-2">
+                                        <div>
+                                            <i class="fa-solid fa-pen-to-square bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full pl-1 pb-1"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs md:text-md font-semibold opacity-70">Exam</p>
+                                        </div>
+                                    </div>
+                                    <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-2 text-xs md:text-[13px]">
+                                        <p>${levelStartDate}</p>
+                                        -
+                                        <p>${levelEndDate}</p>
+                                    </span>
+                                </div>
+                            `;
     
                             lockIcon = `
                                     <i class="fa-solid fa-lock text-[#4189E0] font-bold text-md"></i>
@@ -321,9 +357,36 @@ function paginateMateriStudent(selectedLevel = null) {
                                     <p>langganan</p>
                                 </span>
                             `;
+                            lockExam = `
+                                <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
+                                    <div class="flex items-center gap-2">
+                                        <div>
+                                            <i class="fa-solid fa-pen-to-square bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full pl-1 pb-1"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs md:text-md font-semibold opacity-70">Exam</p>
+                                        </div>
+                                    </div>
+                                    <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
+                                        <p>Belum</p>
+                                        <p>langganan</p>
+                                    </span>
+                                </div>
+                            `;
                             lockIcon = `
                                 <i class="fa-solid fa-lock text-[#4189E0] font-bold text-md"></i>
                             `;
+                        }
+
+                        let containerExam = '';
+                        
+                        // cek apakah session_id materi ada di array bankSoal (bankSoal adalah array yang berisi session_id soal)
+                        if (response.bankSoal.includes(item.session_id)) {
+                            containerExam = `
+                                ${lockExam}
+                            `;
+                        } else {
+                            containerExam = ``;
                         }
     
                         const card = `
@@ -446,6 +509,7 @@ function paginateMateriStudent(selectedLevel = null) {
                                                     </div>
                                                     ${checkSession}
                                                 </div>
+                                                ${containerExam}
                                             </div>
                                         </div>
                                     </div>
