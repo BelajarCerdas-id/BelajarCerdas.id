@@ -17,7 +17,8 @@ class EnglishZoneQuestions extends Model
         'explanation', 
         'level_id',  
         'session_id',
-        'status_bank_soal'
+        'status_bank_soal',
+        'tipe_soal'
     ];
 
     public function UserAccount()

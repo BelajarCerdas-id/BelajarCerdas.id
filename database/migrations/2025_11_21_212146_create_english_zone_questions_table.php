@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('level_id')->constrained('english_zone_levels');
             $table->foreignId('session_id')->constrained('english_zone_sessions');
             $table->enum('status_bank_soal', ['Unpublish', 'Publish'])->default('Unpublish');
+            $table->string('tipe_soal');
             $table->timestamps();
         });
     }
