@@ -682,15 +682,16 @@ class SoalPembahasanController extends Controller
         $user = Auth::user();
 
         // Mendapatkan history subscription
-        $getHistorySubscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
-            $query->where('feature_id', 2);
-        })->where('student_id', $user->id)->whereDate('end_date', '<', $today)->first();
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
 
-        // jika history subscription ada, maka update
-        if ($getHistorySubscription) {
-            $getHistorySubscription->update([
-                'subscription_status' => 'tidak_aktif'
-            ]);
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
         }
 
         // mendapatkan bab name
@@ -712,6 +713,18 @@ class SoalPembahasanController extends Controller
 
         // Ambil ID user yang sedang login
         $userId = Auth::id();
+
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
 
         // Ambil ulang soal-soal yang masih `Publish` dari DB
         $publishedQuestionIds = SoalPembahasanQuestions::where('tipe_soal', 'Latihan')->where('status_bank_soal', 'Publish')
@@ -795,6 +808,18 @@ class SoalPembahasanController extends Controller
         // Ambil tanggal hari ini
         $today = now()->format('Y-m-d');
 
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
         $validator = Validator::make($request->all(), [
             'user_answer_option' => 'required',
         ], [
@@ -808,12 +833,18 @@ class SoalPembahasanController extends Controller
             ], 422);
         }
 
+        // Ambil informasi user yang berlangganan fitur soal dan pembahasan
+        $subscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
+            $query->where('feature_id', 2); // feature_id 2 menunjukkan fitur soal dan pembahasan
+        })->where('student_id', $userId)->where('subscription_status', 'aktif')->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)
+        ->pluck('id')->first();
+
         // mengambil data soal berdasarkan pada hari ini berdasarkan soal yang dijawab
         $dataQuestionsAnswer = SoalPembahasanAnswers::where('student_id', $userId)
             ->where('question_id', $request->question_id)->whereDate('created_at', $today)->first();
 
         // jika soal belum dijawab, maka simpan jawaban (untuk menghindari duplikasi data ketika user spam simpan jawaban)
-        if (!$dataQuestionsAnswer) {
+        if (!$dataQuestionsAnswer && $subscription) {
             SoalPembahasanAnswers::create([
                 'student_id' => $userId,
                 'subscription_id' => $request->subscription_id,
