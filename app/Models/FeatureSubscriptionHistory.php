@@ -51,4 +51,8 @@ class FeatureSubscriptionHistory extends Model
     public function EnglishZoneAttendance() {
         return $this->hasMany(EnglishZoneAttendance::class, 'subscription_history_id');
     }
+
+    public function EnglishZoneAnswers() {
+        return $this->hasMany(EnglishZoneAnswers::class, 'subscription_history_id');
+    }
 }

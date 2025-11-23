@@ -522,6 +522,13 @@ Route::fallback(function () {
     Route::get('/english-zone/{levelId}/worksheet-detail/paginate', [EnglishZoneController::class, 'paginateWorksheetDetail'])->name('EZ.worksheet.detail.paginate');
     Route::get('/english-zone-student/attendance/paginate', [EnglishZoneController::class, 'paginateStudentAttendanceHistory'])->name('EZ.studentAttendanceHistory.paginate');
 
+    // assessment
+    // exam TOEP form
+    Route::get('/english-zone-student/{levelId}/{sessionId}/exam-TOEP/form', [EnglishZoneController::class, 'questionFormExamTOEP'])->name('EZ.examTOEP.assessment');
+
+    // exam TOEP answers
+    Route::post('/english-zone-student/{levelId}/{sessionId}/exam-TOEP/answers', [EnglishZoneController::class, 'examTOEPAnswers'])->name('EZ.examTOEP.answers');
+
     // ROUTES SCHOOL PARTNER
     // school subscription
     Route::get('/school-subscription', [SchoolPartnerController::class, 'schoolSubscriptionView'])->name('schoolSubscription.view');

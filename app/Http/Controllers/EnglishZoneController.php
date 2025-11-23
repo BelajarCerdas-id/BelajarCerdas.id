@@ -13,6 +13,7 @@ use App\Events\EnglishZoneStudentBatchRefund;
 use App\Events\EnglishZoneStudentBatchReschedule;
 use App\Events\EnglishZoneZoomListener;
 use App\Events\EventEnglishZoneBatch;
+use App\Models\EnglishZoneAnswers;
 use App\Models\EnglishZoneAttendance;
 use App\Models\EnglishZoneBatch;
 use App\Models\EnglishZoneBatchSchedule;
@@ -32,6 +33,7 @@ use App\Models\UserAccount;
 use Illuminate\Http\Request;
 use App\Services\DocxImageExtractor;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -3111,6 +3113,7 @@ class EnglishZoneController extends Controller
         ]);
     }
 
+    // worksheet detail view
     public function worksheetDetailView($levelId)
     {
         $user = Auth::user();
@@ -3129,6 +3132,7 @@ class EnglishZoneController extends Controller
         return view('Features.english-zone.student.english-zone-worksheet-detail', compact('levelId'));
     }
 
+    // paginate worksheet detail
     public function paginateWorksheetDetail($levelId)
     {
         $worksheet = EnglishZoneMateri::with(['EnglishZoneLevel', 'EnglishZoneSession'])->where('level_id', $levelId)->get();
@@ -3169,12 +3173,24 @@ class EnglishZoneController extends Controller
         ]);
     }
 
-    // exam non ielts
+    // exam TOEP view
     public function examView($levelId, $sessionId)
     {
         $user = Auth::user();
 
         $date = now()->format('Y-m-d');
+
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $date)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
 
         $getSubscriptionStudent = FeatureSubscriptionHistory::whereHas('Transactions', function($query) {
             $query->where('feature_id', 3)->where('transaction_status', 'Berhasil');    
@@ -3185,7 +3201,175 @@ class EnglishZoneController extends Controller
             return redirect()->route('EZ.student.view');
         }
 
-        return view('Features.english-zone.student.exam.english-zone-student-exam', compact('levelId', 'sessionId'));
+        $levelName = EnglishZoneLevel::where('id', $levelId)->pluck('level_name')->first();
+
+        $sessionName = EnglishZoneSession::where('id', $sessionId)->pluck('session_name')->first();
+
+        return view('Features.english-zone.student.exam.english-zone-student-exam', compact('levelId', 'sessionId', 'levelName', 'sessionName'));
+    }
+
+    // exam TOEP questions form
+    public function questionFormExamTOEP($levelId, $sessionId)
+    {
+        // Ambil tanggal hari ini hanya dalam format 'Y-m-d'
+        $today = Carbon::now()->format('Y-m-d');
+
+        // Ambil ID user yang sedang login
+        $userId = Auth::id();
+
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
+        // Ambil ulang soal-soal yang masih `Publish` dari DB dan tipe soal adalah `TOEP`
+        $publishedQuestionIds = EnglishZoneQuestions::where('tipe_soal', 'TOEP')
+        ->where('status_bank_soal', 'Publish')->where('level_id', $levelId)
+        ->where('session_id', $sessionId)->pluck('id')->implode(',');
+
+        // Ambil informasi user yang berlangganan fitur english zone
+        $subscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
+            $query->where('feature_id', 3); // feature_id 3 menunjukkan fitur english zone
+        })->where('student_id', $userId)->where('subscription_status', 'aktif')->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)
+        ->first();
+
+        $subscriptionId = $subscription ? $subscription->id : null;
+
+        // Buat key cache unik berdasarkan setiap subscription, user, levelId, dan session_id
+        $cacheKey = "english-zone-exam-questions-{$subscriptionId}-{$userId}-{$levelId}-{$sessionId}-{$publishedQuestionIds}";
+
+        // Cek apakah data soal sudah disimpan di cache hari ini
+        if  (Cache::has($cacheKey)) {
+            // Ambil data soal dari cache dan ubah ke bentuk collection dalam bentuk nested group
+            $groupedQuestions = collect(Cache::get($cacheKey))->map(fn($group) => collect($group))->values();
+        } else {
+            // Jika tidak ada di session, ambil soal dari database berdasarkan level dan session_id, status Publish, dan tipe TOEP
+            $getQuestions = EnglishZoneQuestions::where('level_id', $levelId)->where('session_id', $sessionId)
+            ->where('status_bank_soal', 'Publish')->where('tipe_soal', 'TOEP')->get();
+
+            // Mengelompokkan data berdasarkan soal
+            $groupedQuestions = $getQuestions->groupBy('questions');
+
+            // Acak urutan soal, ambil hanya 60 soal pertama
+            $shuffleQuestions = $groupedQuestions->values()->shuffle()->take(60);
+
+            // Acak urutan opsi jawaban dalam setiap soal
+            $groupedQuestions = $shuffleQuestions->map(fn($group) => $group->shuffle()->values())->values();
+
+            // Simpan hasil akhir ke cache sampai akhir hari (pukul 23:59:59)
+            Cache::put($cacheKey, $groupedQuestions, now()->endOfDay());
+        }
+
+        // Ambil semua ID soal (karena groupedQuestions adalah nested collection, gunakan flatten)
+        $questionIds = $groupedQuestions->flatten()->pluck('id')->toArray();
+
+        // Mendapatkan jawaban user berdasarkan question id
+        if ($subscription) {
+             // Ambil jawaban user
+            $questionsAnswer = EnglishZoneAnswers::where('student_id', Auth::id())
+                ->whereIn('question_id', $questionIds)
+                ->where('subscription_history_id', $subscription->id)
+                ->get()
+                ->mapWithKeys(fn($item) => [$item->question_id => $item->attributesToArray()]);
+        } else {
+            // Handle ketika user tidak punya subscription aktif
+            // Bisa return kosong atau kasih message bahwa data tidak ditemukan
+            $questionsAnswer = collect(); // kosong, tidak ada jawaban
+        }
+
+        // Hitung skor ujian dengan menjumlahkan skor dari soal-soal yang sudah dijawab
+        $scoreExam = $questionsAnswer->sum('question_score');
+
+        // menghitung banyaknya soal
+        $total = $groupedQuestions->count();
+
+        // Hitung nilai masing-masing soal => 100 / total soal => nilai setiap soal
+        $scoreEachQuestion = $total ? 100 / $total : 0;
+
+        // Inisialisasi array kosong untuk menampung video ID dari YouTube
+        $videoIds = [];
+
+        // Loop untuk mendapatkan ID video dari URL
+        foreach ($groupedQuestions as $item) {
+            $videoId = null;
+
+            // Cari explanation yang mengandung url video menggunakan regex, lalu mengambil 1 data pertama dari masing" array group soal.
+            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $item[0]['explanation'], $matches)) {
+                $videoId = $matches[1] ?? $matches[2];
+            }
+
+            // Simpan videoId ke array videoIds
+            $videoIds[] = $videoId;
+        }
+
+        return response()->json([
+            'data' => $groupedQuestions->values(),
+            'questionsAnswer' => $questionsAnswer,
+            'videoIds' => $videoIds,
+            'scoreExam' => $scoreExam,
+            'scoreEachQuestion' => $scoreEachQuestion,
+            'today' => $today, // Tambahkan tanggal hari ini ke response
+            'subscription' => $subscription,
+            'now' => now()->toISOString(), // Tambahkan waktu saat ini ke response
+        ]);
+    }
+
+    public function examTOEPAnswers(Request $request, $levelId, $sessionId)
+    {
+        // Ambil tanggal hari ini
+        $today = Carbon::now()->format('Y-m-d');
+
+        $userId = Auth::id();
+
+        $validator = Validator::make($request->all(), [
+            'user_answer_option' => 'required',
+        ], [
+            'user_answer_option.required' => 'Harap pilih jawaban.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // ambil soal dari database berdasarkan bab, status Publish, dan tipe ujian
+        $getQuestions = EnglishZoneQuestions::where('level_id', $levelId)->where('session_id', $sessionId)->where('status_bank_soal', 'Publish')
+        ->where('tipe_soal', 'TOEP')->whereDate('created_at', $today)->get();
+
+        // Mengelompokkan data berdasarkan soal
+        $groupedQuestions = $getQuestions->groupBy('questions');
+
+        // Ambil semua ID soal (karena groupedQuestions adalah nested collection, gunakan flatten)
+        $questionIds = $groupedQuestions->flatten()->pluck('id')->toArray();
+
+        // mencari soal berdasarkan request question_id
+        $question = EnglishZoneQuestions::findOrFail($request->question_id);
+
+        $dataQuestionAnswer = EnglishZoneAnswers::where('student_id', $userId)->where('question_id', $request->question_id)
+        ->whereDate('created_at', $today)->first();
+        
+        if (!$dataQuestionAnswer) {
+            EnglishZoneAnswers::create([
+                'student_id' => $userId,
+                'subscription_history_id' => $request->subscription_history_id,
+                'question_id' => $request->question_id,
+                'user_answer_option' => $request->user_answer_option,
+                'question_score' => $request->user_answer_option === $question->answer_key ? $request->question_score : 0,
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'success',
+        ]);
     }
 
 }

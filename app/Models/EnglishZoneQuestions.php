@@ -35,4 +35,8 @@ class EnglishZoneQuestions extends Model
     {
         return $this->belongsTo(EnglishZoneSession::class, 'session_id');
     }
+
+    public function EnglishZoneAnswers() {
+        return $this->hasMany(EnglishZoneAnswers::class, 'question_id');
+    }
 }
