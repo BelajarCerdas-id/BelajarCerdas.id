@@ -887,8 +887,10 @@ class SoalPembahasanController extends Controller
         })->where('student_id', $userId)->where('subscription_status', 'aktif')->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)
         ->first();
 
+        $subscriptionId = $subscription ? $subscription->id : null;
+
         // Buat key cache unik berdasarkan setiap subscription, user, dan sub bab
-        $cacheKey = "soal-pembahasan-exam-questions-{$subscription}-{$userId}-{$bab_id}-{$publishedQuestionIds}";
+        $cacheKey = "soal-pembahasan-exam-questions-{$subscriptionId}-{$userId}-{$bab_id}-{$publishedQuestionIds}";
 
         // Cek apakah data soal sudah disimpan di cache hari ini
         if  (Cache::has($cacheKey)) {
