@@ -881,16 +881,18 @@ class SoalPembahasanController extends Controller
         $user = Auth::user();
 
         // Mendapatkan history subscription
-        $getHistorySubscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
-            $query->where('feature_id', 2);
-        })->where('student_id', $user->id)->whereDate('end_date', '<', $today)->first();
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
 
-        // jika history subscription ada, maka update
-        if ($getHistorySubscription) {
-            $getHistorySubscription->update([
-                'subscription_status' => 'tidak_aktif'
-            ]);
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
         }
+
         // mendapatkan bab name
         $getBabName = Bab::where('id', $bab_id)->first();
 
@@ -907,6 +909,18 @@ class SoalPembahasanController extends Controller
 
         // Ambil ID user yang sedang login
         $userId = Auth::id();
+
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
 
         // Ambil ulang soal-soal yang masih `Publish` dari DB dan status soal adalah `Premium` dan tipe soal adalah `Ujian`
         $publishedQuestionIds = SoalPembahasanQuestions::where('status_soal', 'Premium')->where('tipe_soal', 'Ujian')
@@ -1011,6 +1025,18 @@ class SoalPembahasanController extends Controller
 
         $userId = Auth::id();
 
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
         $validator = Validator::make($request->all(), [
             'user_answer_option' => 'required',
             'status_answer' => 'required|in:Draft,Saved',
@@ -1024,6 +1050,12 @@ class SoalPembahasanController extends Controller
                 'errors' => $validator->errors(),
             ], 422);
         }
+
+        // Ambil informasi user yang berlangganan fitur soal dan pembahasan
+        $subscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
+            $query->where('feature_id', 2); // feature_id 2 menunjukkan fitur soal dan pembahasan
+        })->where('student_id', $userId)->where('subscription_status', 'aktif')->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)
+        ->pluck('id')->first();
 
         // ambil soal dari database berdasarkan bab, status Publish, dan tipe ujian
         $getQuestionsByBab = SoalPembahasanQuestions::where('bab_id', $id)->where('status_bank_soal', 'Publish')
@@ -1042,25 +1074,28 @@ class SoalPembahasanController extends Controller
         $answer = SoalPembahasanAnswers::where('student_id', $userId)->where('question_id', $request->question_id)
         ->whereDate('created_at', $today)->first();
 
-        // jika jawaban sudah ada maka update, jika belum ada maka create
-        if ($answer) {
-            $answer->update([
-                'subscription_id' => $request->subscription_id,
-                'user_answer_option' => $request->user_answer_option,
-                'status_answer' => $request->status_answer,
-                'question_score' => in_array($request->status_answer, ['Saved', 'Draft']) && $request->user_answer_option === $question->answer_key ? $request->question_score : 0,
-                'exam_answer_duration' => $request->exam_answer_duration,
-            ]);
-        } else {
-            SoalPembahasanAnswers::create([
-                'student_id' => $userId,
-                'subscription_id' => $request->subscription_id,
-                'question_id' => $request->question_id,
-                'user_answer_option' => $request->user_answer_option,
-                'status_answer' => $request->status_answer,
-                'question_score' => in_array($request->status_answer, ['Saved', 'Draft']) && $request->user_answer_option === $question->answer_key ? $request->question_score : 0,
-                'exam_answer_duration' => $request->exam_answer_duration,
-            ]);
+        // memeriksa jika ada subscription, maka jalankan kode berikut
+        if ($subscription) {
+            // jika jawaban sudah ada maka update, jika belum ada maka create
+            if ($answer) {
+                $answer->update([
+                    'subscription_id' => $request->subscription_id,
+                    'user_answer_option' => $request->user_answer_option,
+                    'status_answer' => $request->status_answer,
+                    'question_score' => in_array($request->status_answer, ['Saved', 'Draft']) && $request->user_answer_option === $question->answer_key ? $request->question_score : 0,
+                    'exam_answer_duration' => $request->exam_answer_duration,
+                ]);
+            } else {
+                SoalPembahasanAnswers::create([
+                    'student_id' => $userId,
+                    'subscription_id' => $request->subscription_id,
+                    'question_id' => $request->question_id,
+                    'user_answer_option' => $request->user_answer_option,
+                    'status_answer' => $request->status_answer,
+                    'question_score' => in_array($request->status_answer, ['Saved', 'Draft']) && $request->user_answer_option === $question->answer_key ? $request->question_score : 0,
+                    'exam_answer_duration' => $request->exam_answer_duration,
+                ]);
+            }
         }
 
         // ini untuk testing created_at dan updated_at jika menggunakan beda hari menggunakan carbon lewat $today
