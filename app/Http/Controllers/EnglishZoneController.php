@@ -3178,7 +3178,8 @@ class EnglishZoneController extends Controller
     {
         $user = Auth::user();
 
-        $date = now()->format('Y-m-d');
+        // $date = now()->format('Y-m-d');
+        $date = Carbon::createFromFormat('Y-m-d', '2026-01-01')->format('Y-m-d');
 
         $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
             $query->where('transaction_status', 'Berhasil');
@@ -3328,6 +3329,18 @@ class EnglishZoneController extends Controller
 
         $userId = Auth::id();
 
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
         $validator = Validator::make($request->all(), [
             'user_answer_option' => 'required',
         ], [
@@ -3340,6 +3353,12 @@ class EnglishZoneController extends Controller
                 'errors' => $validator->errors(),
             ], 422);
         }
+
+        // Ambil informasi user yang berlangganan fitur english zone
+        $subscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
+            $query->where('feature_id', 3); // feature_id 3 menunjukkan fitur english zone
+        })->where('student_id', $userId)->where('subscription_status', 'aktif')->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)
+        ->pluck('id')->first();
 
         // ambil soal dari database berdasarkan bab, status Publish, dan tipe ujian
         $getQuestions = EnglishZoneQuestions::where('level_id', $levelId)->where('session_id', $sessionId)->where('status_bank_soal', 'Publish')
@@ -3357,7 +3376,7 @@ class EnglishZoneController extends Controller
         $dataQuestionAnswer = EnglishZoneAnswers::where('student_id', $userId)->where('question_id', $request->question_id)
         ->whereDate('created_at', $today)->first();
         
-        if (!$dataQuestionAnswer) {
+        if (!$dataQuestionAnswer && $subscription) {
             EnglishZoneAnswers::create([
                 'student_id' => $userId,
                 'subscription_history_id' => $request->subscription_history_id,
@@ -3371,5 +3390,4 @@ class EnglishZoneController extends Controller
             'status' => 'success',
         ]);
     }
-
 }
