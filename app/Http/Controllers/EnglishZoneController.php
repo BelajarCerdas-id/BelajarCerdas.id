@@ -3110,6 +3110,7 @@ class EnglishZoneController extends Controller
             'bankSoal' => $bankSoal->values(),
             'worksheetDetail' => '/english-zone/:levelId/worksheet-detail',
             'examDetail' => '/english-zone/:levelId/:sessionId/exam',
+            'quizDetail' => '/english-zone/:levelId/quiz-detail',
         ]);
     }
 
@@ -3389,5 +3390,12 @@ class EnglishZoneController extends Controller
         return response()->json([
             'status' => 'success',
         ]);
+    }
+
+    // QUIZ EXAM (Reading, Writing, Listening, Speaking)
+    // function quiz detail view
+    public function quizDetailView($levelId)
+    {
+        return view('Features.english-zone.student.quiz.english-zone-quiz-detail', compact('levelId'));
     }
 }

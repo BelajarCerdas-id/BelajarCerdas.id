@@ -82,6 +82,7 @@ function paginateMateriStudent(selectedLevel = null) {
 
                         const worksheetDetail = response.worksheetDetail.replace(':levelId', activeLevel);
                         const examDetail = response.examDetail.replace(':levelId', activeLevel).replace(':sessionId', item.session_id); // exam non ielts test (reading, listening, speaking, writing)
+                        const quizDetail = response.quizDetail.replace(':levelId', activeLevel); // exam ielts test (reading, listening, speaking, writing)
     
                         if (response.getSubscriptionStudent && response.date == item.session_date_check) {
                             if (!response.dataAttendance) {
@@ -180,6 +181,13 @@ function paginateMateriStudent(selectedLevel = null) {
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
                                 `;
+                            
+                            lockQuiz = `
+                                    <a href="${quizDetail}" class="text-[#4189E0] flex items-center gap-2 text-sm font-bold">
+                                        Detail
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                `;
     
                             lockMateriVideo = `
                                     <button type="button" onclick="showVideo(this)" data-materi-id="${item.id}" data-video-id="${videoId}" data-student-attendance-history="${response.dataAttendance}"
@@ -272,6 +280,14 @@ function paginateMateriStudent(selectedLevel = null) {
                                         <p>${levelEndDate}</p>
                                     </span>
                                 `;
+                            
+                            lockQuiz = `
+                                    <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-2 text-xs md:text-[13px]">
+                                        <p>${levelStartDate}</p>
+                                        -
+                                        <p>${levelEndDate}</p>
+                                    </span>
+                                `;
     
                             lockMateriVideo = `
                                     <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-2 text-xs md:text-[13px]">
@@ -346,6 +362,12 @@ function paginateMateriStudent(selectedLevel = null) {
                                 </span>
                             `;
                             lockWorksheet = `
+                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
+                                    <p>Belum</p>
+                                    <p>langganan</p>
+                                </span>
+                            `;
+                            lockQuiz = `
                                 <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
                                     <p>Belum</p>
                                     <p>langganan</p>
@@ -519,7 +541,7 @@ function paginateMateriStudent(selectedLevel = null) {
                         containerMateri.append(card);
 
                         $('#container-worksheet-quiz-student').html(`
-                            <div class="grid grid-cols-1 lg:grid-cols-2"> 
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8"> 
                                 <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
                                     <div class="flex items-center gap-2">
                                         <div>
@@ -530,6 +552,19 @@ function paginateMateriStudent(selectedLevel = null) {
                                         </div>
                                     </div>
                                     ${lockWorksheet}
+                                </div>
+
+                                <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
+                                    <div class="flex items-center gap-2">
+                                        <div>
+                                            <i class="fa-solid fa-clipboard-question bg-[#4189E0] text-white w-10 h-10 flex items-center justify-center rounded-full"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs md:text-md font-semibold opacity-70 pb-1">Quiz (Exam)</p>
+                                            <p class="text-xs font-semibold opacity-70 max-w-32 xl:max-w-full">Reading, Writing, Listening, Speaking</p>
+                                        </div>
+                                    </div>
+                                    ${lockQuiz}
                                 </div>
                             </div>
                         `);

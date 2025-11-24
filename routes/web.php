@@ -529,6 +529,10 @@ Route::fallback(function () {
     // exam TOEP answers
     Route::post('/english-zone-student/{levelId}/{sessionId}/exam-TOEP/answers', [EnglishZoneController::class, 'examTOEPAnswers'])->name('EZ.examTOEP.answers');
 
+    // QUIZ EXAM (Reading, Writing, Listening, Speaking)
+    // views
+    Route::get('/english-zone/{levelId}/quiz-detail', [EnglishZoneController::class, 'quizDetailView'])->name('EZ.quizDetail.view');
+
     // ROUTES SCHOOL PARTNER
     // school subscription
     Route::get('/school-subscription', [SchoolPartnerController::class, 'schoolSubscriptionView'])->name('schoolSubscription.view');
