@@ -3179,8 +3179,7 @@ class EnglishZoneController extends Controller
     {
         $user = Auth::user();
 
-        // $date = now()->format('Y-m-d');
-        $date = Carbon::createFromFormat('Y-m-d', '2026-01-01')->format('Y-m-d');
+        $date = now()->format('Y-m-d');
 
         $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
             $query->where('transaction_status', 'Berhasil');
@@ -3396,6 +3395,19 @@ class EnglishZoneController extends Controller
     // function quiz detail view
     public function quizDetailView($levelId)
     {
+        $user = Auth::user();
+
+        $date = now()->format('Y-m-d');
+
+        $getSubscriptionStudent = FeatureSubscriptionHistory::whereHas('Transactions', function($query) {
+            $query->where('feature_id', 3)->where('transaction_status', 'Berhasil');    
+        })->where('student_id', $user->id)->whereDate('start_date', '<=', $date)->whereDate('end_date', '>=', $date)
+        ->where('subscription_status', 'aktif')->exists();
+
+        if (!$getSubscriptionStudent) {
+            return redirect()->route('EZ.student.view');
+        }
+
         return view('Features.english-zone.student.quiz.english-zone-quiz-detail', compact('levelId'));
     }
 }
