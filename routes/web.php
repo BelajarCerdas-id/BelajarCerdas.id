@@ -533,6 +533,9 @@ Route::fallback(function () {
     // views
     Route::get('/english-zone/{levelId}/quiz-detail', [EnglishZoneController::class, 'quizDetailView'])->name('EZ.quizDetail.view');
 
+    // fetch
+    Route::get('/english-zone/{levelId}/quiz-detail/fetch', [EnglishZoneController::class, 'quizDetailFetch'])->name('EZ.quizDetail.fetch');
+
     // ROUTES SCHOOL PARTNER
     // school subscription
     Route::get('/school-subscription', [SchoolPartnerController::class, 'schoolSubscriptionView'])->name('schoolSubscription.view');

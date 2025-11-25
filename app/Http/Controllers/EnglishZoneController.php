@@ -3410,4 +3410,14 @@ class EnglishZoneController extends Controller
 
         return view('Features.english-zone.student.quiz.english-zone-quiz-detail', compact('levelId'));
     }
+
+    // function quiz detail fetch (untuk link href latihan dan ujian pada quiz masing")
+    public function quizDetailFetch($levelId)
+    {
+        $levelName = EnglishZoneLevel::where('id', $levelId)->pluck('level_name')->first();
+
+        return response()->json([
+            'data' => $levelName,
+        ]);
+    }
 }
