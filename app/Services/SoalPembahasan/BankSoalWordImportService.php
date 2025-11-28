@@ -17,7 +17,7 @@ class BankSoalWordImportService
     public function bankSoalImportService(Request $request)
     {
         // Buat instance dari class DocxImageExtractor yang berfungsi untuk ekstrak gambar + HTML styled dari file Word
-        $extractor = new DocxImageExtractor();
+        $extractor = new DocxImageExtractor('soal_pembahasan');
 
         // Validasi input form dari frontend (wajib diisi)
         $validator = Validator::make($request->all(), [

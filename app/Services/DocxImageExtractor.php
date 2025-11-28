@@ -16,7 +16,9 @@ class DocxImageExtractor
     protected string $baseUrl;
     public function __construct(string $feature = '')
     {
-        $map = [];
+        $map = [
+            'soal_pembahasan' => 'soal-pembahasan-image',
+        ];
 
         $folder = $map[$feature] ?? 'images';
 
