@@ -12,6 +12,18 @@ use PhpOffice\PhpWord\Element\ListItem;
 use ZipArchive;
 class DocxImageExtractor
 {
+    protected string $basePath;
+    protected string $baseUrl;
+    public function __construct(string $feature = '')
+    {
+        $map = [];
+
+        $folder = $map[$feature] ?? 'images';
+
+        $this->basePath = public_path($folder);
+        $this->baseUrl = "/{$folder}";
+    }
+
     // Counter gambar (jika ingin memberi nomor urut gambar yang diambil dari dokumen)
     public int $currentImageCounter = 1;
 
@@ -535,7 +547,7 @@ class DocxImageExtractor
         $hash = md5($binary);      // Hash unik berdasarkan isi file (untuk menghindari duplikat)
         $ext = $this->mimeToExtension($mime); // Tentukan ekstensi file dari MIME
         $fileName = "img_$hash.$ext"; // Format nama file
-        $path = public_path("soal-pembahasan-image/$fileName"); // Lokasi penyimpanan di folder publik
+        $path = "{$this->basePath}/$fileName"; // Lokasi penyimpanan di folder publik
 
         // Pastikan folder tujuan ada
         if (!file_exists(dirname($path))) {
@@ -547,7 +559,7 @@ class DocxImageExtractor
         }
 
         // Tentukan URL publik yang bisa diakses
-        $publicUrl = "/soal-pembahasan-image/$fileName";
+        $publicUrl = "{$this->baseUrl}/$fileName";
         $mediaImages[$key]['public_url'] = $publicUrl; // Simpan URL ke array
         $this->savedImageHashes[$hash] = $publicUrl;   // Simpan hash untuk tracking duplikat
 
@@ -643,7 +655,7 @@ class DocxImageExtractor
         $fileName = "img_$hash.$ext";
 
         // Path penyimpanan fisik di public/
-        $path = public_path("soal-pembahasan-image/$fileName");
+        $path = $this->basePath . "/$fileName";
 
         // Jika folder belum ada, buat folder dengan izin 0775
         if (!file_exists(dirname($path))) {
@@ -656,7 +668,7 @@ class DocxImageExtractor
         }
 
         // URL publik untuk diakses di HTML
-        $publicUrl = "/soal-pembahasan-image/$fileName";
+        $publicUrl = "{$this->baseUrl}/$fileName";
 
         // Simpan di cache hash agar tidak disimpan ulang
         $this->savedImageHashes[$hash] = $publicUrl;
