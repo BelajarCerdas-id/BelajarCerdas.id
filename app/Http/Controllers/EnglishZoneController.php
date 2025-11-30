@@ -8,6 +8,7 @@ use App\Events\EnglishZoneBatchScheduleListener;
 use App\Events\EnglishZoneLevelsListener;
 use App\Events\EnglishZoneMateriListener;
 use App\Events\EnglishZoneMentorScheduleListener;
+use App\Events\EnglishZonePassageImportListener;
 use App\Events\EnglishZoneSessionListener;
 use App\Events\EnglishZoneStudentBatchRefund;
 use App\Events\EnglishZoneStudentBatchReschedule;
@@ -20,6 +21,7 @@ use App\Models\EnglishZoneBatchSchedule;
 use App\Models\EnglishZoneLevel;
 use App\Models\EnglishZoneMateri;
 use App\Models\EnglishZoneMentorSchedule;
+use App\Models\EnglishZonePassage;
 use App\Models\EnglishZoneQuestions;
 use App\Models\EnglishZoneSession;
 use App\Models\EnglishZoneStudentBatch;
@@ -32,6 +34,7 @@ use App\Models\Transactions;
 use App\Models\UserAccount;
 use Illuminate\Http\Request;
 use App\Services\DocxImageExtractor;
+use App\Services\EnglishZone\PassageWordImportService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -1242,6 +1245,88 @@ class EnglishZoneController extends Controller
         broadcast(new EnglishZoneMentorScheduleListener($ids))->toOthers();
 
         return response()->json(['success' => true]);
+    }
+
+    // MANAGEMENT QUIZ
+    // function management quiz view
+    public function managementPassageView()
+    {
+        return view('Features.english-zone.management-quiz.management-passage');
+    }
+
+    // function management passage store
+    public function managementPassageStore(Request $request, $id = null)
+    {
+        return app(PassageWordImportService::class)->passageWordImportService($request, $id);
+    }
+
+    // function management passage edit
+    public function managementPassageEdit(Request $request, $id)
+    {
+        return app(PassageWordImportService::class)->passageWordImportService($request, $id);
+    }
+
+    // function management passage delete
+    public function managementPassageDelete($id)
+    {
+        $dataPassage = EnglishZonePassage::findOrFail($id);
+
+        $deletedData = $dataPassage->toArray();
+
+        broadcast(new EnglishZonePassageImportListener('EnglishZonePassage','delete', $deletedData))->toOthers();
+
+        $dataPassage->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Passage berhasil dihapus.',
+        ]);
+    }
+
+    // function paginate management passage
+    public function paginateManagementPassage()
+    {
+        $passage = EnglishZonePassage::with(['UserAccount', 'EnglishZoneLevel'])->orderBy('created_at', 'desc')->get()->groupBy('passage_type');
+
+        return response()->json([
+            'data' => $passage->values(),
+            'passageDetail' => '/english-zone/management-quiz/management-passage/:level_id/:passage_type/detail'
+        ]);
+    }
+
+    // function management passage detail
+    public function managementPassageDetail($level_id, $passage_type)
+    {
+        return view('Features.english-zone.management-quiz.management-passage-detail', compact('level_id', 'passage_type'));
+    }
+
+    // function paginate management passage detail
+    public function paginateManagementPassageDetail($level_id, $passage_type)
+    {
+        $passage = EnglishZonePassage::with(['UserAccount', 'EnglishZoneLevel'])->where('level_id', $level_id)->where('passage_type', $passage_type)
+        ->orderBy('created_at', 'desc')->get();
+
+        return response()->json([
+            'data' => $passage,
+        ]);
+    }
+
+    public function managementPassageActivate(Request $request, $id)
+    {
+        $user = Auth::user();
+
+        $passage = EnglishZonePassage::findOrFail($id);
+
+        $passage->update([
+            'administrator_id' => $user->id,
+            'passage_status' => $request->passage_status,
+        ]);
+
+        broadcast(new EnglishZonePassageImportListener('EnglishZonePassage','activate', $passage))->toOthers();
+
+        return response()->json([
+            'status' => 'success'
+        ]);
     }
 
     // MANAGEMENT MATERI

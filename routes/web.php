@@ -402,6 +402,22 @@ Route::fallback(function () {
     Route::post('/english-zone/bank-soal/edit-image', [EnglishZoneController::class, 'editImageBankSoal'])->name('englishZone.editImage');
     Route::post('/english-zone/bank-soal/delete-image/endpoint', [EnglishZoneController::class, 'deleteImageBankSoal'])->name('englishZone.deleteImage');
 
+    // MANAGEMENT QUIZ
+    // passage
+    // views
+    Route::get('/english-zone/management-quiz/management-passage', [EnglishZoneController::class, 'managementPassageView'])->name('EZ.managementPassage.view');
+    Route::get('/english-zone/management-quiz/management-passage/{level_id}/{passage_type}/detail', [EnglishZoneController::class, 'managementPassageDetail'])->name('EZ.managementPassageDetail.view');
+
+    // CRUD
+    Route::post('/english-zone/management-quiz/management-passage/store', [EnglishZoneController::class, 'managementPassageStore'])->name('EZ.managementPassage.store');
+    Route::post('/english-zone/management-quiz/management-passage/{id}/edit', [EnglishZoneController::class, 'managementPassageEdit'])->name('EZ.managementPassage.edit');
+    Route::delete('/english-zone/management-quiz/management-passage/{id}/delete', [EnglishZoneController::class, 'managementPassageDelete'])->name('EZ.managementPassage.delete');
+    Route::put('/english-zone/management-quiz/management-passage/{id}/activate', [EnglishZoneController::class, 'managementPassageActivate'])->name('EZ.managementPassage.activate');
+
+    // PAGINATE
+    Route::get('/english-zone/management-quiz/management-passage/paginate', [EnglishZoneController::class, 'paginateManagementPassage'])->name('EZ.managementPassage.paginate');
+    Route::get('/english-zone/management-quiz/management-passage-detail/{level_id}/{passage_type}/paginate', [EnglishZoneController::class, 'paginateManagementPassageDetail'])->name('EZ.managementPassageDetail.paginate');
+
     // MANAGEMENT MATERI
     // views (ADMINISTRATOR)
     Route::get('/english-zone/management-materi', [EnglishZoneController::class, 'managementMateriView'])->name('EZ.managementMateri.view');

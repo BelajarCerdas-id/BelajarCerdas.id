@@ -147,6 +147,10 @@ class UserAccount extends Authenticatable
     public function EnglishZoneAnswers() {
         return $this->hasMany(EnglishZoneAnswers::class, 'student_id');
     }
+    
+    public function EnglishZonePassage() {
+        return $this->hasMany(EnglishZonePassage::class, 'administrator_id');
+    }
 
     // MENTOR FEATURE STATUS
     public function MentorFeatureStatus() {

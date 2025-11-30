@@ -18,6 +18,7 @@ class DocxImageExtractor
     {
         $map = [
             'soal_pembahasan' => 'soal-pembahasan-image',
+            'english_zone' => 'english-zone-image',
         ];
 
         $folder = $map[$feature] ?? 'images';
