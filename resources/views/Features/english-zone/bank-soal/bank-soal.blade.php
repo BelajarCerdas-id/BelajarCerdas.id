@@ -67,10 +67,10 @@
                                             <i class="fa-solid fa-arrow-up-from-bracket"></i>
                                             <span>Upload File</span>
                                         </label>
-                                        <input id="file-bulkUpload-word" name="bulkUpload-soal-pembahasan"
+                                        <input id="file-bulkUpload-word" name="bulkUpload-soal-toep-english-zone"
                                             class="hidden" onchange="previewWord(event, 'bulkUpload-word')"
                                             type="file" accept=".docx">
-                                        <span id="error-bulkUpload-soal-pembahasan"
+                                        <span id="error-bulkUpload-soal-toep-english-zone"
                                             class="text-red-500 font-bold text-xs pt-2"></span>
                                     </div>
                                 </div>
