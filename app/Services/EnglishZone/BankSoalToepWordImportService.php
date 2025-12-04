@@ -223,7 +223,7 @@ class BankSoalToepWordImportService
                 ];
                 // Pastikan semua OPTION yang ada terisi, plus field wajib lain
                 $presentOptions = array_filter(array_keys($answerMap), fn($opt) => isset($dataSoal[$opt]) && $extractor->isMeaningfullyEmpty($dataSoal[$opt]));
-                $requiredFields = array_merge($presentOptions, ['ANSWER', 'EXPLANATION', 'LEVEL', 'SESI', 'DIFFICULTY', 'TYPE']);
+                $requiredFields = array_merge($presentOptions, ['ANSWER', 'EXPLANATION', 'LEVEL', 'SESI', 'DIFFICULTY']);
 
                 foreach ($requiredFields as $field) {
                     if (!isset($dataSoal[$field]) || $extractor->isMeaningfullyEmpty($dataSoal[$field])) {
@@ -308,10 +308,9 @@ class BankSoalToepWordImportService
             // Cek duplikasi soal
             $existingQuestion = EnglishZoneQuestions::where('questions', $dataSoal['QUESTION'])->exists();
 
-            // Tentukan status bank soal (Publish kalau sudah ada soal publish sebelumnya di sub_bab_id yang sama)
-            $statusBankSoal = EnglishZoneQuestions::where('sub_bab_id', $request->sub_bab_id)
-                ->where('status_bank_soal', 'Publish')
-                ->exists() ? 'Publish' : 'Unpublish';
+            // Tentukan status bank soal (Publish kalau sudah ada soal publish sebelumnya di level dan sesi yang sama)
+            $statusBankSoal = EnglishZoneQuestions::where('level_id', $dataSoal['LEVEL'])->where('session_id', $dataSoal['SESI'])
+            ->where('tipe_soal', 'TOEP')->where('status_bank_soal', 'Publish')->exists() ? 'Publish' : 'Unpublish';
 
             // Simpan setiap opsi jawaban ke DB
             if (!$allWordValidationErrors) {
@@ -329,7 +328,8 @@ class BankSoalToepWordImportService
                                 'level_id' => $dataSoal['LEVEL'], // ambil dari luar scope  foreach $table as $index
                                 'session_id' => $dataSoal['SESI'],
                                 'status_bank_soal' => $statusBankSoal,
-                                'tipe_soal' => trim(strip_tags($dataSoal['TYPE'] ?? '')),
+                                'tipe_soal' => 'TOEP',
+                                'question_format' => 'MCQ',
                             ]);
                         }
                     }
