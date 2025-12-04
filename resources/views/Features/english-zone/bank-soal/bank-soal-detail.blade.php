@@ -29,7 +29,7 @@
                     </div>
 
                     <!--- daftar list soal --->
-                    <div id="container-bank-soal-detail" data-level-id="{{ $levelId }}">
+                    <div id="container-bank-soal-detail" data-level-id="{{ $levelId }}" data-session-id="{{ $sessionId }}">
                         <div id="grid-list-soal" class="container-accordion mb-8">
                             <!-- show data in ajax -->
                         </div>

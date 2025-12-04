@@ -3,13 +3,15 @@ function paginateBankSoalDetailEZ(search_question = '') {
     if (!container) return;
 
     const levelId = container.dataset.levelId;
+    const sessionId = container.dataset.sessionId;
     if (!levelId) return;
+    if (!sessionId) return;
 
-    fetchFilteredDataBankSoalDetailEZ(search_question, levelId);
+    fetchFilteredDataBankSoalDetailEZ(search_question, levelId, sessionId);
 
-    function fetchFilteredDataBankSoalDetailEZ(search_question, levelId) {
+    function fetchFilteredDataBankSoalDetailEZ(search_question, levelId, sessionId) {
         $.ajax({
-            url: `/english-zone/paginate/bank-soal/${levelId}`,
+            url: `/english-zone/paginate/bank-soal/${levelId}/${sessionId}`,
             method: 'GET',
             data: {
                 search_question // Include the page parameter
@@ -117,7 +119,7 @@ function paginateBankSoalDetailEZ(search_question = '') {
                             </div>
                         `;
 
-                        let editQuestion = response.editQuestion.replace(':levelId', levelId).replace(':id', first.id);
+                        let editQuestion = response.editQuestion.replace(':levelId', levelId).replace(':sessionId', sessionId).replace(':id', first.id);
 
                         const card = `
 

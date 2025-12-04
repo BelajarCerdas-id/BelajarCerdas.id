@@ -284,18 +284,19 @@ class EnglishZoneController extends Controller
     // function paginate bankSoal
     public function paginateBankSoal(Request $request)
     {
-        $dataBankSoal = EnglishZoneQuestions::with(['UserAccount', 'EnglishZoneLevel'])->groupBy('level_id')
-        ->orderBy('created_at', 'desc')->paginate(10);
+        $dataBankSoal = EnglishZoneQuestions::with(['UserAccount', 'EnglishZoneLevel', 'EnglishZoneSession'])->where('tipe_soal', 'TOEP')
+        ->orderBy('created_at', 'desc')->get()->groupBy('level_id')->map(function ($group) {
+            return $group->groupBy('session_id');
+        });
 
         return response()->json([
-            'data' => $dataBankSoal->items(),
-            'links' => (string) $dataBankSoal->links(),
-            'bankSoalDetail' => '/english-zone/bank-soal/:levelId/detail',
+            'data' => $dataBankSoal->values(),
+            'bankSoalDetail' => '/english-zone/bank-soal/:levelId/:sessionId/detail',
         ]);
     }
 
     // function bankSoal activate
-    public function bankSoalActivate(Request $request, $levelId)
+    public function bankSoalActivate(Request $request, $levelId, $sessionId)
     {
         $user = Auth::user();
 
@@ -303,7 +304,7 @@ class EnglishZoneController extends Controller
             'status_bank_soal' => 'required|in:Publish,Unpublish'
         ]);
 
-        $dataBankSoal = EnglishZoneQuestions::where('level_id', $levelId)->get();
+        $dataBankSoal = EnglishZoneQuestions::where('level_id', $levelId)->where('session_id', $sessionId)->get();
 
         foreach ($dataBankSoal as $soal) {
             $soal->update([
@@ -321,16 +322,17 @@ class EnglishZoneController extends Controller
     }
 
     // function bankSoal detail view
-    public function bankSoalDetail($levelId)
+    public function bankSoalDetail($levelId, $sessionId)
     {
-        return view('Features.english-zone.bank-soal.bank-soal-detail', compact('levelId'));
+        return view('Features.english-zone.bank-soal.bank-soal-detail', compact('levelId', 'sessionId'));
     }
 
     // function paginate bankSoal detail
-    public function paginateBankSoalDetail(Request $request, $levelId)
+    public function paginateBankSoalDetail(Request $request, $levelId, $sessionId)
     {
-        // Ambil semua soal yang memiliki sub_bab_id tertentu, lalu ambil relasi SubBab juga
-        $allQuestions = EnglishZoneQuestions::where('level_id', $levelId)->orderBy('created_at', 'desc')->get(); // hasilnya Collection, bukan query builder lagi
+        // Ambil semua soal yang sesuai dengan level id dan session id
+        $allQuestions = EnglishZoneQuestions::where('level_id', $levelId)->where('session_id', $sessionId)
+        ->orderBy('created_at', 'desc')->get(); // hasilnya Collection, bukan query builder lagi
 
         // Group by column 'questions'
         $grouped = $allQuestions->groupBy('questions');
@@ -375,30 +377,30 @@ class EnglishZoneController extends Controller
         return response()->json([
             'data' => $grouped->values(), // daftar soal yang ditampilkan di halaman ini
             'videoIds' => $videoIds, // untuk menampilkan video in iframe
-            'editQuestion' => '/english-zone/bank-soal/:levelId/:id',
+            'editQuestion' => '/english-zone/bank-soal/:levelId/:sessionId/:id',
         ]);
     }
 
     // function edit question view
-    public function editQuestionView($levelId, $id)
+    public function editQuestionView($levelId, $sessionId, $id)
     {
         // Mengambil data soal berdasarkan ID
         $editQuestion = EnglishZoneQuestions::find($id);
 
         if (!$editQuestion) {
-            return redirect()->route('EZ.bankSoal.detail.view', [$levelId]);
+            return redirect()->route('EZ.bankSoal.detail.view', [$levelId, $sessionId]);
         }
 
-        return view('Features.english-zone.bank-soal.bank-soal-edit-question', compact('levelId', 'id'));
+        return view('Features.english-zone.bank-soal.bank-soal-edit-question', compact('levelId', 'sessionId', 'id'));
     }
 
     // function load form edit question
-    public function formEditQuestion(Request $request, $levelId, $id)
+    public function formEditQuestion(Request $request, $levelId, $sessionId, $id)
     {
         $editQuestion = EnglishZoneQuestions::with(['EnglishZoneLevel'])->find($id);
 
         if (!$editQuestion) {
-            return redirect()->route('EZ.bankSoal.detail.view', [$levelId]);
+            return redirect()->route('EZ.bankSoal.detail.view', [$levelId, $sessionId]);
         }
 
         // Mengambil data soal yang punya pertanyaan (questions) yang sama, lalu dikelompokkan berdasarkan isi questions-nya

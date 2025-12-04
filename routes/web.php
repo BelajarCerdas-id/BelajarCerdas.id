@@ -385,18 +385,18 @@ Route::fallback(function () {
     // BANK SOAL
     // views(ADMINISTRATOR)
     Route::get('/english-zone/bank-soal', [EnglishZoneController::class, 'bankSoalView'])->name('EZ.bankSoal.view');
-    Route::get('/english-zone/bank-soal/{levelId}/detail', [EnglishZoneController::class, 'bankSoalDetail'])->name('EZ.bankSoal.detail.view');
-    Route::get('/english-zone/bank-soal/{levelId}/{id}', [EnglishZoneController::class, 'editQuestionView'])->name('EZ.bankSoal.edit.question.view');
-    Route::get('/english-zone/bank-soal/form/{levelId}/{id}', [EnglishZoneController::class, 'formEditQuestion'])->name('EZ.bankSoal.form.edit.question');
+    Route::get('/english-zone/bank-soal/{levelId}/{sessionId}/detail', [EnglishZoneController::class, 'bankSoalDetail'])->name('EZ.bankSoal.detail.view');
+    Route::get('/english-zone/bank-soal/{levelId}/{sessionId}/{id}', [EnglishZoneController::class, 'editQuestionView'])->name('EZ.bankSoal.edit.question.view');
+    Route::get('/english-zone/bank-soal/form/{levelId}/{sessionId}/{id}', [EnglishZoneController::class, 'formEditQuestion'])->name('EZ.bankSoal.form.edit.question');
 
     // CRUD (ADMINISTRATOR)
     Route::post('/english-zone/bank-soal-store', [EnglishZoneController::class, 'bankSoalStore'])->name('EZ.bankSoal.store');
-    Route::put('/english-zone/bank-soal/activate/{levelId}', [EnglishZoneController::class, 'bankSoalActivate'])->name('EZ.bankSoal.activate');
+    Route::put('/english-zone/bank-soal/activate/{levelId}/{sessionId}', [EnglishZoneController::class, 'bankSoalActivate'])->name('EZ.bankSoal.activate');
     Route::post('/english-zone/bank-soal/update/{id}', [EnglishZoneController::class, 'editQuestion'])->name('EZ.bankSoal.edit.question.update');
 
     // PAGINATE (ADMINISTRATOR)
     Route::get('/english-zone/paginate/bank-soal', [EnglishZoneController::class, 'paginateBankSoal'])->name('EZ.bankSoal.paginate');
-    Route::get('/english-zone/paginate/bank-soal/{levelId}', [EnglishZoneController::class, 'paginateBankSoalDetail'])->name('EZ.bankSoalDetail.paginate');
+    Route::get('/english-zone/paginate/bank-soal/{levelId}/{sessionId}', [EnglishZoneController::class, 'paginateBankSoalDetail'])->name('EZ.bankSoalDetail.paginate');
 
     // UPLOAD & DELETE IMAGE WITH CKEDITOR
     Route::post('/english-zone/bank-soal/edit-image', [EnglishZoneController::class, 'editImageBankSoal'])->name('englishZone.editImage');

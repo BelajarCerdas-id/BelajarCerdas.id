@@ -1,5 +1,5 @@
 @include('components/sidebar_beranda', [
-    'linkBackButton' => route('EZ.bankSoal.detail.view', [$levelId]),
+    'linkBackButton' => route('EZ.bankSoal.detail.view', [$levelId, $sessionId]),
     'backButton' => "<i class='fa-solid fa-chevron-left'></i>",
     'headerSideNav' => 'Edit Question',
 ]);
@@ -13,7 +13,7 @@
 
             <main>
                 <section class="bg-white shadow-lg rounded-lg p-8 border border-gray-200">
-                    <div id="editor-container" data-level-id="{{ $levelId }}" data-question-id="{{ $id }}"
+                    <div id="editor-container" data-level-id="{{ $levelId }}" data-session-id="{{ $sessionId }}" data-question-id="{{ $id }}"
                         data-upload-url="{{ route('englishZone.editImage', ['_token' => csrf_token()]) }}"
                         data-delete-url="{{ route('englishZone.deleteImage') }}">
                         <!---- form in ajax ---->

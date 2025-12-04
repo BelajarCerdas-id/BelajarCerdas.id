@@ -99,6 +99,7 @@
                                 <tr>
                                     <th class="th-table text-black opacity-70">No</th>
                                     <th class="th-table text-black opacity-70">Level</th>
+                                    <th class="th-table text-black opacity-70">Sesi</th>
                                     <th class="th-table text-black opacity-70">Status Bank Soal</th>
                                     <th class="th-table text-black opacity-70">Action</th>
                                     <th class="th-table text-black opacity-70">Detail</th>

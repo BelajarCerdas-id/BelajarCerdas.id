@@ -4,14 +4,15 @@ function paginateBankSoalEditQuestionEZ() {
     if (!container) return;
 
     const levelId = container.dataset.levelId;
+    const sessionId = container.dataset.sessionId;
     const questionId = container.dataset.questionId;
 
-    if (!levelId || !questionId) return;
+    if (!levelId || !sessionId || !questionId) return;
 
     // fetchFilteredDataBankSoalEditQuestion(levelId, questionId);
 
     $.ajax({
-        url: `/english-zone/bank-soal/form/${levelId}/${questionId}`,
+        url: `/english-zone/bank-soal/form/${levelId}/${sessionId}/${questionId}`,
         method: 'GET',
         success: function (response) {
             const grouped = response.data;
