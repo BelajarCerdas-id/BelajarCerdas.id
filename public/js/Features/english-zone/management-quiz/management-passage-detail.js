@@ -70,6 +70,9 @@ function paginateManagementPassageDetail() {
 
                         const previewTextOnly = passageContentTextOnly.length > previewLimit ? passageContentTextOnly.slice(0, previewLimit) + "..." : passageContentTextOnly;
 
+                        const previewBankSoalQuiz = data.previewBankSoalQuiz.replace(':level_id', item.level_id).replace(':passage_type', item.passage_type)
+                            .replace(':passage_id', item.id);
+
                         let = audioFile = '';
                         let = audioScript = '';
 
@@ -139,6 +142,14 @@ function paginateManagementPassageDetail() {
                                         <a href="#" class="btn-edit-passage" data-passage-id="${item.id}">
                                             <i class="fa-solid fa-pen text-[#4189e0]"></i>
                                             Edit Passage
+                                        </a>
+                                    </li>
+
+                                    <!-- preview bank soal quiz -->
+                                    <li class="text-xs">
+                                        <a href="${previewBankSoalQuiz}">
+                                            <i class="fa-solid fa-eye text-[#4189e0]"></i>
+                                            Lihat Detail
                                         </a>
                                     </li>
 

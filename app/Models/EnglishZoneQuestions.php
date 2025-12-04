@@ -8,17 +8,20 @@ class EnglishZoneQuestions extends Model
     use HasFactory;
     protected $fillable = 
     [
-        'administrator_id', 
+        'administrator_id',
+        'level_id',  
+        'session_id',
+        'passage_id',
         'questions', 
+        'tipe_soal',
+        'question_format',
         'options_key', 
         'options_value', 
         'answer_key', 
+        'answer_text', 
         'difficulty', 
-        'explanation', 
-        'level_id',  
-        'session_id',
         'status_bank_soal',
-        'tipe_soal'
+        'explanation', 
     ];
 
     public function UserAccount()
@@ -38,5 +41,9 @@ class EnglishZoneQuestions extends Model
 
     public function EnglishZoneAnswers() {
         return $this->hasMany(EnglishZoneAnswers::class, 'question_id');
+    }
+
+    public function EnglishZonePassage() {
+        return $this->belongsTo(EnglishZonePassage::class, 'passage_id');
     }
 }

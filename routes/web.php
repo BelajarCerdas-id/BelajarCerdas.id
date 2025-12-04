@@ -418,6 +418,21 @@ Route::fallback(function () {
     Route::get('/english-zone/management-quiz/management-passage/paginate', [EnglishZoneController::class, 'paginateManagementPassage'])->name('EZ.managementPassage.paginate');
     Route::get('/english-zone/management-quiz/management-passage-detail/{level_id}/{passage_type}/paginate', [EnglishZoneController::class, 'paginateManagementPassageDetail'])->name('EZ.managementPassageDetail.paginate');
 
+    // bank soal quiz
+    // views
+    Route::get('/english-zone/management-quiz/management-passage/{level_id}/{passage_id}/{passage_type}/bank-soal', [EnglishZoneController::class, 'managementBankSoalQuizView'])->name('EZ.managementBankSoalQuiz.view');
+    Route::get('/english-zone/management-quiz/management-passage/{level_id}/{passage_id}/{passage_type}/{question_id}/bank-soal/edit', [EnglishZoneController::class, 'editQuestionQuizView'])->name('EZ.bankSoalQuiz.edit.view');
+    Route::get('/english-zone/management-quiz/management-passage/{level_id}/{passage_id}/{passage_type}/{question_id}/bank-soal/edit/form', [EnglishZoneController::class, 'editQuestionQuizForm'])->name('EZ.bankSoalQuiz.edit.form');
+
+    // CRUD
+    Route::post('/english-zone/management-quiz/management-passage/{level_id}/{passage_id}/{passage_type}/bank-soal/store', [EnglishZoneController::class, 'bankSoalQuizStore'])->name('EZ.bankSoalQuiz.store');
+    Route::post('/english-zone/management-quiz/management-passage/{level_id}/{passage_id}/{passage_type}/{question_id}/bank-soal/edit/submit', [EnglishZoneController::class, 'editQuestionQuizUpdate'])->name('EZ.bankSoalQuiz.edit.submit');
+    Route::delete('/english-zone/management-quiz/management-passage/{question_id}/bank-soal/delete', [EnglishZoneController::class, 'bankSoalQuizDelete'])->name('EZ.bankSoalQuiz.delete');
+    Route::put('/english-zone/management-quiz/management-passage/{question_id}/bank-soal/activate', [EnglishZoneController::class, 'bankSoalQuizActivate'])->name('EZ.bankSoalQuiz.activate');
+
+    // PAGINATE
+    Route::get('/english-zone/management-quiz/management-passage/{level_id}/{passage_id}/{passage_type}/bank-soal/paginate', [EnglishZoneController::class, 'paginateManagementBankSoalQuiz'])->name('EZ.managementBankSoalQuiz.paginate');
+
     // MANAGEMENT MATERI
     // views (ADMINISTRATOR)
     Route::get('/english-zone/management-materi', [EnglishZoneController::class, 'managementMateriView'])->name('EZ.managementMateri.view');

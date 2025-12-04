@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\BankSoalEnglishZoneEditQuestion;
+use App\Events\BankSoalEnglishZoneStatusUpdate;
 use App\Events\EnglishZoneBatchScheduleListener;
 use App\Events\EnglishZoneLevelsListener;
 use App\Events\EnglishZoneMateriListener;
@@ -33,6 +34,7 @@ use App\Models\Transactions;
 use App\Models\UserAccount;
 use Illuminate\Http\Request;
 use App\Services\EnglishZone\BankSoalToepWordImportService;
+use App\Services\EnglishZone\BankSoalQuizWordImportService;
 use App\Services\EnglishZone\PassageWordImportService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -972,6 +974,7 @@ class EnglishZoneController extends Controller
 
         return response()->json([
             'data' => $passage,
+            'previewBankSoalQuiz' => '/english-zone/management-quiz/management-passage/:level_id/:passage_id/:passage_type/bank-soal',
         ]);
     }
 
@@ -990,6 +993,205 @@ class EnglishZoneController extends Controller
 
         return response()->json([
             'status' => 'success'
+        ]);
+    }
+
+    // function management bank soal quiz view
+    public function managementBankSoalQuizView($level_id, $passage_id, $passage_type)
+    {   
+        return view('Features.english-zone.management-quiz.management-bank-soal-quiz', compact('level_id', 'passage_id', 'passage_type'));
+    }
+
+    // function paginate management bank soal quiz
+    public function paginateManagementBankSoalQuiz(Request $request, $level_id, $passage_id, $passage_type)
+    {
+        // Ambil semua soal yang memiliki sub_bab_id tertentu, lalu ambil relasi SubBab juga
+        $allQuestions = EnglishZoneQuestions::with('EnglishZonePassage')->whereHas('EnglishZonePassage', function($query) use ($passage_type) {
+            $query->where('passage_type', $passage_type);
+        })->where('level_id', $level_id)->where('passage_id', $passage_id)->get(); // hasilnya Collection, bukan query builder lagi
+
+        // Group by column 'questions'
+        $grouped = $allQuestions->groupBy('questions');
+
+        // Filter question
+        if ($request->filled('search_question')) {
+            // Cek apakah request mengirim parameter search_question dan tidak kosong
+
+            $search = strtolower($request->search_question);
+            // Ambil nilai search_question, lalu ubah ke huruf kecil supaya pencarian case-insensitive
+
+            $grouped = $grouped->filter(function ($item) use ($search) {
+                // Lakukan filter ke setiap group soal
+                // $item di sini adalah Collection (sekumpulan soal yang pertanyaannya sama)
+
+                $questionText = strtolower($item->first()->questions);
+                // Ambil pertanyaan dari soal pertama di group
+                // lalu ubah ke huruf kecil juga supaya bisa dibandingkan dengan $search
+
+                return Str::contains($questionText, $search);
+                // Hanya pertahankan group jika teks pertanyaannya mengandung kata kunci pencarian
+            })->values();
+            // values() dipakai untuk mereset index Collection (0,1,2,...), bukan key asli groupBy
+        }
+
+        $videoIds = [];
+
+        // Loop untuk mendapatkan ID video dari URL
+        foreach ($grouped as $groupedSoal) {
+            $videoId = null;
+
+            // Cari explanation yang mengandung url video menggunakan regex, lalu mengambil 1 data pertama dari masing" array group soal.
+            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $groupedSoal[0]['explanation'], $matches)) {
+                $videoId = $matches[1] ?? $matches[2];
+            }
+
+            // Menyiapkan array untuk ID video
+            $videoIds[] = $videoId;
+        }
+        return response()->json([
+            'data' => $grouped->values(),
+            'videoIds' => $videoIds,
+            'editQuestion' => '/english-zone/management-quiz/management-passage/:level_id/:passage_id/:passage_type/:question_id/bank-soal/edit',
+        ]);
+    }
+
+    // function management bank soal quiz store
+    public function bankSoalQuizStore(Request $request, $level_id, $passage_id, $passage_type)
+    {
+        return app(BankSoalQuizWordImportService::class)->bankSoalQuizWordImportService($request, $level_id, $passage_id, $passage_type);
+    }
+
+    // function management bank soal quiz detail view
+    public function editQuestionQuizView($level_id, $passage_id, $passage_type, $question_id)
+    {
+        $editQuestion = EnglishZoneQuestions::with(['EnglishZoneLevel'])->find($question_id);
+
+        if (!$editQuestion) {
+            return redirect()->route('EZ.managementBankSoalQuiz.view', [$level_id, $passage_id, $passage_type]);
+        }
+        
+        return view('Features.english-zone.management-quiz.management-bank-soal-quiz-edit', compact('level_id', 'passage_id', 
+        'passage_type', 'question_id'));
+    }
+
+    // function management bank soal quiz edit form
+    public function editQuestionQuizForm(Request $request, $level_id, $passage_id, $passage_type, $question_id)
+    {
+        $editQuestion = EnglishZoneQuestions::with(['EnglishZoneLevel'])->find($question_id);
+
+        // Mengambil data soal yang punya pertanyaan (questions) yang sama, lalu dikelompokkan berdasarkan isi questions-nya
+        $dataSoal = EnglishZoneQuestions::with(['EnglishZoneLevel'])->where('questions', $editQuestion->questions)->get()->groupBy('questions');
+
+        // Simpan hasil pengelompokan ke variabel baru
+        $groupedSoal = $dataSoal;
+
+        $getLevels = EnglishZoneLevel::all();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $groupedSoal,
+            'editQuestion' => $editQuestion,
+            'getLevels' => $getLevels,
+        ]);
+    }
+
+    // function edit quiz question submit
+    public function editQuestionQuizUpdate(Request $request, $level_id, $passage_id, $passage_type, $question_id)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'questions' => 'required',
+            'options_value.*' => 'required',
+            'answer_key' => 'required',
+            'difficulty' => 'required',
+            'explanation' => 'required',
+        ], [
+            'questions.required' => 'Harap isi pertanyaan soal!',
+            'options_value.*.required' => 'Harap isi jawaban soal!',
+            'answer_key.required' => 'Harap isi jawaban soal!',
+            'difficulty.required' => 'Harap isi difficulty soal!',
+            'explanation.required' => 'Harap isi pembahasan soal!',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $question = EnglishZoneQuestions::find($question_id);
+
+        $dataQuestion = EnglishZoneQuestions::where('questions', $question->questions)->get()->groupBy('questions');
+
+        // Simpan hasil pengelompokan ke variabel baru
+        $groupedSoal = $dataQuestion;
+
+        foreach($groupedSoal as $key => $value) {
+            foreach($value as $soal) {
+                $soal->update([
+                    'administrator_id' => $user->id,
+                    'questions' => $request->questions,
+                    'answer_key' => $request->answer_key,
+                    'options_value' => $request->options_value[$soal->id], // untuk each option_value masing" options
+                    'difficulty' => $request->difficulty,
+                    'explanation' => $request->explanation,
+                ]);
+            }
+        }
+
+        broadcast(new BankSoalEnglishZoneEditQuestion($groupedSoal))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Soal berhasil diupdate',
+            'data' => $groupedSoal
+        ]);
+    }
+
+    // public function bank soal quiz delete
+    public function bankSoalQuizDelete($question_id)
+    {
+        $explodeQuestionIds = explode(',', $question_id);
+
+        $question = EnglishZoneQuestions::whereIn('id', $explodeQuestionIds)->get();
+
+        $deletedData = $question;
+
+        broadcast(new BankSoalEnglishZoneStatusUpdate($deletedData))->toOthers();
+
+        EnglishZoneQuestions::whereIn('id', $explodeQuestionIds)->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Soal berhasil dihapus',
+
+        ]);
+    }
+
+    // public function bank soal quiz activate
+    public function bankSoalQuizActivate(Request $request, $question_id)
+    {
+        $user = Auth::user();
+
+        $explodeQuestionIds = explode(',', $question_id);
+
+        $question = EnglishZoneQuestions::whereIn('id', $explodeQuestionIds)->get();
+
+        $activatedData = $question;
+
+        foreach ($activatedData as $item) {
+            $item->update([
+                'administrator_id' => $user->id,
+                'status_bank_soal' => $request->status_bank_soal,
+            ]);
+        }
+
+        broadcast(new BankSoalEnglishZoneStatusUpdate($activatedData))->toOthers();
+
+        return response()->json([
+            'status' => 'success',
         ]);
     }
 
