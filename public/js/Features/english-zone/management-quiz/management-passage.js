@@ -7,17 +7,25 @@ function paginateManagementPassage() {
             $('.pagination-container-management-passage').empty(); // Clear previous pagination links
 
             if (data.data.length > 0) {
-                $.each(data.data, function (index, item) {
+                const rows = [];
 
-                    const first = item[0];
+                data.data.forEach(group => {
+                    Object.values(group).forEach(items => {
+                        rows.push(items[0]);
+                    });
+                });
 
-                    const passageDetail = data.passageDetail.replace(':level_id', first.level_id).replace(':passage_type', first.passage_type);
+                $('#table-list-management-passage').empty();
+
+                rows.forEach((item, index) => {
+                    const passageDetail = data.passageDetail
+                        .replace(':level_id', item.level_id).replace(':passage_type', item.passage_type);
 
                     $('#table-list-management-passage').append(`
                         <tr class="text-xs">
                             <td class="td-table !text-black !text-center">${index + 1}</td>
-                            <td class="td-table !text-black !text-center">${first.english_zone_level?.level_name}</td>
-                            <td class="td-table !text-black !text-center">${first.passage_type}</td>
+                            <td class="td-table !text-black !text-center">${item.english_zone_level?.level_name}</td>
+                            <td class="td-table !text-black !text-center">${item.passage_type}</td>
                             <td class="td-table !text-center font-bold text-[#4189e0] text-xs">
                                 <a href="${passageDetail}">
                                     Lihat Passage

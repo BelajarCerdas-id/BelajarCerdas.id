@@ -952,10 +952,13 @@ class EnglishZoneController extends Controller
     // function paginate management passage
     public function paginateManagementPassage()
     {
-        $passage = EnglishZonePassage::with(['UserAccount', 'EnglishZoneLevel'])->orderBy('created_at', 'desc')->get()->groupBy('passage_type');
+        $passages = EnglishZonePassage::with(['UserAccount', 'EnglishZoneLevel'])->orderBy('created_at', 'desc')->get()->groupBy('passage_type')
+        ->map(function ($group) {
+            return $group->groupBy('level_id');
+        });
 
         return response()->json([
-            'data' => $passage->values(),
+            'data' => $passages->values(),
             'passageDetail' => '/english-zone/management-quiz/management-passage/:level_id/:passage_type/detail'
         ]);
     }
