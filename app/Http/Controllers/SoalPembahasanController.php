@@ -405,15 +405,26 @@ class SoalPembahasanController extends Controller
         $publishedQuestionIds = SoalPembahasanQuestions::where('tipe_soal', 'Latihan')->where('status_bank_soal', 'Publish')
         ->where('sub_bab_id', $sub_bab_id)->pluck('id')->implode(',');
 
+        // Ambil informasi user yang berlangganan fitur soal dan pembahasan
+        $subscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
+            $query->where('feature_id', 2); // feature_id 2 menunjukkan fitur soal dan pembahasan
+        })->where('student_id', $userId)->where('subscription_status', 'aktif')->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->first();
+
         // Buat key cache unik berdasarkan tanggal, user, dan sub bab
-        $cacheKey = "soal-pembahasan-practice-questions-{$today}-{$userId}-{$sub_bab_id}-{$publishedQuestionIds}";
+        $cacheKey = "soal-pembahasan-practice-questions-{$userId}-{$today}-{$sub_bab_id}-{$publishedQuestionIds}";
 
         // Cek apakah soal sudah pernah disimpan di cache hari ini
         if (Cache::has($cacheKey)) {
-            // Ambil data soal dari cache dan bungkus ulang jadi koleksi Laravel
-            $groupedQuestions = collect(Cache::get($cacheKey))
-                ->map(fn($group) => collect($group)) // pastikan setiap grup tetap berbentuk Collection
-                ->values();
+            // Ambil data soal dari cache dan ubah ke bentuk collection dalam bentuk nested group
+            $cachedGroupIds = Cache::get($cacheKey);
+
+            $groupedQuestions = collect($cachedGroupIds)->map(function($groupIds) {
+
+            return SoalPembahasanQuestions::whereIn('id', $groupIds)
+                ->get()->sortBy(function($q) use ($groupIds){
+                    return array_search($q->id, $groupIds->toArray());
+                })->values();
+            });
         } else {
             // Ambil semua soal latihan yang sudah di-publish berdasarkan sub_bab_id
             $getQuestions = SoalPembahasanQuestions::where('sub_bab_id', $sub_bab_id)
@@ -435,34 +446,53 @@ class SoalPembahasanController extends Controller
             // Acak soal Premium
             $premium = $partitioned[1]->shuffle();
 
-            // Gabungkan 3 Free dan Premium, lalu ambil maksimal 20 soal
-            $selected = $free->concat($premium)->take(20);
+            // Gabungkan 3 Free dan Premium, lalu ambil maksimal 60 soal
+            $selected = $free->concat($premium)->take(60);
 
-            // Setiap grup soal diacak isinya (misalnya pilihan jawabannya)
-            $groupedQuestions = $selected->map(fn($g) => $g->shuffle()->values())->values();
-
+            // Simpan hanya ID soal dalam nested group + urutan shuffle
+            $cachePayload = $selected->map(function($group) {
+                return $group->pluck('id');
+            });
+            
             // Simpan hasil akhir ke cache sampai akhir hari (pukul 23:59:59)
-            Cache::put($cacheKey, $groupedQuestions, now()->endOfDay());
+            Cache::put($cacheKey, $cachePayload, now()->endOfDay());
         }
 
-        // Ambil jawaban user sebelumnya untuk ditampilkan sebagai isian otomatis (per hari)
-        $questionsAnswer = SoalPembahasanAnswers::whereHas('SoalPembahasanQuestions', function ($query) {
-            $query->where('tipe_soal', 'Latihan');
-        })->where('student_id', $userId)->whereDate('created_at', $today)
-            ->pluck('user_answer_option', 'question_id');
+        // Mendapatkan jawaban user berdasarkan question id
+        if ($subscription) {
+             // Ambil jawaban user sebelumnya untuk ditampilkan sebagai isian otomatis (per hari)
+            $questionsAnswer = SoalPembahasanAnswers::whereHas('SoalPembahasanQuestions', function ($query) {
+                $query->where('tipe_soal', 'Latihan');
+            })->where('student_id', $userId)->where('subscription_id', $subscription->id)->whereDate('created_at', $today)
+                ->pluck('user_answer_option', 'question_id');
+        } else {
+            // Handle ketika user tidak punya subscription aktif
+            // Bisa return kosong atau kasih message bahwa data tidak ditemukan
+            $questionsAnswer = collect(); // kosong, tidak ada jawaban
+        }
 
-        // Ambil informasi user yang berlangganan fitur soal dan pembahasan
-        $subscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
-            $query->where('feature_id', 2); // feature_id 2 menunjukkan fitur soal dan pembahasan
-        })->where('student_id', $userId)->where('subscription_status', 'aktif')->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->first();
+        // Inisialisasi array kosong untuk menampung video ID dari YouTube
+        $videoIds = [];
 
         // Ambil ID video YouTube dari penjelasan (explanation) tiap soal (jika ada)
-        $videoIds = $groupedQuestions->map(function ($group) {
-            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $group[0]['explanation'], $matches)) {
-                return $matches[1] ?? $matches[2]; // ambil ID video dari link
+        foreach ($groupedQuestions as $group) {
+
+            // ambil soal pertama dari group
+            $question = $group->first();
+
+            if (!$question) {
+                $videoIds[] = null;
+                continue;
             }
-            return null; // jika tidak ditemukan, kembalikan null
-        });
+
+            $videoId = null;
+
+            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $question->explanation, $matches)) {
+                $videoId = $matches[1] ?? $matches[2];
+            }
+
+            $videoIds[] = $videoId;
+        }
 
         // Kembalikan response JSON ke client (misalnya ke JavaScript)
         return response()->json([

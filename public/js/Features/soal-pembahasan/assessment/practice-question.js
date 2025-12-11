@@ -376,11 +376,20 @@ $(document).on('change', 'input[type="radio"][name^="options_value_"]', function
     $('#error-user_answer_option').text('');
 });
 
+let isProcessing = false;
 // Submit form jawaban
 $(document).on('submit', '#bank-soal-practice-question-form', function (e) {
     e.preventDefault();
+    if (isProcessing) return; // Abaikan jika sedang proses
+
+    isProcessing = true; // Tandai sedang diproses
+
     const subBabId = $(this).data('sub-bab-id');
     const formData = new FormData(this);
+
+    const btn = $(this).find('button');
+
+    btn.prop('disabled', true);
 
     $.ajax({
         url: `/soal-pembahasan/kelas/${subBabId}/assessment/latihan/answer`,
@@ -394,6 +403,9 @@ $(document).on('submit', '#bank-soal-practice-question-form', function (e) {
         success: function (response) {
             // jika success, inisialisasi content untuk memunculkan soal yang terakhir dikerjakan
             fetchPracticeQuestionsForm(subBabId, currentQuestionIndex);
+
+            isProcessing = false;
+            btn.prop('disabled', false);
         },
         error: function (xhr) {
             if (xhr.status === 422) {
@@ -402,6 +414,9 @@ $(document).on('submit', '#bank-soal-practice-question-form', function (e) {
                     $(`#error-${field}`).text(messages[0]);
                 });
             }
+
+            isProcessing = false;
+            btn.prop('disabled', false);
         }
     });
 });
