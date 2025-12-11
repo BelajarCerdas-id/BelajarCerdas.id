@@ -611,7 +611,7 @@ class SoalPembahasanController extends Controller
     {
         // Ambil tanggal hari ini hanya dalam format 'Y-m-d'
         $today = Carbon::now()->format('Y-m-d');
-
+        
         // Ambil ID user yang sedang login
         $userId = Auth::id();
 
@@ -640,12 +640,20 @@ class SoalPembahasanController extends Controller
         $subscriptionId = $subscription ? $subscription->id : null;
 
         // Buat key cache unik berdasarkan setiap subscription, user, dan sub bab
-        $cacheKey = "soal-pembahasan-exam-questions-{$subscriptionId}-{$userId}-{$bab_id}-{$publishedQuestionIds}";
+        $cacheKey = "soal-pembahasan-exam-questions-{$userId}-{$subscriptionId}-{$bab_id}-{$publishedQuestionIds}";
 
         // Cek apakah data soal sudah disimpan di cache hari ini
         if  (Cache::has($cacheKey)) {
             // Ambil data soal dari cache dan ubah ke bentuk collection dalam bentuk nested group
-            $groupedQuestions = collect(Cache::get($cacheKey))->map(fn($group) => collect($group))->values();
+            $cachedGroupIds = Cache::get($cacheKey);
+
+            $groupedQuestions = collect($cachedGroupIds)->map(function($groupIds) {
+
+            return SoalPembahasanQuestions::whereIn('id', $groupIds)
+                ->get()->sortBy(function($q) use ($groupIds){
+                    return array_search($q->id, $groupIds->toArray());
+                })->values();
+            });
         } else {
             // Jika tidak ada di session, ambil soal dari database berdasarkan bab, status Publish, dan tipe ujian
             $getQuestionsByBab = SoalPembahasanQuestions::where('bab_id', $bab_id)->where('status_bank_soal', 'Publish')
@@ -660,8 +668,13 @@ class SoalPembahasanController extends Controller
             // Acak urutan opsi jawaban dalam setiap soal
             $groupedQuestions = $shuffleQuestions->map(fn($group) => $group->shuffle()->values())->values();
 
+            // Simpan hanya ID soal dalam nested group + urutan shuffle
+            $cachePayload = $groupedQuestions->map(function($group) {
+                return $group->pluck('id');
+            });
+            
             // Simpan hasil akhir ke cache sampai akhir hari (pukul 23:59:59)
-            Cache::put($cacheKey, $groupedQuestions, now()->endOfDay());
+            Cache::put($cacheKey, $cachePayload, now()->endOfDay());
         }
 
         // Ambil semua ID soal (karena groupedQuestions adalah nested collection, gunakan flatten)
@@ -682,7 +695,7 @@ class SoalPembahasanController extends Controller
         }
 
         // Hitung skor ujian dengan menjumlahkan skor dari soal-soal yang sudah dijawab
-        $scoreExam = $questionsAnswer->sum('question_score');
+        $scoreExam = round($questionsAnswer->sum('question_score'), 2);
 
         // menghitung banyaknya soal
         $total = $groupedQuestions->count();

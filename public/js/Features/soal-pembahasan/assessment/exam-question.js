@@ -705,18 +705,20 @@ function fetchExamQuestionsForm(babId, selectedIndex = 0) {
 
             // Cek apakah semua soal sudah dijawab
             const isAllAnswered = jumlahSoalTerjawab === totalSoal;
+            const subscription = response.subscription;
+            const scoreExam = response.scoreExam; // mengambil nilai ujian
+            const examAnswerDuration = response.examAnswerDuration; // mengambil durasi pengerjaan ujian
 
+            if (!subscription) {
+                $('#score-exam').text('-'); // menampilkan nilai ujian
+                $('#timer-duration').text('-'); // menampilkan durasi pengerjaan ujian
+            }
+            
             // Jika semua soal sudah dijawab, tampilkan konten
             if (isAllAnswered) {
-                const scoreExam = response.scoreExam; // mengambil nilai ujian
-                const examAnswerDuration = response.examAnswerDuration; // mengambil durasi pengerjaan ujian
-
                 $('#score-exam').text(scoreExam); // menampilkan nilai ujian
                 $('#timer-duration').text(examAnswerDuration); // menampilkan durasi pengerjaan ujian
             }
-
-            const subscription = response.subscription;
-            const now = new Date(response.now);
 
             let startDate = null;
             let endDate = null;
@@ -1087,11 +1089,18 @@ $(document).on('click', '#button-mark-exam-answer', function (e) {
     submitExamAnswer('Draft', form, babId); // Kirim jawaban sebagai 'Draft'
 });
 
-
+let isProcessing = false;
 // Submit form answers
 function submitExamAnswer(status_answer, form, babId) {
+    if (isProcessing) return; // Abaikan jika sedang diproses
+    isProcessing = true;
+
     const formData = new FormData(form); // Ambil seluruh data dari form
     formData.append('status_answer', status_answer); // Tambahkan status jawaban
+    
+    const $form = $(form);
+    const btn = $form.find('button'); // tombol dalam form
+    btn.prop('disabled', true); // disable tombol
 
     $.ajax({
         url: `/soal-pembahasan/kelas/${babId}/assessment/ujian/answer`, // Endpoint penyimpanan jawaban
@@ -1116,6 +1125,8 @@ function submitExamAnswer(status_answer, form, babId) {
                     fetchExamQuestionsForm(babId, currentQuestionIndex); // Refresh soal
                 }
             });
+            isProcessing = false;
+            btn.prop('disabled', false);
         },
         error: function (xhr) {
             // Tampilkan error validasi
@@ -1125,6 +1136,8 @@ function submitExamAnswer(status_answer, form, babId) {
                     $(`#error-${field}`).text(messages[0]);
                 });
             }
+            isProcessing = false;
+            btn.prop('disabled', false);
         }
     });
 }
