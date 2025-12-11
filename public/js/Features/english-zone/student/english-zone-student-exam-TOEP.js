@@ -43,6 +43,11 @@ function fetchExamQuestionsForm(levelId, sessionId, selectedIndex = 0) {
 
             // Cek apakah semua soal sudah dijawab
             const isAllAnswered = jumlahSoalTerjawab === totalSoal;
+            const subscription = response.subscription;
+
+            if (!subscription) {
+                $('#score-exam').text('-');
+            }
 
             // Jika semua soal sudah dijawab, tampilkan konten
             if (isAllAnswered) {
@@ -51,7 +56,6 @@ function fetchExamQuestionsForm(levelId, sessionId, selectedIndex = 0) {
                 $('#score-exam').text(scoreExam); // menampilkan nilai ujian
             }
 
-            const subscription = response.subscription;
             const now = new Date(response.now);
 
             let startDate = null;
