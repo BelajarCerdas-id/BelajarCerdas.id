@@ -3200,12 +3200,20 @@ class EnglishZoneController extends Controller
         $subscriptionId = $subscription ? $subscription->id : null;
 
         // Buat key cache unik berdasarkan setiap subscription, user, levelId, dan session_id
-        $cacheKey = "english-zone-exam-questions-{$subscriptionId}-{$userId}-{$levelId}-{$sessionId}-{$publishedQuestionIds}";
+        $cacheKey = "english-zone-exam-questions-{$userId}-{$subscriptionId}-{$levelId}-{$sessionId}-{$publishedQuestionIds}";
 
         // Cek apakah data soal sudah disimpan di cache hari ini
         if  (Cache::has($cacheKey)) {
             // Ambil data soal dari cache dan ubah ke bentuk collection dalam bentuk nested group
-            $groupedQuestions = collect(Cache::get($cacheKey))->map(fn($group) => collect($group))->values();
+            $cachedGroupIds = Cache::get($cacheKey);
+
+            $groupedQuestions = collect($cachedGroupIds)->map(function($groupIds) {
+
+            return EnglishZoneQuestions::whereIn('id', $groupIds)
+                ->get()->sortBy(function($q) use ($groupIds){
+                    return array_search($q->id, $groupIds->toArray());
+                })->values();
+            });
         } else {
             // Jika tidak ada di session, ambil soal dari database berdasarkan level dan session_id, status Publish, dan tipe TOEP
             $getQuestions = EnglishZoneQuestions::where('level_id', $levelId)->where('session_id', $sessionId)
@@ -3220,8 +3228,13 @@ class EnglishZoneController extends Controller
             // Acak urutan opsi jawaban dalam setiap soal
             $groupedQuestions = $shuffleQuestions->map(fn($group) => $group->shuffle()->values())->values();
 
+            // Simpan hanya ID soal dalam nested group + urutan shuffle
+            $cachePayload = $groupedQuestions->map(function($group) {
+                return $group->pluck('id');
+            });
+            
             // Simpan hasil akhir ke cache sampai akhir hari (pukul 23:59:59)
-            Cache::put($cacheKey, $groupedQuestions, now()->endOfDay());
+            Cache::put($cacheKey, $cachePayload, now()->endOfDay());
         }
 
         // Ambil semua ID soal (karena groupedQuestions adalah nested collection, gunakan flatten)
@@ -3242,7 +3255,7 @@ class EnglishZoneController extends Controller
         }
 
         // Hitung skor ujian dengan menjumlahkan skor dari soal-soal yang sudah dijawab
-        $scoreExam = $questionsAnswer->sum('question_score');
+        $scoreExam = round($questionsAnswer->sum('question_score'),2);
 
         // menghitung banyaknya soal
         $total = $groupedQuestions->count();
@@ -3254,15 +3267,22 @@ class EnglishZoneController extends Controller
         $videoIds = [];
 
         // Loop untuk mendapatkan ID video dari URL
-        foreach ($groupedQuestions as $item) {
+        foreach ($groupedQuestions as $group) {
+
+            // ambil soal pertama dari group
+            $question = $group->first();
+
+            if (!$question) {
+                $videoIds[] = null;
+                continue;
+            }
+
             $videoId = null;
 
-            // Cari explanation yang mengandung url video menggunakan regex, lalu mengambil 1 data pertama dari masing" array group soal.
-            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $item[0]['explanation'], $matches)) {
+            if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})|youtube\.com\/.*v=([a-zA-Z0-9_-]{11})/', $question->explanation, $matches)) {
                 $videoId = $matches[1] ?? $matches[2];
             }
 
-            // Simpan videoId ke array videoIds
             $videoIds[] = $videoId;
         }
 

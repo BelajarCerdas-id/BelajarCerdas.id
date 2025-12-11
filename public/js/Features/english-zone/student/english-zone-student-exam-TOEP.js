@@ -376,12 +376,22 @@ $(document).on('change', 'input[type="radio"][name^="options_value_"]', function
     $('#error-user_answer_option').text('');
 });
 
+let isProcessing = false;
 // Submit form jawaban
 $(document).on('submit', '#bank-soal-exam-question-form', function (e) {
     e.preventDefault();
+
+    if (isProcessing) return; // Abaikan jika sedang proses
+
+    isProcessing = true; // Tandai sedang diproses
+
     const levelId = $(this).data('level-id');
     const sessionId = $(this).data('session-id');
     const formData = new FormData(this);
+
+    const btn = $(this).find('button');
+
+    btn.prop('disabled', true);
 
     $.ajax({
         url: `/english-zone-student/${levelId}/${sessionId}/exam-TOEP/answers`,
@@ -395,6 +405,9 @@ $(document).on('submit', '#bank-soal-exam-question-form', function (e) {
         success: function (response) {
             // jika success, inisialisasi content untuk memunculkan soal yang terakhir dikerjakan
             fetchExamQuestionsForm(levelId, sessionId, currentQuestionIndex);
+
+            isProcessing = false;
+            btn.prop('disabled', false);
         },
         error: function (xhr) {
             if (xhr.status === 422) {
@@ -402,6 +415,9 @@ $(document).on('submit', '#bank-soal-exam-question-form', function (e) {
                 $.each(response, function (field, messages) {
                     $(`#error-${field}`).text(messages[0]);
                 });
+
+                isProcessing = false;
+                btn.prop('disabled', false);
             }
         }
     });
