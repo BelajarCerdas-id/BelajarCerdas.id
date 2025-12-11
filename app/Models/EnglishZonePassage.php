@@ -33,4 +33,9 @@ class EnglishZonePassage extends Model
     {
         return $this->hasMany(EnglishZoneQuestions::class, 'passage_id');
     }
+
+    public function EnglishZoneAnswers()
+    {
+        return $this->hasMany(EnglishZoneAnswers::class, 'passage_id');
+    }
 }

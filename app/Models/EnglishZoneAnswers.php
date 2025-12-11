@@ -12,8 +12,12 @@ class EnglishZoneAnswers extends Model
     protected $fillable = [
         'student_id',
         'subscription_history_id',
+        'level_id',
+        'passage_id',
         'question_id',
         'user_answer_option',
+        'user_answer_text',
+        'user_answer_audio',
         'question_score',
     ];
 
@@ -30,5 +34,15 @@ class EnglishZoneAnswers extends Model
     public function FeatureSubscriptionHistory()
     {
         return $this->belongsTo(FeatureSubscriptionHistory::class, 'subscription_history_id');
+    }
+
+    public function EnglishZoneLevel()
+    {
+        return $this->belongsTo(EnglishZoneLevel::class, 'level_id');
+    }
+
+    public function EnglishZonePassage()
+    {
+        return $this->belongsTo(EnglishZonePassage::class, 'passage_id');
     }
 }

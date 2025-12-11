@@ -563,9 +563,14 @@ Route::fallback(function () {
     // QUIZ EXAM (Reading, Writing, Listening, Speaking)
     // views
     Route::get('/english-zone/{levelId}/quiz-detail', [EnglishZoneController::class, 'quizDetailView'])->name('EZ.quizDetail.view');
+    Route::get('/english-zone/{levelId}/quiz/reading-practice-test', [EnglishZoneController::class, 'quizReadingPracticeTest'])->name('EZ.quizReadingPracticeTest.view');
+
+    // quiz reading answers
+    Route::post('/english-zone-student/{levelId}/{passageId}/quiz/reading-practice-test/answers', [EnglishZoneController::class, 'quizReadingPracticeTestAnswer'])->name('EZ.quizReadingPracticeTest.answers');
 
     // fetch
     Route::get('/english-zone/{levelId}/quiz-detail/fetch', [EnglishZoneController::class, 'quizDetailFetch'])->name('EZ.quizDetail.fetch');
+    Route::get('/english-zone/{levelId}/quiz/reading-practice-test/form', [EnglishZoneController::class, 'quizReadingPracticeTestForm'])->name('EZ.quizReadingPracticeTest.form');
 
     // ROUTES SCHOOL PARTNER
     // school subscription

@@ -15,6 +15,8 @@ function quizDetailView() {
                 const containerCard = $('#grid-list-quiz');
                 containerCard.empty();
 
+                const readingPracticeTest = response.readingPracticeTest.replace(':levelId', levelId);
+
                 const card = `
                     <!-- Reading -->
                     <div class="bg-white shadow-md hover:shadow-xl transition-all duration-300 rounded-xl border border-gray-200 py-6 px-5 flex flex-col h-full group">
@@ -32,10 +34,14 @@ function quizDetailView() {
                         </div>
 
                         <div class="flex gap-2 mt-auto pt-5">
-                            <button
-                                class="bg-[#3BA55D] hover:bg-[#2E8D4A] text-white px-4 py-1.5 rounded-lg text-xs font-semibold w-full transition">
-                                Latihan
-                            </button>
+                            <div class="w-full">
+                                <a href="${readingPracticeTest}">
+                                    <button
+                                        class="bg-[#3BA55D] hover:bg-[#2E8D4A] text-white px-4 py-1.5 rounded-lg text-xs font-semibold w-full transition">
+                                        Latihan
+                                    </button>
+                                </a>
+                            </div>
                             <button
                                 class="border border-[#3BA55D] text-[#3BA55D] hover:bg-[#3BA55D] hover:text-white px-4 py-1.5 rounded-lg text-xs font-semibold w-full transition">
                                 Ujian
