@@ -42,6 +42,11 @@ function quizReadingExamTest(page = 1, selectedIndex = 0) {
 
                 // Cek apakah semua soal sudah dijawab
                 const isAllAnswered = jumlahSoalTerjawab === totalSoal;
+                const subscription = response.subscription;
+
+                if (!subscription) {
+                    $('#score-exam').text('-');
+                }
 
                 // Jika semua soal sudah dijawab, tampilkan konten
                 if (isAllAnswered) {
@@ -49,8 +54,6 @@ function quizReadingExamTest(page = 1, selectedIndex = 0) {
 
                     $('#score-exam').text(scoreExam); // menampilkan nilai ujian
                 }
-
-                const subscription = response.subscription;
 
                 let startDate = null;
                 let endDate = null;
