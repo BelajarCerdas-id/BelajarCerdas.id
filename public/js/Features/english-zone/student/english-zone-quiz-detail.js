@@ -17,6 +17,7 @@ function quizDetailView() {
 
                 const readingPracticeTest = response.readingPracticeTest.replace(':levelId', levelId);
                 const readingExamTest = response.readingExamTest.replace(':levelId', levelId);
+                const listeningPracticeTest = response.listeningPracticeTest.replace(':levelId', levelId);
 
                 const card = `
                     <!-- Reading -->
@@ -98,10 +99,14 @@ function quizDetailView() {
 
                         <!-- Footer Actions -->
                         <div class="flex gap-2 mt-auto pt-5">
-                            <button
-                                class="bg-[#4189E0] hover:bg-[#3573BA] text-white px-4 py-1.5 rounded-lg text-xs font-semibold w-full transition">
-                                Latihan
-                            </button>
+                            <div class="w-full">
+                                <a href="${listeningPracticeTest}">
+                                    <button
+                                        class="bg-[#4189E0] hover:bg-[#3573BA] text-white px-4 py-1.5 rounded-lg text-xs font-semibold w-full transition">
+                                        Latihan
+                                    </button>
+                                </a>
+                            </div>
                             <button
                                 class="border border-[#4189E0] text-[#4189E0] hover:bg-[#4189E0] hover:text-white px-4 py-1.5 rounded-lg text-xs font-semibold w-full transition">
                                 Ujian
