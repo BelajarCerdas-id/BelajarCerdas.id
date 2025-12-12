@@ -3233,8 +3233,8 @@ class EnglishZoneController extends Controller
                 return $group->pluck('id');
             });
             
-            // Simpan hasil akhir ke cache sampai akhir hari (pukul 23:59:59)
-            Cache::put($cacheKey, $cachePayload, now()->endOfDay());
+            // simpan cache sampai masa langganan habis
+            Cache::put($cacheKey, $cachePayload, when($subscription, fn() => $subscription->end_date->endOfDay()));
         }
 
         // Ambil semua ID soal (karena groupedQuestions adalah nested collection, gunakan flatten)
