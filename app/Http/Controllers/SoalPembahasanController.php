@@ -673,8 +673,8 @@ class SoalPembahasanController extends Controller
                 return $group->pluck('id');
             });
             
-            // Simpan hasil akhir ke cache sampai akhir hari (pukul 23:59:59)
-            Cache::put($cacheKey, $cachePayload, now()->endOfDay());
+            // simpan cache sampai masa langganan habis
+            Cache::put($cacheKey, $cachePayload, when($subscription, fn() => $subscription->end_date->endOfDay()));
         }
 
         // Ambil semua ID soal (karena groupedQuestions adalah nested collection, gunakan flatten)
@@ -683,7 +683,9 @@ class SoalPembahasanController extends Controller
         // Mendapatkan jawaban user berdasarkan question id
         if ($subscription) {
              // Ambil jawaban user
-            $questionsAnswer = SoalPembahasanAnswers::where('student_id', Auth::id())
+            $questionsAnswer = SoalPembahasanAnswers::whereHas('SoalPembahasanQuestions', function ($query) {
+                $query->where('tipe_soal', 'Ujian');
+            })->where('student_id', Auth::id())
                 ->whereIn('question_id', $questionIds)
                 ->where('subscription_id', $subscription->id)
                 ->get()
