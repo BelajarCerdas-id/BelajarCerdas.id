@@ -561,22 +561,31 @@ Route::fallback(function () {
     Route::post('/english-zone-student/{levelId}/{sessionId}/exam-TOEP/answers', [EnglishZoneController::class, 'examTOEPAnswers'])->name('EZ.examTOEP.answers');
 
     // QUIZ EXAM (Reading, Writing, Listening, Speaking)
-    // views
+    // quiz detail view
     Route::get('/english-zone/{levelId}/quiz-detail', [EnglishZoneController::class, 'quizDetailView'])->name('EZ.quizDetail.view');
+
+    // reading test views
     Route::get('/english-zone/{levelId}/quiz/reading-practice-test', [EnglishZoneController::class, 'quizReadingPracticeTest'])->name('EZ.quizReadingPracticeTest.view');
     Route::get('/english-zone/{levelId}/quiz/reading-exam-test', [EnglishZoneController::class, 'quizReadingExamTest'])->name('EZ.quizReadingExamTest.view');
+
+    // listening test views
     Route::get('/english-zone/{levelId}/quiz/listening-practice-test', [EnglishZoneController::class, 'quizListeningPracticeTest'])->name('EZ.quizListeningPracticeTest.view');
+    Route::get('/english-zone/{levelId}/quiz/listening-exam-test', [EnglishZoneController::class, 'quizListeningExamTest'])->name('EZ.quizListeningExamTest.view');
 
     // quiz reading answers
     Route::post('/english-zone-student/{levelId}/{passageId}/quiz/reading-practice-test/answers', [EnglishZoneController::class, 'quizReadingPracticeTestAnswer'])->name('EZ.quizReadingPracticeTest.answers');
     Route::post('/english-zone-student/{levelId}/{passageId}/quiz/reading-exam-test/answers', [EnglishZoneController::class, 'quizReadingExamTestAnswer'])->name('EZ.quizReadingExam.answers');
+
+    // quiz listening answers
     Route::post('/english-zone-student/{levelId}/{passageId}/quiz/listening-practice-test/answers', [EnglishZoneController::class, 'quizListeningPracticeTestAnswer'])->name('EZ.quizListeningPracticeTest.answers');
+    Route::post('/english-zone-student/{levelId}/{passageId}/quiz/listening-exam-test/answers', [EnglishZoneController::class, 'quizListeningExamTestAnswer'])->name('EZ.quizListeningExamTest.answers');
 
     // fetch
     Route::get('/english-zone/{levelId}/quiz-detail/fetch', [EnglishZoneController::class, 'quizDetailFetch'])->name('EZ.quizDetail.fetch');
     Route::get('/english-zone/{levelId}/quiz/reading-practice-test/form', [EnglishZoneController::class, 'quizReadingPracticeTestForm'])->name('EZ.quizReadingPracticeTest.form');
     Route::get('/english-zone/{levelId}/quiz/reading-exam-test/form', [EnglishZoneController::class, 'quizReadingExamTestForm'])->name('EZ.quizReadingExamTest.form');
     Route::get('/english-zone/{levelId}/quiz/listening-practice-test/form', [EnglishZoneController::class, 'quizListeningPracticeTestForm'])->name('EZ.quizListeningPracticeTest.form');
+    Route::get('/english-zone/{levelId}/quiz/listening-exam-test/form', [EnglishZoneController::class, 'quizListeningExamTestForm'])->name('EZ.quizListeningExamTest.form');
 
     // ROUTES SCHOOL PARTNER
     // school subscription
