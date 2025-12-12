@@ -3470,10 +3470,13 @@ class EnglishZoneController extends Controller
 
         $passageIds = EnglishZonePassage::where('level_id', $levelId)->where('passage_type', 'Reading Practice Test')->pluck('id');
 
+        $firstPassage = $passages->first();
+
         // Ambil ulang soal-soal yang masih `Publish` dari DB dan tipe soal adalah `QUIZ`
         $publishedQuestionIds = EnglishZoneQuestions::whereHas('EnglishZonePassage', function ($query) {
             $query->where('passage_type', 'Reading Practice Test');
-        })->where('level_id', $levelId)->where('tipe_soal', 'QUIZ')->where('passage_id', $passages->first()->id)
+        })->where('level_id', $levelId)->where('tipe_soal', 'QUIZ')
+        ->when($firstPassage, fn($q) => $q->where('passage_id', $firstPassage->id))
         ->where('status_bank_soal', 'Publish')->pluck('id')->implode(',');
 
         $levelName = EnglishZoneLevel::where('id', $levelId)->pluck('level_name')->first();
@@ -3506,7 +3509,8 @@ class EnglishZoneController extends Controller
             // Jika tidak ada di levelId dan passageId, ambil soal dari database berdasarkan level dan passageId, status Publish, dan tipe QUIZ
             $getQuestions = EnglishZoneQuestions::whereHas('EnglishZonePassage', function ($query) {
                 $query->where('passage_type', 'Reading Practice Test');
-            })->where('level_id', $levelId)->where('tipe_soal', 'QUIZ')->where('passage_id', $passages->first()->id)
+            })->where('level_id', $levelId)->where('tipe_soal', 'QUIZ')
+            ->when($firstPassage, fn($q) => $q->where('passage_id', $firstPassage->id))
             ->where('status_bank_soal', 'Publish')->get();
 
             // Mengelompokkan data berdasarkan soal
@@ -3690,10 +3694,13 @@ class EnglishZoneController extends Controller
 
         $passageIds = EnglishZonePassage::where('level_id', $levelId)->where('passage_type', 'Reading Exam Test')->pluck('id');
 
+        $firstPassage = $passages->first();
+
         // Ambil ulang soal-soal yang masih `Publish` dari DB dan tipe soal adalah `QUIZ`
         $publishedQuestionIds = EnglishZoneQuestions::whereHas('EnglishZonePassage', function ($query) {
             $query->where('passage_type', 'Reading Exam Test');
-        })->where('level_id', $levelId)->where('tipe_soal', 'QUIZ')->where('passage_id', $passages->first()->id)
+        })->where('level_id', $levelId)->where('tipe_soal', 'QUIZ')
+        ->when($firstPassage, fn($q) => $q->where('passage_id', $firstPassage->id))
         ->where('status_bank_soal', 'Publish')->pluck('id')->implode(',');
 
         $levelName = EnglishZoneLevel::where('id', $levelId)->pluck('level_name')->first();
@@ -3725,7 +3732,8 @@ class EnglishZoneController extends Controller
             // Jika tidak ada di levelId dan passageId, ambil soal dari database berdasarkan level dan passageId, status Publish, dan tipe QUIZ
             $getQuestions = EnglishZoneQuestions::whereHas('EnglishZonePassage', function ($query) {
                 $query->where('passage_type', 'Reading Exam Test');
-            })->where('level_id', $levelId)->where('tipe_soal', 'QUIZ')->where('passage_id', $passages->first()->id)
+            })->where('level_id', $levelId)->where('tipe_soal', 'QUIZ')
+            ->when($firstPassage, fn($q) => $q->where('passage_id', $firstPassage->id))
             ->where('status_bank_soal', 'Publish')->get();
 
             // Mengelompokkan data berdasarkan soal
