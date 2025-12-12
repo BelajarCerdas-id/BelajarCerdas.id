@@ -3484,8 +3484,10 @@ class EnglishZoneController extends Controller
         })->where('student_id', $userId)->where('subscription_status', 'aktif')->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)
         ->first();
 
-        // Buat key cache unik berdasarkan setiap hari, user, levelId, passageId, questions, dan publishedQuestionIds
-        $cacheKey = "english-zone-quiz-reading-practice-test-{$today}-{$userId}-{$levelId}-{$passageIds}-{$publishedQuestionIds}";
+        $subscriptionId = $subscription ? $subscription->id : null;
+
+        // Buat key cache unik berdasarkan setiap hari, user, subscriptionId, levelId, passageId, questions, dan publishedQuestionIds
+        $cacheKey = "english-zone-quiz-reading-practice-test-{$today}-{$userId}-{$subscriptionId}-{$levelId}-{$passageIds}-{$publishedQuestionIds}";
 
         // Cek apakah data soal sudah disimpan di cache hari ini
         if (Cache::has($cacheKey)) {
