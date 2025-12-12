@@ -66,12 +66,14 @@ function quizReadingExamTest(page = 1, selectedIndex = 0) {
                 // jika tidak ada passages yang aktif maka tampilkan pesan
                 if (response.data.length === 0) {
                     container.innerHTML = `<div class="p-6 font-bold opacity-70 flex justify-center">Tidak ada passage yang aktif pada quiz ini.</div>`;
+                    $('#container-score-exam').hide();
                     return;
                 }
 
                 // jika tidak ada soal yang aktif pada passage, maka tampilkan pesan
                 else if (filteredQuestions.length === 0) {
                     container.innerHTML = `<div class="p-6 font-bold opacity-70 flex justify-center">Tidak ada soal untuk passage ini.</div>`;
+                    $('#container-score-exam').hide();
 
                     // Append pagination links
                     $('.pagination-container-question-reading-exam-test').html(response.links);
@@ -406,6 +408,7 @@ function quizReadingExamTest(page = 1, selectedIndex = 0) {
 
                     // Append pagination links
                     $('.pagination-container-question-reading-exam-test').html(response.links);
+                    $('#container-score-exam').show();
                     bindPaginationLinks(); // Bind click event ke link pagination yang baru
 
                     // Set nomor soal aktif

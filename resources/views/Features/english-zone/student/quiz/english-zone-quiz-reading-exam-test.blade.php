@@ -9,7 +9,7 @@
         <div class="content-beranda">
             <main>
                 <div class="w-full flex flex-col items-end">
-                    <div class="w-max">
+                    <div id="container-score-exam" class="w-max hidden">
                         <div
                             class="w-full border border-gray-400 py-[4px] text-xs md:text-sm text-center font-bold opacity-70 px-4">
                             Score Passage
