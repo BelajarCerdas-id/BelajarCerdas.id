@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\tanyaAccess as ModelsTanyaAccess;
+use App\Models\TanyaAccess as ModelsTanyaAccess;
 use App\Models\UserAccount;
 use Carbon\Carbon;
 use Closure;

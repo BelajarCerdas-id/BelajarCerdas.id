@@ -13,8 +13,8 @@
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/kucingpresto/BelajarCerdas.id.git /var/www/
-    cd /var/www/
+    git clone https://github.com/your/repo.git /var/www/html
+    cd /var/www/html
     ```
 
 2.  **Install PHP Dependencies:**
