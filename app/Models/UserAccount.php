@@ -60,7 +60,7 @@ class UserAccount extends Authenticatable
 
     // TANYA ACCESS
     public function TanyaAccess() {
-        return $this->hasOne(tanyaAccess::class, 'user_id');
+        return $this->hasOne(TanyaAccess::class, 'user_id');
     }
 
     // TANYA
@@ -100,9 +100,9 @@ class UserAccount extends Authenticatable
         return $this->hasOne(EnglishZoneLevel::class, 'administrator_id');
     }
 
-    public function EnglishZoneUnit() {
-        return $this->hasOne(EnglishZoneUnit::class, 'administrator_id');
-    }
+    // public function EnglishZoneUnit() {
+    //     return $this->hasOne(EnglishZoneUnit::class, 'administrator_id');
+    // }
     
     public function EnglishZoneQuestions() {
         return $this->hasOne(EnglishZoneQuestions::class, 'administrator_id');

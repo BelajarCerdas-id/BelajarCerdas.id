@@ -615,28 +615,28 @@ class TanyaController extends Controller
     // tanya access view
     public function tanyaAccess()
     {
-        $dataTanyaAccess = tanyaAccess::all();
+        $dataTanyaAccess = TanyaAccess::all();
 
         $today = now();
 
         // 1. Jika status_access tidak aktif, dan tanggal mulai sudah lewat dari tanggal hari ini maka status_access diubah menjadi aktif
-        tanyaAccess::whereIn('status_access', ['Tidak Aktif'])
+        TanyaAccess::whereIn('status_access', ['Tidak Aktif'])
             ->whereDate('tanggal_mulai', "<=", $today)
             ->whereDate('tanggal_akhir', '>=', $today)
             ->update(['status_access' => 'Aktif']);
 
         // 2. jika status_acccess aktif, dan tanggal_mulai sesuai atau lebih dari tanggal hari ini, dan tanggal_akhir sudah melewati tanggal hari ini maka status_access diubah menjadi tidak aktif
-        tanyaAccess::whereIn('status_access', ['Aktif'])
+        TanyaAccess::whereIn('status_access', ['Aktif'])
             ->whereDate('tanggal_mulai', ">", $today)
             ->update(['status_access' => 'Tidak Aktif']);
 
         // 3. jika status_access aktif, dan tanggal_mulai sudah melewati tanggal hari ini maka status_access diubah menjadi tidak aktif
-        tanyaAccess::whereIn('status_access', ['Aktif'])
+        TanyaAccess::whereIn('status_access', ['Aktif'])
             ->whereDate('tanggal_mulai', "<", $today)
             ->update(['status_access' => 'Tidak Aktif']);
 
         // 4. jika status_access aktif atau tidak aktif, dan tanggal_akhir sudah melewati tanggal hari ini maka status_access diubah menjadi tidak aktif
-        tanyaAccess::whereIn('status_access', ['Tidak Aktif', 'Aktif'])
+        TanyaAccess::whereIn('status_access', ['Tidak Aktif', 'Aktif'])
         ->whereDate('tanggal_akhir', "<", $today)
         ->update(['status_access' => 'Tidak Aktif']);
 
@@ -654,7 +654,7 @@ class TanyaController extends Controller
 
         $statusAccess = ($today->between($start, $end)) ? 'Aktif' : 'Tidak Aktif';
 
-        $getDataTanyaAccess = tanyaAccess::all();
+        $getDataTanyaAccess = TanyaAccess::all();
 
         $validator = Validator::make($request->all(), [
             'tanggal_mulai' => [
@@ -735,7 +735,7 @@ class TanyaController extends Controller
             ], 422); // Gunakan 422 Unprocessable Entity untuk validasi
         }
 
-        $updateDataLibur = tanyaAccess::find($id);
+        $updateDataLibur = TanyaAccess::find($id);
 
         $updateDataLibur->update([
             'tanggal_mulai' => $request->tanggal_mulai,

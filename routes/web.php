@@ -522,8 +522,8 @@ Route::fallback(function () {
 
     // dropdown bertingkat in student batch detail
     Route::get('/english-zone/management-student-batch-detail/dropdown-days/{batch_id}', [EnglishZoneController::class, 'dropdownDayStudentBatch'])->name('EZ.dropdownDayStudentBatch');
-    Route::get('/english-zone/management-student-batch-detail/school-partner/dropdown-hours/{batch_id}/{group_id}/{level_id}/{feature_variant_id}/{transaction_source}/{school_id}', [EnglishZoneController::class, 'dropdownHourStudentBatch'])->name('EZ.dropdownHourStudentBatch.nonSchool');
-    Route::get('/english-zone/management-student-batch-detail/non-school-partner/dropdown-hours/{batch_id}/{group_id}/{level_id}/{transaction_source}/{feature_variant_id}', [EnglishZoneController::class, 'dropdownHourStudentBatch'])->name('EZ.dropdownHourStudentBatch.school');
+    Route::get('/english-zone/management-student-batch-detail/school-partner/dropdown-hours/{batch_id}/{group_id}/{level_id}/{feature_variant_id}/{transaction_source}/{school_id}', [EnglishZoneController::class, 'dropdownHourStudentBatch'])->name('EZ.dropdownHourStudentBatch.school');
+    Route::get('/english-zone/management-student-batch-detail/non-school-partner/dropdown-hours/{batch_id}/{group_id}/{level_id}/{transaction_source}/{feature_variant_id}', [EnglishZoneController::class, 'dropdownHourStudentBatch'])->name('EZ.dropdownHourStudentBatch.nonSchool');
 
     // MENTOR SIDE
     // mentor feature access middleware (untuk membatasi mentor yang tidak aktif pada fitur english zone)

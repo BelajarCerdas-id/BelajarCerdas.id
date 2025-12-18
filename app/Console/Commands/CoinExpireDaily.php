@@ -30,8 +30,8 @@ class CoinExpireDaily extends Command
     {
         $today = now();
 
-        // Cari semua klaim koin yang dibuat lebih dari 1 menit lalu
-        $expiredCoinDaily = CoinHistory::where('created_at', '<', $today->subMinutes(1))->get();
+        // Cari semua klaim koin yang dibuat lebih dari 5 menit lalu
+        $expiredCoinDaily = CoinHistory::where('created_at', '<', $today->subMinutes(5))->get();
 
         // Ambil saldo koin user dari TanyaUserCoin berdasarkan user_id yang ada di expiredCoinDaily
         $userIds = $expiredCoinDaily->pluck('user_id')->unique();
