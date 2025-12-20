@@ -225,6 +225,8 @@ class PassageWordImportService
 
                     // Array untuk menampung semua error validasi dari isi tabel di file Word
                     $allWordValidationErrors = [];
+                } else if ($type === 'WRITING PRACTICE TEST' || $type === 'WRITING EXAM TEST') {
+                    $requiredFields = ['LEVEL', 'PASSAGE_CONTENT', 'EXAMPLE_ANSWER', 'TYPE'];
                 } else {
                     $requiredFields = ['LEVEL', 'PASSAGE_CONTENT', 'TYPE'];
                 }
@@ -327,6 +329,7 @@ class PassageWordImportService
                             'level_id' => $dataPassage['LEVEL'],
                             'audio_file' => $audioFile ?? '',
                             'audio_script' => $dataPassage['AUDIO_SCRIPT'] ?? '',
+                            'example_answer' => $dataPassage['EXAMPLE_ANSWER'] ?? '',
                             'passage_type' => strip_tags($dataPassage['TYPE']),
                         ]);
                     }
@@ -340,6 +343,7 @@ class PassageWordImportService
                             'level_id' => $dataPassage['LEVEL'],
                             'audio_file' => $audioFile ?? '',
                             'audio_script' => $dataPassage['AUDIO_SCRIPT'] ?? '',
+                            'example_answer' => $dataPassage['EXAMPLE_ANSWER'] ?? '',
                             'passage_type' => strip_tags($dataPassage['TYPE']),
                         ]);
                     }
