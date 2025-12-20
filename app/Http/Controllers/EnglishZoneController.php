@@ -3410,6 +3410,7 @@ class EnglishZoneController extends Controller
             'readingExamTest' => '/english-zone/:levelId/quiz/reading-exam-test',
             'listeningPracticeTest' => '/english-zone/:levelId/quiz/listening-practice-test',
             'listeningExamTest' => '/english-zone/:levelId/quiz/listening-exam-test',
+            'writingPracticeTest' => '/english-zone/:levelId/quiz/writing-practice-test',
         ]);
     }
 
@@ -4339,5 +4340,193 @@ class EnglishZoneController extends Controller
             'status' => 'success',
             'page' => $request->current_page,
         ]);   
+    }
+
+    // function quiz writing practice test view
+    public function quizWritingPracticeTest($levelId)
+    {
+        $user = Auth::user();
+
+        $date = now()->format('Y-m-d');
+
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $date)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
+        $getSubscriptionStudent = FeatureSubscriptionHistory::whereHas('Transactions', function($query) {
+            $query->where('feature_id', 3)->where('transaction_status', 'Berhasil');    
+        })->where('student_id', $user->id)->whereDate('start_date', '<=', $date)->whereDate('end_date', '>=', $date)
+        ->where('subscription_status', 'aktif')->exists();
+
+        if (!$getSubscriptionStudent) {
+            return redirect()->route('EZ.student.view');
+        }
+        
+        return view('Features.english-zone.student.quiz.english-zone-quiz-writing-practice-test', compact('levelId'));
+    }
+
+    // function quiz writing practice test form
+    public function quizWritingPracticeTestForm(Request $request, $levelId)
+    {
+        // Ambil tanggal hari ini hanya dalam format 'Y-m-d'
+        $today = Carbon::now()->format('Y-m-d');
+
+        // Ambil ID user yang sedang login
+        $userId = Auth::id();
+
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
+        // Ambil informasi user yang berlangganan fitur english zone
+        $subscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
+            $query->where('feature_id', 3)->where('transaction_status', 'Berhasil'); // feature_id 3 menunjukkan fitur english zone
+        })->where('student_id', $userId)->where('subscription_status', 'aktif')->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)
+        ->first();
+
+        $subscriptionId = $subscription ? $subscription->id : null;
+
+        $passageIds = EnglishZonePassage::where('level_id', $levelId)->where('passage_type', 'Writing Practice Test')
+        ->where('passage_status', 'Publish')->limit(3)->pluck('id');
+
+        $passageIdString = $passageIds->implode(',');
+
+        $lastUpdated = EnglishZonePassage::whereIn('id', $passageIds)->max('updated_at');
+
+        $levelName = EnglishZoneLevel::where('id', $levelId)->pluck('level_name')->first();
+
+        // Buat key cache unik berdasarkan setiap hari, user, subscriptionId, levelId, passageId, questions, dan publishedQuestionIds
+        $cacheKey = "english-zone-quiz-writing-practice-test-{$today}-{$userId}-{$subscriptionId}-{$levelId}-{$passageIdString}-{$lastUpdated}";
+
+        // Cek apakah data soal sudah disimpan di cache hari ini
+        if (Cache::has($cacheKey)) {
+            // Ambil data soal dari cache dan ubah ke bentuk collection dalam bentuk nested group
+            $collection = Cache::get($cacheKey);
+        } else {
+                $collection = EnglishZonePassage::whereIn('id', $passageIds)->get()->values();
+
+            // simpan cache sampai jam 23:59:59
+            Cache::put($cacheKey, $collection, now()->endOfDay());
+        }
+
+        // Pagination manual
+        $page = (int) $request->get('page', 1);
+        $perPage = 1;
+        $offset = ($page - 1) * $perPage;
+
+        $pagedData = $collection->slice($offset, $perPage)->values();
+
+        $passages = new LengthAwarePaginator(
+            $pagedData,
+            $collection->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        $questionsAnswer = collect();
+
+        // Mendapatkan jawaban user berdasarkan question id
+        if ($subscription) {
+            // Ambil jawaban user sebelumnya untuk ditampilkan sebagai isian otomatis (per hari)
+            $questionsAnswer = EnglishZoneAnswers::whereHas('EnglishZonePassage', function ($query) {
+                    $query->where('passage_type', 'Writing Practice Test');
+                })->where('student_id', $userId)->where('level_id', $levelId)->where('subscription_history_id', $subscription->id)
+                ->whereDate('created_at', $today)->get()->mapWithKeys(function ($item) {
+                    return [
+                        $item->passage_id => $item->user_answer_text
+                    ];
+                });
+        } else {
+            // Handle ketika user tidak punya subscription aktif
+            // Bisa return kosong atau kasih message bahwa data tidak ditemukan
+            $questionsAnswer = collect(); // kosong, tidak ada jawaban
+        }
+
+        return response()->json([
+            'data' => $passages->items(),
+            'links' => (string) $passages->links(),
+            'passage_id' => $passages->first()?->id,
+            'levelName' => $levelName,
+            'subscription' => $subscription,
+            'questionsAnswer' => $questionsAnswer,
+            'page' => $passages->currentPage(), // untuk menampilkan nomor passage yang sedang aktif pada halaman
+        ]);
+    }
+
+    public function quizWritingPracticeTestAnswer(Request $request, $levelId, $passageId)
+    {
+        // Ambil tanggal hari ini
+        $today = Carbon::now()->format('Y-m-d');
+
+        $userId = Auth::id();
+
+        $featureSubscriptionHistory = FeatureSubscriptionHistory::whereHas('Transactions', function ($query) {
+            $query->where('transaction_status', 'Berhasil');
+        })->whereDate('end_date', '<', $today)->get();
+
+        if ($featureSubscriptionHistory) {
+            foreach ($featureSubscriptionHistory as $history) {
+                $history->update([
+                    'subscription_status' => 'tidak_aktif'
+                ]);
+            }
+        }
+
+        $validator = Validator::make($request->all(), [
+            'user_answer_text' => 'required',
+        ], [
+            'user_answer_text.required' => 'Harap isi jawaban.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Ambil informasi user yang berlangganan fitur english zone
+        $subscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
+            $query->where('feature_id', 3); // feature_id 3 menunjukkan fitur english zone
+        })->where('student_id', $userId)->where('subscription_status', 'aktif')->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)
+        ->pluck('id')->first();
+
+        $dataAnswer = EnglishZoneAnswers::whereHas('EnglishZonePassage', function($query) {
+            $query->where('passage_type', 'Writing Practice Test');
+        })->where('level_id', $levelId)->where('passage_id', $passageId)->where('student_id', $userId)->whereDate('created_at', $today)->first();
+        
+        if (!$dataAnswer && $subscription) {            
+            EnglishZoneAnswers::create([
+                'student_id' => $userId,
+                'subscription_history_id' => $request->subscription_history_id,
+                'level_id' => $levelId,
+                'passage_id' => $passageId,
+                'user_answer_text' => $request->user_answer_text,
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'page' => $request->current_page,
+            'message' => 'Jawaban berhasil disimpan.',
+            'subscription' => $subscription
+        ]);
     }
 }

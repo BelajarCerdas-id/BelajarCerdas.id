@@ -15,6 +15,7 @@ class EnglishZonePassage extends Model
         'passage_content',
         'audio_file',
         'audio_script',
+        'example_answer',
         'passage_type',
         'passage_status',
     ];

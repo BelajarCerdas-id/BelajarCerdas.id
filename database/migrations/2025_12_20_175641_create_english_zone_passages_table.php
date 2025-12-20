@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('passage_content')->nullable();
             $table->string('audio_file')->nullable();
             $table->string('audio_script')->nullable();
+            $table->longText('example_answer')->nullable();
             $table->string('passage_type');
             $table->enum('passage_status', ['Unpublish', 'Publish'])->default('Unpublish');
             $table->timestamps();
