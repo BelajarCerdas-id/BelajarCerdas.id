@@ -4543,7 +4543,7 @@ class EnglishZoneController extends Controller
         $subscriptionId = $subscription ? $subscription->id : null;
 
         $passageIds = EnglishZonePassage::where('level_id', $levelId)->where('passage_type', 'Writing Practice Test')
-        ->where('passage_status', 'Publish')->limit(3)->pluck('id');
+        ->where('passage_status', 'Publish')->pluck('id');
 
         $passageIdString = $passageIds->implode(',');
 
@@ -4551,15 +4551,17 @@ class EnglishZoneController extends Controller
 
         $levelName = EnglishZoneLevel::where('id', $levelId)->pluck('level_name')->first();
 
+        $limit = 3;
+
         // Buat key cache unik berdasarkan setiap hari, user, subscriptionId, levelId, passageId, questions, dan publishedQuestionIds
-        $cacheKey = "english-zone-quiz-writing-practice-test-{$today}-{$userId}-{$subscriptionId}-{$levelId}-{$passageIdString}-{$lastUpdated}";
+        $cacheKey = "english-zone-quiz-writing-practice-test-{$today}-{$userId}-{$subscriptionId}-{$levelId}-{$passageIdString}-{$lastUpdated}-{$limit}";
 
         // Cek apakah data soal sudah disimpan di cache hari ini
         if (Cache::has($cacheKey)) {
             // Ambil data soal dari cache dan ubah ke bentuk collection dalam bentuk nested group
             $collection = Cache::get($cacheKey);
         } else {
-                $collection = EnglishZonePassage::whereIn('id', $passageIds)->get()->values();
+                $collection = EnglishZonePassage::whereIn('id', $passageIds)->get()->shuffle()->take($limit)->values();
 
             // simpan cache sampai jam 23:59:59
             Cache::put($cacheKey, $collection, now()->endOfDay());
