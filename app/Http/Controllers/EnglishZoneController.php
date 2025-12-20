@@ -3999,22 +3999,6 @@ class EnglishZoneController extends Controller
             }
         }
 
-        $passages = EnglishZonePassage::where('level_id', $levelId)->where('passage_type', 'Listening Practice Test')
-        ->where('passage_status', 'Publish')->paginate(1);
-
-        $passageIds = EnglishZonePassage::where('level_id', $levelId)->where('passage_type', 'Listening Practice Test')->pluck('id');
-
-        $firstPassage = $passages->first();
-
-        // Ambil ulang soal-soal yang masih `Publish` dari DB dan tipe soal adalah `QUIZ`
-        $publishedQuestionIds = EnglishZoneQuestions::whereHas('EnglishZonePassage', function ($query) {
-            $query->where('passage_type', 'Listening Practice Test');
-        })->where('level_id', $levelId)->where('tipe_soal', 'QUIZ')
-        ->when($firstPassage, fn($q) => $q->where('passage_id', $firstPassage->id))
-        ->where('status_bank_soal', 'Publish')->pluck('id')->implode(',');
-
-        $levelName = EnglishZoneLevel::where('id', $levelId)->pluck('level_name')->first();
-
         // Ambil informasi user yang berlangganan fitur english zone
         $subscription = FeatureSubscriptionHistory::whereHas('Transactions', function ($query){
             $query->where('feature_id', 3)->where('transaction_status', 'Berhasil'); // feature_id 3 menunjukkan fitur english zone
@@ -4023,8 +4007,58 @@ class EnglishZoneController extends Controller
 
         $subscriptionId = $subscription ? $subscription->id : null;
 
-        // Buat key cache unik berdasarkan setiap hari, user, subscriptionId, levelId, passageId, questions, dan publishedQuestionIds
-        $cacheKey = "english-zone-quiz-listening-practice-test-{$today}-{$userId}-{$subscriptionId}-{$levelId}-{$passageIds}-{$publishedQuestionIds}";
+        // Ambil semua passage Listening Practice Test
+        $passageCollection = EnglishZonePassage::where('level_id', $levelId)->where('passage_type', 'Listening Practice Test')
+        ->where('passage_status', 'Publish')->get();
+        
+        // Ambil seluruh ID passage lalu gabungkan jadi string
+        $passageIds = $passageCollection->pluck('id')->implode(',');
+
+        // Ambil waktu update terakhir dari seluruh passage
+        $lastUpdated = $passageCollection->max('updated_at');
+
+        // untuk menampilkan banyaknya passage dalam 1 ujian
+        $limit = 3;
+
+        // Susun cache key khusus untuk urutan passage
+        $passageCacheKey = "listening-passages-{$userId}-{$today}-{$subscriptionId}-{$levelId}-{$passageIds}-{$lastUpdated}-{$limit}";
+
+        // Simpan urutan passage ke cache sampai akhir hari
+        $passages = Cache::remember(
+            $passageCacheKey,
+            now()->endOfDay(),
+            fn () => $passageCollection->shuffle()->take($limit)->values()
+        );
+
+        // pagination manual
+        $page    = (int) request('page', 1);
+        $perPage = 1;
+
+        $pagedPassage = new LengthAwarePaginator(
+            $passages->slice(($page - 1) * $perPage, $perPage)->values(),
+            $passages->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        // ambil passage yang sedang aktif
+        $activePassage = $passages->slice(($page - 1) * $perPage, 1)->first();
+
+        // memeriksa apakah ada passage yang aktif atau tidak
+        $activePassageId = $activePassage?->id ?? '';
+
+        // Ambil ulang soal-soal yang masih `Publish` dari DB dan tipe soal adalah `QUIZ`
+        $publishedQuestionIds = EnglishZoneQuestions::whereHas('EnglishZonePassage', function ($query) {
+            $query->where('passage_type', 'Listening Practice Test');
+        })->where('level_id', $levelId)->where('tipe_soal', 'QUIZ')
+        ->when($activePassage, fn($q) => $q->where('passage_id', $activePassage->id))
+        ->where('status_bank_soal', 'Publish')->pluck('id')->implode(',');
+
+        $levelName = EnglishZoneLevel::where('id', $levelId)->pluck('level_name')->first();
+
+        // susun cache key untuk urutan soal
+        $cacheKey = "english-zone-quiz-listening-practice-test-{$today}-{$userId}-{$subscriptionId}-{$levelId}-{$activePassageId}-{$lastUpdated}-{$publishedQuestionIds}";
 
         // Cek apakah data soal sudah disimpan di cache hari ini
         if (Cache::has($cacheKey)) {
@@ -4043,7 +4077,8 @@ class EnglishZoneController extends Controller
             // Jika tidak ada di levelId dan passageId, ambil soal dari database berdasarkan level dan passageId, status Publish, dan tipe QUIZ
             $getQuestions = EnglishZoneQuestions::whereHas('EnglishZonePassage', function ($query) {
                 $query->where('passage_type', 'Listening Practice Test');
-            })->where('level_id', $levelId)->where('tipe_soal', 'QUIZ')->when($firstPassage, fn($q) => $q->where('passage_id', $firstPassage->id))
+            })->where('level_id', $levelId)->where('tipe_soal', 'QUIZ')
+            ->when($activePassage, fn($q) => $q->where('passage_id', $activePassage->id))
             ->where('status_bank_soal', 'Publish')->get();
 
             // Mengelompokkan data berdasarkan soal
@@ -4101,15 +4136,15 @@ class EnglishZoneController extends Controller
         }
 
         return response()->json([
-            'data' => $passages->items(),
-            'links' => (string) $passages->links(),
+            'data' => $pagedPassage->items(),
+            'links' => (string) $pagedPassage->links(),
             'questions' => $groupedQuestions->values(),
-            'passage_id' => $passages->first()?->id,
+            'passage_id' => $pagedPassage->first()?->id,
             'levelName' => $levelName,
             'subscription' => $subscription,
             'questionsAnswer' => $questionsAnswer,
             'videoIds' => $videoIds,
-            'page' => $passages->currentPage(), // untuk menampilkan nomor passage yang sedang aktif pada halaman
+            'page' => $pagedPassage->currentPage(), // untuk menampilkan nomor passage yang sedang aktif pada halaman
         ]);
     }
 
