@@ -22,6 +22,7 @@ return new class extends Migration
             $table->longText('user_answer_text')->nullable();
             $table->string('user_answer_audio')->nullable();
             $table->integer('question_score')->nullable();
+            $table->string('exam_answer_duration')->nullable();
             $table->timestamps();
         });
     }

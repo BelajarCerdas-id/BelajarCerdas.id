@@ -19,6 +19,7 @@ class EnglishZoneAnswers extends Model
         'user_answer_text',
         'user_answer_audio',
         'question_score',
+        'exam_answer_duration',
     ];
 
     public function UserAccount()

@@ -20,6 +20,7 @@ function quizDetailView() {
                 const listeningPracticeTest = response.listeningPracticeTest.replace(':levelId', levelId);
                 const listeningExamTest = response.listeningExamTest.replace(':levelId', levelId);
                 const writingPracticeTest = response.writingPracticeTest.replace(':levelId', levelId);
+                const writingExamTest = response.writingExamTest.replace(':levelId', levelId);
 
                 const card = `
                     <!-- Reading -->
@@ -81,10 +82,14 @@ function quizDetailView() {
                                     </button>
                                 </a>
                             </div>
-                            <button
-                                class="border border-[#C9A33B] text-[#C9A33B] hover:bg-[#C9A33B] hover:text-white px-4 py-1.5 rounded-lg text-xs font-semibold w-full transition">
-                                Ujian
-                            </button>
+                            <div class="w-full">
+                                <a href="${writingExamTest}">
+                                    <button
+                                        class="border border-[#C9A33B] text-[#C9A33B] hover:bg-[#C9A33B] hover:text-white px-4 py-1.5 rounded-lg text-xs font-semibold w-full transition">
+                                        Ujian
+                                    </button>
+                                </a>
+                            </div>
                         </div>
                     </div>
 
