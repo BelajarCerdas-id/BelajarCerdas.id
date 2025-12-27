@@ -188,21 +188,61 @@ function bindPaginationLinks() {
     });
 }
 
-let isProcessing = false;
-// Submit form jawaban
+function subscriptionEmpty() {
+    swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Maaf, kamu tidak dapat mengakses ujian ini, karena kamu tidak memiliki paket aktif pada fitur ini. Silahkan aktifkan paket terlebih dahulu.',
+    })
+}
+
+function checkSubscription(onSuccess) {
+    const levelId = $('#bank-soal-quiz-practice-writing-test-question-form').data('level-id');
+
+    $.ajax({
+        url: `/english-zone/${levelId}/quiz/writing-practice-test/form`,
+        method: 'GET',
+        success: function (response) {
+            if (!response.subscription) {
+                subscriptionEmpty();
+                isProcessing = false;
+                return;
+            }
+
+            // LULUS subscription
+            onSuccess();
+        },
+        error: function () {
+            swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Gagal memverifikasi paket.',
+            });
+            isProcessing = false;
+        }
+    });
+}
+
 $(document).on('submit', '#bank-soal-quiz-practice-writing-test-question-form', function (e) {
     e.preventDefault();
-    if (isProcessing) return; // Abaikan jika sedang proses
+    if (isProcessing) return;
 
-    isProcessing = true; // Tandai sedang diproses
-
-    const levelId = $(this).data('level-id');
-    const passageId = $(this).data('passage-id');
-    const formData = new FormData(this);
-
+    isProcessing = true;
+    const form = this;
     const btn = $(this).find('button');
-
     btn.prop('disabled', true);
+
+    checkSubscription(function () {
+        submitAnswer(form, btn);
+    });
+});
+
+let isProcessing = false;
+// Submit form jawaban
+function submitAnswer(form, btn) {
+    const levelId = $(form).data('level-id');
+    const passageId = $(form).data('passage-id');
+    const formData = new FormData(form);
 
     $.ajax({
         url: `/english-zone-student/${levelId}/${passageId}/quiz/writing-practice-test/answers`,
@@ -214,53 +254,24 @@ $(document).on('submit', '#bank-soal-quiz-practice-writing-test-question-form', 
         processData: false,
         contentType: false,
         success: function (response) {
-            const subscription = response.subscription;
-
-            if (subscription) {
-                $('#alert-success-submit-answer').html(`
-                        <div class=" w-full flex justify-center">
-                            <div class="fixed z-[9999]">
-                                <div id="alertSuccess"
-                                    class="relative top-[-45px] opacity-100 scale-90 bg-green-200 w-max p-3 flex items-center space-x-2 rounded-lg shadow-lg transition-all duration-300 ease-out">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current text-green-600" fill="none"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span class="text-green-600 text-sm">${response.message}</span>
-                                    <i class="fas fa-times cursor-pointer text-green-600" id="btnClose"></i>
-                            </div>
-                        </div>
-                    </div>
-                `);
-    
-                setTimeout(function () {
-                    $('#alertSuccess').remove();
-                }, 3000);
-    
-                $('#btnClose').on('click', function () {
-                    $('#alertSuccess').remove();
-                });
-            }
-            // jika success, inisialisasi content untuk memunculkan soal yang terakhir dikerjakan
+            // success handling (punya kamu)
             const page = $('#current_page').val();
             quizWritingPracticeTest(page);
-
-            isProcessing = false;
-            btn.prop('disabled', false);
         },
         error: function (xhr) {
             if (xhr.status === 422) {
-                const response = xhr.responseJSON.errors;
-                $.each(response, function (field, messages) {
+                const errors = xhr.responseJSON.errors;
+                $.each(errors, function (field, messages) {
                     $(`#error-${field}`).text(messages[0]);
                 });
             }
+        },
+        complete: function () {
             isProcessing = false;
             btn.prop('disabled', false);
         }
     });
-});
+}
 
 const toggles = document.getElementsByClassName('toggleButton');
 const contentDiv = document.getElementsByClassName('content-accordion');
