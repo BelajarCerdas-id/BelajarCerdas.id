@@ -3962,10 +3962,6 @@ class EnglishZoneController extends Controller
             $query->where('feature_id', 3)->where('transaction_status', 'Berhasil');    
         })->where('student_id', $user->id)->whereDate('start_date', '<=', $date)->whereDate('end_date', '>=', $date)
         ->where('subscription_status', 'aktif')->exists();
-
-        if (!$getSubscriptionStudent) {
-            return redirect()->route('EZ.student.view');
-        }
         
         return view('Features.english-zone.student.quiz.english-zone-quiz-listening-practice-test', compact('levelId'));
     }
@@ -4219,10 +4215,6 @@ class EnglishZoneController extends Controller
             $query->where('feature_id', 3)->where('transaction_status', 'Berhasil');    
         })->where('student_id', $user->id)->whereDate('start_date', '<=', $date)->whereDate('end_date', '>=', $date)
         ->where('subscription_status', 'aktif')->exists();
-
-        if (!$getSubscriptionStudent) {
-            return redirect()->route('EZ.student.view');
-        }
         
         return view('Features.english-zone.student.quiz.english-zone-quiz-listening-exam-test', compact('levelId'));
     }
