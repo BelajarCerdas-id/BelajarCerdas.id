@@ -3154,10 +3154,6 @@ class EnglishZoneController extends Controller
         })->where('student_id', $user->id)->whereDate('start_date', '<=', $date)->whereDate('end_date', '>=', $date)
         ->where('subscription_status', 'aktif')->exists();
 
-        if (!$getSubscriptionStudent) {
-            return redirect()->route('EZ.student.view');
-        }
-
         $levelName = EnglishZoneLevel::where('id', $levelId)->pluck('level_name')->first();
 
         $sessionName = EnglishZoneSession::where('id', $sessionId)->pluck('session_name')->first();
