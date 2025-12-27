@@ -88,7 +88,7 @@ function paginateManagementPassageDetail() {
                             const passageContentHTML = `
                                 <div class="flex flex-col gap-6 items-start">
                                     ${passageImage}
-                                    <div class="space-y-4">${textAfterImage}</div>
+                                    <div class="space-y-4 passage-content">${textAfterImage}</div>
                                 </div>
                             `;
                             
@@ -98,7 +98,7 @@ function paginateManagementPassageDetail() {
                             
                             contentTextOnly = `
                                 <span
-                                    class="preview-text-only w-full passage-text max-w-[1450px] space-y-4 text-justify"
+                                    class="preview-text-only w-full passage-text max-w-[1450px] space-y-4 text-justify passage-content"
                                     data-fulltext="${passageContentTextOnly}">
                                     ${previewTextOnly}
                                 </span>
