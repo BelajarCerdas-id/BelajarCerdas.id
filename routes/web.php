@@ -576,6 +576,9 @@ Route::fallback(function () {
     Route::get('/english-zone/{levelId}/quiz/writing-practice-test', [EnglishZoneController::class, 'quizWritingPracticeTest'])->name('EZ.quizWritingPracticeTest.view');
     Route::get('/english-zone/{levelId}/quiz/writing-exam-test', [EnglishZoneController::class, 'quizWritingExamTest'])->name('EZ.quizWritingExamTest.view');
 
+    // speaking test views
+    Route::get('/english-zone/{levelId}/quiz/speaking-practice-test', [EnglishZoneController::class, 'quizSpeakingPracticeTest'])->name('EZ.quizSpeakingPracticeTest.view');
+
     // quiz reading answers
     Route::post('/english-zone-student/{levelId}/{passageId}/quiz/reading-practice-test/answers', [EnglishZoneController::class, 'quizReadingPracticeTestAnswer'])->name('EZ.quizReadingPracticeTest.answers');
     Route::post('/english-zone-student/{levelId}/{passageId}/quiz/reading-exam-test/answers', [EnglishZoneController::class, 'quizReadingExamTestAnswer'])->name('EZ.quizReadingExam.answers');
@@ -588,6 +591,9 @@ Route::fallback(function () {
     Route::post('/english-zone-student/{levelId}/{passageId}/quiz/writing-practice-test/answers', [EnglishZoneController::class, 'quizWritingPracticeTestAnswer'])->name('EZ.quizWritingPracticeTest.answers');
     Route::post('/english-zone-student/{levelId}/{passageId}/quiz/writing-exam-test/answers', [EnglishZoneController::class, 'quizWritingExamTestAnswer'])->name('EZ.quizWritingExamTest.answers');
 
+    // quiz speaking answers
+    Route::post('/english-zone-student/{levelId}/{passageId}/quiz/speaking-practice-test/answers', [EnglishZoneController::class, 'quizSpeakingPracticeTestAnswer'])->name('EZ.quizSpeakingPracticeTest.answers');
+
     // fetch
     Route::get('/english-zone/{levelId}/quiz-detail/fetch', [EnglishZoneController::class, 'quizDetailFetch'])->name('EZ.quizDetail.fetch');
     Route::get('/english-zone/{levelId}/quiz/reading-practice-test/form', [EnglishZoneController::class, 'quizReadingPracticeTestForm'])->name('EZ.quizReadingPracticeTest.form');
@@ -596,6 +602,7 @@ Route::fallback(function () {
     Route::get('/english-zone/{levelId}/quiz/listening-exam-test/form', [EnglishZoneController::class, 'quizListeningExamTestForm'])->name('EZ.quizListeningExamTest.form');
     Route::get('/english-zone/{levelId}/quiz/writing-practice-test/form', [EnglishZoneController::class, 'quizWritingPracticeTestForm'])->name('EZ.quizWritingPracticeTest.form');
     Route::get('/english-zone/{levelId}/quiz/writing-exam-test/form', [EnglishZoneController::class, 'quizWritingExamTestForm'])->name('EZ.quizWritingExamTest.form');
+    Route::get('/english-zone/{levelId}/quiz/speaking-practice-test/form', [EnglishZoneController::class, 'quizSpeakingPracticeTestForm'])->name('EZ.quizSpeakingPracticeTest.form');
 
     // ROUTES SCHOOL PARTNER
     // school subscription

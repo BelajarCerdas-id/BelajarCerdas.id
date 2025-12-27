@@ -2007,6 +2007,18 @@ input[type="radio"]:checked + label.nomor-soal {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
+/* ---------- ENGLISH ZONE FEATURE  ------------- */
+/* ---------- show ul ol list pada passage content  ------------- */
+.passage-content ul {
+    list-style: disc !important;
+    padding-left: 1.25rem;
+}
+
+.passage-content ol {
+    list-style: decimal !important;
+    padding-left: 1.25rem;
+}
+
 /* ---------- MEDIA SCREEN  ------------- */
 @media screen and (max-width: 900px) {
     #slide1:checked ~ #controls label:nth-child(2),
