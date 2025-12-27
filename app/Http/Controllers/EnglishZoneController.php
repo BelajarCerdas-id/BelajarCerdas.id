@@ -3388,10 +3388,6 @@ class EnglishZoneController extends Controller
         })->where('student_id', $user->id)->whereDate('start_date', '<=', $date)->whereDate('end_date', '>=', $date)
         ->where('subscription_status', 'aktif')->exists();
 
-        if (!$getSubscriptionStudent) {
-            return redirect()->route('EZ.student.view');
-        }
-
         return view('Features.english-zone.student.quiz.english-zone-quiz-detail', compact('levelId'));
     }
 
