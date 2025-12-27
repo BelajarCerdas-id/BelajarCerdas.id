@@ -120,7 +120,7 @@ function paginateMateriStudent(selectedLevel = null) {
                         if (response.date >= item.level_start_date) {
                             lockMateriVocabulary = `
                                     <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_vocabulary}"
-                                        data-materi-type="vocabulary" data-student-attendance-history="${response.dataAttendance}">
+                                        data-materi-type="vocabulary" data-student-attendance-history="${response.dataAttendance}" data-subscription-student="${response.getSubscriptionStudent}">
                                         Lihat Materi
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -128,7 +128,7 @@ function paginateMateriStudent(selectedLevel = null) {
     
                             lockMateriGrammar = `
                                     <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_grammar}"
-                                        data-materi-type="grammar" data-student-attendance-history="${response.dataAttendance}">
+                                        data-materi-type="grammar" data-student-attendance-history="${response.dataAttendance}" data-subscription-student="${response.getSubscriptionStudent}">
                                         Lihat Materi
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -136,7 +136,7 @@ function paginateMateriStudent(selectedLevel = null) {
     
                             lockMateriReading = `
                                     <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_reading}"
-                                        data-materi-type="reading" data-student-attendance-history="${response.dataAttendance}">
+                                        data-materi-type="reading" data-student-attendance-history="${response.dataAttendance}" data-subscription-student="${response.getSubscriptionStudent}">
                                         Lihat Materi
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -144,7 +144,7 @@ function paginateMateriStudent(selectedLevel = null) {
     
                             lockMateriWriting = `
                                     <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_writing}"
-                                        data-materi-type="writing" data-student-attendance-history="${response.dataAttendance}">
+                                        data-materi-type="writing" data-student-attendance-history="${response.dataAttendance}" data-subscription-student="${response.getSubscriptionStudent}">
                                         Lihat Materi
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -152,7 +152,7 @@ function paginateMateriStudent(selectedLevel = null) {
     
                             lockMateriListening = `
                                     <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_listening}"
-                                        data-materi-type="listening" data-student-attendance-history="${response.dataAttendance}">
+                                        data-materi-type="listening" data-student-attendance-history="${response.dataAttendance}" data-subscription-student="${response.getSubscriptionStudent}">
                                         Lihat Materi
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -160,7 +160,7 @@ function paginateMateriStudent(selectedLevel = null) {
     
                             lockMateriSpeaking = `
                                     <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_speaking}"
-                                        data-materi-type="speaking" data-student-attendance-history="${response.dataAttendance}">
+                                        data-materi-type="speaking" data-student-attendance-history="${response.dataAttendance}" data-subscription-student="${response.getSubscriptionStudent}">
                                         Lihat Materi
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -168,7 +168,7 @@ function paginateMateriStudent(selectedLevel = null) {
     
                             lockMateriPembelajaran = `
                                     <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_pembelajaran}"
-                                        data-materi-type="pembelajaran" data-student-attendance-history="${response.dataAttendance}">
+                                        data-materi-type="pembelajaran" data-student-attendance-history="${response.dataAttendance}" data-subscription-student="${response.getSubscriptionStudent}">
                                         Lihat Materi
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -176,7 +176,7 @@ function paginateMateriStudent(selectedLevel = null) {
     
                             lockWorksheet = `
                                     <a href="${worksheetDetail}" class="text-[#4189E0] flex items-center gap-2 text-sm font-bold"
-                                        data-materi-type="worksheet" data-student-attendance-history="${response.dataAttendance}">
+                                        data-materi-type="worksheet" data-student-attendance-history="${response.dataAttendance}" data-subscription-student="${response.getSubscriptionStudent}">
                                         Detail
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -190,8 +190,8 @@ function paginateMateriStudent(selectedLevel = null) {
                                 `;
     
                             lockMateriVideo = `
-                                    <button type="button" onclick="showVideo(this)" data-materi-id="${item.id}" data-video-id="${videoId}" data-student-attendance-history="${response.dataAttendance}"
-                                        class="text-[#4189E0] flex items-center gap-2 text-md font-bold">
+                                    <button type="button" class="text-[#4189E0] flex items-center gap-2 text-md font-bold" onclick="showVideo(this)" data-materi-id="${item.id}" 
+                                            data-video-id="${videoId}" data-student-attendance-history="${response.dataAttendance}" data-subscription-student="${response.getSubscriptionStudent}">
                                             Lihat Video
                                             <i class="fas fa-chevron-right"></i>
                                     </button>
@@ -319,48 +319,129 @@ function paginateMateriStudent(selectedLevel = null) {
                                     <i class="fa-solid fa-lock text-[#4189E0] font-bold text-md"></i>
                                 `;
                         } else {
-                            lockMateriVocabulary = `
-                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
-                                    <p>Belum</p>
-                                    <p>langganan</p>
-                                </span>
-                            `;
-                            lockMateriGrammar = `
-                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
-                                    <p>Belum</p>
-                                    <p>langganan</p>
-                                </span>
-                            `;
-                            lockMateriReading = `
-                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
-                                    <p>Belum</p>
-                                    <p>langganan</p>
-                                </span>
-                            `;
-                            lockMateriWriting = `
-                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
-                                    <p>Belum</p>
-                                    <p>langganan</p>
-                                </span>
-                            `;
-                            lockMateriListening = `
-                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
-                                    <p>Belum</p>
-                                    <p>langganan</p>
-                                </span>
-                            `;
-                            lockMateriSpeaking = `
-                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
-                                    <p>Belum</p>
-                                    <p>langganan</p>
-                                </span>
-                            `;
-                            lockMateriPembelajaran = `
-                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
-                                    <p>Belum</p>
-                                    <p>langganan</p>
-                                </span>
-                            `;
+                            // jika user tidak berlangganan, maka dia hanya bisa mengakses materi pertama. dan tutup semua materi selain materi pertama
+                            if (index === 0) {
+                                lockMateriVocabulary = `
+                                    <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_vocabulary}"
+                                        data-materi-type="vocabulary" data-subscription-student="${response.getSubscriptionStudent}">
+                                        Lihat Materi
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                `;
+
+                                lockMateriGrammar = `
+                                    <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_grammar}"
+                                        data-materi-type="grammar" data-subscription-student="${response.getSubscriptionStudent}">
+                                        Lihat Materi
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                `;
+
+                                lockMateriReading = `
+                                    <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_reading}"
+                                        data-materi-type="reading" data-subscription-student="${response.getSubscriptionStudent}">
+                                        Lihat Materi
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                `;
+
+                                lockMateriWriting = `
+                                    <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_writing}"
+                                        data-materi-type="writing" data-subscription-student="${response.getSubscriptionStudent}">
+                                        Lihat Materi
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                `;
+
+                                lockMateriListening = `
+                                    <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_listening}"
+                                        data-materi-type="listening" data-subscription-student="${response.getSubscriptionStudent}">
+                                        Lihat Materi
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                `;
+
+                                lockMateriSpeaking = `
+                                    <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_speaking}"
+                                        data-materi-type="speaking" data-subscription-student="${response.getSubscriptionStudent}">
+                                        Lihat Materi
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                `;
+
+                                lockMateriPembelajaran = `
+                                    <a href="" class="btn-materi text-[#4189E0] flex items-center gap-2 text-md font-bold" data-materi-id="${item.id}" data-materi="${item.materi_pembelajaran}"
+                                        data-materi-type="pembelajaran" data-subscription-student="${response.getSubscriptionStudent}">
+                                        Lihat Materi
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                `;
+
+                                lockMateriVideo = `
+                                    <button type="button" class="text-[#4189E0] flex items-center gap-2 text-md font-bold" onclick="showVideo(this)" data-materi-id="${item.id}" 
+                                        data-video-id="${videoId}" data-student-attendance-history="${response.dataAttendance}"
+                                        data-subscription-student="${response.getSubscriptionStudent}">
+                                            Lihat Video
+                                            <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                `;
+
+                                lockIcon = ``;
+                            } else {
+                                lockMateriVocabulary = `
+                                    <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
+                                        <p>Belum</p>
+                                        <p>langganan</p>
+                                    </span>
+                                `;
+                                lockMateriGrammar = `
+                                    <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
+                                        <p>Belum</p>
+                                        <p>langganan</p>
+                                    </span>
+                                `;
+                                lockMateriReading = `
+                                    <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
+                                        <p>Belum</p>
+                                        <p>langganan</p>
+                                    </span>
+                                `;
+                                lockMateriWriting = `
+                                    <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
+                                        <p>Belum</p>
+                                        <p>langganan</p>
+                                    </span>
+                                `;
+                                lockMateriListening = `
+                                    <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
+                                        <p>Belum</p>
+                                        <p>langganan</p>
+                                    </span>
+                                `;
+                                lockMateriSpeaking = `
+                                    <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
+                                        <p>Belum</p>
+                                        <p>langganan</p>
+                                    </span>
+                                `;
+                                lockMateriPembelajaran = `
+                                    <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
+                                        <p>Belum</p>
+                                        <p>langganan</p>
+                                    </span>
+                                `;
+                                lockMateriVideo = `
+                                    <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
+                                        <p>Belum</p>
+                                        <p>langganan</p>
+                                    </span>
+                                `;
+
+                                lockIcon = `
+                                    <i class="fa-solid fa-lock text-[#4189E0] font-bold text-md"></i>
+                                `;
+                            }
+
                             lockWorksheet = `
                                 <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
                                     <p>Belum</p>
@@ -368,17 +449,12 @@ function paginateMateriStudent(selectedLevel = null) {
                                 </span>
                             `;
                             lockQuiz = `
-                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
-                                    <p>Belum</p>
-                                    <p>langganan</p>
-                                </span>
+                                <a href="${quizDetail}" class="text-[#4189E0] flex items-center gap-2 text-sm font-bold">
+                                    Detail
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
                             `;
-                            lockMateriVideo = `
-                                <span class="font-bold opacity-70 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center sm:gap-1 lg:gap-0 xl:gap-1 text-xs md:text-[13px]">
-                                    <p>Belum</p>
-                                    <p>langganan</p>
-                                </span>
-                            `;
+
                             lockExam = `
                                 <div class="w-full border-2 border-gray-200 bg-white shadow-lg rounded-lg p-4 flex justify-between items-center">
                                     <div class="flex items-center gap-2">
@@ -394,9 +470,6 @@ function paginateMateriStudent(selectedLevel = null) {
                                         <p>langganan</p>
                                     </span>
                                 </div>
-                            `;
-                            lockIcon = `
-                                <i class="fa-solid fa-lock text-[#4189E0] font-bold text-md"></i>
                             `;
                         }
 
@@ -604,8 +677,9 @@ function showVideo(element) {
     const modal = document.getElementById('my_modal_1-' + materiId);
     const iframe = document.getElementById('video-frame-' + materiId);
     const studentAttendanceHistory = $(this).data('student-attendance-history');
+    const subscription = $(this).data('subscription-student');
 
-    if (!studentAttendanceHistory) {
+    if (!studentAttendanceHistory && subscription) {
         alertStudentAttendanceHistory();
         return;
     } else {
@@ -633,8 +707,9 @@ $(document).off('click', '.btn-materi').on('click', '.btn-materi', function (e) 
     const materi = $(this).data('materi');
     const materiType = $(this).data('materi-type');
     const studentAttendanceHistory = $(this).data('student-attendance-history');
+    const subscription = $(this).data('subscription-student');
 
-    if (!studentAttendanceHistory) {
+    if (!studentAttendanceHistory && subscription) {
         alertStudentAttendanceHistory();
         return;
     } else {
