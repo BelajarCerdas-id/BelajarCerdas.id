@@ -33,42 +33,6 @@ function paginateManagementPassageDetail() {
                                     return `<img ${before}class="${existingClasses} ${className}"`;
                                 });
                         }
-                        
-                        const containsImage = /<img\s+[^>]*src=/.test(item.passage_content);
-
-                        // Tambahkan class img jika ada gambar
-                        if (containsImage) {
-                            content = addClassToImgTags(item.passage_content, 'max-w-[300px] rounded my-2');
-                        }
-
-                        // untuk memisahkan teks sebelum dengan img dan text setelah img
-                        const splitPassage = item.passage_content.split('<img'); // split sebelum <img>
-                        const passageContentTextOnly = splitPassage[0]; // sebelum <img> ( [0] dan [1] digunakan untuk memisahkan 2 element berbeda )
-
-                        // Inisialisasi variabel kosong untuk menampung elemen gambar dan teks setelah gambar
-                        let passageImage = '', textAfterImage = '';
-
-                        // Cek apakah hasil split punya bagian setelah <img (artinya ada gambar)
-                        if (splitPassage.length > 1) {
-                            const imgSplit = splitPassage[1].split('>'); // pisahkan tag <img> dan sisa teks
-                            const imgTag = imgSplit[0]; // bagian src dan atribut gambar
-                            const restText = imgSplit.slice(1).join('>'); // gabungkan sisa setelah tag img
-
-                            passageImage = `<img class="lg:max-w-[65%] xl:max-w-[45%]" ${imgTag}>`; // Susun tag <img> lengkap dengan class tambahan
-                            textAfterImage = restText.trim(); // Hapus spasi berlebih pada teks setelah gambar
-                        }
-
-                        // Gabungkan menjadi HTML: bungkus gambar dan teks
-                        const passageContentHTML = `
-                            <div class="flex flex-col gap-6 items-start">
-                                ${passageImage}
-                                <div class="space-y-4">${textAfterImage}</div>
-                            </div>
-                        `;
-
-                        const previewLimit = 350;
-
-                        const previewTextOnly = passageContentTextOnly.length > previewLimit ? passageContentTextOnly.slice(0, previewLimit) + "..." : passageContentTextOnly;
 
                         const previewBankSoalQuiz = data.previewBankSoalQuiz.replace(':level_id', item.level_id).replace(':passage_type', item.passage_type)
                             .replace(':passage_id', item.id);
@@ -96,6 +60,42 @@ function paginateManagementPassageDetail() {
                                 
                             `;
                         } else {
+                            const containsImage = /<img\s+[^>]*src=/.test(item.passage_content);
+
+                            // Tambahkan class img jika ada gambar
+                            if (containsImage) {
+                                content = addClassToImgTags(item.passage_content, 'max-w-[300px] rounded my-2');
+                            }
+
+                            // untuk memisahkan teks sebelum dengan img dan text setelah img
+                            const splitPassage = item.passage_content.split('<img'); // split sebelum <img>
+                            const passageContentTextOnly = splitPassage[0]; // sebelum <img> ( [0] dan [1] digunakan untuk memisahkan 2 element berbeda )
+
+                            // Inisialisasi variabel kosong untuk menampung elemen gambar dan teks setelah gambar
+                            let passageImage = '', textAfterImage = '';
+
+                            // Cek apakah hasil split punya bagian setelah <img (artinya ada gambar)
+                            if (splitPassage.length > 1) {
+                                const imgSplit = splitPassage[1].split('>'); // pisahkan tag <img> dan sisa teks
+                                const imgTag = imgSplit[0]; // bagian src dan atribut gambar
+                                const restText = imgSplit.slice(1).join('>'); // gabungkan sisa setelah tag img
+
+                                passageImage = `<img class="lg:max-w-[65%] xl:max-w-[45%]" ${imgTag}>`; // Susun tag <img> lengkap dengan class tambahan
+                                textAfterImage = restText.trim(); // Hapus spasi berlebih pada teks setelah gambar
+                            }
+
+                            // Gabungkan menjadi HTML: bungkus gambar dan teks
+                            const passageContentHTML = `
+                                <div class="flex flex-col gap-6 items-start">
+                                    ${passageImage}
+                                    <div class="space-y-4">${textAfterImage}</div>
+                                </div>
+                            `;
+                            
+                            const previewLimit = 350;
+
+                            const previewTextOnly = passageContentTextOnly.length > previewLimit ? passageContentTextOnly.slice(0, previewLimit) + "..." : passageContentTextOnly;
+                            
                             contentTextOnly = `
                                 <span
                                     class="preview-text-only w-full passage-text max-w-[1450px] space-y-4 text-justify"
