@@ -578,6 +578,7 @@ Route::fallback(function () {
 
     // speaking test views
     Route::get('/english-zone/{levelId}/quiz/speaking-practice-test', [EnglishZoneController::class, 'quizSpeakingPracticeTest'])->name('EZ.quizSpeakingPracticeTest.view');
+    Route::get('/english-zone/{levelId}/quiz/speaking-exam-test', [EnglishZoneController::class, 'quizSpeakingExamTest'])->name('EZ.quizSpeakingExamTest.view');
 
     // quiz reading answers
     Route::post('/english-zone-student/{levelId}/{passageId}/quiz/reading-practice-test/answers', [EnglishZoneController::class, 'quizReadingPracticeTestAnswer'])->name('EZ.quizReadingPracticeTest.answers');
@@ -593,6 +594,7 @@ Route::fallback(function () {
 
     // quiz speaking answers
     Route::post('/english-zone-student/{levelId}/{passageId}/quiz/speaking-practice-test/answers', [EnglishZoneController::class, 'quizSpeakingPracticeTestAnswer'])->name('EZ.quizSpeakingPracticeTest.answers');
+    Route::post('/english-zone-student/{levelId}/{passageId}/quiz/speaking-exam-test/answers', [EnglishZoneController::class, 'quizSpeakingExamTestAnswer'])->name('EZ.quizSpeakingExamTest.answers');
 
     // fetch
     Route::get('/english-zone/{levelId}/quiz-detail/fetch', [EnglishZoneController::class, 'quizDetailFetch'])->name('EZ.quizDetail.fetch');
@@ -603,6 +605,7 @@ Route::fallback(function () {
     Route::get('/english-zone/{levelId}/quiz/writing-practice-test/form', [EnglishZoneController::class, 'quizWritingPracticeTestForm'])->name('EZ.quizWritingPracticeTest.form');
     Route::get('/english-zone/{levelId}/quiz/writing-exam-test/form', [EnglishZoneController::class, 'quizWritingExamTestForm'])->name('EZ.quizWritingExamTest.form');
     Route::get('/english-zone/{levelId}/quiz/speaking-practice-test/form', [EnglishZoneController::class, 'quizSpeakingPracticeTestForm'])->name('EZ.quizSpeakingPracticeTest.form');
+    Route::get('/english-zone/{levelId}/quiz/speaking-exam-test/form', [EnglishZoneController::class, 'quizSpeakingExamTestForm'])->name('EZ.quizSpeakingExamTest.form');
 
     // ROUTES SCHOOL PARTNER
     // school subscription
