@@ -43,6 +43,7 @@ function quizWritingExamTest(page = 1, selectedIndex = 0) {
                 const examAnswerDuration = response.examAnswerDuration; // mengambil durasi pengerjaan ujian
 
                 const subscription = response.subscription;
+                const subscriptionEntitlement = response.subscriptionEntitlement;
 
                 let startDate = null;
                 let endDate = null;
@@ -70,7 +71,7 @@ function quizWritingExamTest(page = 1, selectedIndex = 0) {
                         const isAnswered = questionsAnswer?.[activePassageId]?.length > 0;
 
                         const passage = `
-                            <div class="passage-content space-y-4 text-justify ${!isAnswered ? 'blur-[3px]' : ''}">
+                            <div class="passage-content space-y-4 text-justify ${!isAnswered && (subscriptionEntitlement ? subscriptionEntitlement.subscription_status === 'aktif' : '') ? 'blur-[3px]' : ''}">
                                 ${passageContent} 
                             </div>
                         `;
@@ -216,7 +217,7 @@ function quizWritingExamTest(page = 1, selectedIndex = 0) {
                                         </div>
 
                                         <div class="content-accordion">
-                                            <div class="example-answer space-y-2 overflow-y-auto max-h-[600px] text-sm pr-6 py-4 ${!isAnswered ? 'blur-[3px]' : ''}">
+                                            <div class="example-answer space-y-2 overflow-y-auto max-h-[600px] text-sm pr-6 py-4 ${!isAnswered && (subscriptionEntitlement ? subscriptionEntitlement.subscription_status === 'aktif' : '') ? 'blur-[3px]' : ''}">
                                                 ${item.example_answer ?? 'No example answer found.'}
                                             </div>
                                         </div>

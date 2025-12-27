@@ -4700,6 +4700,11 @@ class EnglishZoneController extends Controller
             $query->where('feature_id', 3)->where('transaction_status', 'Berhasil'); // feature_id 3 menunjukkan fitur english zone
         })->where('student_id', $userId)->where('subscription_status', 'aktif')->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)
         ->first();
+
+        // mengambil subscription yang aktif tetapi masa aktif paket belum berakhir
+        $subscriptionEntitlement = FeatureSubscriptionHistory::whereHas('Transactions', function($query) {
+            $query->where('feature_id', 3)->where('transaction_status', 'Berhasil');
+        })->where('student_id', $userId)->where('subscription_status', 'aktif')->whereDate('end_date', '>=', $today)->first();
         
         $subscriptionId = $subscription ? $subscription->id : null;
 
@@ -4855,6 +4860,7 @@ class EnglishZoneController extends Controller
             'passage_id' => $pagedPassage->first()?->id,
             'levelName' => $levelName,
             'subscription' => $subscription,
+            'subscriptionEntitlement' => $subscriptionEntitlement,
             'questionsAnswer' => $questionsAnswer,
             'examAnswerDuration' => $examAnswerDuration,    
             'videoIds' => $videoIds,
