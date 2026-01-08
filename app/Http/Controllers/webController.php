@@ -20,7 +20,7 @@ class webController extends Controller
 
         $descriptionsFeatures = [
             'TANYA' => [
-                'image_feature' => asset("image/logo-fitur/logo-tanya.png"),
+                'image_feature' => asset("image/logo-fitur/logo-tanya.svg"),
                 'textButton' => 'Lihat Paket',
                 'price' => 'Rp 2.000 / Koin',
 
@@ -39,7 +39,7 @@ class webController extends Controller
                 ]
             ],
             'Soal dan Pembahasan' => [
-                'image_feature' => asset("image/logo-fitur/logo-englishZone.png"),
+                'image_feature' => asset("image/logo-fitur/logo-soal-pembahasan.svg"),
                 'textButton' => 'Lihat Paket',
                 'price' => 'Rp 20.000',
 
@@ -56,7 +56,7 @@ class webController extends Controller
                 ]
             ],
             'English Zone' => [
-                'image_feature' => asset("image/logo-fitur/logo-englishZone.png"),
+                'image_feature' => asset("image/logo-fitur/logo-english-zone.svg"),
                 'textButton' => 'Lihat Paket',
                 'price' => 'Rp 500.000',
 
