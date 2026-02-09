@@ -493,7 +493,7 @@
     <aside class="sidebar-beranda-administrator hidden md:block">
         <a href="{{ route('beranda') }}">
             <div class="logo_details flex items-center justify-center">
-                <img src="{{ asset('image/logoBC.png') }}" alt="" class="w-2/4">
+                <img src="{{ asset('image/logo-bc/white-logo-bc.svg') }}" alt="" class="!w-50 h-24">
             </div>
         </a>
         <ul class="mt-8">
@@ -715,7 +715,7 @@
         <div class="flex items-center h-full">
             <i class="fas fa-bars text-2xl relative top-1 cursor-pointer text-white" onclick="togglePopup()"></i>
             <a href="{{ route('beranda') }}">
-                <img src="{{ asset('image/logoBC.png') }}" alt="" class="w-[65px] ml-4">
+                <img src="{{ asset('image/logo-bc/white-logo-bc.svg') }}" alt="" class="w-[110px] ml-4">
             </a>
         </div>
         <div class="flex items-center gap-8 text-2xl relative top-1">
@@ -758,7 +758,7 @@
         <div class="overlay-sidebar-phone"></div>
         <div class="content-sidebar-phone">
             <header class="w-full h-20 bg-[--color-second] flex items-center justify-between pl-2 pr-6">
-                <img src="{{ asset('image/logoBC.png') }}" alt="" class="w-[60px]">
+                <img src="{{ asset('image/logo-bc/white-logo-bc.svg') }}" alt="" class="w-[100px]">
                 <i class="fas fa-xmark text-2xl text-white cursor-pointer" onclick="togglePopup()"></i>
             </header>
             <main>
