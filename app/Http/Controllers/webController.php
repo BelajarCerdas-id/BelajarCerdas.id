@@ -132,19 +132,19 @@ class webController extends Controller
         if($user->role == 'Siswa') {
             $packetSiswa = [
                 [
-                    'image' => 'image/logo-fitur/logo-tanya.png',
+                    'image' => asset("image/logo-fitur/logo-tanya.svg"),
                     'text' => 'TANYAkan soal sulit ke Guru Ahli.',
                     'url' => "/tanya",
                     'button' => 'TANYA'
                 ],
                 [
-                    'image' => 'image/logo-fitur/logo-englishZone.png',
-                    'text' => '[Soal dan Pembahasan].',
+                    'image' => asset("image/logo-fitur/logo-soal-pembahasan.svg"),
+                    'text' => 'Soal dan Pembahasan.',
                     'url' => '/soal-pembahasan/kelas',
                     'button' => 'Soal dan Pembahasan'
                 ],
                 [
-                    'image' => 'image/logo-fitur/logo-englishZone.png',
+                    'image' => asset("image/logo-fitur/logo-english-zone.svg"),
                     'text' => 'Sesi Boot Camp for Conversation Only.',
                     'url' => '/english-zone',
                     'button' => 'English Zone'
@@ -153,13 +153,13 @@ class webController extends Controller
         } else {
             $packetSiswa = [
                 [
-                    'image' => 'image/logo-fitur/logo-tanya.png',
+                    'image' => asset("image/logo-fitur/logo-tanya.svg"),
                     'text' => 'TANYAkan soal sulit ke Guru Ahli.',
                     'url' => "/tanya",
                     'button' => 'TANYA'
                 ],
                 [
-                    'image' => 'image/logo-fitur/logo-englishZone.png',
+                    'image' => asset("image/logo-fitur/logo-english-zone.svg"),
                     'text' => 'Sesi Boot Camp for Conversation Only.',
                     'url' => '/english-zone-mentor',
                     'button' => 'English Zone'
