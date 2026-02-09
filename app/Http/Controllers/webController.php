@@ -97,7 +97,7 @@ class webController extends Controller
     {
         $user = Auth::user();
 
-        $getData = UserAccount::where('status', 'Mentor')->get();
+        $getData = UserAccount::where('role', 'Mentor')->get();
 
         // FOR BERANDA ADMINISTRATOR
         $getMentor = UserAccount::where('role', 'Mentor')->get(); // mendapatkan user mentor
