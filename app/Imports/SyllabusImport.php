@@ -78,46 +78,45 @@ class SyllabusImport implements ToCollection, WithHeadingRow, WithStartRow, With
 
             // 1. Kurikulum
             $kurikulum = Kurikulum::firstOrCreate([
-                'user_id' => $this->userId,
                 'nama_kurikulum' => $row['kurikulum'],
             ], [
+                'user_id' => $this->userId,
                 'kode' => $row['kurikulum'],
             ]);
 
             // 2. Fase
             $fase = Fase::firstOrCreate([
-                'user_id' => $this->userId,
                 'nama_fase' => $row['fase'],
                 'kurikulum_id' => $kurikulum->id,
             ], [
+                'user_id' => $this->userId,
                 'kode' => $row['fase'],
             ]);
 
             // 3. Kelas
             $kelas = Kelas::firstOrCreate([
-                'user_id' => $this->userId,
                 'kelas' => $row['kelas'],
                 'fase_id' => $fase->id,
                 'kurikulum_id' => $kurikulum->id,
             ], [
+                'user_id' => $this->userId,
                 'kode' => $row['kelas'],
             ]);
 
             // 4. Mapel
             $mapel = Mapel::firstOrCreate([
-                'user_id' => $this->userId,
                 'mata_pelajaran' => $row['mata_pelajaran'],
                 'harga_koin' => 5,
                 'kelas_id' => $kelas->id,
                 'fase_id' => $fase->id,
                 'kurikulum_id' => $kurikulum->id,
             ], [
+                'user_id' => $this->userId,
                 'kode' => $row['mata_pelajaran'],
             ]);
 
             // 5. Bab
             $bab = Bab::firstOrCreate([
-                'user_id' => $this->userId,
                 'nama_bab' => $row['bab'],
                 'semester' => $row['semester'],
                 'kelas_id' => $kelas->id,
@@ -125,12 +124,12 @@ class SyllabusImport implements ToCollection, WithHeadingRow, WithStartRow, With
                 'fase_id' => $fase->id,
                 'kurikulum_id' => $kurikulum->id,
             ], [
+                'user_id' => $this->userId,
                 'kode' => $row['bab'],
             ]);
 
             // 6. Sub Bab
             $subBab = SubBab::firstOrCreate([
-                'user_id' => $this->userId,
                 'sub_bab' => $row['sub_bab'],
                 'bab_id' => $bab->id,
                 'kelas_id' => $kelas->id,
@@ -138,6 +137,7 @@ class SyllabusImport implements ToCollection, WithHeadingRow, WithStartRow, With
                 'fase_id' => $fase->id,
                 'kurikulum_id' => $kurikulum->id,
             ], [
+                'user_id' => $this->userId,
                 'kode' => $row['sub_bab'],
             ]);
 
